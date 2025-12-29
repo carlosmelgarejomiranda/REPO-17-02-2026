@@ -22,13 +22,24 @@ export const ValueProposition = ({ t }) => {
   ];
 
   return (
-    <section className="py-20 px-6" style={{ backgroundColor: '#1e1919' }}>
+    <section className="py-24 px-6" style={{ backgroundColor: '#1a1a1a' }}>
       <div className="max-w-7xl mx-auto">
+        {/* Decorative top border with molding effect */}
+        <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
+        
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: 'white' }}>
+          <h2 className="text-4xl md:text-6xl font-light mb-6 italic" 
+              style={{ 
+                color: '#f5ede4',
+                fontFamily: 'var(--font-primary)'
+              }}>
             {t.valueProposition.title}
           </h2>
-          <p className="text-lg md:text-xl max-w-4xl mx-auto" style={{ color: '#bbb5ae' }}>
+          <p className="text-base md:text-lg max-w-4xl mx-auto leading-relaxed" 
+             style={{ 
+               color: '#ead7c8',
+               fontFamily: 'var(--font-secondary)'
+             }}>
             {t.valueProposition.subtitle}
           </p>
         </div>
@@ -39,17 +50,29 @@ export const ValueProposition = ({ t }) => {
             return (
               <Card 
                 key={index} 
-                className="border-none transition-all duration-300 hover:scale-105 hover:shadow-xl"
-                style={{ backgroundColor: '#f7f5f2' }}
+                className="border-none transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                style={{ 
+                  backgroundColor: '#f5ede4',
+                  border: '1px solid #d4a968'
+                }}
               >
                 <CardContent className="p-8">
-                  <div className="mb-6 inline-block p-4 rounded-full" style={{ backgroundColor: '#61525a20' }}>
-                    <Icon className="w-8 h-8" style={{ color: '#61525a' }} />
+                  <div className="mb-6 inline-block p-4 rounded-full" 
+                       style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)' }}>
+                    <Icon className="w-8 h-8" style={{ color: '#d4a968' }} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4" style={{ color: '#1a1918' }}>
+                  <h3 className="text-2xl font-light mb-4 italic" 
+                      style={{ 
+                        color: '#1a1a1a',
+                        fontFamily: 'var(--font-primary)'
+                      }}>
                     {feature.title}
                   </h3>
-                  <p className="text-base" style={{ color: '#736c64' }}>
+                  <p className="text-base leading-relaxed" 
+                     style={{ 
+                       color: '#5a5a5a',
+                       fontFamily: 'var(--font-secondary)'
+                     }}>
                     {feature.description}
                   </p>
                 </CardContent>
@@ -57,6 +80,9 @@ export const ValueProposition = ({ t }) => {
             );
           })}
         </div>
+        
+        {/* Decorative bottom border */}
+        <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
       </div>
     </section>
   );

@@ -1,30 +1,33 @@
-/* DB Brand Design System Variables */
+/* Avenue Brand Design System - Neoclassical Fashion Editorial */
 :root {
-  /* Primary Brand Colors */
-  --accent--ui-accent: #61525a;
-  --accent--tab: #61525a;
-  --color--accent--line-solid: #5f9dff;
-  --color--accent--line: #5f9dff66;
+  /* Primary Brand Colors - Avenue Palette */
+  --color-beige: #f5ede4;
+  --color-nude: #ead7c8;
+  --color-nude-light: #f7f2ed;
+  --color-black: #1a1a1a;
+  --color-gold: #d4a968;
+  --color-gold-light: #e8c891;
+  --color-gold-dark: #b88f4f;
   
   /* Text Colors */
-  --text--text-light: #1e1919;
-  --text--text-dark: white;
-  --text--base: #1a1918;
-  --text--text-subtle-light: #736c64;
-  --text--text-subtle-dark: #bbb5ae;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5a5a5a;
+  --text-light: #8a8a8a;
+  --text-on-dark: #f5ede4;
   
   /* Surface Colors */
-  --surface--background-dark: #1e1919;
-  --white: white;
-  --color--accent--coconut: #f7f5f2;
+  --surface-light: #f7f2ed;
+  --surface-beige: #f5ede4;
+  --surface-dark: #1a1a1a;
   
-  /* Font Family */
-  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  /* Font Family - Editorial Fashion */
+  --font-primary: 'Playfair Display', 'Georgia', serif;
+  --font-secondary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .App {
   min-height: 100vh;
-  background-color: var(--color--accent--coconut);
+  background-color: var(--surface-light);
 }
 
 /* Smooth scrolling */
@@ -35,6 +38,41 @@ html {
 /* Remove default text-align center */
 * {
   box-sizing: border-box;
+}
+
+/* Editorial Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* Neoclassical decorative elements */
+.neoclassical-border {
+  border: 1px solid var(--color-gold);
+  padding: 2px;
+}
+
+.neoclassical-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid var(--color-gold);
+  margin: 4px;
+}
+
+/* Molding effect */
+.molding-top {
+  border-top: 3px solid var(--color-gold);
+  box-shadow: 0 -2px 4px rgba(212, 169, 104, 0.1);
+}
+
+.molding-bottom {
+  border-bottom: 3px solid var(--color-gold);
+  box-shadow: 0 2px 4px rgba(212, 169, 104, 0.1);
 }
 
 /* Transition for interactive elements (NOT transforms) */
@@ -48,23 +86,51 @@ textarea {
 /* Ensure proper contrast for buttons */
 button:hover,
 a:hover {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color--accent--coconut);
+  background: var(--surface-beige);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent--ui-accent);
-  border-radius: 5px;
+  background: var(--color-gold);
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent--tab);
+  background: var(--color-gold-dark);
+}
+
+/* Image overlay effects */
+.image-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(26, 26, 26, 0.3) 100%);
+  pointer-events: none;
+}
+
+/* Fashion editorial spacing */
+.editorial-spacing {
+  padding: 80px 0;
+}
+
+@media (max-width: 768px) {
+  .editorial-spacing {
+    padding: 40px 0;
+  }
 }
