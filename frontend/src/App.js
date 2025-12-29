@@ -43,11 +43,11 @@ function App() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Solo isologo (A) en navbar */}
+            {/* Isologo (A) 10 veces más grande */}
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
               alt="Avenue"
-              className="h-12 cursor-pointer"
+              className="h-32 md:h-40 lg:h-48 cursor-pointer"
               style={{
                 filter: 'drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
               }}
