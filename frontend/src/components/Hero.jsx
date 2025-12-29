@@ -19,22 +19,12 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
-        {/* Logo */}
-        <div className="mb-12 inline-block">
-          {/* Isologo PNG sin fondo */}
-          <img 
-            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
-            alt="Avenue Logo"
-            className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-8"
-            style={{
-              filter: 'drop-shadow(0 10px 30px rgba(212, 169, 104, 0.4))'
-            }}
-          />
-          {/* Logo AVENUE PNG sin fondo */}
+        {/* Solo Logo AVENUE - más grande */}
+        <div className="mb-16 inline-block">
           <img 
             src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
             alt="Avenue"
-            className="h-24 md:h-32 lg:h-36"
+            className="h-32 md:h-40 lg:h-48 xl:h-56"
             style={{
               filter: 'drop-shadow(0 10px 30px rgba(212, 169, 104, 0.4))'
             }}
