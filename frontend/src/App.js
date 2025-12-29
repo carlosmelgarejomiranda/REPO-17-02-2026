@@ -43,12 +43,14 @@ function App() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Isologo (A) más grande pero barra igual */}
+            {/* Isologo escalado 10x sin afectar la barra */}
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
               alt="Avenue"
-              className="h-20 cursor-pointer"
+              className="h-12 cursor-pointer"
               style={{
+                transform: 'scale(2.5)',
+                transformOrigin: 'left center',
                 filter: 'drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
               }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
