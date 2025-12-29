@@ -43,12 +43,11 @@ export const Footer = ({ t }) => {
           {/* Brand */}
           <div>
             <img 
-              src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
+              src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
               alt="Avenue"
               className="h-12 mb-6"
               style={{
-                filter: 'brightness(1.3) contrast(1.5)',
-                mixBlendMode: 'screen'
+                filter: 'drop-shadow(0 4px 12px rgba(212, 169, 104, 0.4))'
               }}
             />
             <p className="text-sm font-light leading-relaxed" 
