@@ -24,12 +24,20 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
           <img 
             src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/y6gw2bk6_AVENUE%20DOURADO%20%282%29.jpg"
             alt="Avenue Logo"
-            className="w-20 h-20 md:w-28 md:h-28 mx-auto mb-8 drop-shadow-2xl"
+            className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-8"
+            style={{
+              mixBlendMode: 'multiply',
+              filter: 'drop-shadow(0 10px 20px rgba(212, 169, 104, 0.3))'
+            }}
           />
           <img 
             src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
             alt="Avenue"
-            className="h-12 md:h-16 mx-auto drop-shadow-2xl"
+            className="h-16 md:h-24 lg:h-28 mx-auto"
+            style={{
+              mixBlendMode: 'multiply',
+              filter: 'drop-shadow(0 10px 20px rgba(212, 169, 104, 0.3))'
+            }}
           />
         </div>
         
