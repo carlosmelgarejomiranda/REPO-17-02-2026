@@ -19,13 +19,14 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
-        {/* Logo AVENUE - solo más grande */}
+        {/* Logo AVENUE escalado 6x */}
         <div className="mb-16 inline-block">
           <img 
             src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
             alt="Avenue"
-            className="h-96"
+            className="h-32"
             style={{
+              transform: 'scale(3)',
               filter: 'drop-shadow(0 10px 30px rgba(212, 169, 104, 0.4))'
             }}
           />
