@@ -3,19 +3,29 @@ import { MapPin, Car, Shield, TrendingUp } from 'lucide-react';
 
 export const Location = ({ t }) => {
   return (
-    <section className="py-20 px-6" style={{ backgroundColor: '#1e1919' }}>
+    <section className="py-24 px-6" style={{ backgroundColor: '#1a1a1a' }}>
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
+        
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left side - Info */}
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ color: 'white' }}>
+            <h2 className="text-4xl md:text-6xl font-light mb-8 italic" 
+                style={{ 
+                  color: '#f5ede4',
+                  fontFamily: 'var(--font-primary)'
+                }}>
               {t.location.title}
             </h2>
-            <p className="text-lg mb-8 leading-relaxed" style={{ color: '#bbb5ae' }}>
+            <p className="text-base mb-10 leading-relaxed" 
+               style={{ 
+                 color: '#ead7c8',
+                 fontFamily: 'var(--font-secondary)'
+               }}>
               {t.location.description}
             </p>
             
-            <div className="flex flex-wrap gap-3 mb-8">
+            <div className="flex flex-wrap gap-4 mb-10">
               {[
                 { icon: TrendingUp, label: 'Alto tránsito' },
                 { icon: Car, label: 'Estacionamiento' },
@@ -26,11 +36,18 @@ export const Location = ({ t }) => {
                 return (
                   <div 
                     key={index}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full"
-                    style={{ backgroundColor: '#61525a33' }}
+                    className="flex items-center gap-2 px-5 py-3 rounded-sm"
+                    style={{ 
+                      backgroundColor: 'rgba(212, 169, 104, 0.15)',
+                      border: '1px solid rgba(212, 169, 104, 0.3)'
+                    }}
                   >
-                    <Icon className="w-4 h-4" style={{ color: '#5f9dff' }} />
-                    <span className="text-sm font-medium" style={{ color: '#bbb5ae' }}>
+                    <Icon className="w-4 h-4" style={{ color: '#d4a968' }} />
+                    <span className="text-sm font-light" 
+                          style={{ 
+                            color: '#ead7c8',
+                            fontFamily: 'var(--font-secondary)'
+                          }}>
                       {item.label}
                     </span>
                   </div>
@@ -38,29 +55,31 @@ export const Location = ({ t }) => {
               })}
             </div>
 
-            <p className="text-base" style={{ color: '#bbb5ae' }}>
+            <p className="text-sm" 
+               style={{ 
+                 color: '#ead7c8',
+                 fontFamily: 'var(--font-secondary)'
+               }}>
               {t.location.features}
             </p>
           </div>
 
-          {/* Right side - Map placeholder */}
-          <div className="rounded-lg overflow-hidden shadow-2xl" style={{ height: '400px' }}>
-            <div 
-              className="w-full h-full flex items-center justify-center"
-              style={{ backgroundColor: '#f7f5f2' }}
-            >
-              <div className="text-center p-8">
-                <MapPin className="w-16 h-16 mx-auto mb-4" style={{ color: '#61525a' }} />
-                <p className="text-lg font-semibold mb-2" style={{ color: '#1a1918' }}>
-                  Paseo Los Árboles
-                </p>
-                <p className="text-base" style={{ color: '#736c64' }}>
-                  Av. San Martín, Asunción
-                </p>
-              </div>
-            </div>
+          {/* Right side - Google Maps */}
+          <div className="rounded-sm overflow-hidden shadow-2xl" style={{ height: '500px', border: '2px solid #d4a968' }}>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3607.1234567890!2d-57.5876!3d-25.2865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDE3JzExLjQiUyA1N8KwMzUnMTUuNCJX!5e0!3m2!1sen!2spy!4v1234567890"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Avenue - Paseo Los Árboles"
+            ></iframe>
           </div>
         </div>
+        
+        <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
       </div>
     </section>
   );
