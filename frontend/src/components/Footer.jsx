@@ -49,7 +49,7 @@ export const Footer = ({ t }) => {
                 alt="Avenue"
                 className="h-5"
                 style={{
-                  transform: 'scale(6)',
+                  transform: 'scale(12)',
                   transformOrigin: 'left center',
                   filter: 'drop-shadow(0 4px 12px rgba(212, 169, 104, 0.4))'
                 }}
