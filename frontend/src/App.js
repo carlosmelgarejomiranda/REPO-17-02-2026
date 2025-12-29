@@ -152,6 +152,7 @@ function App() {
           <Categories t={t} />
         </div>
         <DesignShowcase t={t} />
+        <Brands t={t} />
         <Location t={t} />
         <ContactForm t={t} />
       </main>
