@@ -1,52 +1,156 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React, { useState } from "react";
+import "./App.css";
+import { translations } from "./i18n/translations";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
+import { Hero } from "./components/Hero";
+import { ValueProposition } from "./components/ValueProposition";
+import { Benefits } from "./components/Benefits";
+import { Categories } from "./components/Categories";
+import { DesignShowcase } from "./components/DesignShowcase";
+import { Location } from "./components/Location";
+import { ContactForm } from "./components/ContactForm";
+import { Footer } from "./components/Footer";
+import { Button } from "./components/ui/button";
+import { Menu, X } from "lucide-react";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+function App() {
+  const [language, setLanguage] = useState('es');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const t = translations[language];
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setMobileMenuOpen(false);
     }
   };
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+  const handleBrandsClick = () => {
+    scrollToSection('contact-form');
+  };
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+  const handleDeliveryClick = () => {
+    window.open('https://wa.me/595973666000', '_blank');
+  };
 
-function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      {/* Navigation */}
+      <nav 
+        className="fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md"
+        style={{ backgroundColor: '#f7f5f2dd', borderBottom: '1px solid #61525a22' }}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h1 
+              className="text-2xl font-bold cursor-pointer"
+              style={{ color: '#61525a' }}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              AVENUE
+            </h1>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            <button 
+              onClick={() => scrollToSection('value')}
+              className="text-sm font-medium transition-colors hover:opacity-70"
+              style={{ color: '#1a1918' }}
+            >
+              {t.nav.about}
+            </button>
+            <button 
+              onClick={() => scrollToSection('benefits')}
+              className="text-sm font-medium transition-colors hover:opacity-70"
+              style={{ color: '#1a1918' }}
+            >
+              {t.nav.benefits}
+            </button>
+            <button 
+              onClick={() => scrollToSection('categories')}
+              className="text-sm font-medium transition-colors hover:opacity-70"
+              style={{ color: '#1a1918' }}
+            >
+              {t.nav.categories}
+            </button>
+            <button 
+              onClick={() => scrollToSection('contact-form')}
+              className="text-sm font-medium transition-colors hover:opacity-70"
+              style={{ color: '#1a1918' }}
+            >
+              {t.nav.contact}
+            </button>
+            <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} />
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center gap-2">
+            <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 space-y-3">
+            <button 
+              onClick={() => scrollToSection('value')}
+              className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70"
+              style={{ color: '#1a1918' }}
+            >
+              {t.nav.about}
+            </button>
+            <button 
+              onClick={() => scrollToSection('benefits')}
+              className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70"
+              style={{ color: '#1a1918' }}
+            >
+              {t.nav.benefits}
+            </button>
+            <button 
+              onClick={() => scrollToSection('categories')}
+              className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70"
+              style={{ color: '#1a1918' }}
+            >
+              {t.nav.categories}
+            </button>
+            <button 
+              onClick={() => scrollToSection('contact-form')}
+              className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70"
+              style={{ color: '#1a1918' }}
+            >
+              {t.nav.contact}
+            </button>
+          </div>
+        )}
+      </nav>
+
+      {/* Page Sections */}
+      <main>
+        <Hero t={t} onBrandsClick={handleBrandsClick} onDeliveryClick={handleDeliveryClick} />
+        <div id="value">
+          <ValueProposition t={t} />
+        </div>
+        <div id="benefits">
+          <Benefits t={t} />
+        </div>
+        <div id="categories">
+          <Categories t={t} />
+        </div>
+        <DesignShowcase t={t} />
+        <Location t={t} />
+        <ContactForm t={t} />
+      </main>
+
+      <Footer t={t} />
     </div>
   );
 }
