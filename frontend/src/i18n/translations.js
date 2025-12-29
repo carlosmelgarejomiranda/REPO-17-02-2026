@@ -137,6 +137,10 @@ export const translations = {
       cat5: 'Cosmetics',
       cat6: 'Perfumery'
     },
+    brands: {
+      title: 'Brands That Trust Avenue',
+      subtitle: 'Select brands that are part of our premium universe'
+    },
     design: {
       title: 'Elegant and Timeless Design',
       subtitle: 'Every detail designed to enhance your brand',
