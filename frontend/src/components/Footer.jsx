@@ -45,7 +45,10 @@ export const Footer = ({ t }) => {
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
               alt="Avenue"
-              className="h-8 mb-6"
+              className="h-10 mb-6"
+              style={{
+                mixBlendMode: 'screen'
+              }}
             />
             <p className="text-sm font-light leading-relaxed" 
                style={{ 
