@@ -64,17 +64,17 @@ export const Location = ({ t }) => {
             </p>
           </div>
 
-          {/* Right side - Google Maps */}
+          {/* Right side - Google Maps con ubicación exacta de Avenue */}
           <div className="rounded-sm overflow-hidden shadow-2xl" style={{ height: '500px', border: '2px solid #d4a968' }}>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3607.1234567890!2d-57.5876!3d-25.2865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDE3JzExLjQiUyA1N8KwMzUnMTUuNCJX!5e0!3m2!1sen!2spy!4v1234567890"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3607.5474166945686!2d-57.5764508!3d-25.2921064!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x945da9002e40e909%3A0x7f238934210e33c4!2sAVENUE!5e0!3m2!1sen!2spy!4v1640000000000!5m2!1sen!2spy"
               width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen=""
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Avenue - Paseo Los Árboles"
+              title="Avenue - Paseo Los Árboles, Asunción"
             ></iframe>
           </div>
         </div>
