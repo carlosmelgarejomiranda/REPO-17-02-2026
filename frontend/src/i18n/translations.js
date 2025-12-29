@@ -49,6 +49,10 @@ export const translations = {
       cat5: 'Cosmética',
       cat6: 'Perfumería'
     },
+    brands: {
+      title: 'Marcas que Confían en Avenue',
+      subtitle: 'Marcas selectas que forman parte de nuestro universo premium'
+    },
     design: {
       title: 'Diseño Elegante y Atemporal',
       subtitle: 'Cada detalle pensado para realzar tu marca',
