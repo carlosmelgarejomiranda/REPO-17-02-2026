@@ -39,17 +39,16 @@ function App() {
       {/* Navigation */}
       <nav 
         className="fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md"
-        style={{ backgroundColor: '#f7f5f2dd', borderBottom: '1px solid #61525a22' }}
+        style={{ backgroundColor: 'rgba(247, 242, 237, 0.95)', borderBottom: '1px solid rgba(212, 169, 104, 0.3)' }}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 
-              className="text-2xl font-bold cursor-pointer"
-              style={{ color: '#61525a' }}
+            <img 
+              src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
+              alt="Avenue"
+              className="h-6 cursor-pointer"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            >
-              AVENUE
-            </h1>
+            />
           </div>
 
           {/* Desktop Navigation */}
