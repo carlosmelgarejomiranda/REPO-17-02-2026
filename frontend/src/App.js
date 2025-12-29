@@ -46,7 +46,10 @@ function App() {
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
               alt="Avenue"
-              className="h-6 cursor-pointer"
+              className="h-8 cursor-pointer"
+              style={{
+                mixBlendMode: 'darken'
+              }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             />
           </div>
