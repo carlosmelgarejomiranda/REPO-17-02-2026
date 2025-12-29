@@ -1,5 +1,5 @@
 import React from 'react';
-import { Instagram, Music, Phone, MapPin } from 'lucide-react';
+import { Instagram, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
 
 export const Footer = ({ t }) => {
@@ -11,7 +11,7 @@ export const Footer = ({ t }) => {
       handle: '@avenuepy'
     },
     {
-      icon: Music,
+      icon: MessageCircle,
       label: 'TikTok',
       url: 'https://tiktok.com/@avenue_py',
       handle: '@avenue_py'
@@ -20,13 +20,13 @@ export const Footer = ({ t }) => {
 
   const contactOptions = [
     {
-      icon: Phone,
+      icon: MessageCircle,
       label: t.footer.brands,
       url: 'https://wa.me/595976691520',
       text: '+595 976 691 520'
     },
     {
-      icon: Phone,
+      icon: MessageCircle,
       label: t.footer.delivery,
       url: 'https://wa.me/595973666000',
       text: '+595 973 666 000'
