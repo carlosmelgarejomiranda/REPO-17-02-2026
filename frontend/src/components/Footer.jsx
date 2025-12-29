@@ -45,8 +45,9 @@ export const Footer = ({ t }) => {
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
               alt="Avenue"
-              className="h-10 mb-6"
+              className="h-12 mb-6"
               style={{
+                filter: 'brightness(1.3) contrast(1.5)',
                 mixBlendMode: 'screen'
               }}
             />
