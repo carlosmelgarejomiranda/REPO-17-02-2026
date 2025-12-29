@@ -1,5 +1,6 @@
 import React from 'react';
-import { Instagram, MessageCircle, MapPin } from 'lucide-react';
+import { FaWhatsapp, FaTiktok } from 'react-icons/fa';
+import { Instagram, MapPin } from 'lucide-react';
 import { Button } from './ui/button';
 
 export const Footer = ({ t }) => {
@@ -11,7 +12,7 @@ export const Footer = ({ t }) => {
       handle: '@avenuepy'
     },
     {
-      icon: MessageCircle,
+      icon: FaTiktok,
       label: 'TikTok',
       url: 'https://tiktok.com/@avenue_py',
       handle: '@avenue_py'
@@ -20,13 +21,13 @@ export const Footer = ({ t }) => {
 
   const contactOptions = [
     {
-      icon: MessageCircle,
+      icon: FaWhatsapp,
       label: t.footer.brands,
       url: 'https://wa.me/595976691520',
       text: '+595 976 691 520'
     },
     {
-      icon: MessageCircle,
+      icon: FaWhatsapp,
       label: t.footer.delivery,
       url: 'https://wa.me/595973666000',
       text: '+595 973 666 000'
