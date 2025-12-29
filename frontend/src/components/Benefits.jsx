@@ -12,37 +12,67 @@ export const Benefits = ({ t }) => {
   ];
 
   return (
-    <section className="py-20 px-6" style={{ backgroundColor: '#f7f5f2' }}>
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-16" style={{ color: '#1a1918' }}>
+    <section 
+      className="py-24 px-6 relative" 
+      style={{ backgroundColor: '#f7f2ed' }}
+    >
+      {/* Background architectural image with overlay */}
+      <div className="absolute inset-0 opacity-10">
+        <img 
+          src="https://images.unsplash.com/photo-1676517243531-69e3b27276e9?w=1920&q=80" 
+          alt="Neoclassical Architecture"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
+        
+        <h2 className="text-4xl md:text-6xl font-light text-center mb-20 italic" 
+            style={{ 
+              color: '#1a1a1a',
+              fontFamily: 'var(--font-primary)'
+            }}>
           {t.benefits.title}
         </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
               <div 
                 key={index}
-                className="p-8 rounded-lg transition-all duration-300 hover:shadow-lg"
+                className="p-10 rounded-sm transition-all duration-300 hover:shadow-2xl"
                 style={{ 
-                  backgroundColor: 'white',
-                  border: '1px solid #5f9dff33'
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  border: '1px solid rgba(212, 169, 104, 0.3)',
+                  backdropFilter: 'blur(10px)'
                 }}
               >
-                <div className="mb-4 inline-block p-3 rounded-full" style={{ backgroundColor: '#5f9dff22' }}>
-                  <Icon className="w-6 h-6" style={{ color: '#5f9dff' }} />
+                <div className="mb-6 inline-block p-4 rounded-full" 
+                     style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)' }}>
+                  <Icon className="w-7 h-7" style={{ color: '#d4a968' }} />
                 </div>
-                <h3 className="text-xl font-bold mb-3" style={{ color: '#1a1918' }}>
+                <h3 className="text-xl font-light mb-4 italic" 
+                    style={{ 
+                      color: '#1a1a1a',
+                      fontFamily: 'var(--font-primary)'
+                    }}>
                   {benefit.title}
                 </h3>
-                <p className="text-base leading-relaxed" style={{ color: '#736c64' }}>
+                <p className="text-sm leading-relaxed" 
+                   style={{ 
+                     color: '#5a5a5a',
+                     fontFamily: 'var(--font-secondary)'
+                   }}>
                   {benefit.description}
                 </p>
               </div>
             );
           })}
         </div>
+        
+        <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
       </div>
     </section>
   );
