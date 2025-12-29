@@ -43,15 +43,18 @@ function App() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
-              alt="Avenue"
-              className="h-8 cursor-pointer"
-              style={{
-                mixBlendMode: 'darken'
-              }}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            />
+            <div className="inline-block px-4 py-2 rounded-sm" 
+                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
+                alt="Avenue"
+                className="h-8 cursor-pointer"
+                style={{
+                  mixBlendMode: 'multiply'
+                }}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              />
+            </div>
           </div>
 
           {/* Desktop Navigation */}
