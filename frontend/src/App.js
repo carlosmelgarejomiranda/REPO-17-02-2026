@@ -7,6 +7,7 @@ import { ValueProposition } from "./components/ValueProposition";
 import { Benefits } from "./components/Benefits";
 import { Categories } from "./components/Categories";
 import { DesignShowcase } from "./components/DesignShowcase";
+import { Brands } from "./components/Brands";
 import { Location } from "./components/Location";
 import { ContactForm } from "./components/ContactForm";
 import { Footer } from "./components/Footer";
