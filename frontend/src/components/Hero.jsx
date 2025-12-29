@@ -21,36 +21,26 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
       <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
         {/* Logo */}
         <div className="mb-12 inline-block">
-          {/* Isologo with white background container */}
-          <div className="inline-block p-6 rounded-full mb-8" 
-               style={{ 
-                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                 boxShadow: '0 10px 30px rgba(212, 169, 104, 0.3)'
-               }}>
-            <img 
-              src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/y6gw2bk6_AVENUE%20DOURADO%20%282%29.jpg"
-              alt="Avenue Logo"
-              className="w-28 h-28 md:w-36 md:h-36"
-              style={{
-                mixBlendMode: 'multiply'
-              }}
-            />
-          </div>
-          {/* Logo text with white background */}
-          <div className="inline-block px-12 py-6 rounded-sm" 
-               style={{ 
-                 backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                 boxShadow: '0 10px 30px rgba(212, 169, 104, 0.3)'
-               }}>
-            <img 
-              src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
-              alt="Avenue"
-              className="h-20 md:h-28 lg:h-32"
-              style={{
-                mixBlendMode: 'multiply'
-              }}
-            />
-          </div>
+          {/* Isologo - remove black background */}
+          <img 
+            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/y6gw2bk6_AVENUE%20DOURADO%20%282%29.jpg"
+            alt="Avenue Logo"
+            className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-8"
+            style={{
+              filter: 'brightness(1.2) contrast(1.5)',
+              mixBlendMode: 'screen'
+            }}
+          />
+          {/* Logo text - remove black background */}
+          <img 
+            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/c4c09402_AVENUE%20DOURADO.jpg"
+            alt="Avenue"
+            className="h-24 md:h-32 lg:h-36"
+            style={{
+              filter: 'brightness(1.2) contrast(1.5)',
+              mixBlendMode: 'screen'
+            }}
+          />
         </div>
         
         <p className="text-xl md:text-3xl mb-6 font-light italic" 
