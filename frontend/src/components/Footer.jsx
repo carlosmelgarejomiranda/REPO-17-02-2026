@@ -1,5 +1,5 @@
 import React from 'react';
-import { Instagram, MessageCircle } from 'lucide-react';
+import { Instagram, MessageCircle, MapPin } from 'lucide-react';
 import { Button } from './ui/button';
 
 export const Footer = ({ t }) => {
