@@ -38,9 +38,13 @@ function App() {
   };
 
   return (
-    <div className="App">
-      {/* Navigation */}
-      <nav 
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={
+            <>
+              {/* Navigation */}
+              <nav 
         className="fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md"
         style={{ backgroundColor: 'rgba(247, 242, 237, 0.95)', borderBottom: '1px solid rgba(212, 169, 104, 0.3)' }}
       >
