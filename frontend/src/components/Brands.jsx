@@ -58,12 +58,12 @@ export const Brands = ({ t }) => {
             let mobileScaleValue = 1;
             
             if (brand.name === 'Coraltheia') {
-              scaleValue = 10;
-              mobileScaleValue = 7;
+              scaleValue = 15;
+              mobileScaleValue = 10;
             }
             if (brand.name === 'Serotonina') {
-              scaleValue = 9;
-              mobileScaleValue = 6.5;
+              scaleValue = 14;
+              mobileScaleValue = 9;
             }
             if (brand.name === 'OKI') {
               scaleValue = 2.2;
