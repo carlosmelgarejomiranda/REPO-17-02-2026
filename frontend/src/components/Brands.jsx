@@ -59,6 +59,8 @@ export const Brands = ({ t }) => {
             if (brand.name === 'Serotonina') scaleValue = 4;
             if (brand.name === 'OKI') scaleValue = 2.2;
             if (brand.name === 'Brand Logo') scaleValue = 2.2;
+            if (brand.name === 'David Sandoval') scaleValue = 1.5;
+            if (brand.name === 'Body Sculpt') scaleValue = 1.5;
             // Logos que necesitan ser más pequeños
             if (brand.name === 'Laese') scaleValue = 0.8;
             if (brand.name === 'UGG') scaleValue = 0.8;
