@@ -650,10 +650,10 @@ export const UGCCreators = ({ t, campaignId }) => {
         </div>
       </section>
 
-      {/* Back to Studio */}
+      {/* Back to Campaigns */}
       <div className="py-8 text-center">
-        <a href="/studio" className="text-sm transition-colors hover:opacity-70" style={{ color: '#666' }}>
-          ← Volver a Avenue Studio
+        <a href="/studio/ugc" className="text-sm transition-colors hover:opacity-70" style={{ color: '#666' }}>
+          ← Ver todas las campañas
         </a>
       </div>
     </div>
