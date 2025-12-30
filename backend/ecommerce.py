@@ -199,6 +199,7 @@ def extract_base_model(name: str) -> str:
         (r'-([PMGSL])$', ''),              # -P, -M, -G, -S, -L at end → remove
         (r'-([PMGSL])-', '-'),             # -P-, -M- etc → -
         (r'\s([PMGSL])$', ''),             # space P at end → remove
+        (r'\s([PMGSL])\s', ' '),           # space P space → space (P in middle of name)
         
         # Numeric sizes (2 digits)
         (r'-(\d{2})$', ''),                # -38 at end → remove
