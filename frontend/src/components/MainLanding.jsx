@@ -38,14 +38,14 @@ export const MainLanding = ({ t }) => {
             className="text-4xl md:text-6xl lg:text-7xl font-light mb-6 italic"
             style={{ color: '#1a1a1a', fontFamily: 'var(--font-primary)' }}
           >
-            Bienvenido a Avenue
+            {t.mainLanding?.welcome || 'Bienvenido a Avenue'}
           </h1>
           
           <p 
             className="text-lg md:text-xl max-w-2xl mx-auto mb-16 leading-relaxed"
             style={{ color: '#5a5a5a' }}
           >
-            Un concepto premium donde las marcas brillan y el contenido cobra vida
+            {t.mainLanding?.tagline || 'Un concepto premium donde las marcas brillan y el contenido cobra vida'}
           </p>
 
           {/* Two Main Options */}
@@ -70,13 +70,13 @@ export const MainLanding = ({ t }) => {
                 className="text-2xl md:text-3xl font-light mb-4 italic"
                 style={{ color: '#1a1a1a', fontFamily: 'var(--font-primary)' }}
               >
-                Únete a Avenue
+                {t.mainLanding?.joinAvenue || 'Únete a Avenue'}
               </h2>
               <p className="mb-6" style={{ color: '#5a5a5a' }}>
-                Descubre cómo tu marca puede brillar en nuestro espacio premium sin comisiones
+                {t.mainLanding?.joinDesc || 'Descubre cómo tu marca puede brillar en nuestro espacio premium sin comisiones'}
               </p>
               <div className="flex items-center justify-center gap-2" style={{ color: '#d4a968' }}>
-                <span className="font-medium">Para marcas</span>
+                <span className="font-medium">{t.mainLanding?.forBrands || 'Para marcas'}</span>
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
               </div>
             </a>
@@ -101,13 +101,13 @@ export const MainLanding = ({ t }) => {
                 className="text-2xl md:text-3xl font-light mb-4 italic"
                 style={{ color: '#f5ede4', fontFamily: 'var(--font-primary)' }}
               >
-                Avenue Studio
+                {t.mainLanding?.studioTitle || 'Avenue Studio'}
               </h2>
               <p className="mb-6" style={{ color: '#a8a8a8' }}>
-                Alquiler de estudio fotográfico profesional y plataforma UGC Creators
+                {t.mainLanding?.studioDesc || 'Alquiler de estudio fotográfico profesional y plataforma UGC Creators'}
               </p>
               <div className="flex items-center justify-center gap-2" style={{ color: '#d4a968' }}>
-                <span className="font-medium">Explorar</span>
+                <span className="font-medium">{t.mainLanding?.explore || 'Explorar'}</span>
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
               </div>
             </a>
