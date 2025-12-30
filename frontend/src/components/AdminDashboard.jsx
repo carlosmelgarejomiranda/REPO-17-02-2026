@@ -63,6 +63,30 @@ export const AdminDashboard = ({ user }) => {
     }
   };
 
+  const sendTestEmail = async () => {
+    setSendingTestEmail(true);
+    setTestEmailStatus(null);
+    try {
+      const response = await fetch(`${API_URL}/api/admin/test-email`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        credentials: 'include'
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setTestEmailStatus({ type: 'success', message: data.message });
+      } else {
+        setTestEmailStatus({ type: 'error', message: data.detail || 'Error al enviar email' });
+      }
+    } catch (err) {
+      setTestEmailStatus({ type: 'error', message: 'Error de conexión' });
+    } finally {
+      setSendingTestEmail(false);
+    }
+  };
+
   const updateReservationStatus = async (reservationId, newStatus) => {
     try {
       const response = await fetch(`${API_URL}/api/admin/reservations/${reservationId}`, {
