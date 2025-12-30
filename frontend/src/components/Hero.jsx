@@ -20,15 +20,14 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
 
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center">
-        {/* Logo AVENUE */}
-        <div className="mb-12 inline-block">
+        {/* Isologo AVENUE */}
+        <div className="mb-10 inline-block">
           <img 
-            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
+            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
             alt="Avenue"
-            className="h-20 md:h-24"
+            className="h-16 md:h-20"
             style={{
-              transform: 'scale(2.5)',
-              filter: 'brightness(1.1) drop-shadow(0 4px 20px rgba(212, 169, 104, 0.3))'
+              filter: 'brightness(1.2) drop-shadow(0 4px 20px rgba(212, 169, 104, 0.4))'
             }}
           />
         </div>
