@@ -174,6 +174,10 @@ def extract_base_model(name: str) -> str:
     # Patterns to remove sizes (order matters - more specific first)
     # Must match the patterns in extract_size_from_name
     patterns = [
+        # Product code patterns with embedded size: XXXXX-N[PMGSL]- or XXXXX-[0-9]N[PMGSL]-
+        # Examples: 100065-NG-, 100065-NM-, 100074-1NP-
+        (r'(\d{5,6}-\d?)N([PMGSL])-', r'\1N-'),  # 100065-NG- → 100065-N-
+        
         # US sizes
         (r'-(US\d{1,2})$', ''),           # -US8 at end → remove
         (r'-(US\d{1,2})-', '-'),          # -US8- → keep one dash
