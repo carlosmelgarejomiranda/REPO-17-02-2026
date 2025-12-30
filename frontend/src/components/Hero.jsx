@@ -5,47 +5,48 @@ import { ShoppingBag, ArrowDown } from 'lucide-react';
 export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
+      {/* Background Image with Subtle Overlay */}
       <div className="absolute inset-0">
         <img 
           src="https://customer-assets.emergentagent.com/job_1b3572cd-a3d0-456a-8ed6-f6e2b33dc707/artifacts/fhsbv62q_IMG_9720.jpg" 
           alt="Avenue Store"
           className="w-full h-full object-cover"
         />
+        {/* Subtle dark overlay for better text readability */}
         <div className="absolute inset-0" style={{ 
-          background: 'linear-gradient(to bottom, rgba(245, 237, 228, 0.7) 0%, rgba(26, 26, 26, 0.5) 100%)'
+          background: 'linear-gradient(180deg, rgba(13, 13, 13, 0.4) 0%, rgba(13, 13, 13, 0.55) 50%, rgba(13, 13, 13, 0.7) 100%)'
         }}></div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center">
-        {/* Logo AVENUE escalado 6x */}
-        <div className="mb-16 inline-block">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 py-20 text-center">
+        {/* Logo AVENUE */}
+        <div className="mb-12 inline-block">
           <img 
             src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
             alt="Avenue"
-            className="h-32"
+            className="h-20 md:h-24"
             style={{
-              transform: 'scale(3)',
-              filter: 'drop-shadow(0 10px 30px rgba(212, 169, 104, 0.4))'
+              transform: 'scale(2.5)',
+              filter: 'brightness(1.1) drop-shadow(0 4px 20px rgba(212, 169, 104, 0.3))'
             }}
           />
         </div>
         
-        <p className="text-xl md:text-3xl mb-6 font-light italic" 
+        <p className="text-2xl md:text-4xl mb-4 font-light italic" 
            style={{ 
-             color: '#1a1a1a',
+             color: '#f5ede4',
              fontFamily: 'var(--font-primary)',
-             textShadow: '0 2px 4px rgba(245, 237, 228, 0.8)'
+             textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
            }}>
           {t.hero.subtitle}
         </p>
         
-        <p className="text-base md:text-lg mb-12 max-w-2xl mx-auto font-light" 
+        <p className="text-base md:text-lg mb-10 max-w-xl mx-auto font-light" 
            style={{ 
-             color: '#1a1a1a',
+             color: 'rgba(245, 237, 228, 0.85)',
              fontFamily: 'var(--font-secondary)',
-             textShadow: '0 1px 2px rgba(245, 237, 228, 0.8)'
+             lineHeight: '1.7'
            }}>
           {t.hero.description}
         </p>
@@ -53,13 +54,14 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button 
             size="lg" 
-            className="text-base px-10 py-6 transition-all duration-300 hover:scale-105 border-2"
+            className="text-sm px-8 py-5 transition-all duration-300 hover:scale-105"
             style={{ 
               backgroundColor: '#d4a968',
-              borderColor: '#b88f4f',
-              color: '#1a1a1a',
+              border: 'none',
+              color: '#0d0d0d',
               fontFamily: 'var(--font-secondary)',
-              letterSpacing: '0.05em'
+              letterSpacing: '0.1em',
+              fontWeight: '500'
             }}
             onClick={onBrandsClick}
           >
@@ -69,27 +71,27 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
           <Button 
             size="lg" 
             variant="outline"
-            className="text-base px-10 py-6 transition-all duration-300 hover:scale-105 border-2"
+            className="text-sm px-8 py-5 transition-all duration-300 hover:scale-105"
             style={{ 
-              borderColor: '#d4a968',
-              backgroundColor: 'rgba(245, 237, 228, 0.9)',
-              color: '#1a1a1a',
+              border: '1px solid rgba(212, 169, 104, 0.6)',
+              backgroundColor: 'rgba(13, 13, 13, 0.4)',
+              backdropFilter: 'blur(4px)',
+              color: '#f5ede4',
               fontFamily: 'var(--font-secondary)',
-              letterSpacing: '0.05em'
+              letterSpacing: '0.1em',
+              fontWeight: '400'
             }}
             onClick={onDeliveryClick}
           >
-            <ShoppingBag className="mr-2 h-5 w-5" />
+            <ShoppingBag className="mr-2 h-4 w-4" style={{ color: '#d4a968' }} />
             {t.hero.deliveryCta}
           </Button>
         </div>
       </div>
 
-      {/* Scroll indicator with gold accent */}
+      {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="flex flex-col items-center gap-2">
-          <ArrowDown className="w-6 h-6" style={{ color: '#d4a968' }} />
-        </div>
+        <ArrowDown className="w-5 h-5" style={{ color: 'rgba(212, 169, 104, 0.7)' }} />
       </div>
     </section>
   );
