@@ -142,14 +142,44 @@ export const AdminDashboard = ({ user }) => {
             </h1>
             <p style={{ color: '#a8a8a8' }}>Bienvenido, {user?.name}</p>
           </div>
-          <Button
-            onClick={() => setShowCreateModal(true)}
-            className="mt-4 md:mt-0 flex items-center gap-2"
-            style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-          >
-            <Plus className="w-4 h-4" /> Nueva Reserva
-          </Button>
+          <div className="flex gap-3 mt-4 md:mt-0">
+            <Button
+              onClick={sendTestEmail}
+              disabled={sendingTestEmail}
+              className="flex items-center gap-2"
+              style={{ backgroundColor: '#2a2a2a', color: '#d4a968', border: '1px solid #d4a968' }}
+            >
+              {sendingTestEmail ? 'Enviando...' : '📧 Probar Email'}
+            </Button>
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2"
+              style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+            >
+              <Plus className="w-4 h-4" /> Nueva Reserva
+            </Button>
+          </div>
         </div>
+
+        {/* Test Email Status */}
+        {testEmailStatus && (
+          <div 
+            className="mb-6 p-4 rounded"
+            style={{ 
+              backgroundColor: testEmailStatus.type === 'success' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+              color: testEmailStatus.type === 'success' ? '#22c55e' : '#ef4444',
+              border: `1px solid ${testEmailStatus.type === 'success' ? '#22c55e' : '#ef4444'}`
+            }}
+          >
+            {testEmailStatus.message}
+            <button 
+              onClick={() => setTestEmailStatus(null)} 
+              className="ml-4 opacity-70 hover:opacity-100"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
