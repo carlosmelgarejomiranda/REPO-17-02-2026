@@ -72,6 +72,15 @@ export const UGCCreators = ({ t, campaignId }) => {
     if (!formData.sexo) newErrors.sexo = 'Selecciona una opción';
     if (!formData.fecha_nacimiento) newErrors.fecha_nacimiento = 'Fecha de nacimiento es requerida';
     
+    // Gender validation based on campaign
+    if (formData.sexo && campaign.requirements.gender !== 'all') {
+      if (campaign.requirements.gender === 'female' && formData.sexo !== 'femenino') {
+        newErrors.sexo = 'Esta campaña es solo para mujeres';
+      } else if (campaign.requirements.gender === 'male' && formData.sexo !== 'masculino') {
+        newErrors.sexo = 'Esta campaña es solo para hombres';
+      }
+    }
+    
     // Age validation (18+)
     if (formData.fecha_nacimiento) {
       const birthDate = new Date(formData.fecha_nacimiento);
