@@ -132,6 +132,7 @@ metadata:
 test_plan:
   current_focus:
     - "All backend API endpoints tested successfully"
+    - "Terms & Conditions Integration completed and verified"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -139,3 +140,5 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "✅ ALL BACKEND TESTS PASSED - Avenue Studio booking system API is fully functional. All 7 test cases completed successfully: availability endpoint, user registration/login, guest reservations, admin functionality, and availability updates after booking. Email confirmation with Resend integration is working. Backend ready for production use."
+  - agent: "testing"
+    message: "✅ UGC CREATOR FORM & TERMS INTEGRATION FULLY TESTED - Comprehensive testing completed for /studio/ugc/avenue form. All 3 checkboxes verified in Condiciones section: (1) Terms acceptance with working link to /studio/ugc/terms, (2) Content authorization, (3) Optional marketing. Terms page displays complete legal content with 15 sections. Navigation flows work perfectly between form → terms → campaigns list. All functionality working as expected."
