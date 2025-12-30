@@ -235,6 +235,32 @@ export const translations = {
       delivery: 'Orders and Delivery',
       follow: 'Follow Us',
       rights: 'Avenue. All rights reserved.'
+    },
+    mainLanding: {
+      welcome: 'Welcome to Avenue',
+      tagline: 'A premium concept where brands shine and content comes to life',
+      joinAvenue: 'Join Avenue',
+      joinDesc: 'Discover how your brand can shine in our premium space without commissions',
+      forBrands: 'For brands',
+      studioTitle: 'Avenue Studio',
+      studioDesc: 'Professional photo studio rental and UGC Creators platform',
+      explore: 'Explore'
+    },
+    studioLanding: {
+      title: 'Avenue Studio',
+      subtitle: 'Where content comes to life',
+      description: 'A professional space to create high-quality content and connect brands with creators',
+      rental: 'Studio rental',
+      rentalDesc: 'Professional photo studio equipped with Godox lights, infinite backdrop, lounge area and more',
+      viewMore: 'View more and book',
+      ugcTitle: 'UGC Creators',
+      ugcDesc: 'We connect brands with micro-influencers to create authentic content in exchange for trades',
+      ugcBenefit1: 'Authentic UGC content',
+      ugcBenefit2: 'Verified micro-influencers',
+      ugcBenefit3: 'Product/service trades',
+      ugcBenefit4: 'Personalized campaigns',
+      knowMore: 'Learn more',
+      backToAvenue: 'Back to Avenue'
     }
   },
   pt: {
