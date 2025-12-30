@@ -64,8 +64,10 @@ def extract_size_from_name(name: str) -> Optional[str]:
     if not name:
         return None
     
-    # Patterns to match sizes
+    # Patterns to match sizes (order matters - more specific first)
     patterns = [
+        r'-(US\d{1,2})$',          # ends with -US8, -US10
+        r'-(US\d{1,2})-',          # -US8-
         r'-(\d{2})-',              # -38-, -39-
         r'-([XSMLGUP]{1,4})-',     # -M-, -XL-, -XXG-
         r'-([XSMLGUP]{1,4})$',     # ends with -M, -XL
