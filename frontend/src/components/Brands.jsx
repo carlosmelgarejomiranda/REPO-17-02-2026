@@ -67,8 +67,8 @@ export const Brands = ({ t }) => {
                   alt={brand.name}
                   className={brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'h-auto object-contain brand-logo' : 'w-full h-auto object-contain brand-logo'}
                   style={{
-                    maxHeight: brand.name === 'Serotonina' ? '2500px' :
-                               brand.name === 'Coraltheia' ? '1000px' : 
+                    maxHeight: brand.name === 'Serotonina' ? '250px' :
+                               brand.name === 'Coraltheia' ? '250px' : 
                                brand.name === 'Fila' ? '40px' :
                                brand.name === 'UGG' ? '60px' : '200px',
                     maxWidth: brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'none' : '100%',
