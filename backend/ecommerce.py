@@ -464,15 +464,22 @@ async def get_products(
         # Transform for frontend
         result = []
         for p in products:
-            # Sort available sizes
+            # Sort available sizes (handle None values)
             available_sizes = p.get("available_sizes", [])
-            sizes_sorted = sorted(
-                available_sizes,
-                key=lambda x: (
-                    0 if x.get("size", "").isdigit() else 1,
-                    int(x.get("size", "0")) if x.get("size", "").isdigit() else x.get("size", "")
-                )
-            )
+            sizes_sorted = []
+            for s in available_sizes:
+                size_val = s.get("size") if s else None
+                if size_val:
+                    sizes_sorted.append(s)
+            
+            # Sort: numeric first, then alphabetic
+            sizes_sorted.sort(key=lambda x: (
+                0 if (x.get("size") or "").isdigit() else 1,
+                int(x.get("size") or "0") if (x.get("size") or "").isdigit() else (x.get("size") or "")
+            ))
+            
+            # Filter None from sizes_list
+            sizes_list = [s for s in p.get("sizes_list", []) if s]
             
             result.append({
                 "id": p.get("grouped_id"),
@@ -488,7 +495,7 @@ async def get_products(
                 "discount": p.get("discount", 0),
                 "description": p.get("description"),
                 "available_sizes": sizes_sorted,
-                "sizes_list": p.get("sizes_list", []),
+                "sizes_list": sizes_list,
                 "variant_count": p.get("variant_count", 1)
             })
         
