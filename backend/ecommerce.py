@@ -64,10 +64,11 @@ def extract_size_from_name(name: str) -> Optional[str]:
     
     Handles multiple size conventions:
     - Standard: XS, S, M, L, XL, XXL, XXXL
-    - Brazilian/Spanish: PP, P, M, G, GG, XG, XXG, XXXG
-    - Numeric: 34, 36, 38, 40, 42, etc.
+    - Brazilian/Spanish: PP, P, M, G, GG, XG, XXG, XXXG, XP (extra pequeño)
+    - Numeric: 34, 36, 38, 40, 42, etc. (including single digits 8, 10, 12, 14, 16 for kids)
     - US sizes: US5, US6, US7, etc.
     - Combined: S/M, M/L, etc.
+    - Dot notation: .M, .G, .XG (used by some brands)
     """
     if not name:
         return None
@@ -83,29 +84,34 @@ def extract_size_from_name(name: str) -> Optional[str]:
         # Combined sizes with slash
         r'[-\s]([XSMLPG]{1,3}/[XSMLPG]{1,3})(?:[-\s]|$)',  # S/M, M/L
         
-        # Extended alpha sizes (XXL, XXXL, XXG, XXXG, etc.)
-        r'[-\s]((?:X{1,3})[SLG])(?:[-\s]|$)',  # XS, XXS, XXXS, XL, XXL, XXXL, XG, XXG, XXXG
-        r'[-\s]((?:X{1,3})G)(?:[-\s]|$)',       # XG, XXG, XXXG
+        # Extended alpha sizes with X prefix (XXL, XXXL, XXG, XXXG, XP, XS, XL, etc.)
+        r'[-\s\.](X{1,3}[SLGP])(?:[-\s\.]|$)',  # XS, XXS, XXXS, XL, XXL, XXXL, XG, XXG, XXXG, XP
         
-        # Brazilian/Spanish sizes - PP, GG
-        r'[-\s](PP|GG)(?:[-\s]|$)',              # PP (extra small), GG (extra large)
+        # Brazilian/Spanish double sizes - PP, GG (not ambiguous with color codes)
+        r'[-\s\.](PP)(?:[-\s\.]|$)',              # PP (extra small)
         
-        # Single letter sizes - P, M, G, S, L
-        r'[-\s]([PMGSL])(?:[-\s]|$)',            # P, M, G, S, L (single letter)
+        # Single letter sizes at specific positions - P, M, G, S, L
+        # Be more specific to avoid matching color codes
+        r'-([PMGSL])-[A-Z]',                # -P-, -M- etc. followed by color name
+        r'[-\s\.]([PMGSL])(?:[-\s\.]|$)',   # P, M, G, S, L (single letter) at boundaries
         
-        # Numeric sizes (2 digits)
+        # Numeric sizes (2 digits) - common clothing sizes
         r'[-\s](\d{2})(?:[-\s]|$)',              # 34, 36, 38, etc.
+        
+        # Numeric sizes for kids (single digits 8-16)
+        r'-([8]|1[0246])(?:-|$)',                # 8, 10, 12, 14, 16 for kids
         
         # At end of string patterns
         r'-(US\d{1,2})$',                        # ends with -US8
-        r'-((?:X{1,3})[SLG])$',                  # ends with -XL, -XXL, -XG, -XXG
-        r'-(PP|GG)$',                            # ends with -PP, -GG
+        r'[-\.](X{1,3}[SLGP])$',                 # ends with -XL, -XXL, -XG, -XXG, -XP, .XG
+        r'-(PP)$',                               # ends with -PP
         r'-([PMGSL])$',                          # ends with -P, -M, -G, -S, -L
+        r'\.([PMGSL])$',                         # ends with .P, .M, .G (dot notation)
         r'-(\d{2})$',                            # ends with -38
         
         # Space separated at end
-        r'\s((?:X{1,3})[SLG])$',                 # ends with " XL"
-        r'\s(PP|GG)$',                           # ends with " PP"
+        r'\s(X{1,3}[SLGP])$',                    # ends with " XL", " XP"
+        r'\s(PP)$',                              # ends with " PP"
         r'\s([PMGSL])$',                         # ends with " M"
         r'\s(\d{2})$',                           # ends with " 38"
     ]
@@ -114,7 +120,6 @@ def extract_size_from_name(name: str) -> Optional[str]:
         match = re.search(pattern, name_upper)
         if match:
             size = match.group(1).upper()
-            # Normalize common equivalents (optional - can be used for grouping)
             return size
     
     return None
