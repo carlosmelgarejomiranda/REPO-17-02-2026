@@ -295,59 +295,45 @@ async def get_products(
                 "stock": float(p.get('stock', 0)),
                 "discount": float(p.get('discount', 0)),
                 "description": p.get('description', ''),
-                    "image": p.get('img_url', ''),
-                    "category": p.get('category', '').strip(),
-                    "brand": p.get('brand', '').strip(),
-                    "size": product_size,
-                    "gender": product_gender,
-                    "featured": p.get('featured', False)
-                })
-            
-            return {
-                "products": transformed,
-                "total": total,
-                "page": page,
-                "limit": limit,
-                "total_pages": math.ceil(total / limit)
-            }
-            
-    except httpx.RequestError as e:
-        raise HTTPException(status_code=502, detail=f"ERP connection error: {str(e)}")
+                "image": p.get('img_url', ''),
+                "category": p.get('category', '').strip(),
+                "brand": p.get('brand', '').strip(),
+                "size": product_size,
+                "gender": product_gender,
+                "featured": p.get('featured', False)
+            })
+        
+        return {
+            "products": transformed,
+            "total": total,
+            "page": page,
+            "limit": limit,
+            "total_pages": math.ceil(total / limit)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Error: {str(e)}")
 
 @ecommerce_router.get("/products/{product_id}")
 async def get_product(product_id: str):
-    """Get single product details"""
+    """Get single product details - uses cache"""
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            response = await client.post(
-                f"{ENCOM_API_URL}/products",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {ENCOM_API_TOKEN}"
-                },
-                json={"limit": 500, "page": 1}
-            )
-            
-            if response.status_code != 200:
-                raise HTTPException(status_code=502, detail="Error connecting to ERP")
-            
-            data = response.json()
-            products = data.get('data', [])
-            
-            # Find the product
-            product = next((p for p in products if p.get('ID') == product_id), None)
-            
-            if not product:
-                raise HTTPException(status_code=404, detail="Product not found")
-            
-            return {
-                "id": product.get('ID'),
-                "name": product.get('Name'),
-                "sku": product.get('sku'),
-                "price": float(product.get('price', 0)),
-                "stock": float(product.get('stock', 0)),
-                "discount": float(product.get('discount', 0)),
-                "description": product.get('description', ''),
+        all_products = await get_cached_products()
+        
+        # Find the product
+        product = next((p for p in all_products if p.get('ID') == product_id), None)
+        
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        return {
+            "id": product.get('ID'),
+            "name": product.get('Name'),
+            "sku": product.get('sku'),
+            "price": float(product.get('price', 0)),
+            "stock": float(product.get('stock', 0)),
+            "discount": float(product.get('discount', 0)),
+            "description": product.get('description', ''),
                 "image": product.get('img_url', ''),
                 "category_id": product.get('categoryID'),
                 "brand_id": product.get('brandID'),
