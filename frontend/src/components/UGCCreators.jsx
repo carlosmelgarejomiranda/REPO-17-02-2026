@@ -29,10 +29,10 @@ export const UGCCreators = ({ t, campaignId }) => {
     apellido: '',
     sexo: '',
     fecha_nacimiento: '',
-    instagram_url: '',
+    instagram_username: '',
     instagram_privado: '',
     instagram_seguidores: '',
-    tiktok_url: '',
+    tiktok_username: '',
     tiktok_privado: '',
     tiktok_seguidores: '',
     video_link_1: '',
@@ -42,7 +42,6 @@ export const UGCCreators = ({ t, campaignId }) => {
     whatsapp: '',
     acepta_condiciones: false,
     acepta_whatsapp: false,
-    autoriza_contenido: false,
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
