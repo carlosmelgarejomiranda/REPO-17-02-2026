@@ -570,11 +570,12 @@ async def get_featured_products():
         result = []
         for p in products:
             result.append({
-                "id": p.get("product_id"),
-                "name": p.get("name"),
+                "id": p.get("grouped_id"),
+                "name": p.get("base_model"),
                 "price": p.get("price"),
                 "image": p.get("image"),
-                "discount": p.get("discount", 0)
+                "discount": p.get("discount", 0),
+                "sizes_list": p.get("sizes_list", [])
             })
         
         return result
