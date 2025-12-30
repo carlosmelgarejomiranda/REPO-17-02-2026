@@ -420,6 +420,83 @@ async def notify_new_ugc_application(application: dict):
     """
     await send_admin_email_notification(f"📸 Nueva Aplicación UGC - {nombre_completo}", email_html)
 
+async def notify_new_order(order: dict):
+    """Send notifications for new e-commerce order"""
+    items_text = "\n".join([f"• {item.get('name', 'Producto')} x{item.get('quantity', 1)} - {item.get('price', 0):,.0f} Gs" for item in order.get('items', [])])
+    
+    delivery_info = ""
+    if order.get('delivery_type') == 'delivery' and order.get('delivery_address'):
+        addr = order['delivery_address']
+        delivery_info = f"""
+📍 *Dirección de entrega:*
+{addr.get('address', 'N/A')}
+{addr.get('reference', '')}
+🚚 *Costo de envío:* {order.get('delivery_cost', 0):,.0f} Gs"""
+    else:
+        delivery_info = "🏪 *Retiro en tienda*"
+    
+    # WhatsApp notification
+    whatsapp_message = f"""🛒 *NUEVO PEDIDO - Avenue Online*
+
+📦 *Pedido:* {order.get('order_id', 'N/A')}
+💳 *Estado:* {order.get('payment_status', 'pending').upper()}
+
+👤 *Cliente:* {order.get('customer_name', 'N/A')}
+📧 *Email:* {order.get('customer_email', 'N/A')}
+📱 *Teléfono:* {order.get('customer_phone', 'N/A')}
+
+🛍️ *Productos:*
+{items_text}
+
+{delivery_info}
+
+💰 *Subtotal:* {order.get('subtotal', 0):,.0f} Gs
+💰 *TOTAL:* {order.get('total', 0):,.0f} Gs
+
+📝 *Notas:* {order.get('notes', 'Sin notas')}"""
+
+    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_STUDIO, whatsapp_message)
+    
+    # Email notification
+    items_html = "".join([f"<tr><td style='padding: 8px; border-bottom: 1px solid #333;'>{item.get('name', 'Producto')}</td><td style='padding: 8px; border-bottom: 1px solid #333;'>{item.get('quantity', 1)}</td><td style='padding: 8px; border-bottom: 1px solid #333; color: #d4a968;'>{item.get('price', 0):,.0f} Gs</td></tr>" for item in order.get('items', [])])
+    
+    email_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #f5ede4; padding: 40px;">
+        <h1 style="color: #d4a968;">🛒 Nuevo Pedido - Avenue Online</h1>
+        <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #d4a968; margin-bottom: 20px;">
+            <p><strong>Pedido:</strong> {order.get('order_id', 'N/A')}</p>
+            <p><strong>Estado de pago:</strong> <span style="color: #22c55e;">{order.get('payment_status', 'pending').upper()}</span></p>
+            <hr style="border-color: #333;">
+            <p><strong>Cliente:</strong> {order.get('customer_name', 'N/A')}</p>
+            <p><strong>Email:</strong> {order.get('customer_email', 'N/A')}</p>
+            <p><strong>Teléfono:</strong> {order.get('customer_phone', 'N/A')}</p>
+        </div>
+        
+        <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #333; margin-bottom: 20px;">
+            <h3 style="color: #d4a968; margin-top: 0;">Productos</h3>
+            <table style="width: 100%; color: #f5ede4;">
+                <thead>
+                    <tr style="border-bottom: 1px solid #d4a968;">
+                        <th style="text-align: left; padding: 8px;">Producto</th>
+                        <th style="text-align: left; padding: 8px;">Cant.</th>
+                        <th style="text-align: left; padding: 8px;">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {items_html}
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #333;">
+            <p><strong>Subtotal:</strong> {order.get('subtotal', 0):,.0f} Gs</p>
+            <p><strong>Envío:</strong> {order.get('delivery_cost', 0):,.0f} Gs</p>
+            <p style="font-size: 18px; color: #d4a968;"><strong>TOTAL: {order.get('total', 0):,.0f} Gs</strong></p>
+        </div>
+    </div>
+    """
+    await send_admin_email_notification(f"🛒 Nuevo Pedido #{order.get('order_id', 'N/A')} - {order.get('total', 0):,.0f} Gs", email_html)
+
 # ==================== AUTH ROUTES ====================
 
 @api_router.post("/auth/register")
