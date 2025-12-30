@@ -50,6 +50,18 @@ export const UGCCreators = ({ t, campaignId }) => {
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
+  // If campaign not found, show error
+  if (!campaign) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
+        <div className="text-center">
+          <h1 className="text-2xl mb-4" style={{ color: '#f5ede4' }}>Campaña no encontrada</h1>
+          <a href="/studio/ugc" className="text-sm" style={{ color: '#d4a968' }}>Ver campañas disponibles</a>
+        </div>
+      </div>
+    );
+  }
+
   const validateForm = () => {
     const newErrors = {};
 
