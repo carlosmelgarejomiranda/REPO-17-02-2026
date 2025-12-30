@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Store, Camera } from 'lucide-react';
+import { ArrowRight, Store, Camera, ShoppingBag } from 'lucide-react';
 import { Button } from './ui/button';
 
 export const MainLanding = ({ t }) => {
@@ -48,12 +48,12 @@ export const MainLanding = ({ t }) => {
             {t.mainLanding?.tagline || 'Un concepto premium donde las marcas brillan y el contenido cobra vida'}
           </p>
 
-          {/* Two Main Options */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {/* Three Main Options */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {/* Option 1: Únete a Avenue - White translucent */}
             <a 
               href="/marcas"
-              className="group relative p-8 md:p-12 rounded-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl backdrop-blur-sm"
+              className="group relative p-6 md:p-8 rounded-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl backdrop-blur-sm"
               style={{ 
                 backgroundColor: 'rgba(255, 255, 255, 0.75)',
                 border: '1px solid rgba(212, 169, 104, 0.5)',
@@ -61,30 +61,61 @@ export const MainLanding = ({ t }) => {
               }}
             >
               <div 
-                className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
                 style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)' }}
               >
-                <Store className="w-10 h-10" style={{ color: '#d4a968' }} />
+                <Store className="w-8 h-8" style={{ color: '#d4a968' }} />
               </div>
               <h2 
-                className="text-2xl md:text-3xl font-light mb-4 italic"
+                className="text-xl md:text-2xl font-light mb-3 italic"
                 style={{ color: '#1a1a1a', fontFamily: 'var(--font-primary)' }}
               >
                 {t.mainLanding?.joinAvenue || 'Únete a Avenue'}
               </h2>
-              <p className="mb-6" style={{ color: '#5a5a5a' }}>
-                {t.mainLanding?.joinDesc || 'Descubre cómo tu marca puede brillar en nuestro espacio premium sin comisiones'}
+              <p className="text-sm mb-4" style={{ color: '#5a5a5a' }}>
+                {t.mainLanding?.joinDesc || 'Descubre cómo tu marca puede brillar en nuestro espacio premium'}
               </p>
               <div className="flex items-center justify-center gap-2" style={{ color: '#d4a968' }}>
-                <span className="font-medium">{t.mainLanding?.forBrands || 'Para marcas'}</span>
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                <span className="font-medium text-sm">{t.mainLanding?.forBrands || 'Para marcas'}</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
               </div>
             </a>
 
-            {/* Option 2: Avenue Studio - Absolute black translucent */}
+            {/* Option 2: Avenue Online (E-commerce) - Gold translucent */}
+            <a 
+              href="/shop"
+              className="group relative p-6 md:p-8 rounded-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl backdrop-blur-sm"
+              style={{ 
+                backgroundColor: 'rgba(212, 169, 104, 0.15)',
+                border: '1px solid rgba(212, 169, 104, 0.6)',
+                boxShadow: '0 10px 40px rgba(212, 169, 104, 0.2)'
+              }}
+            >
+              <div 
+                className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                style={{ backgroundColor: 'rgba(212, 169, 104, 0.3)' }}
+              >
+                <ShoppingBag className="w-8 h-8" style={{ color: '#d4a968' }} />
+              </div>
+              <h2 
+                className="text-xl md:text-2xl font-light mb-3 italic"
+                style={{ color: '#1a1a1a', fontFamily: 'var(--font-primary)' }}
+              >
+                Avenue Online
+              </h2>
+              <p className="text-sm mb-4" style={{ color: '#5a5a5a' }}>
+                Tienda online con las mejores marcas de moda, accesorios, cosméticos y más
+              </p>
+              <div className="flex items-center justify-center gap-2" style={{ color: '#d4a968' }}>
+                <span className="font-medium text-sm">Comprar ahora</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
+              </div>
+            </a>
+
+            {/* Option 3: Avenue Studio - Absolute black translucent */}
             <a 
               href="/studio"
-              className="group relative p-8 md:p-12 rounded-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl backdrop-blur-sm"
+              className="group relative p-6 md:p-8 rounded-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl backdrop-blur-sm"
               style={{ 
                 backgroundColor: 'rgba(0, 0, 0, 0.85)',
                 border: '1px solid rgba(212, 169, 104, 0.5)',
@@ -92,23 +123,23 @@ export const MainLanding = ({ t }) => {
               }}
             >
               <div 
-                className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
+                className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110"
                 style={{ backgroundColor: 'rgba(212, 169, 104, 0.2)' }}
               >
-                <Camera className="w-10 h-10" style={{ color: '#d4a968' }} />
+                <Camera className="w-8 h-8" style={{ color: '#d4a968' }} />
               </div>
               <h2 
-                className="text-2xl md:text-3xl font-light mb-4 italic"
+                className="text-xl md:text-2xl font-light mb-3 italic"
                 style={{ color: '#f5ede4', fontFamily: 'var(--font-primary)' }}
               >
                 {t.mainLanding?.studioTitle || 'Avenue Studio'}
               </h2>
-              <p className="mb-6" style={{ color: '#a8a8a8' }}>
-                {t.mainLanding?.studioDesc || 'Alquiler de estudio fotográfico profesional y plataforma UGC Creators'}
+              <p className="text-sm mb-4" style={{ color: '#a8a8a8' }}>
+                {t.mainLanding?.studioDesc || 'Alquiler de estudio fotográfico y plataforma UGC Creators'}
               </p>
               <div className="flex items-center justify-center gap-2" style={{ color: '#d4a968' }}>
-                <span className="font-medium">{t.mainLanding?.explore || 'Explorar'}</span>
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                <span className="font-medium text-sm">{t.mainLanding?.explore || 'Explorar'}</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-2" />
               </div>
             </a>
           </div>
