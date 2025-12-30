@@ -930,6 +930,12 @@ def run_all_tests():
         ("Test Shop Filters", test_shop_filters),
         ("Test Shop Products", test_shop_products),
         ("Test Shop Products with Filters", test_shop_products_with_filters),
+        
+        # NEW: Improved Product Grouping Tests
+        ("Test Product Grouping Verification", test_product_grouping_verification),
+        ("Test Specific Product Cases", test_specific_product_cases),
+        ("Test Size Detection Verification", test_size_detection_verification),
+        ("Test API Endpoints Verification", test_api_endpoints_verification),
     ]
     
     results = []
