@@ -83,10 +83,10 @@ export const Brands = ({ t }) => {
                 <img 
                   src={brand.url}
                   alt={brand.name}
-                  className={brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'h-auto object-contain brand-logo' : 'w-full h-auto object-contain brand-logo'}
+                  className={brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'h-auto object-contain brand-logo brand-logo-special' : 'w-full h-auto object-contain brand-logo'}
                   style={{
-                    maxHeight: brand.name === 'Serotonina' ? '375px' :
-                               brand.name === 'Coraltheia' ? '375px' : 
+                    maxHeight: brand.name === 'Serotonina' ? maxHeightMobile :
+                               brand.name === 'Coraltheia' ? maxHeightMobile : 
                                brand.name === 'Fila' ? '40px' :
                                brand.name === 'UGG' ? '60px' : '200px',
                     maxWidth: brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'none' : '100%',
@@ -96,6 +96,13 @@ export const Brands = ({ t }) => {
                   onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
                 />
+                <style jsx>{`
+                  @media (min-width: 1024px) {
+                    .brand-logo-special {
+                      max-height: ${maxHeightDesktop} !important;
+                    }
+                  }
+                `}</style>
               </div>
             );
           })}
