@@ -52,28 +52,34 @@ export const Brands = ({ t }) => {
 
         {/* Grid de logos: 3 columnas mobile, 6 desktop */}
         <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-8">
-          {brands.map((brand, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-center p-3 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
-              style={{ 
-                backgroundColor: '#f7f2ed',
-                minHeight: '120px'
-              }}
-            >
-              <img 
-                src={brand.url}
-                alt={brand.name}
-                className="w-full h-auto object-contain brand-logo"
-                style={{
-                  filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
-                  transition: 'filter 0.3s ease'
+          {brands.map((brand, index) => {
+            // Logos que necesitan ser más grandes
+            const isLargerLogo = brand.name === 'Coraltheia' || brand.name === 'Serotonina';
+            
+            return (
+              <div
+                key={index}
+                className="flex items-center justify-center p-3 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
+                style={{ 
+                  backgroundColor: '#f7f2ed',
+                  minHeight: '120px'
                 }}
-                onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
-                onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
-              />
-            </div>
-          ))}
+              >
+                <img 
+                  src={brand.url}
+                  alt={brand.name}
+                  className="w-full h-auto object-contain brand-logo"
+                  style={{
+                    transform: isLargerLogo ? 'scale(1.8)' : 'scale(1)',
+                    filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
+                    transition: 'filter 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
+                  onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
+                />
+              </div>
+            );
+          })}
         </div>
         
         <style jsx>{`
