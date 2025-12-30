@@ -1,0 +1,578 @@
+import React, { useState, useEffect } from 'react';
+import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+
+export const AdminDashboard = ({ user }) => {
+  const [reservations, setReservations] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('reservations');
+  const [filterDate, setFilterDate] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('auth_token');
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    };
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [filterDate, filterStatus]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // Build query params
+      let query = '';
+      if (filterDate) query += `?date=${filterDate}`;
+      if (filterStatus) query += `${query ? '&' : '?'}status=${filterStatus}`;
+
+      const [resResponse, usersResponse] = await Promise.all([
+        fetch(`${API_URL}/api/admin/reservations${query}`, {
+          headers: getAuthHeaders(),
+          credentials: 'include'
+        }),
+        fetch(`${API_URL}/api/admin/users`, {
+          headers: getAuthHeaders(),
+          credentials: 'include'
+        })
+      ]);
+
+      if (resResponse.ok) {
+        const resData = await resResponse.json();
+        setReservations(resData);
+      }
+
+      if (usersResponse.ok) {
+        const usersData = await usersResponse.json();
+        setUsers(usersData);
+      }
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateReservationStatus = async (reservationId, newStatus) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/reservations/${reservationId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        fetchData();
+      }
+    } catch (err) {
+      console.error('Error updating reservation:', err);
+    }
+  };
+
+  const deleteReservation = async (reservationId) => {
+    if (!window.confirm('¿Estás seguro de eliminar esta reserva?')) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/admin/reservations/${reservationId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        fetchData();
+      }
+    } catch (err) {
+      console.error('Error deleting reservation:', err);
+    }
+  };
+
+  const stats = {
+    total: reservations.length,
+    confirmed: reservations.filter(r => r.status === 'confirmed').length,
+    cancelled: reservations.filter(r => r.status === 'cancelled').length,
+    totalRevenue: reservations
+      .filter(r => r.status === 'confirmed')
+      .reduce((sum, r) => sum + r.price, 0)
+  };
+
+  return (
+    <div className="min-h-screen p-6" style={{ backgroundColor: '#0d0d0d' }}>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-light italic" style={{ color: '#f5ede4' }}>
+              Panel de Administración
+            </h1>
+            <p style={{ color: '#a8a8a8' }}>Bienvenido, {user?.name}</p>
+          </div>
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="mt-4 md:mt-0 flex items-center gap-2"
+            style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+          >
+            <Plus className="w-4 h-4" /> Nueva Reserva
+          </Button>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardContent className="p-4">
+              <p className="text-sm" style={{ color: '#a8a8a8' }}>Total Reservas</p>
+              <p className="text-2xl font-light" style={{ color: '#d4a968' }}>{stats.total}</p>
+            </CardContent>
+          </Card>
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardContent className="p-4">
+              <p className="text-sm" style={{ color: '#a8a8a8' }}>Confirmadas</p>
+              <p className="text-2xl font-light" style={{ color: '#22c55e' }}>{stats.confirmed}</p>
+            </CardContent>
+          </Card>
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardContent className="p-4">
+              <p className="text-sm" style={{ color: '#a8a8a8' }}>Canceladas</p>
+              <p className="text-2xl font-light" style={{ color: '#ef4444' }}>{stats.cancelled}</p>
+            </CardContent>
+          </Card>
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardContent className="p-4">
+              <p className="text-sm" style={{ color: '#a8a8a8' }}>Ingresos</p>
+              <p className="text-2xl font-light" style={{ color: '#d4a968' }}>
+                {stats.totalRevenue.toLocaleString()} Gs
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-4 mb-6">
+          <button
+            onClick={() => setActiveTab('reservations')}
+            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
+            style={{
+              backgroundColor: activeTab === 'reservations' ? '#d4a968' : '#2a2a2a',
+              color: activeTab === 'reservations' ? '#0d0d0d' : '#a8a8a8'
+            }}
+          >
+            <Calendar className="w-4 h-4" /> Reservas
+          </button>
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
+            style={{
+              backgroundColor: activeTab === 'users' ? '#d4a968' : '#2a2a2a',
+              color: activeTab === 'users' ? '#0d0d0d' : '#a8a8a8'
+            }}
+          >
+            <Users className="w-4 h-4" /> Usuarios
+          </button>
+        </div>
+
+        {/* Reservations Tab */}
+        {activeTab === 'reservations' && (
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardHeader>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <CardTitle style={{ color: '#f5ede4' }}>Reservas</CardTitle>
+                <div className="flex gap-2 flex-wrap">
+                  <input
+                    type="date"
+                    value={filterDate}
+                    onChange={(e) => setFilterDate(e.target.value)}
+                    className="p-2 rounded"
+                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                  />
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="p-2 rounded"
+                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                  >
+                    <option value="">Todos los estados</option>
+                    <option value="confirmed">Confirmadas</option>
+                    <option value="cancelled">Canceladas</option>
+                  </select>
+                  <Button
+                    onClick={() => { setFilterDate(''); setFilterStatus(''); }}
+                    variant="ghost"
+                    style={{ color: '#a8a8a8' }}
+                  >
+                    Limpiar
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <p style={{ color: '#a8a8a8' }}>Cargando...</p>
+              ) : reservations.length === 0 ? (
+                <p style={{ color: '#a8a8a8' }}>No hay reservas</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #333' }}>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Fecha</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Horario</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Cliente</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Contacto</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Precio</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Estado</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {reservations.map((res) => (
+                        <tr key={res.reservation_id} style={{ borderBottom: '1px solid #2a2a2a' }}>
+                          <td className="p-3" style={{ color: '#f5ede4' }}>{res.date}</td>
+                          <td className="p-3" style={{ color: '#f5ede4' }}>
+                            {res.start_time} - {res.end_time}
+                          </td>
+                          <td className="p-3">
+                            <div style={{ color: '#f5ede4' }}>{res.name}</div>
+                            {res.company && (
+                              <div className="text-sm" style={{ color: '#a8a8a8' }}>{res.company}</div>
+                            )}
+                          </td>
+                          <td className="p-3">
+                            <div style={{ color: '#f5ede4' }}>{res.phone}</div>
+                            <div className="text-sm" style={{ color: '#a8a8a8' }}>{res.email}</div>
+                          </td>
+                          <td className="p-3" style={{ color: '#d4a968' }}>
+                            {res.price.toLocaleString()} Gs
+                          </td>
+                          <td className="p-3">
+                            <span
+                              className="px-2 py-1 rounded text-sm"
+                              style={{
+                                backgroundColor: res.status === 'confirmed' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                                color: res.status === 'confirmed' ? '#22c55e' : '#ef4444'
+                              }}
+                            >
+                              {res.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex gap-2">
+                              {res.status === 'confirmed' && (
+                                <button
+                                  onClick={() => updateReservationStatus(res.reservation_id, 'cancelled')}
+                                  className="p-1 rounded"
+                                  style={{ color: '#ef4444' }}
+                                  title="Cancelar"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              )}
+                              {res.status === 'cancelled' && (
+                                <button
+                                  onClick={() => updateReservationStatus(res.reservation_id, 'confirmed')}
+                                  className="p-1 rounded"
+                                  style={{ color: '#22c55e' }}
+                                  title="Confirmar"
+                                >
+                                  <Check className="w-4 h-4" />
+                                </button>
+                              )}
+                              <button
+                                onClick={() => deleteReservation(res.reservation_id)}
+                                className="p-1 rounded"
+                                style={{ color: '#666' }}
+                                title="Eliminar"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Users Tab */}
+        {activeTab === 'users' && (
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardHeader>
+              <CardTitle style={{ color: '#f5ede4' }}>Usuarios Registrados</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <p style={{ color: '#a8a8a8' }}>Cargando...</p>
+              ) : users.length === 0 ? (
+                <p style={{ color: '#a8a8a8' }}>No hay usuarios</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #333' }}>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Nombre</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Email</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Teléfono</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Rol</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Registro</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.map((u) => (
+                        <tr key={u.user_id} style={{ borderBottom: '1px solid #2a2a2a' }}>
+                          <td className="p-3" style={{ color: '#f5ede4' }}>{u.name}</td>
+                          <td className="p-3" style={{ color: '#f5ede4' }}>{u.email}</td>
+                          <td className="p-3" style={{ color: '#a8a8a8' }}>{u.phone || '-'}</td>
+                          <td className="p-3">
+                            <span
+                              className="px-2 py-1 rounded text-sm"
+                              style={{
+                                backgroundColor: u.role === 'admin' ? 'rgba(212, 169, 104, 0.2)' : 'rgba(100, 100, 100, 0.2)',
+                                color: u.role === 'admin' ? '#d4a968' : '#a8a8a8'
+                              }}
+                            >
+                              {u.role === 'admin' ? 'Admin' : 'Usuario'}
+                            </span>
+                          </td>
+                          <td className="p-3" style={{ color: '#a8a8a8' }}>
+                            {new Date(u.created_at).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Create Reservation Modal */}
+        {showCreateModal && (
+          <CreateReservationModal
+            onClose={() => setShowCreateModal(false)}
+            onSuccess={() => {
+              setShowCreateModal(false);
+              fetchData();
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+const CreateReservationModal = ({ onClose, onSuccess }) => {
+  const [formData, setFormData] = useState({
+    date: '',
+    start_time: '09:00',
+    duration_hours: 2,
+    name: '',
+    phone: '',
+    email: '',
+    company: '',
+    razon_social: '',
+    ruc: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${API_URL}/api/admin/reservations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Error al crear reserva');
+      }
+
+      onSuccess();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
+      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto" style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle style={{ color: '#f5ede4' }}>Nueva Reserva Manual</CardTitle>
+            <button onClick={onClose} style={{ color: '#666' }} className="text-2xl">×</button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {error && (
+            <div className="mb-4 p-3 rounded" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#ef4444' }}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Fecha</label>
+                <input
+                  type="date"
+                  required
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full p-2 rounded border"
+                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Hora Inicio</label>
+                <select
+                  value={formData.start_time}
+                  onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                  className="w-full p-2 rounded border"
+                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                >
+                  {Array.from({ length: 13 }, (_, i) => i + 9).map(hour => (
+                    <option key={hour} value={`${hour.toString().padStart(2, '0')}:00`}>
+                      {hour.toString().padStart(2, '0')}:00
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Duración</label>
+              <select
+                value={formData.duration_hours}
+                onChange={(e) => setFormData({ ...formData, duration_hours: parseInt(e.target.value) })}
+                className="w-full p-2 rounded border"
+                style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+              >
+                <option value={2}>2 horas - 250.000 Gs</option>
+                <option value={4}>4 horas - 450.000 Gs</option>
+                <option value={6}>6 horas - 650.000 Gs</option>
+                <option value={8}>8 horas - 800.000 Gs</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Nombre *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full p-2 rounded border"
+                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Teléfono *</label>
+                <input
+                  type="tel"
+                  required
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full p-2 rounded border"
+                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Email *</label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full p-2 rounded border"
+                style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Empresa</label>
+              <input
+                type="text"
+                value={formData.company}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                className="w-full p-2 rounded border"
+                style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Razón Social</label>
+                <input
+                  type="text"
+                  value={formData.razon_social}
+                  onChange={(e) => setFormData({ ...formData, razon_social: e.target.value })}
+                  className="w-full p-2 rounded border"
+                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                />
+              </div>
+              <div>
+                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>RUC</label>
+                <input
+                  type="text"
+                  value={formData.ruc}
+                  onChange={(e) => setFormData({ ...formData, ruc: e.target.value })}
+                  className="w-full p-2 rounded border"
+                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button
+                type="button"
+                onClick={onClose}
+                className="flex-1"
+                style={{ backgroundColor: '#2a2a2a', color: '#a8a8a8' }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="flex-1"
+                style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+              >
+                {loading ? 'Creando...' : 'Crear Reserva'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
