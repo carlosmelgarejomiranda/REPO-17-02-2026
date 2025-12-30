@@ -398,16 +398,21 @@ export const UGCCreators = ({ t, campaignId }) => {
                   {/* Instagram */}
                   <div className="p-4 rounded mb-4" style={{ backgroundColor: '#2a2a2a' }}>
                     <label className="block text-sm mb-2 font-medium" style={{ color: '#f5ede4' }}>Instagram</label>
-                    <input
-                      type="url"
-                      placeholder="https://instagram.com/tu_usuario"
-                      value={formData.instagram_url}
-                      onChange={(e) => updateField('instagram_url', e.target.value)}
-                      className="w-full p-3 rounded border mb-3"
-                      style={{ backgroundColor: '#1a1a1a', borderColor: '#333', color: '#f5ede4' }}
-                    />
-                    {formData.instagram_url && (
-                      <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center">
+                      <span className="p-3 rounded-l border border-r-0 text-sm" style={{ backgroundColor: '#1a1a1a', borderColor: '#333', color: '#666' }}>
+                        @
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="tu_usuario"
+                        value={formData.instagram_username}
+                        onChange={(e) => updateField('instagram_username', e.target.value.replace('@', ''))}
+                        className="w-full p-3 rounded-r border"
+                        style={{ backgroundColor: '#1a1a1a', borderColor: '#333', color: '#f5ede4' }}
+                      />
+                    </div>
+                    {formData.instagram_username && (
+                      <div className="grid grid-cols-2 gap-3 mt-3">
                         <div>
                           <label className="block text-xs mb-1" style={{ color: '#a8a8a8' }}>¿Público o privado?</label>
                           <select
@@ -446,16 +451,21 @@ export const UGCCreators = ({ t, campaignId }) => {
                     <label className="block text-sm mb-2 font-medium flex items-center gap-2" style={{ color: '#f5ede4' }}>
                       <Music2 className="w-4 h-4" /> TikTok
                     </label>
-                    <input
-                      type="url"
-                      placeholder="https://tiktok.com/@tu_usuario"
-                      value={formData.tiktok_url}
-                      onChange={(e) => updateField('tiktok_url', e.target.value)}
-                      className="w-full p-3 rounded border mb-3"
-                      style={{ backgroundColor: '#1a1a1a', borderColor: '#333', color: '#f5ede4' }}
-                    />
-                    {formData.tiktok_url && (
-                      <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center">
+                      <span className="p-3 rounded-l border border-r-0 text-sm" style={{ backgroundColor: '#1a1a1a', borderColor: '#333', color: '#666' }}>
+                        @
+                      </span>
+                      <input
+                        type="text"
+                        placeholder="tu_usuario"
+                        value={formData.tiktok_username}
+                        onChange={(e) => updateField('tiktok_username', e.target.value.replace('@', ''))}
+                        className="w-full p-3 rounded-r border"
+                        style={{ backgroundColor: '#1a1a1a', borderColor: '#333', color: '#f5ede4' }}
+                      />
+                    </div>
+                    {formData.tiktok_username && (
+                      <div className="grid grid-cols-2 gap-3 mt-3">
                         <div>
                           <label className="block text-xs mb-1" style={{ color: '#a8a8a8' }}>¿Público o privado?</label>
                           <select
