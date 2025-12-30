@@ -22,13 +22,13 @@ export const MainLanding = ({ t }) => {
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
           {/* Isologo - 25x bigger */}
-          <div className="mb-12">
+          <div className="mb-16">
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
               alt="Avenue"
-              className="h-16 md:h-20 mx-auto"
+              className="h-20 md:h-28 mx-auto"
               style={{ 
-                transform: 'scale(5)',
+                transform: 'scale(4)',
                 filter: 'drop-shadow(0 4px 12px rgba(212, 169, 104, 0.3))' 
               }}
             />
