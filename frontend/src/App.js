@@ -171,7 +171,49 @@ function App() {
       </main>
 
       <Footer t={t} />
-    </div>
+            </>
+          } />
+          
+          <Route path="/studio" element={
+            <>
+              {/* Navigation for Studio page */}
+              <nav 
+                className="fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md"
+                style={{ backgroundColor: 'rgba(247, 242, 237, 0.95)', borderBottom: '1px solid rgba(212, 169, 104, 0.3)' }}
+              >
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <a href="/">
+                      <img 
+                        src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
+                        alt="Avenue"
+                        className="h-12 cursor-pointer"
+                        style={{
+                          transform: 'scale(2.5)',
+                          transformOrigin: 'left center',
+                          filter: 'drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
+                        }}
+                      />
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <a href="/" className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#1a1a1a' }}>
+                      {t.nav.home}
+                    </a>
+                    <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} />
+                  </div>
+                </div>
+              </nav>
+              
+              <div style={{ paddingTop: '80px' }}>
+                <AvenueStudio t={t} />
+              </div>
+              <Footer t={t} />
+            </>
+          } />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
