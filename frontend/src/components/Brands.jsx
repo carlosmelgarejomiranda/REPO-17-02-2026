@@ -92,11 +92,11 @@ export const Brands = ({ t }) => {
                 <img 
                   src={brand.url}
                   alt={brand.name}
-                  className={`w-full h-auto object-contain brand-logo brand-logo-${index}`}
+                  className={`w-full h-auto object-contain brand-logo brand-logo-${index} ${brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'high-quality-logo' : ''}`}
                   style={{
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease',
-                    imageRendering: 'crisp-edges'
+                    imageRendering: brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'high-quality' : 'crisp-edges'
                   }}
                   onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
@@ -106,6 +106,17 @@ export const Brands = ({ t }) => {
                     transform: scale(${mobileScaleValue}) translateZ(0);
                     -webkit-font-smoothing: antialiased;
                     will-change: transform;
+                  }
+                  
+                  .high-quality-logo {
+                    image-rendering: -webkit-optimize-contrast;
+                    image-rendering: -moz-crisp-edges;
+                    image-rendering: crisp-edges;
+                    -webkit-backface-visibility: hidden;
+                    backface-visibility: hidden;
+                    -webkit-perspective: 1000;
+                    perspective: 1000;
+                    -webkit-transform: translate3d(0,0,0);
                   }
                   
                   @media (min-width: 1024px) {
