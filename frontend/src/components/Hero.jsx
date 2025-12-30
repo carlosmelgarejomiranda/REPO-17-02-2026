@@ -8,8 +8,8 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1553544260-f87e671974ee?w=1920&q=80" 
-          alt="Fashion Editorial"
+          src="https://customer-assets.emergentagent.com/job_1b3572cd-a3d0-456a-8ed6-f6e2b33dc707/artifacts/fhsbv62q_IMG_9720.jpg" 
+          alt="Avenue Store"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0" style={{ 
