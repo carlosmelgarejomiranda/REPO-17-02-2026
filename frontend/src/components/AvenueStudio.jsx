@@ -74,11 +74,17 @@ export const AvenueStudio = ({ t }) => {
         </div>
       </section>
 
-      {/* Promo Badge */}
-      <div className="py-5 text-center" style={{ backgroundColor: '#d4a968' }}>
+      {/* Promo Badge - Black with Gold Border */}
+      <div 
+        className="py-5 text-center border-y-2"
+        style={{ 
+          backgroundColor: '#0d0d0d',
+          borderColor: '#d4a968'
+        }}
+      >
         <p className="text-lg md:text-xl font-semibold tracking-wider" 
            style={{ 
-             color: '#0d0d0d',
+             color: '#d4a968',
              fontFamily: 'var(--font-primary)'
            }}>
           {t.studio.promoTitle}

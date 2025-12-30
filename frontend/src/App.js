@@ -183,10 +183,10 @@ function App() {
           
           <Route path="/studio" element={
             <>
-              {/* Navigation for Studio page */}
+              {/* Navigation for Studio page - Dark Theme */}
               <nav 
-                className="fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md"
-                style={{ backgroundColor: 'rgba(247, 242, 237, 0.95)', borderBottom: '1px solid rgba(212, 169, 104, 0.3)' }}
+                className="fixed top-0 left-0 right-0 z-50 px-6 py-4"
+                style={{ backgroundColor: '#0d0d0d', borderBottom: '1px solid #d4a968' }}
               >
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -198,15 +198,16 @@ function App() {
                         style={{
                           transform: 'scale(2.5)',
                           transformOrigin: 'left center',
-                          filter: 'drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
+                          filter: 'brightness(1.2) drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
                         }}
                       />
                     </a>
                   </div>
                   <div className="flex items-center gap-6">
-                    <a href="/" className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#1a1a1a' }}>
+                    <a href="/" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.home}
                     </a>
+                    <div className="h-4 w-px" style={{ backgroundColor: '#d4a968' }}></div>
                     <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} />
                   </div>
                 </div>
