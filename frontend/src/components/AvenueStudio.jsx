@@ -157,23 +157,18 @@ export const AvenueStudio = ({ t }) => {
             {t.studio.gallery?.subtitle || 'Conocé el estudio donde tu marca cobra vida'}
           </p>
 
-          {/* Video Principal */}
+          {/* Studio Image */}
           <div className="mb-8">
             <div 
               className="relative overflow-hidden rounded-sm border"
               style={{ borderColor: '#d4a968' }}
             >
-              <video 
-                className="w-full h-auto"
-                controls
-                playsInline
-                poster=""
+              <img 
+                src="/studio_space.jpg"
+                alt="Avenue Studio Space"
+                className="w-full h-auto object-cover"
                 style={{ maxHeight: '500px', objectFit: 'cover', width: '100%' }}
-              >
-                <source src="https://customer-assets.emergentagent.com/job_06a29df7-a974-4134-b07f-60d78598450e/artifacts/tqww6bmt_IMG_9492.MOV" type="video/quicktime" />
-                <source src="https://customer-assets.emergentagent.com/job_06a29df7-a974-4134-b07f-60d78598450e/artifacts/tqww6bmt_IMG_9492.MOV" type="video/mp4" />
-                Tu navegador no soporta el elemento de video.
-              </video>
+              />
             </div>
           </div>
 
