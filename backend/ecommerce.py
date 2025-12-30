@@ -161,30 +161,58 @@ def determine_gender(category: str, brand: str) -> str:
     return 'unisex'
 
 def extract_base_model(name: str) -> str:
-    """Extract base model name by removing size from product name"""
+    """Extract base model name by removing size from product name
+    
+    Removes all size patterns to get the base product model name
+    for grouping variants together.
+    """
     if not name:
         return name
     
     base = name
     
     # Patterns to remove sizes (order matters - more specific first)
+    # Must match the patterns in extract_size_from_name
     patterns = [
-        (r'-(US\d{1,2})$', ''),        # -US8 at end → remove
-        (r'-(US\d{1,2})-', '-'),       # -US8- → -
-        (r'-(\d{2})-', '-'),           # -38- → -
-        (r'-([XSMLGUP]{1,4})-', '-'),  # -XL- → -
-        (r'-([XSMLGUP]{1,4})$', ''),   # -XL at end → remove
-        (r'-(\d{2})$', ''),            # -38 at end → remove
-        (r' ([XSMLGUP]) (?=[A-Z])', ' '),  # space M space before word → space
-        (r' ([XSMLGUP])$', ''),        # space M at end → remove
+        # US sizes
+        (r'-(US\d{1,2})$', ''),           # -US8 at end → remove
+        (r'-(US\d{1,2})-', '-'),          # -US8- → keep one dash
+        (r'\s(US\d{1,2})(?:\s|$)', ' '),  # space US8 → space
+        
+        # Combined sizes with slash
+        (r'-([XSMLPG]{1,3}/[XSMLPG]{1,3})$', ''),      # -S/M at end → remove
+        (r'-([XSMLPG]{1,3}/[XSMLPG]{1,3})-', '-'),     # -S/M- → -
+        
+        # Extended alpha sizes (XXL, XXXL, XXG, XXXG, XS, etc.)
+        (r'-((?:X{1,3})[SLG])$', ''),      # -XXL, -XXG at end → remove
+        (r'-((?:X{1,3})[SLG])-', '-'),     # -XXL-, -XXG- → -
+        (r'\s((?:X{1,3})[SLG])$', ''),     # space XXL at end → remove
+        (r'\s((?:X{1,3})[SLG])\s', ' '),   # space XXL space → space
+        
+        # Brazilian/Spanish double sizes (PP, GG)
+        (r'-(PP|GG)$', ''),                # -PP, -GG at end → remove
+        (r'-(PP|GG)-', '-'),               # -PP-, -GG- → -
+        (r'\s(PP|GG)$', ''),               # space PP at end → remove
+        (r'\s(PP|GG)\s', ' '),             # space PP space → space
+        
+        # Single letter sizes (P, M, G, S, L) - be careful not to remove parts of words
+        (r'-([PMGSL])$', ''),              # -P, -M, -G, -S, -L at end → remove
+        (r'-([PMGSL])-', '-'),             # -P-, -M- etc → -
+        (r'\s([PMGSL])$', ''),             # space P at end → remove
+        
+        # Numeric sizes (2 digits)
+        (r'-(\d{2})$', ''),                # -38 at end → remove
+        (r'-(\d{2})-', '-'),               # -38- → -
+        (r'\s(\d{2})$', ''),               # space 38 at end → remove
+        (r'\s(\d{2})\s', ' '),             # space 38 space → space
     ]
     
     for pattern, replacement in patterns:
         base = re.sub(pattern, replacement, base, flags=re.IGNORECASE)
     
     # Clean up
-    base = re.sub(r'-+', '-', base)  # multiple dashes to one
-    base = re.sub(r'\s+', ' ', base)  # multiple spaces to one
+    base = re.sub(r'-+', '-', base)    # multiple dashes to one
+    base = re.sub(r'\s+', ' ', base)   # multiple spaces to one
     base = base.strip('-').strip()
     
     return base
