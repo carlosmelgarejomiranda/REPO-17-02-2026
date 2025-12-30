@@ -86,14 +86,26 @@ def determine_gender(category: str, brand: str) -> str:
     
     return 'unisex'
 
+def extract_base_model(name: str) -> str:
+    """Extract base model name by removing size from product name"""
+    if not name:
+        return name
+    # Remove size patterns like -XG-, -M-, -38-, -U- from middle
+    base = re.sub(r'-([XSMLG]{1,4}|[0-9]{2}|U)-', '-', name)
+    # Remove size at end like -XG, -M, -38
+    base = re.sub(r'-([XSMLG]{1,4}|[0-9]{2}|U)$', '', base)
+    return base.strip()
+
 def transform_product(p: dict) -> dict:
     """Transform ERP product to our format"""
     product_size = extract_size_from_name(p.get('Name', ''))
     product_gender = determine_gender(p.get('category', ''), p.get('brand', ''))
+    base_model = extract_base_model(p.get('Name', ''))
     
     return {
         "product_id": p.get('ID'),
         "name": p.get('Name', ''),
+        "base_model": base_model,
         "sku": p.get('sku', ''),
         "price": float(p.get('price', 0) or 0),
         "stock": float(p.get('stock', 0) or 0),
@@ -108,6 +120,73 @@ def transform_product(p: dict) -> dict:
         "online": bool(p.get('online')),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
+
+async def create_grouped_products():
+    """Create grouped products collection from individual products"""
+    logger.info("Creating grouped products...")
+    
+    # Aggregate products by base_model
+    pipeline = [
+        {"$match": {"stock": {"$gt": 0}}},
+        {"$group": {
+            "_id": "$base_model",
+            "name": {"$first": "$name"},
+            "base_model": {"$first": "$base_model"},
+            "price": {"$min": "$price"},  # Minimum price
+            "max_price": {"$max": "$price"},
+            "total_stock": {"$sum": "$stock"},
+            "category": {"$first": "$category"},
+            "brand": {"$first": "$brand"},
+            "gender": {"$first": "$gender"},
+            "image": {"$first": "$image"},
+            "description": {"$first": "$description"},
+            "discount": {"$max": "$discount"},
+            "variants": {
+                "$push": {
+                    "product_id": "$product_id",
+                    "size": "$size",
+                    "stock": "$stock",
+                    "price": "$price",
+                    "sku": "$sku"
+                }
+            }
+        }},
+        {"$addFields": {
+            "available_sizes": {
+                "$filter": {
+                    "input": "$variants",
+                    "as": "v",
+                    "cond": {"$gt": ["$$v.stock", 0]}
+                }
+            }
+        }},
+        {"$addFields": {
+            "sizes_list": {
+                "$map": {
+                    "input": "$available_sizes",
+                    "as": "s",
+                    "in": "$$s.size"
+                }
+            },
+            "variant_count": {"$size": "$available_sizes"}
+        }}
+    ]
+    
+    grouped = await db.shop_products.aggregate(pipeline).to_list(5000)
+    
+    # Clear and recreate grouped products collection
+    await db.shop_products_grouped.delete_many({})
+    
+    if grouped:
+        # Add a unique ID to each grouped product
+        for i, g in enumerate(grouped):
+            g["grouped_id"] = f"grp_{i}"
+            g.pop("_id", None)
+        
+        await db.shop_products_grouped.insert_many(grouped)
+        logger.info(f"Created {len(grouped)} grouped products")
+    
+    return len(grouped)
 
 # ==================== SYNC FUNCTIONS ====================
 
