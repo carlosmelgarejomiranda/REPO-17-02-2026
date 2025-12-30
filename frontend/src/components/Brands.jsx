@@ -55,7 +55,7 @@ export const Brands = ({ t }) => {
               key={index}
               className="flex items-center justify-center p-6 transition-all duration-300 hover:scale-110"
               style={{ 
-                backgroundColor: 'white',
+                backgroundColor: '#f7f2ed',
                 border: '1px solid rgba(212, 169, 104, 0.2)',
                 minHeight: '120px'
               }}
@@ -63,7 +63,7 @@ export const Brands = ({ t }) => {
               <img 
                 src={brand.url}
                 alt={brand.name}
-                className="max-w-full max-h-20 object-contain"
+                className="w-full h-auto max-h-24 object-contain"
                 style={{
                   filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                   transition: 'filter 0.3s ease'
