@@ -309,7 +309,7 @@ function AppRouter() {
             </>
           } />
 
-          {/* UGC Creators Page */}
+          {/* UGC Campaigns List */}
           <Route path="/studio/ugc" element={
             <>
               <StudioNav 
@@ -321,10 +321,22 @@ function AppRouter() {
                 onLogout={logout}
               />
               <div style={{ paddingTop: '80px' }}>
-                <UGCCreators t={t} />
+                <UGCCampaignsList t={t} />
               </div>
               <Footer t={t} />
             </>
+          } />
+
+          {/* Individual Campaign Page */}
+          <Route path="/studio/ugc/:campaignId" element={
+            <UGCCampaignPage 
+              t={t}
+              language={language}
+              setLanguage={setLanguage}
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+            />
           } />
 
           {/* Booking Page */}
