@@ -216,8 +216,8 @@ function AppRouter() {
           <Route path="/marcas" element={
             <>
               <nav 
-                className="fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md"
-                style={{ backgroundColor: 'rgba(247, 242, 237, 0.95)', borderBottom: '1px solid rgba(212, 169, 104, 0.3)' }}
+                className="fixed top-0 left-0 right-0 z-50 px-6 py-4"
+                style={{ backgroundColor: '#0d0d0d', borderBottom: '1px solid #d4a968' }}
               >
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -228,34 +228,34 @@ function AppRouter() {
                       style={{
                         transform: 'scale(2.5)',
                         transformOrigin: 'left center',
-                        filter: 'drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
+                        filter: 'brightness(1.2) drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
                       }}
                       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                     />
                   </div>
 
                   <div className="hidden md:flex items-center gap-6">
-                    <button onClick={() => scrollToSection('value')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#1a1918' }}>
+                    <button onClick={() => scrollToSection('value')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.about}
                     </button>
-                    <button onClick={() => scrollToSection('benefits')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#1a1918' }}>
+                    <button onClick={() => scrollToSection('benefits')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.benefits}
                     </button>
-                    <button onClick={() => scrollToSection('categories')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#1a1918' }}>
+                    <button onClick={() => scrollToSection('categories')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.categories}
                     </button>
-                    <a href="/studio" className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <a href="/studio" className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.studio}
                     </a>
-                    <button onClick={() => scrollToSection('contact-form')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#1a1918' }}>
+                    <button onClick={() => scrollToSection('contact-form')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.contact}
                     </button>
-                    <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} />
+                    <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
                   </div>
 
                   <div className="md:hidden flex items-center gap-2">
-                    <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} />
-                    <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                    <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
+                    <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ color: '#d4a968' }}>
                       {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                     </Button>
                   </div>
@@ -263,19 +263,19 @@ function AppRouter() {
 
                 {mobileMenuOpen && (
                   <div className="md:hidden mt-4 pb-4 space-y-3">
-                    <button onClick={() => scrollToSection('value')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#1a1918' }}>
+                    <button onClick={() => scrollToSection('value')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.about}
                     </button>
-                    <button onClick={() => scrollToSection('benefits')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#1a1918' }}>
+                    <button onClick={() => scrollToSection('benefits')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.benefits}
                     </button>
-                    <button onClick={() => scrollToSection('categories')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#1a1918' }}>
+                    <button onClick={() => scrollToSection('categories')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.categories}
                     </button>
-                    <a href="/studio" className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <a href="/studio" className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.studio}
                     </a>
-                    <button onClick={() => scrollToSection('contact-form')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#1a1918' }}>
+                    <button onClick={() => scrollToSection('contact-form')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.contact}
                     </button>
                   </div>
