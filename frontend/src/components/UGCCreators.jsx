@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Instagram, Music2, CheckCircle, XCircle, Send, Gift, MapPin, Phone } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
+import { getCampaign } from '../data/campaigns';
 
 const CITIES = [
   'Asunción', 'Luque', 'San Lorenzo', 'Fernando de la Mora', 'Lambaré', 
@@ -17,8 +18,11 @@ const FOLLOWER_RANGES = [
   { value: '10000+', label: '+10.000', eligible: true },
 ];
 
-export const UGCCreators = ({ t }) => {
+export const UGCCreators = ({ t, campaignId }) => {
+  const campaign = getCampaign(campaignId);
+  
   const [formData, setFormData] = useState({
+    campaign_id: campaignId,
     email: '',
     nombre: '',
     apellido: '',
