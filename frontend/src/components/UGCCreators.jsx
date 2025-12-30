@@ -94,37 +94,37 @@ export const UGCCreators = ({ t, campaignId }) => {
     }
 
     // At least one social network required
-    if (!formData.instagram_url && !formData.tiktok_url) {
+    if (!formData.instagram_username && !formData.tiktok_username) {
       newErrors.redes = 'Debes completar al menos una red social (Instagram o TikTok)';
     }
 
     // Instagram validations
-    if (formData.instagram_url) {
+    if (formData.instagram_username) {
       if (!formData.instagram_privado) newErrors.instagram_privado = 'Indica si tu perfil es público o privado';
       if (formData.instagram_privado === 'privado') newErrors.instagram_privado = 'Tu perfil de Instagram debe ser público';
       if (!formData.instagram_seguidores) newErrors.instagram_seguidores = 'Indica tu cantidad de seguidores';
       const igRange = FOLLOWER_RANGES.find(r => r.value === formData.instagram_seguidores);
-      if (igRange && !igRange.eligible && !formData.tiktok_url) {
+      if (igRange && !igRange.eligible && !formData.tiktok_username) {
         newErrors.instagram_seguidores = 'Necesitas mínimo 3.000 seguidores';
       }
     }
 
     // TikTok validations
-    if (formData.tiktok_url) {
+    if (formData.tiktok_username) {
       if (!formData.tiktok_privado) newErrors.tiktok_privado = 'Indica si tu perfil es público o privado';
       if (formData.tiktok_privado === 'privado') newErrors.tiktok_privado = 'Tu perfil de TikTok debe ser público';
       if (!formData.tiktok_seguidores) newErrors.tiktok_seguidores = 'Indica tu cantidad de seguidores';
       const tkRange = FOLLOWER_RANGES.find(r => r.value === formData.tiktok_seguidores);
-      if (tkRange && !tkRange.eligible && !formData.instagram_url) {
+      if (tkRange && !tkRange.eligible && !formData.instagram_username) {
         newErrors.tiktok_seguidores = 'Necesitas mínimo 3.000 seguidores';
       }
     }
 
     // Check if at least one network meets minimum
-    if (formData.instagram_url || formData.tiktok_url) {
-      const igEligible = formData.instagram_url && formData.instagram_privado === 'publico' && 
+    if (formData.instagram_username || formData.tiktok_username) {
+      const igEligible = formData.instagram_username && formData.instagram_privado === 'publico' && 
         FOLLOWER_RANGES.find(r => r.value === formData.instagram_seguidores)?.eligible;
-      const tkEligible = formData.tiktok_url && formData.tiktok_privado === 'publico' && 
+      const tkEligible = formData.tiktok_username && formData.tiktok_privado === 'publico' && 
         FOLLOWER_RANGES.find(r => r.value === formData.tiktok_seguidores)?.eligible;
       
       if (!igEligible && !tkEligible) {
@@ -148,7 +148,6 @@ export const UGCCreators = ({ t, campaignId }) => {
 
     // Terms
     if (!formData.acepta_condiciones) newErrors.acepta_condiciones = 'Debes aceptar las condiciones';
-    if (!formData.autoriza_contenido) newErrors.autoriza_contenido = 'Debes autorizar el uso del contenido';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -161,10 +160,17 @@ export const UGCCreators = ({ t, campaignId }) => {
 
     setSubmitting(true);
     try {
+      // Generate full URLs from usernames before sending
+      const submitData = {
+        ...formData,
+        instagram_url: formData.instagram_username ? `https://www.instagram.com/${formData.instagram_username}` : '',
+        tiktok_url: formData.tiktok_username ? `https://www.tiktok.com/@${formData.tiktok_username}` : '',
+      };
+      
       const response = await fetch(`${API_URL}/api/ugc/aplicar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(submitData)
       });
 
       const data = await response.json();
