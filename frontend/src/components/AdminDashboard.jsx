@@ -135,13 +135,51 @@ export const AdminDashboard = ({ user }) => {
     }
   };
 
+  const updateUgcStatus = async (applicationId, newStatus) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/ugc/${applicationId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        fetchData();
+      }
+    } catch (err) {
+      console.error('Error updating UGC application:', err);
+    }
+  };
+
+  const deleteUgcApplication = async (applicationId) => {
+    if (!window.confirm('¿Estás seguro de eliminar esta aplicación?')) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/admin/ugc/${applicationId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        fetchData();
+      }
+    } catch (err) {
+      console.error('Error deleting UGC application:', err);
+    }
+  };
+
   const stats = {
     total: reservations.length,
     confirmed: reservations.filter(r => r.status === 'confirmed').length,
     cancelled: reservations.filter(r => r.status === 'cancelled').length,
     totalRevenue: reservations
       .filter(r => r.status === 'confirmed')
-      .reduce((sum, r) => sum + r.price, 0)
+      .reduce((sum, r) => sum + r.price, 0),
+    ugcTotal: ugcApplications.length,
+    ugcPending: ugcApplications.filter(a => a.status === 'pending').length,
+    ugcApproved: ugcApplications.filter(a => a.status === 'approved').length
   };
 
   return (
