@@ -25,9 +25,10 @@ export const Hero = ({ t, onBrandsClick, onDeliveryClick }) => {
           <img 
             src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
             alt="Avenue"
-            className="h-16 md:h-20"
+            className="h-32 md:h-48"
             style={{
-              filter: 'brightness(1.2) drop-shadow(0 4px 20px rgba(212, 169, 104, 0.4))'
+              transform: 'scale(3)',
+              filter: 'brightness(1.2) drop-shadow(0 4px 30px rgba(212, 169, 104, 0.5))'
             }}
           />
         </div>
