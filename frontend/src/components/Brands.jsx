@@ -53,33 +53,6 @@ export const Brands = ({ t }) => {
         {/* Grid de logos: 3 columnas mobile, 6 desktop */}
         <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-8">
           {brands.map((brand, index) => {
-            // Logos que necesitan ser más grandes (desktop)
-            let scaleValue = 1;
-            let mobileScaleValue = 1;
-            
-            if (brand.name === 'Coraltheia') {
-              scaleValue = 1;
-              mobileScaleValue = 1;
-            }
-            if (brand.name === 'Serotonina') {
-              scaleValue = 1;
-              mobileScaleValue = 1;
-            }
-            if (brand.name === 'OKI') {
-              scaleValue = 2.2;
-              mobileScaleValue = 1.5;
-            }
-            if (brand.name === 'Brand Logo') {
-              scaleValue = 2.2;
-              mobileScaleValue = 1.5;
-            }
-            if (brand.name === 'David Sandoval') scaleValue = 1.5;
-            if (brand.name === 'Body Sculpt') scaleValue = 1.5;
-            // Logos que necesitan ser más pequeños
-            if (brand.name === 'Laese') scaleValue = 0.8;
-            if (brand.name === 'UGG') scaleValue = 0.8;
-            if (brand.name === 'Fila') scaleValue = 0.8;
-            
             return (
               <div
                 key={index}
