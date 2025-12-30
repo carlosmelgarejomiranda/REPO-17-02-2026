@@ -16,6 +16,9 @@ import { AvenueStudio } from "./components/AvenueStudio";
 import { BookingCalendar } from "./components/BookingCalendar";
 import { AuthForms, AuthCallback } from "./components/AuthForms";
 import { AdminDashboard } from "./components/AdminDashboard";
+import { MainLanding } from "./components/MainLanding";
+import { StudioLanding } from "./components/StudioLanding";
+import { UGCCreators } from "./components/UGCCreators";
 import { Button } from "./components/ui/button";
 import { Menu, X, User, LogOut, Calendar } from "lucide-react";
 
