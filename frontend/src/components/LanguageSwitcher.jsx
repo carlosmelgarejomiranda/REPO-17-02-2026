@@ -29,8 +29,8 @@ export const LanguageSwitcher = ({ currentLang, onLanguageChange, isDark = false
           className="gap-2"
           style={{ color: textColor }}
         >
-          <span className="text-base">{currentLanguage?.flag}</span>
-          <span className="hidden sm:inline">{currentLanguage?.name}</span>
+          <span className="text-lg">{currentLanguage?.flag}</span>
+          <span className="text-sm">{currentLanguage?.name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
@@ -49,7 +49,7 @@ export const LanguageSwitcher = ({ currentLang, onLanguageChange, isDark = false
               color: isDark ? '#f5ede4' : 'inherit',
             }}
           >
-            <span className="text-base">{lang.flag}</span>
+            <span className="text-lg">{lang.flag}</span>
             <span>{lang.name}</span>
           </DropdownMenuItem>
         ))}
