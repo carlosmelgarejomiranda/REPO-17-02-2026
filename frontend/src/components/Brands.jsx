@@ -136,12 +136,12 @@ export const Brands = ({ t }) => {
           }
           
           .brand-logo {
-            max-height: 200px;
+            max-height: none;
           }
           
           @media (min-width: 1024px) {
             .brand-logo {
-              max-height: 96px;
+              max-height: none;
             }
           }
         `}</style>
