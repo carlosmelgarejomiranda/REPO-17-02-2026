@@ -451,22 +451,49 @@ async def get_products(
             else:
                 query["price"] = {"$lte": max_price}
         
-        # Get total count
-        total = await db.shop_products.count_documents(query)
+        # Get total count from grouped collection
+        total = await db.shop_products_grouped.count_documents(query)
         
-        # Get paginated products
+        # Get paginated grouped products
         skip = (page - 1) * limit
-        products = await db.shop_products.find(
+        products = await db.shop_products_grouped.find(
             query,
             {"_id": 0}
-        ).sort("name", 1).skip(skip).limit(limit).to_list(limit)
+        ).sort("base_model", 1).skip(skip).limit(limit).to_list(limit)
         
-        # Transform for frontend (rename product_id to id)
+        # Transform for frontend
+        result = []
         for p in products:
-            p["id"] = p.pop("product_id", None)
+            # Sort available sizes
+            available_sizes = p.get("available_sizes", [])
+            sizes_sorted = sorted(
+                available_sizes,
+                key=lambda x: (
+                    0 if x.get("size", "").isdigit() else 1,
+                    int(x.get("size", "0")) if x.get("size", "").isdigit() else x.get("size", "")
+                )
+            )
+            
+            result.append({
+                "id": p.get("grouped_id"),
+                "name": p.get("base_model"),  # Use base model as display name
+                "full_name": p.get("name"),
+                "price": p.get("price"),
+                "max_price": p.get("max_price"),
+                "stock": p.get("total_stock"),
+                "image": p.get("image"),
+                "category": p.get("category"),
+                "brand": p.get("brand"),
+                "gender": p.get("gender"),
+                "discount": p.get("discount", 0),
+                "description": p.get("description"),
+                "available_sizes": sizes_sorted,
+                "sizes_list": p.get("sizes_list", []),
+                "variant_count": p.get("variant_count", 1)
+            })
         
         return {
-            "products": products,
+            "products": result,
             "total": total,
             "page": page,
             "limit": limit,
@@ -479,8 +506,42 @@ async def get_products(
 
 @ecommerce_router.get("/products/{product_id}")
 async def get_product(product_id: str):
-    """Get single product from local DB - FAST"""
+    """Get single grouped product with all variants"""
     try:
+        # First try grouped products
+        product = await db.shop_products_grouped.find_one(
+            {"grouped_id": product_id},
+            {"_id": 0}
+        )
+        
+        if product:
+            available_sizes = product.get("available_sizes", [])
+            sizes_sorted = sorted(
+                available_sizes,
+                key=lambda x: (
+                    0 if x.get("size", "").isdigit() else 1,
+                    int(x.get("size", "0")) if x.get("size", "").isdigit() else x.get("size", "")
+                )
+            )
+            
+            return {
+                "id": product.get("grouped_id"),
+                "name": product.get("base_model"),
+                "full_name": product.get("name"),
+                "price": product.get("price"),
+                "max_price": product.get("max_price"),
+                "stock": product.get("total_stock"),
+                "image": product.get("image"),
+                "category": product.get("category"),
+                "brand": product.get("brand"),
+                "gender": product.get("gender"),
+                "discount": product.get("discount", 0),
+                "description": product.get("description"),
+                "available_sizes": sizes_sorted,
+                "variants": product.get("variants", [])
+            }
+        
+        # Fallback to individual product
         product = await db.shop_products.find_one(
             {"product_id": product_id},
             {"_id": 0}
@@ -499,10 +560,10 @@ async def get_product(product_id: str):
 
 @ecommerce_router.get("/featured")
 async def get_featured_products():
-    """Get featured products - FAST"""
+    """Get featured grouped products"""
     try:
-        products = await db.shop_products.find(
-            {"stock": {"$gt": 0}},
+        products = await db.shop_products_grouped.find(
+            {"total_stock": {"$gt": 0}},
             {"_id": 0}
         ).limit(8).to_list(8)
         
