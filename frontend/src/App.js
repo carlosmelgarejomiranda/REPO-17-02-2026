@@ -136,6 +136,28 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
   </nav>
 );
 
+// UGC Campaign Page wrapper component
+const UGCCampaignPage = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => {
+  const { campaignId } = useParams();
+  
+  return (
+    <>
+      <StudioNav 
+        t={t} 
+        language={language} 
+        setLanguage={setLanguage}
+        user={user}
+        onLoginClick={onLoginClick}
+        onLogout={onLogout}
+      />
+      <div style={{ paddingTop: '80px' }}>
+        <UGCCreators t={t} campaignId={campaignId} />
+      </div>
+      <Footer t={t} />
+    </>
+  );
+};
+
 // App Router component
 function AppRouter() {
   const location = useLocation();
