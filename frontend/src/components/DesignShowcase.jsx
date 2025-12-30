@@ -12,28 +12,27 @@ export const DesignShowcase = ({ t }) => {
   ];
 
   return (
-    <section className="py-24 px-6 relative" style={{ backgroundColor: '#f5ede4' }}>
-      {/* Imagen real de Avenue - visible en todas las resoluciones */}
+    <section className="py-14 px-6 relative" style={{ backgroundColor: '#f5ede4' }}>
       <div className="absolute top-0 left-0 right-0 bottom-0 overflow-hidden">
         <img 
           src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/gbm22p9w_IMG_9625.HEIC" 
           alt="Avenue Interior"
-          className="w-full h-full object-cover opacity-20"
+          className="w-full h-full object-cover opacity-15"
         />
       </div>
       
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
+      <div className="max-w-5xl mx-auto relative z-10">
+        <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
         
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-6xl font-light mb-6 italic" 
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-4xl font-light mb-2 italic" 
               style={{ 
                 color: '#1a1a1a',
                 fontFamily: 'var(--font-primary)'
               }}>
             {t.design.title}
           </h2>
-          <p className="text-xl font-light italic" 
+          <p className="text-base font-light italic" 
              style={{ 
                color: '#5a5a5a',
                fontFamily: 'var(--font-primary)'
@@ -42,24 +41,24 @@ export const DesignShowcase = ({ t }) => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <div
                 key={index}
-                className="flex items-start gap-4 p-8 rounded-sm transition-all duration-300 hover:shadow-lg"
+                className="flex items-start gap-3 p-4 rounded-sm transition-all duration-300 hover:shadow-md"
                 style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
                   border: '1px solid rgba(212, 169, 104, 0.3)',
                   backdropFilter: 'blur(10px)'
                 }}
               >
-                <div className="flex-shrink-0 p-3 rounded-full" 
+                <div className="flex-shrink-0 p-2 rounded-full" 
                      style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)' }}>
-                  <Icon className="w-5 h-5" style={{ color: '#d4a968' }} />
+                  <Icon className="w-4 h-4" style={{ color: '#d4a968' }} />
                 </div>
-                <p className="text-sm leading-relaxed" 
+                <p className="text-xs leading-relaxed" 
                    style={{ 
                      color: '#1a1a1a',
                      fontFamily: 'var(--font-secondary)'
@@ -71,7 +70,7 @@ export const DesignShowcase = ({ t }) => {
           })}
         </div>
         
-        <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
+        <div className="w-20 h-0.5 mx-auto mt-8" style={{ backgroundColor: '#d4a968' }}></div>
       </div>
     </section>
   );

@@ -13,10 +13,9 @@ export const Benefits = ({ t }) => {
 
   return (
     <section 
-      className="py-24 px-6 relative" 
+      className="py-14 px-6 relative" 
       style={{ backgroundColor: '#f7f2ed' }}
     >
-      {/* Background architectural image with overlay */}
       <div className="absolute inset-0 opacity-10">
         <img 
           src="https://images.unsplash.com/photo-1676517243531-69e3b27276e9?w=1920&q=80" 
@@ -25,10 +24,10 @@ export const Benefits = ({ t }) => {
         />
       </div>
       
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
         
-        <h2 className="text-4xl md:text-6xl font-light text-center mb-20 italic" 
+        <h2 className="text-2xl md:text-4xl font-light text-center mb-10 italic" 
             style={{ 
               color: '#1a1a1a',
               fontFamily: 'var(--font-primary)'
@@ -36,31 +35,31 @@ export const Benefits = ({ t }) => {
           {t.benefits.title}
         </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
               <div 
                 key={index}
-                className="p-10 rounded-sm transition-all duration-300 hover:shadow-2xl"
+                className="p-5 rounded-sm transition-all duration-300 hover:shadow-lg"
                 style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
                   border: '1px solid rgba(212, 169, 104, 0.3)',
                   backdropFilter: 'blur(10px)'
                 }}
               >
-                <div className="mb-6 inline-block p-4 rounded-full" 
+                <div className="mb-3 inline-block p-2.5 rounded-full" 
                      style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)' }}>
-                  <Icon className="w-7 h-7" style={{ color: '#d4a968' }} />
+                  <Icon className="w-5 h-5" style={{ color: '#d4a968' }} />
                 </div>
-                <h3 className="text-xl font-light mb-4 italic" 
+                <h3 className="text-base font-light mb-2 italic" 
                     style={{ 
                       color: '#1a1a1a',
                       fontFamily: 'var(--font-primary)'
                     }}>
                   {benefit.title}
                 </h3>
-                <p className="text-sm leading-relaxed" 
+                <p className="text-xs leading-relaxed" 
                    style={{ 
                      color: '#5a5a5a',
                      fontFamily: 'var(--font-secondary)'
@@ -72,7 +71,7 @@ export const Benefits = ({ t }) => {
           })}
         </div>
         
-        <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
+        <div className="w-20 h-0.5 mx-auto mt-8" style={{ backgroundColor: '#d4a968' }}></div>
       </div>
     </section>
   );

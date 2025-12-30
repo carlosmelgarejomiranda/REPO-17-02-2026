@@ -29,19 +29,19 @@ export const Brands = ({ t }) => {
   ];
 
   return (
-    <section className="py-24 px-6" style={{ backgroundColor: '#f7f2ed' }}>
-      <div className="max-w-7xl mx-auto">
-        <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
+    <section className="py-12 px-6" style={{ backgroundColor: '#f7f2ed' }}>
+      <div className="max-w-5xl mx-auto">
+        <div className="w-20 h-0.5 mx-auto mb-6" style={{ backgroundColor: '#d4a968' }}></div>
         
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-light mb-6 italic" 
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-4xl font-light mb-2 italic" 
               style={{ 
                 color: '#1a1a1a',
                 fontFamily: 'var(--font-primary)'
               }}>
             {t.brands.title}
           </h2>
-          <p className="text-base max-w-3xl mx-auto leading-relaxed" 
+          <p className="text-sm max-w-2xl mx-auto leading-relaxed" 
              style={{ 
                color: '#5a5a5a',
                fontFamily: 'var(--font-secondary)'
@@ -50,65 +50,40 @@ export const Brands = ({ t }) => {
           </p>
         </div>
 
-        {/* Grid de logos: 3 columnas mobile, 6 desktop - filas uniformes */}
-        <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6" style={{ gridAutoRows: '1fr' }}>
+        <div className="grid grid-cols-4 lg:grid-cols-8 gap-2" style={{ gridAutoRows: '1fr' }}>
           {brands.map((brand, index) => {
-            // Todos los logos con el mismo maxHeight para filas uniformes
-            let maxHeightMobile = '150px';
-            let maxHeightDesktop = '150px';
-            
-            if (brand.name === 'Fila') {
-              maxHeightMobile = '40px';
-              maxHeightDesktop = '40px';
-            } else if (brand.name === 'UGG') {
-              maxHeightMobile = '60px';
-              maxHeightDesktop = '60px';
-            }
+            let maxHeight = '80px';
+            if (brand.name === 'Fila') maxHeight = '25px';
+            else if (brand.name === 'UGG') maxHeight = '35px';
             
             return (
               <div
                 key={index}
-                className="flex items-center justify-center p-3 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
+                className="flex items-center justify-center p-2 transition-all duration-300 hover:scale-110"
                 style={{ 
                   backgroundColor: '#f7f2ed',
-                  height: '150px'
+                  height: '70px'
                 }}
               >
                 <img 
                   src={brand.url}
                   alt={brand.name}
-                  className={brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'h-auto object-contain brand-logo brand-logo-special' : 'w-full h-auto object-contain brand-logo'}
+                  className="w-full h-auto object-contain"
                   style={{
-                    maxHeight: brand.name === 'Serotonina' ? maxHeightMobile :
-                               brand.name === 'Coraltheia' ? maxHeightMobile : 
-                               brand.name === 'Fila' ? '40px' :
-                               brand.name === 'UGG' ? '60px' : '200px',
-                    maxWidth: brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'none' : '100%',
+                    maxHeight: maxHeight,
+                    maxWidth: '100%',
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease'
                   }}
                   onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
                 />
-                <style jsx>{`
-                  @media (min-width: 1024px) {
-                    .brand-logo-special {
-                      max-height: ${maxHeightDesktop} !important;
-                    }
-                  }
-                `}</style>
               </div>
             );
           })}
         </div>
         
-        <style jsx>{`
-          .brand-card {
-            border: none;
-          }
-        `}</style>
-        
-        <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
+        <div className="w-20 h-0.5 mx-auto mt-6" style={{ backgroundColor: '#d4a968' }}></div>
       </div>
     </section>
   );
