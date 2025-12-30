@@ -181,7 +181,7 @@ async def get_products(
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {ENCOM_API_TOKEN}"
                 },
-                json={"limit": 500, "page": page}
+                json={"limit": 500, "page": 1}
             )
             
             if response.status_code != 200:
@@ -198,6 +198,15 @@ async def get_products(
                 search_lower = search.lower()
                 products = [p for p in products if search_lower in p.get('Name', '').lower()]
             
+            if category:
+                products = [p for p in products if p.get('category', '').strip().lower() == category.lower()]
+            
+            if gender:
+                products = [p for p in products if determine_gender(p.get('category', ''), p.get('brand', '')) == gender]
+            
+            if size:
+                products = [p for p in products if extract_size_from_name(p.get('Name', '')) == size.upper()]
+            
             if min_price:
                 products = [p for p in products if float(p.get('price', 0)) >= min_price]
             
@@ -213,6 +222,9 @@ async def get_products(
             # Transform products for frontend
             transformed = []
             for p in paginated_products:
+                product_size = extract_size_from_name(p.get('Name', ''))
+                product_gender = determine_gender(p.get('category', ''), p.get('brand', ''))
+                
                 transformed.append({
                     "id": p.get('ID'),
                     "name": p.get('Name'),
@@ -222,8 +234,10 @@ async def get_products(
                     "discount": float(p.get('discount', 0)),
                     "description": p.get('description', ''),
                     "image": p.get('img_url', ''),
-                    "category_id": p.get('categoryID'),
-                    "brand_id": p.get('brandID'),
+                    "category": p.get('category', '').strip(),
+                    "brand": p.get('brand', '').strip(),
+                    "size": product_size,
+                    "gender": product_gender,
                     "featured": p.get('featured', False)
                 })
             
