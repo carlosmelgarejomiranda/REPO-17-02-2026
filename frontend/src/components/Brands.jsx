@@ -51,8 +51,26 @@ export const Brands = ({ t }) => {
         </div>
 
         {/* Grid de logos: 3 columnas mobile, 6 desktop */}
-        <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-8">
+        <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
           {brands.map((brand, index) => {
+            // Tamaños diferentes para mobile y desktop
+            let maxHeightMobile = '200px';
+            let maxHeightDesktop = '200px';
+            
+            if (brand.name === 'Serotonina') {
+              maxHeightMobile = '250px';
+              maxHeightDesktop = '375px';
+            } else if (brand.name === 'Coraltheia') {
+              maxHeightMobile = '250px';
+              maxHeightDesktop = '375px';
+            } else if (brand.name === 'Fila') {
+              maxHeightMobile = '40px';
+              maxHeightDesktop = '40px';
+            } else if (brand.name === 'UGG') {
+              maxHeightMobile = '60px';
+              maxHeightDesktop = '60px';
+            }
+            
             return (
               <div
                 key={index}
