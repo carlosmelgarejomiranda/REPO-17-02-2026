@@ -1,18 +1,21 @@
 # E-commerce routes for Avenue Online
 # This file contains all e-commerce related endpoints
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, BackgroundTasks
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import httpx
 import os
 import stripe
 import googlemaps
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import uuid
 import asyncio
 import math
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Initialize router
 ecommerce_router = APIRouter(prefix="/api/shop")
@@ -26,6 +29,14 @@ STORE_LNG = float(os.environ.get('STORE_LNG', '-57.6474'))
 DELIVERY_PRICE_PER_KM = float(os.environ.get('DELIVERY_PRICE_PER_KM', '2500'))
 DELIVERY_MIN_PRICE = float(os.environ.get('DELIVERY_MIN_PRICE', '15000'))
 
+# Cache configuration
+CACHE_TTL_SECONDS = 300  # 5 minutes cache
+products_cache: Dict[str, Any] = {
+    "data": None,
+    "last_updated": None,
+    "updating": False
+}
+
 # Initialize Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
 
@@ -35,9 +46,87 @@ if GOOGLE_MAPS_API_KEY:
     gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 
 # Gender mapping based on category/brand keywords
-FEMALE_KEYWORDS = ['malva', 'santal', 'ina clothing', 'efimera', 'thula', 'mariela', 'sarelly', 'cristaline']
+FEMALE_KEYWORDS = ['malva', 'santal', 'ina clothing', 'efimera', 'thula', 'mariela', 'sarelly', 'cristaline', 'bravisima', 'olivia']
 MALE_KEYWORDS = ['bro fitwear', 'lacoste', 'immortal']
 UNISEX_KEYWORDS = ['aguara', 'ds', 'mp suplementos', 'ugg']
+
+# ==================== CACHE FUNCTIONS ====================
+
+async def fetch_products_from_erp() -> List[dict]:
+    """Fetch all products from ERP"""
+    try:
+        async with httpx.AsyncClient(timeout=90) as client:
+            response = await client.post(
+                f"{ENCOM_API_URL}/products",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {ENCOM_API_TOKEN}"
+                },
+                json={"limit": 500, "page": 1}
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"ERP API error: {response.status_code}")
+                return []
+            
+            data = response.json()
+            return data.get('data', [])
+    except Exception as e:
+        logger.error(f"Error fetching from ERP: {str(e)}")
+        return []
+
+async def get_cached_products() -> List[dict]:
+    """Get products from cache or fetch from ERP"""
+    global products_cache
+    
+    now = datetime.now(timezone.utc)
+    
+    # Check if cache is valid
+    if (products_cache["data"] is not None and 
+        products_cache["last_updated"] is not None and
+        (now - products_cache["last_updated"]).total_seconds() < CACHE_TTL_SECONDS):
+        return products_cache["data"]
+    
+    # If cache is stale but we have data, return it and update in background
+    if products_cache["data"] is not None and not products_cache["updating"]:
+        products_cache["updating"] = True
+        asyncio.create_task(update_cache_background())
+        return products_cache["data"]
+    
+    # No cache, must fetch
+    products = await fetch_products_from_erp()
+    if products:
+        products_cache["data"] = products
+        products_cache["last_updated"] = now
+    
+    return products_cache["data"] or []
+
+async def update_cache_background():
+    """Update cache in background"""
+    global products_cache
+    try:
+        products = await fetch_products_from_erp()
+        if products:
+            products_cache["data"] = products
+            products_cache["last_updated"] = datetime.now(timezone.utc)
+            logger.info(f"Cache updated with {len(products)} products")
+    except Exception as e:
+        logger.error(f"Background cache update failed: {str(e)}")
+    finally:
+        products_cache["updating"] = False
+
+@ecommerce_router.post("/refresh-cache")
+async def refresh_cache():
+    """Force refresh the products cache"""
+    global products_cache
+    products_cache["data"] = None
+    products_cache["last_updated"] = None
+    products = await fetch_products_from_erp()
+    if products:
+        products_cache["data"] = products
+        products_cache["last_updated"] = datetime.now(timezone.utc)
+        return {"message": f"Cache refreshed with {len(products)} products"}
+    return {"message": "Failed to refresh cache"}
 
 def extract_size_from_name(name: str) -> Optional[str]:
     """Extract size from product name"""
