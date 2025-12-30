@@ -13,6 +13,15 @@ export const DesignShowcase = ({ t }) => {
 
   return (
     <section className="py-14 px-6 relative" style={{ backgroundColor: '#f5ede4' }}>
+      {/* Architectural background image */}
+      <div className="absolute inset-0 opacity-8">
+        <img 
+          src="https://images.unsplash.com/photo-1673010523525-bcf9cfb4b8b5?w=1920&q=80" 
+          alt="Neoclassical Interior"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      
       <div className="max-w-5xl mx-auto relative z-10">
         <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
         
@@ -41,8 +50,9 @@ export const DesignShowcase = ({ t }) => {
                 key={index}
                 className="flex items-start gap-3 p-4 rounded-sm transition-all duration-300 hover:shadow-md"
                 style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                  border: '1px solid rgba(212, 169, 104, 0.3)'
+                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                  border: '1px solid rgba(212, 169, 104, 0.3)',
+                  backdropFilter: 'blur(8px)'
                 }}
               >
                 <div className="flex-shrink-0 p-2 rounded-full" 
