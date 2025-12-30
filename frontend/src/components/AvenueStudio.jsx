@@ -136,6 +136,51 @@ export const AvenueStudio = ({ t }) => {
         </div>
       </section>
 
+      {/* Gallery Section - Nuestro Espacio */}
+      <section className="py-20 px-6" style={{ backgroundColor: '#0d0d0d' }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
+          
+          <h2 className="text-4xl md:text-5xl font-light text-center mb-6 italic" 
+              style={{ 
+                color: '#f5ede4',
+                fontFamily: 'var(--font-primary)'
+              }}>
+            {t.studio.gallery?.title || 'Nuestro Espacio'}
+          </h2>
+          
+          <p className="text-center text-base mb-12" 
+             style={{ 
+               color: '#a8a8a8',
+               fontFamily: 'var(--font-secondary)'
+             }}>
+            {t.studio.gallery?.subtitle || 'Conocé el estudio donde tu marca cobra vida'}
+          </p>
+
+          {/* Video Principal */}
+          <div className="mb-8">
+            <div 
+              className="relative overflow-hidden rounded-sm border"
+              style={{ borderColor: '#d4a968' }}
+            >
+              <video 
+                className="w-full h-auto"
+                controls
+                playsInline
+                poster=""
+                style={{ maxHeight: '500px', objectFit: 'cover', width: '100%' }}
+              >
+                <source src="https://customer-assets.emergentagent.com/job_06a29df7-a974-4134-b07f-60d78598450e/artifacts/tqww6bmt_IMG_9492.MOV" type="video/quicktime" />
+                <source src="https://customer-assets.emergentagent.com/job_06a29df7-a974-4134-b07f-60d78598450e/artifacts/tqww6bmt_IMG_9492.MOV" type="video/mp4" />
+                Tu navegador no soporta el elemento de video.
+              </video>
+            </div>
+          </div>
+
+          <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
+        </div>
+      </section>
+
       {/* Equipment Section */}
       <section className="relative py-20 px-6 overflow-hidden">
         {/* Background Image with B&W Filter */}
