@@ -59,6 +59,28 @@ class UserBase(BaseModel):
     razon_social: Optional[str] = None
     ruc: Optional[str] = None
 
+# UGC Application Model
+class UGCApplication(BaseModel):
+    email: EmailStr
+    nombre: str
+    apellido: str
+    sexo: str
+    fecha_nacimiento: str
+    instagram_url: Optional[str] = None
+    instagram_privado: Optional[str] = None
+    instagram_seguidores: Optional[str] = None
+    tiktok_url: Optional[str] = None
+    tiktok_privado: Optional[str] = None
+    tiktok_seguidores: Optional[str] = None
+    video_link_1: str
+    video_link_2: str
+    confirma_grabar_tienda: bool
+    ciudad: str
+    whatsapp: str
+    acepta_condiciones: bool
+    acepta_whatsapp: Optional[bool] = False
+    autoriza_contenido: bool
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
