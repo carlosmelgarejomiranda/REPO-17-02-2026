@@ -83,20 +83,23 @@ export const Brands = ({ t }) => {
             return (
               <div
                 key={index}
-                className="flex items-center justify-center p-3 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
+                className="flex items-center justify-center p-3 lg:p-6 brand-card"
                 style={{ 
                   backgroundColor: '#f7f2ed',
-                  minHeight: '120px'
+                  minHeight: '120px',
+                  overflow: 'visible'
                 }}
               >
                 <img 
                   src={brand.url}
                   alt={brand.name}
-                  className={`w-full h-auto object-contain brand-logo brand-logo-${index} ${brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'high-quality-logo' : ''}`}
+                  className={`h-auto object-contain brand-logo brand-logo-${index} ${brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'high-quality-logo' : ''}`}
                   style={{
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease',
-                    imageRendering: brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'high-quality' : 'crisp-edges'
+                    imageRendering: brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'high-quality' : 'crisp-edges',
+                    width: brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'auto' : '100%',
+                    maxWidth: 'none'
                   }}
                   onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
