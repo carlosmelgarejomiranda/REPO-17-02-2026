@@ -102,6 +102,9 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
         <a href="/" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 hidden md:block" style={{ color: '#d4a968' }}>
           {t.nav.home}
         </a>
+        <a href="/shop" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 hidden md:block" style={{ color: '#d4a968' }}>
+          E-commerce
+        </a>
         <a href="/studio/reservar" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 flex items-center gap-1" style={{ color: '#d4a968' }}>
           <Calendar className="w-4 h-4" />
           <span className="hidden md:inline">Reservar</span>
@@ -140,6 +143,83 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
     </div>
   </nav>
 );
+
+// Shop Navigation Component
+const ShopNav = ({ t, language, setLanguage, user, cart, onLoginClick, onLogout }) => {
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  
+  return (
+    <nav 
+      className="fixed top-0 left-0 right-0 z-50 px-6 py-4"
+      style={{ backgroundColor: '#0d0d0d', borderBottom: '1px solid #d4a968' }}
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <a href="/">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
+              alt="Avenue"
+              className="h-12 cursor-pointer"
+              style={{
+                transform: 'scale(2.5)',
+                transformOrigin: 'left center',
+                filter: 'brightness(1.2) drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
+              }}
+            />
+          </a>
+        </div>
+        <div className="flex items-center gap-4 md:gap-6">
+          <a href="/" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 hidden md:block" style={{ color: '#d4a968' }}>
+            {t.nav?.home || 'Inicio'}
+          </a>
+          <a href="/shop" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 hidden md:block" style={{ color: '#f5ede4' }}>
+            E-commerce
+          </a>
+          <a href="/studio" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 hidden md:block" style={{ color: '#d4a968' }}>
+            Studio
+          </a>
+          
+          <div className="h-4 w-px hidden md:block" style={{ backgroundColor: '#d4a968' }}></div>
+          
+          <a href="/shop/cart" className="relative p-2" style={{ color: '#d4a968' }}>
+            <ShoppingBag className="w-5 h-5" />
+            {cartCount > 0 && (
+              <span 
+                className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs flex items-center justify-center"
+                style={{ backgroundColor: '#ef4444', color: 'white' }}
+              >
+                {cartCount}
+              </span>
+            )}
+          </a>
+          
+          {user ? (
+            <div className="flex items-center gap-3">
+              {user.role === 'admin' && (
+                <a href="/admin" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                  Admin
+                </a>
+              )}
+              <button onClick={onLogout} className="p-1" style={{ color: '#666' }}>
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={onLoginClick}
+              className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 flex items-center gap-1"
+              style={{ color: '#d4a968' }}
+            >
+              <User className="w-4 h-4" />
+            </button>
+          )}
+          
+          <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 // UGC Campaign Page wrapper component
 const UGCCampaignPage = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => {
