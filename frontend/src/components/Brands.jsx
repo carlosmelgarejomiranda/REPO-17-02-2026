@@ -53,12 +53,26 @@ export const Brands = ({ t }) => {
         {/* Grid de logos: 3 columnas mobile, 6 desktop */}
         <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-8">
           {brands.map((brand, index) => {
-            // Logos que necesitan ser más grandes
+            // Logos que necesitan ser más grandes (desktop)
             let scaleValue = 1;
-            if (brand.name === 'Coraltheia') scaleValue = 5;
-            if (brand.name === 'Serotonina') scaleValue = 4;
-            if (brand.name === 'OKI') scaleValue = 2.2;
-            if (brand.name === 'Brand Logo') scaleValue = 2.2;
+            let mobileScaleValue = 1;
+            
+            if (brand.name === 'Coraltheia') {
+              scaleValue = 5;
+              mobileScaleValue = 2.5;
+            }
+            if (brand.name === 'Serotonina') {
+              scaleValue = 4;
+              mobileScaleValue = 2;
+            }
+            if (brand.name === 'OKI') {
+              scaleValue = 2.2;
+              mobileScaleValue = 1.5;
+            }
+            if (brand.name === 'Brand Logo') {
+              scaleValue = 2.2;
+              mobileScaleValue = 1.5;
+            }
             if (brand.name === 'David Sandoval') scaleValue = 1.5;
             if (brand.name === 'Body Sculpt') scaleValue = 1.5;
             // Logos que necesitan ser más pequeños
@@ -78,15 +92,25 @@ export const Brands = ({ t }) => {
                 <img 
                   src={brand.url}
                   alt={brand.name}
-                  className="w-full h-auto object-contain brand-logo"
+                  className={`w-full h-auto object-contain brand-logo brand-logo-${index}`}
                   style={{
-                    transform: `scale(${scaleValue})`,
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease'
                   }}
                   onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
                 />
+                <style jsx>{`
+                  .brand-logo-${index} {
+                    transform: scale(${mobileScaleValue});
+                  }
+                  
+                  @media (min-width: 1024px) {
+                    .brand-logo-${index} {
+                      transform: scale(${scaleValue});
+                    }
+                  }
+                `}</style>
               </div>
             );
           })}
