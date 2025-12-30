@@ -179,7 +179,10 @@ def extract_base_model(name: str) -> str:
     if not name:
         return name
     
+    # Pre-normalize: fix inconsistent spacing around dashes
     base = name
+    base = re.sub(r'\s+', ' ', base)    # multiple spaces to one
+    base = re.sub(r'\s*-\s*', '-', base)  # " - " or "- " or " -" → "-"
     
     # Patterns to remove sizes (order matters - more specific first)
     patterns = [
