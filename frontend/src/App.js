@@ -20,6 +20,7 @@ import { MainLanding } from "./components/MainLanding";
 import { StudioLanding } from "./components/StudioLanding";
 import { UGCCreators } from "./components/UGCCreators";
 import { UGCCampaignsList } from "./components/UGCCampaignsList";
+import { TerminosCondiciones } from "./components/TerminosCondiciones";
 import { Button } from "./components/ui/button";
 import { Menu, X, User, LogOut, Calendar } from "lucide-react";
 
