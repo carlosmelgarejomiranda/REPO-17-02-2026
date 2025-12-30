@@ -15,6 +15,7 @@ import jwt
 import asyncio
 import resend
 import httpx
+from twilio.rest import Client as TwilioClient
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -27,6 +28,18 @@ db = client[os.environ['DB_NAME']]
 # Resend configuration
 resend.api_key = os.environ.get('RESEND_API_KEY', '')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+
+# Twilio configuration for WhatsApp
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
+TWILIO_WHATSAPP_FROM = os.environ.get('TWILIO_WHATSAPP_FROM', 'whatsapp:+14155238886')
+NOTIFICATION_WHATSAPP_STUDIO = os.environ.get('NOTIFICATION_WHATSAPP_STUDIO', '+595973666000')
+NOTIFICATION_WHATSAPP_UGC = os.environ.get('NOTIFICATION_WHATSAPP_UGC', '+595976691520')
+
+# Initialize Twilio client
+twilio_client = None
+if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+    twilio_client = TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 # JWT configuration
 JWT_SECRET = os.environ.get('JWT_SECRET', 'default_secret_key')
