@@ -13,35 +13,35 @@ export const translations = {
       subtitle: 'Tu próximo escaparate de éxito',
       description: 'Un concepto premium de retail donde tu marca brilla sin comisiones',
       cta: 'Únete a Avenue',
-      deliveryCta: 'Realizar Pedido'
+      deliveryCta: 'Realizar pedido'
     },
     valueProposition: {
-      title: 'El Poder de Vender sin Comisiones',
+      title: 'El poder de vender sin comisiones',
       subtitle: 'Avenue es una tienda boutique que ofrece a marcas seleccionadas la posibilidad de exhibir y vender sus productos en un entorno premium y de alto tráfico.',
-      feature1Title: '0% Comisión',
+      feature1Title: '0% comisión',
       feature1Desc: 'Solo alquilas el espacio. Todas las ventas son 100% tuyas.',
-      feature2Title: 'Ubicación Premium',
+      feature2Title: 'Ubicación premium',
       feature2Desc: 'Paseo Los Árboles, Av. San Martín - el corazón comercial de Asunción.',
-      feature3Title: 'Gestión Integral',
+      feature3Title: 'Gestión integral',
       feature3Desc: 'Nosotros nos ocupamos de todo: atención al cliente, stock y ventas.'
     },
     benefits: {
-      title: 'Beneficios para Tu Marca',
-      benefit1Title: 'Presencia en Espacio Premium',
+      title: 'Beneficios para tu marca',
+      benefit1Title: 'Presencia en espacio premium',
       benefit1Desc: 'Herramienta de posicionamiento diseñada para transmitir elegancia y distinción, elevando la percepción de tu marca.',
-      benefit2Title: 'Presentación que Realza el Producto',
+      benefit2Title: 'Presentación que realza el producto',
       benefit2Desc: 'Cada marca será exhibida en un entorno diseñado para resaltar sus atributos con iluminación, ambientación y coherencia estética.',
-      benefit3Title: 'Visibilidad Constante',
+      benefit3Title: 'Visibilidad constante',
       benefit3Desc: 'Tráfico orgánico de clientes con alto poder adquisitivo, complementado con estrategia digital activa.',
-      benefit4Title: 'Sin Carga Operativa',
+      benefit4Title: 'Sin carga operativa',
       benefit4Desc: 'Enfócate en tu desarrollo mientras nosotros gestionamos atención, stock y ventas.',
       benefit5Title: 'Avenue Studio',
       benefit5Desc: 'Espacio interno que genera contenido profesional para tu marca de manera ágil y simple.',
-      benefit6Title: 'Sinergia entre Marcas',
+      benefit6Title: 'Sinergia entre marcas',
       benefit6Desc: 'Selección curada de marcas complementarias que se potencian mutuamente.'
     },
     categories: {
-      title: 'Nuestras Líneas de Productos',
+      title: 'Nuestras líneas de productos',
       subtitle: 'Limitamos la cantidad de marcas por rubro para fomentar convergencia estratégica',
       cat1: 'Indumentaria',
       cat2: 'Calzados',
@@ -51,11 +51,11 @@ export const translations = {
       cat6: 'Perfumería'
     },
     brands: {
-      title: 'Marcas que Confían en Avenue',
+      title: 'Marcas que confían en Avenue',
       subtitle: 'Marcas selectas que forman parte de nuestro universo premium'
     },
     design: {
-      title: 'Diseño Elegante y Atemporal',
+      title: 'Diseño elegante y atemporal',
       subtitle: 'Cada detalle pensado para realzar tu marca',
       feature1: 'Espacios soñados y diseñados para cada producto',
       feature2: 'Paleta de tonos nudes que realzan todo tipo de producto',
@@ -65,25 +65,25 @@ export const translations = {
       feature6: 'Arte y texturas sutiles por doquier'
     },
     location: {
-      title: 'Ubicación Estratégica',
+      title: 'Ubicación estratégica',
       description: 'Ubicados en el Paseo Los Árboles, sobre la Av. San Martín, formamos parte de uno de los centros comerciales más destacados de Asunción.',
       features: 'Alto tránsito • Excelente accesibilidad • Estacionamiento amplio • Seguridad permanente'
     },
     form: {
-      title: '¿Interesado en Formar Parte?',
+      title: '¿Interesado en formar parte?',
       subtitle: 'Completa este breve formulario y nos pondremos en contacto contigo',
-      name: 'Tu Nombre',
-      brandName: 'Nombre de tu Marca',
+      name: 'Tu nombre',
+      brandName: 'Nombre de tu marca',
       category: 'Rubro',
       phone: 'Número de WhatsApp',
-      submit: 'Enviar Solicitud',
+      submit: 'Enviar solicitud',
       success: '¡Gracias! Te contactaremos pronto.',
       categoryPlaceholder: 'Ej: Indumentaria, Calzados, etc.'
     },
     footer: {
       tagline: 'El concepto premium de retail en Asunción',
-      brands: 'Para Marcas',
-      delivery: 'Pedidos y Delivery',
+      brands: 'Para marcas',
+      delivery: 'Pedidos y delivery',
       follow: 'Síguenos',
       rights: 'Avenue. Todos los derechos reservados.'
     },
@@ -91,34 +91,34 @@ export const translations = {
       title: 'Avenue Studio',
       subtitle: 'Tu espacio creativo en el corazón de Asunción',
       description: 'Un estudio profesional de creación de contenido disponible para alquiler, equipado con tecnología de última generación y diseñado para potenciar tu marca.',
-      promoTitle: 'Precios Promocionales de Apertura',
+      promoTitle: 'Precios promocionales de apertura',
       rates: {
         title: 'Tarifas',
-        hours2: '2 Horas',
-        hours4: '4 Horas',
-        hours6: '6 Horas',
-        hours8: '8 Horas',
+        hours2: '2 horas',
+        hours4: '4 horas',
+        hours6: '6 horas',
+        hours8: '8 horas',
         price2: '250.000 Gs',
         price4: '450.000 Gs',
         price6: '650.000 Gs',
         price8: '800.000 Gs'
       },
       equipment: {
-        title: 'Equipamiento Incluido',
+        title: 'Equipamiento incluido',
         light: 'Luz Godox SL-100 Bicolor',
         flash: 'Flash Godox AD200 II',
         savings: 'Valor 20.000 Gs/hora c/u - Exhonerados',
         table: 'Mesa de reuniones para 8 personas',
-        backdrop: 'Fondo Infinito',
+        backdrop: 'Fondo infinito',
         lounge: 'Área de descanso y esparcimiento',
         tv: 'TV en sala de esparcimiento',
         wifi: 'WiFi de alta velocidad',
         water: 'Agua incluida'
       },
-      cta: 'Reservar Ahora',
-      contact: 'Consultar Disponibilidad',
+      cta: 'Reservar ahora',
+      contact: 'Consultar disponibilidad',
       gallery: {
-        title: 'Nuestro Espacio',
+        title: 'Nuestro espacio',
         subtitle: 'Conocé el estudio donde tu marca cobra vida'
       }
     }
