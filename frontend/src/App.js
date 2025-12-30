@@ -445,6 +445,75 @@ function AppRouter() {
               navigate('/studio/reservar');
             }} />
           } />
+
+          {/* E-commerce Routes */}
+          <Route path="/shop" element={
+            <>
+              <ShopNav 
+                t={t} 
+                language={language} 
+                setLanguage={setLanguage}
+                user={user}
+                cart={cart}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+              />
+              <div style={{ paddingTop: '80px' }}>
+                <ShopPage cart={cart} setCart={setCart} />
+              </div>
+            </>
+          } />
+
+          <Route path="/shop/cart" element={
+            <>
+              <ShopNav 
+                t={t} 
+                language={language} 
+                setLanguage={setLanguage}
+                user={user}
+                cart={cart}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+              />
+              <div style={{ paddingTop: '80px' }}>
+                <CartPage cart={cart} setCart={setCart} />
+              </div>
+            </>
+          } />
+
+          <Route path="/shop/checkout" element={
+            <>
+              <ShopNav 
+                t={t} 
+                language={language} 
+                setLanguage={setLanguage}
+                user={user}
+                cart={cart}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+              />
+              <div style={{ paddingTop: '80px' }}>
+                <CheckoutPage cart={cart} setCart={setCart} user={user} />
+              </div>
+            </>
+          } />
+
+          <Route path="/shop/order-success" element={
+            <>
+              <ShopNav 
+                t={t} 
+                language={language} 
+                setLanguage={setLanguage}
+                user={user}
+                cart={cart}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+              />
+              <div style={{ paddingTop: '80px' }}>
+                <OrderSuccessPage setCart={setCart} />
+              </div>
+            </>
+          } />
         </Routes>
       </div>
     </>
