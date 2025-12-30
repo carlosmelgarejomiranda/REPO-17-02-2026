@@ -334,57 +334,45 @@ async def get_product(product_id: str):
             "stock": float(product.get('stock', 0)),
             "discount": float(product.get('discount', 0)),
             "description": product.get('description', ''),
-                "image": product.get('img_url', ''),
-                "category_id": product.get('categoryID'),
-                "brand_id": product.get('brandID'),
-                "featured": product.get('featured', False)
-            }
+            "image": product.get('img_url', ''),
+            "category": product.get('category', '').strip(),
+            "brand": product.get('brand', '').strip(),
+            "featured": product.get('featured', False)
+        }
             
-    except httpx.RequestError as e:
-        raise HTTPException(status_code=502, detail=f"ERP connection error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Error: {str(e)}")
 
 @ecommerce_router.get("/featured")
 async def get_featured_products():
-    """Get featured products for homepage"""
+    """Get featured products for homepage - uses cache"""
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            response = await client.post(
-                f"{ENCOM_API_URL}/products",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {ENCOM_API_TOKEN}"
-                },
-                json={"limit": 100, "page": 1}
-            )
-            
-            if response.status_code != 200:
-                raise HTTPException(status_code=502, detail="Error connecting to ERP")
-            
-            data = response.json()
-            products = data.get('data', [])
-            
-            # Filter featured products with stock
-            featured = [p for p in products if p.get('featured') and float(p.get('stock', 0)) > 0][:8]
-            
-            # If not enough featured, get products with stock
-            if len(featured) < 8:
-                with_stock = [p for p in products if float(p.get('stock', 0)) > 0][:8]
-                featured = with_stock
-            
-            transformed = []
-            for p in featured:
-                transformed.append({
-                    "id": p.get('ID'),
-                    "name": p.get('Name'),
-                    "price": float(p.get('price', 0)),
-                    "image": p.get('img_url', ''),
-                    "discount": float(p.get('discount', 0))
-                })
-            
-            return transformed
-            
-    except httpx.RequestError as e:
-        raise HTTPException(status_code=502, detail=f"ERP connection error: {str(e)}")
+        all_products = await get_cached_products()
+        
+        # Filter products with stock
+        products = [p for p in all_products if float(p.get('stock', 0)) > 0]
+        
+        # Filter featured products
+        featured = [p for p in products if p.get('featured')][:8]
+        
+        # If not enough featured, get first products with stock
+        if len(featured) < 8:
+            featured = products[:8]
+        
+        transformed = []
+        for p in featured:
+            transformed.append({
+                "id": p.get('ID'),
+                "name": p.get('Name'),
+                "price": float(p.get('price', 0)),
+                "image": p.get('img_url', ''),
+                "discount": float(p.get('discount', 0))
+            })
+        
+        return transformed
+        
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Error: {str(e)}")
 
 # ==================== DELIVERY CALCULATION ====================
 
