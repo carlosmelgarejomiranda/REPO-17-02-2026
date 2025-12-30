@@ -16,13 +16,14 @@ export const Benefits = ({ t }) => {
       className="py-14 px-6 relative" 
       style={{ backgroundColor: '#f5ede4' }}
     >
-      {/* Architectural background image */}
-      <div className="absolute inset-0 opacity-8">
+      {/* Architectural background image with overlay */}
+      <div className="absolute inset-0">
         <img 
           src="https://images.unsplash.com/photo-1676517243531-69e3b27276e9?w=1920&q=80" 
           alt="Neoclassical Architecture"
           className="w-full h-full object-cover"
         />
+        <div className="absolute inset-0" style={{ backgroundColor: 'rgba(245, 237, 228, 0.85)' }}></div>
       </div>
       
       <div className="max-w-6xl mx-auto relative z-10">

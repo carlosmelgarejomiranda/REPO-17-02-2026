@@ -54,13 +54,13 @@ export const ContactForm = ({ t }) => {
         <div className="w-20 h-0.5 mx-auto mb-6" style={{ backgroundColor: '#d4a968' }}></div>
         
         {/* AVENUE Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           <img 
             src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
             alt="Avenue"
-            className="h-8 mx-auto"
+            className="h-12 mx-auto"
             style={{
-              transform: 'scale(6)',
+              transform: 'scale(12)',
               filter: 'drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
             }}
           />
