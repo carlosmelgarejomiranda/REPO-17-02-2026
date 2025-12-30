@@ -70,7 +70,7 @@ export const Brands = ({ t }) => {
                   alt={brand.name}
                   className="w-full h-auto object-contain brand-logo"
                   style={{
-                    transform: isLargerLogo ? 'scale(3)' : 'scale(1)',
+                    transform: isLargerLogo ? 'scale(5)' : 'scale(1)',
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease'
                   }}
