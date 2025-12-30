@@ -11,6 +11,8 @@ export const AdminDashboard = ({ user }) => {
   const [filterDate, setFilterDate] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
+  const [testEmailStatus, setTestEmailStatus] = useState(null);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
