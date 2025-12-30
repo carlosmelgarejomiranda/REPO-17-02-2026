@@ -345,6 +345,32 @@ export const translations = {
       delivery: 'Pedidos e Entrega',
       follow: 'Siga-nos',
       rights: 'Avenue. Todos os direitos reservados.'
+    },
+    mainLanding: {
+      welcome: 'Bem-vindo ao Avenue',
+      tagline: 'Um conceito premium onde as marcas brilham e o conteúdo ganha vida',
+      joinAvenue: 'Junte-se ao Avenue',
+      joinDesc: 'Descubra como sua marca pode brilhar em nosso espaço premium sem comissões',
+      forBrands: 'Para marcas',
+      studioTitle: 'Avenue Studio',
+      studioDesc: 'Aluguel de estúdio fotográfico profissional e plataforma UGC Creators',
+      explore: 'Explorar'
+    },
+    studioLanding: {
+      title: 'Avenue Studio',
+      subtitle: 'Onde o conteúdo ganha vida',
+      description: 'Um espaço profissional para criar conteúdo de alta qualidade e conectar marcas com criadores',
+      rental: 'Aluguel de estúdio',
+      rentalDesc: 'Estúdio fotográfico profissional equipado com luzes Godox, fundo infinito, área de descanso e mais',
+      viewMore: 'Ver mais e reservar',
+      ugcTitle: 'UGC Creators',
+      ugcDesc: 'Conectamos marcas com micro-influenciadores para criar conteúdo autêntico em troca de permutas',
+      ugcBenefit1: 'Conteúdo UGC autêntico',
+      ugcBenefit2: 'Micro-influenciadores verificados',
+      ugcBenefit3: 'Permutas de produtos/serviços',
+      ugcBenefit4: 'Campanhas personalizadas',
+      knowMore: 'Saber mais',
+      backToAvenue: 'Voltar ao Avenue'
     }
   },
   de: {
