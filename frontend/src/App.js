@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { translations } from "./i18n/translations";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { Hero } from "./components/Hero";
@@ -11,6 +12,7 @@ import { Brands } from "./components/Brands";
 import { Location } from "./components/Location";
 import { ContactForm } from "./components/ContactForm";
 import { Footer } from "./components/Footer";
+import { AvenueStudio } from "./components/AvenueStudio";
 import { Button } from "./components/ui/button";
 import { Menu, X } from "lucide-react";
 
