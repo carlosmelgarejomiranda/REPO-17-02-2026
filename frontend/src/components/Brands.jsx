@@ -58,7 +58,11 @@ export const Brands = ({ t }) => {
             if (brand.name === 'Coraltheia') scaleValue = 5;
             if (brand.name === 'Serotonina') scaleValue = 4;
             if (brand.name === 'OKI') scaleValue = 2.2;
-            if (brand.name === 'Brand Logo') scaleValue = 2.2; // Skyline?
+            if (brand.name === 'Brand Logo') scaleValue = 2.2;
+            // Logos que necesitan ser más pequeños
+            if (brand.name === 'Laese') scaleValue = 0.8;
+            if (brand.name === 'UGG') scaleValue = 0.8;
+            if (brand.name === 'Fila') scaleValue = 0.8;
             
             return (
               <div
