@@ -3,7 +3,7 @@ import { MapPin, Car, Shield, TrendingUp } from 'lucide-react';
 
 export const Location = ({ t }) => {
   return (
-    <section className="py-14 px-6" style={{ backgroundColor: '#1a1a1a' }}>
+    <section className="py-14 px-6" style={{ backgroundColor: '#ead7c8' }}>
       <div className="max-w-5xl mx-auto">
         <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
         
@@ -11,14 +11,14 @@ export const Location = ({ t }) => {
           <div>
             <h2 className="text-2xl md:text-4xl font-light mb-4 italic" 
                 style={{ 
-                  color: '#f5ede4',
+                  color: '#1a1a1a',
                   fontFamily: 'var(--font-primary)'
                 }}>
               {t.location.title}
             </h2>
             <p className="text-sm mb-6 leading-relaxed" 
                style={{ 
-                 color: '#ead7c8',
+                 color: '#5a5a5a',
                  fontFamily: 'var(--font-secondary)'
                }}>
               {t.location.description}
@@ -37,14 +37,14 @@ export const Location = ({ t }) => {
                     key={index}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm"
                     style={{ 
-                      backgroundColor: 'rgba(212, 169, 104, 0.15)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.6)',
                       border: '1px solid rgba(212, 169, 104, 0.3)'
                     }}
                   >
                     <Icon className="w-3 h-3" style={{ color: '#d4a968' }} />
                     <span className="text-xs font-light" 
                           style={{ 
-                            color: '#ead7c8',
+                            color: '#1a1a1a',
                             fontFamily: 'var(--font-secondary)'
                           }}>
                       {item.label}
@@ -56,7 +56,7 @@ export const Location = ({ t }) => {
 
             <p className="text-xs" 
                style={{ 
-                 color: '#ead7c8',
+                 color: '#5a5a5a',
                  fontFamily: 'var(--font-secondary)'
                }}>
               {t.location.features}

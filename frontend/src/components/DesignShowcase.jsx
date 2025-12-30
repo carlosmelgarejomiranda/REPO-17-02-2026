@@ -13,14 +13,6 @@ export const DesignShowcase = ({ t }) => {
 
   return (
     <section className="py-14 px-6 relative" style={{ backgroundColor: '#f5ede4' }}>
-      <div className="absolute top-0 left-0 right-0 bottom-0 overflow-hidden">
-        <img 
-          src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/gbm22p9w_IMG_9625.HEIC" 
-          alt="Avenue Interior"
-          className="w-full h-full object-cover opacity-15"
-        />
-      </div>
-      
       <div className="max-w-5xl mx-auto relative z-10">
         <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
         
@@ -49,9 +41,8 @@ export const DesignShowcase = ({ t }) => {
                 key={index}
                 className="flex items-start gap-3 p-4 rounded-sm transition-all duration-300 hover:shadow-md"
                 style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
-                  border: '1px solid rgba(212, 169, 104, 0.3)',
-                  backdropFilter: 'blur(10px)'
+                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  border: '1px solid rgba(212, 169, 104, 0.3)'
                 }}
               >
                 <div className="flex-shrink-0 p-2 rounded-full" 
