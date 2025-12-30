@@ -626,7 +626,7 @@ async def admin_test_email(request: Request):
         "price": 450000,
         "name": "Cliente de Prueba",
         "phone": "+595 971 234 567",
-        "email": ADMIN_EMAIL,  # Send to admin email
+        "email": "carlos.melgarejo.miranda@gmail.com",  # Send to Resend registered email
         "company": "Marca Premium SRL",
         "razon_social": "Marca Premium SRL",
         "ruc": "80012345-6",
@@ -635,7 +635,7 @@ async def admin_test_email(request: Request):
     
     await send_confirmation_email(test_reservation)
     
-    return {"message": f"Email de prueba enviado a {ADMIN_EMAIL}"}
+    return {"message": "Email de prueba enviado a carlos.melgarejo.miranda@gmail.com"}
 
 @api_router.get("/admin/reservations")
 async def admin_get_all_reservations(request: Request, date: Optional[str] = None, status: Optional[str] = None):
