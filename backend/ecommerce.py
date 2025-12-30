@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 import uuid
 import asyncio
 import math
+import re
 
 # Initialize router
 ecommerce_router = APIRouter(prefix="/api/shop")
@@ -32,6 +33,38 @@ stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
 gmaps = None
 if GOOGLE_MAPS_API_KEY:
     gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
+
+# Gender mapping based on category/brand keywords
+FEMALE_KEYWORDS = ['malva', 'santal', 'ina clothing', 'efimera', 'thula', 'mariela', 'sarelly', 'cristaline']
+MALE_KEYWORDS = ['bro fitwear', 'lacoste', 'immortal']
+UNISEX_KEYWORDS = ['aguara', 'ds', 'mp suplementos', 'ugg']
+
+def extract_size_from_name(name: str) -> Optional[str]:
+    """Extract size from product name"""
+    # Common patterns: -38-, -M-, -XL-, -U- (único)
+    match = re.search(r'-([XSML]{1,3}|[0-9]{1,2}|U)-', name, re.IGNORECASE)
+    if match:
+        return match.group(1).upper()
+    # Also check at the end of name
+    match = re.search(r'-([XSML]{1,3}|[0-9]{1,2}|U)$', name, re.IGNORECASE)
+    if match:
+        return match.group(1).upper()
+    return None
+
+def determine_gender(category: str, brand: str) -> str:
+    """Determine gender based on category/brand"""
+    cat_lower = (category or '').lower()
+    brand_lower = (brand or '').lower()
+    
+    for keyword in FEMALE_KEYWORDS:
+        if keyword in cat_lower or keyword in brand_lower:
+            return 'mujer'
+    
+    for keyword in MALE_KEYWORDS:
+        if keyword in cat_lower or keyword in brand_lower:
+            return 'hombre'
+    
+    return 'unisex'
 
 # ==================== MODELS ====================
 
@@ -63,6 +96,69 @@ class DeliveryCalculation(BaseModel):
     lat: float
     lng: float
 
+# ==================== FILTERS ENDPOINT ====================
+
+@ecommerce_router.get("/filters")
+async def get_filters():
+    """Get available filter options"""
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.post(
+                f"{ENCOM_API_URL}/products",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {ENCOM_API_TOKEN}"
+                },
+                json={"limit": 500, "page": 1}
+            )
+            
+            if response.status_code != 200:
+                raise HTTPException(status_code=502, detail="Error connecting to ERP")
+            
+            data = response.json()
+            products = data.get('data', [])
+            
+            # Filter products with stock
+            products = [p for p in products if float(p.get('stock', 0)) > 0]
+            
+            # Collect unique values
+            categories = {}
+            sizes = set()
+            genders = {'mujer': 0, 'hombre': 0, 'unisex': 0}
+            
+            for p in products:
+                # Categories
+                cat = p.get('category', '').strip()
+                if cat:
+                    categories[cat] = categories.get(cat, 0) + 1
+                
+                # Sizes from name
+                size = extract_size_from_name(p.get('Name', ''))
+                if size:
+                    sizes.add(size)
+                
+                # Gender
+                gender = determine_gender(p.get('category', ''), p.get('brand', ''))
+                genders[gender] += 1
+            
+            # Sort sizes (numeric first, then alpha)
+            numeric_sizes = sorted([s for s in sizes if s.isdigit()], key=int)
+            alpha_sizes = sorted([s for s in sizes if not s.isdigit()])
+            sorted_sizes = numeric_sizes + alpha_sizes
+            
+            return {
+                "categories": [{"name": k, "count": v} for k, v in sorted(categories.items(), key=lambda x: -x[1])],
+                "sizes": sorted_sizes,
+                "genders": [
+                    {"value": "mujer", "label": "Mujer", "count": genders['mujer']},
+                    {"value": "hombre", "label": "Hombre", "count": genders['hombre']},
+                    {"value": "unisex", "label": "Unisex", "count": genders['unisex']}
+                ]
+            }
+            
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=502, detail=f"ERP connection error: {str(e)}")
+
 # ==================== PRODUCTS ENDPOINTS ====================
 
 @ecommerce_router.get("/products")
@@ -70,6 +166,8 @@ async def get_products(
     page: int = 1,
     limit: int = 20,
     category: Optional[str] = None,
+    gender: Optional[str] = None,
+    size: Optional[str] = None,
     search: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None
