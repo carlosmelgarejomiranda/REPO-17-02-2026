@@ -607,24 +607,10 @@ export const UGCCreators = ({ t, campaignId }) => {
                       className="mt-1"
                     />
                     <span className="text-sm" style={{ color: '#a8a8a8' }}>
-                      Leí y acepto las <Link to="/studio/ugc/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a968', textDecoration: 'underline' }}>Bases y Condiciones</Link> (Contrato de Adhesión), la Política de Privacidad y la Autorización de uso de imagen/voz y licencia de contenido, incluyendo el uso por AVENUE MALL EAS y por el Cliente de la Campaña, y autorizo el contacto por WhatsApp/email para coordinación. *
+                      Leí y acepto las <Link to="/studio/ugc/terms" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a968', textDecoration: 'underline' }}>Bases y Condiciones</Link> (incluye privacidad y autorización de uso de imagen y contenido por AVENUE y la marca). *
                     </span>
                   </label>
                   {errors.acepta_condiciones && <p className="text-sm" style={{ color: '#ef4444' }}>{errors.acepta_condiciones}</p>}
-
-                  {/* Content authorization checkbox */}
-                  <label className="flex items-start gap-3 cursor-pointer p-3 rounded" style={{ backgroundColor: '#2a2a2a' }}>
-                    <input
-                      type="checkbox"
-                      checked={formData.autoriza_contenido}
-                      onChange={(e) => updateField('autoriza_contenido', e.target.checked)}
-                      className="mt-1"
-                    />
-                    <span className="text-sm" style={{ color: '#a8a8a8' }}>
-                      Autorizo a AVENUE a reutilizar el contenido en sus redes (orgánico) *
-                    </span>
-                  </label>
-                  {errors.autoriza_contenido && <p className="text-sm" style={{ color: '#ef4444' }}>{errors.autoriza_contenido}</p>}
 
                   {/* Optional checkbox */}
                   <label className="flex items-start gap-3 cursor-pointer p-3 rounded" style={{ backgroundColor: '#2a2a2a' }}>
