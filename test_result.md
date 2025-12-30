@@ -108,6 +108,18 @@ frontend:
         agent: "testing"
         comment: "Frontend testing not performed as per testing agent instructions - only backend API testing conducted."
 
+  - task: "Avenue Online E-commerce Section"
+    implemented: true
+    working: false
+    file: "frontend/src/components/ShopPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "✅ PARTIAL SUCCESS - Main landing page shows 3 options correctly: 'Únete a Avenue', 'Avenue Online', 'Avenue Studio'. Navigation to /shop works. Shop page UI elements present: Avenue Online header, search bar, filters button, shopping cart button. Cart page shows empty state correctly. ❌ CRITICAL ISSUES: Products API fails to load in browser (net::ERR_ABORTED), though API works via curl. Console shows 'Error fetching products: TypeError: Failed to fetch'. Checkout page has React rendering issues. Auth API returns 401 errors. Products display as loading skeleton cards but never populate with actual data."
+
   - task: "Terms & Conditions Integration"
     implemented: true
     working: true
