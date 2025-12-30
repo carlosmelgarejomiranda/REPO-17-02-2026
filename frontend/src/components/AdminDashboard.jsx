@@ -428,6 +428,163 @@ export const AdminDashboard = ({ user }) => {
           </Card>
         )}
 
+        {/* UGC Tab */}
+        {activeTab === 'ugc' && (
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardHeader>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <CardTitle style={{ color: '#f5ede4' }}>UGC Creator Applications</CardTitle>
+                <div className="flex gap-2 flex-wrap">
+                  <select
+                    value={ugcFilterStatus}
+                    onChange={(e) => setUgcFilterStatus(e.target.value)}
+                    className="p-2 rounded"
+                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                  >
+                    <option value="">Todos los estados</option>
+                    <option value="pending">Pendientes</option>
+                    <option value="approved">Aprobadas</option>
+                    <option value="rejected">Rechazadas</option>
+                  </select>
+                  <Button
+                    onClick={() => setUgcFilterStatus('')}
+                    variant="ghost"
+                    style={{ color: '#a8a8a8' }}
+                  >
+                    Limpiar
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <p style={{ color: '#a8a8a8' }}>Cargando...</p>
+              ) : ugcApplications.length === 0 ? (
+                <p style={{ color: '#a8a8a8' }}>No hay aplicaciones UGC</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #333' }}>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Nombre</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Email</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Instagram</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Seguidores</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Contenido</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Estado</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Fecha</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ugcApplications.map((app) => (
+                        <tr key={app.application_id} style={{ borderBottom: '1px solid #2a2a2a' }}>
+                          <td className="p-3" style={{ color: '#f5ede4' }}>{app.name}</td>
+                          <td className="p-3" style={{ color: '#f5ede4' }}>{app.email}</td>
+                          <td className="p-3">
+                            <a 
+                              href={app.instagram_handle.startsWith('@') ? `https://instagram.com/${app.instagram_handle.slice(1)}` : `https://instagram.com/${app.instagram_handle}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1"
+                              style={{ color: '#d4a968' }}
+                            >
+                              <Instagram className="w-4 h-4" />
+                              {app.instagram_handle}
+                            </a>
+                          </td>
+                          <td className="p-3" style={{ color: '#f5ede4' }}>
+                            {app.follower_count?.toLocaleString() || 'N/A'}
+                          </td>
+                          <td className="p-3">
+                            <div className="text-sm" style={{ color: '#a8a8a8' }}>
+                              {app.content_type}
+                            </div>
+                            {app.portfolio_url && (
+                              <a 
+                                href={app.portfolio_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm"
+                                style={{ color: '#d4a968' }}
+                              >
+                                Ver portfolio
+                              </a>
+                            )}
+                          </td>
+                          <td className="p-3">
+                            <span
+                              className="px-2 py-1 rounded text-sm"
+                              style={{
+                                backgroundColor: 
+                                  app.status === 'approved' ? 'rgba(34, 197, 94, 0.2)' :
+                                  app.status === 'rejected' ? 'rgba(239, 68, 68, 0.2)' :
+                                  'rgba(245, 158, 11, 0.2)',
+                                color: 
+                                  app.status === 'approved' ? '#22c55e' :
+                                  app.status === 'rejected' ? '#ef4444' :
+                                  '#f59e0b'
+                              }}
+                            >
+                              {app.status === 'approved' ? 'Aprobada' :
+                               app.status === 'rejected' ? 'Rechazada' : 'Pendiente'}
+                            </span>
+                          </td>
+                          <td className="p-3" style={{ color: '#a8a8a8' }}>
+                            {new Date(app.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex gap-2">
+                              {app.status === 'pending' && (
+                                <>
+                                  <button
+                                    onClick={() => updateUgcStatus(app.application_id, 'approved')}
+                                    className="p-1 rounded"
+                                    style={{ color: '#22c55e' }}
+                                    title="Aprobar"
+                                  >
+                                    <Check className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => updateUgcStatus(app.application_id, 'rejected')}
+                                    className="p-1 rounded"
+                                    style={{ color: '#ef4444' }}
+                                    title="Rechazar"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </>
+                              )}
+                              {app.status !== 'pending' && (
+                                <button
+                                  onClick={() => updateUgcStatus(app.application_id, 'pending')}
+                                  className="p-1 rounded"
+                                  style={{ color: '#f59e0b' }}
+                                  title="Marcar como pendiente"
+                                >
+                                  <MessageCircle className="w-4 h-4" />
+                                </button>
+                              )}
+                              <button
+                                onClick={() => deleteUgcApplication(app.application_id)}
+                                className="p-1 rounded"
+                                style={{ color: '#666' }}
+                                title="Eliminar"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Users Tab */}
         {activeTab === 'users' && (
           <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
