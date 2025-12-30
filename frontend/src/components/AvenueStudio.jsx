@@ -4,6 +4,13 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 
 export const AvenueStudio = ({ t }) => {
+  // Editorial B&W photography studio images
+  const studioImages = {
+    hero: 'https://images.unsplash.com/photo-1604514628550-37477afdf4e3?q=80&w=2127&auto=format&fit=crop',
+    equipment: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=2070&auto=format&fit=crop',
+    cta: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?q=80&w=2070&auto=format&fit=crop'
+  };
+
   const rates = [
     { hours: t.studio.rates.hours2, price: t.studio.rates.price2 },
     { hours: t.studio.rates.hours4, price: t.studio.rates.price4 },
@@ -31,8 +38,18 @@ export const AvenueStudio = ({ t }) => {
     <div className="min-h-screen" style={{ backgroundColor: '#f7f2ed' }}>
       {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0" style={{ backgroundColor: '#1a1a1a' }}>
-          <div className="absolute inset-0 opacity-30">
+        {/* Background Image with B&W Filter */}
+        <div className="absolute inset-0">
+          <img 
+            src={studioImages.hero}
+            alt="Avenue Studio"
+            className="w-full h-full object-cover"
+            style={{ filter: 'grayscale(100%) contrast(1.1)' }}
+          />
+          {/* Dark Overlay for text readability */}
+          <div className="absolute inset-0 bg-black/70"></div>
+          {/* Gold accent glow */}
+          <div className="absolute inset-0 opacity-20">
             <div className="absolute top-20 left-10 w-96 h-96 bg-[#d4a968] rounded-full blur-3xl"></div>
             <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#d4a968] rounded-full blur-3xl"></div>
           </div>
@@ -115,8 +132,19 @@ export const AvenueStudio = ({ t }) => {
       </section>
 
       {/* Equipment Section */}
-      <section className="py-20 px-6" style={{ backgroundColor: '#1a1a1a' }}>
-        <div className="max-w-6xl mx-auto">
+      <section className="relative py-20 px-6 overflow-hidden">
+        {/* Background Image with B&W Filter */}
+        <div className="absolute inset-0">
+          <img 
+            src={studioImages.equipment}
+            alt="Studio Equipment"
+            className="w-full h-full object-cover"
+            style={{ filter: 'grayscale(100%) contrast(1.1)' }}
+          />
+          <div className="absolute inset-0 bg-black/85"></div>
+        </div>
+
+        <div className="relative z-10 max-w-6xl mx-auto">
           <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
           
           <h2 className="text-4xl md:text-5xl font-light text-center mb-6 italic" 
@@ -141,9 +169,9 @@ export const AvenueStudio = ({ t }) => {
               return (
                 <div 
                   key={index}
-                  className="flex items-start gap-4 p-6 rounded-sm"
+                  className="flex items-start gap-4 p-6 rounded-sm backdrop-blur-sm"
                   style={{ 
-                    backgroundColor: item.highlight ? 'rgba(212, 169, 104, 0.15)' : 'rgba(245, 237, 228, 0.1)',
+                    backgroundColor: item.highlight ? 'rgba(212, 169, 104, 0.2)' : 'rgba(245, 237, 228, 0.1)',
                     border: item.highlight ? '1px solid #d4a968' : '1px solid rgba(245, 237, 228, 0.2)'
                   }}
                 >
@@ -167,11 +195,22 @@ export const AvenueStudio = ({ t }) => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 text-center" style={{ backgroundColor: '#f7f2ed' }}>
-        <div className="max-w-3xl mx-auto">
+      <section className="relative py-20 px-6 text-center overflow-hidden">
+        {/* Background Image with B&W Filter */}
+        <div className="absolute inset-0">
+          <img 
+            src={studioImages.cta}
+            alt="Creative Studio"
+            className="w-full h-full object-cover"
+            style={{ filter: 'grayscale(100%) contrast(1.1)' }}
+          />
+          <div className="absolute inset-0 bg-black/60"></div>
+        </div>
+
+        <div className="relative z-10 max-w-3xl mx-auto">
           <h3 className="text-3xl md:text-4xl font-light mb-8 italic" 
               style={{ 
-                color: '#1a1a1a',
+                color: '#f5ede4',
                 fontFamily: 'var(--font-primary)'
               }}>
             {t.studio.contact}
