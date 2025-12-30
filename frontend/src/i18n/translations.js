@@ -116,7 +116,11 @@ export const translations = {
         water: 'Agua incluida'
       },
       cta: 'Reservar Ahora',
-      contact: 'Consultar Disponibilidad'
+      contact: 'Consultar Disponibilidad',
+      gallery: {
+        title: 'Nuestro Espacio',
+        subtitle: 'Conocé el estudio donde tu marca cobra vida'
+      }
     }
   },
   en: {
