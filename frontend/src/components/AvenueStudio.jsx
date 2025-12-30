@@ -30,7 +30,7 @@ export const AvenueStudio = ({ t }) => {
 
   const handleContact = () => {
     const message = `Hola! Me interesa reservar Avenue Studio. ¿Podrían darme más información sobre disponibilidad?`;
-    const whatsappUrl = `https://wa.me/595976691520?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/595973666000?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -110,7 +110,7 @@ export const AvenueStudio = ({ t }) => {
               📅 Las reservas online requieren al menos <strong>1 día de anticipación</strong>.
             </p>
             <p style={{ color: '#a8a8a8', fontSize: '13px', marginTop: '4px' }}>
-              Para reservas del mismo día, contactanos por WhatsApp: <a href="https://wa.me/595976691520" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a968', textDecoration: 'underline' }}>+595 976 691 520</a>
+              Para reservas del mismo día, contactanos por WhatsApp: <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a968', textDecoration: 'underline' }}>+595 973 666 000</a>
             </p>
           </div>
 
