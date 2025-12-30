@@ -187,14 +187,14 @@ def extract_base_model(name: str) -> str:
         # PRODUCT CODE PATTERNS (Wuarani style)
         # Format: XXXXX-[COLOR][SIZE]- where COLOR is letter(s) and SIZE is P/M/G/XL/etc
         # ===========================================
-        # Color codes: N=Negro, B=Blanco, R=Rosa/Rojo, G=Gris, C=Celeste, V=Verde, F=Fucsia, L=Lila, O=Ocre
+        # Color codes: N=Negro, B=Blanco, R=Rosa/Rojo, G=Gris, C=Celeste, V=Verde, F=Fucsia, L=Lila, O=Ocre, P=Petroleo/Piel
         # Size codes: XP, P, M, G, XL, XXL, XG, XXG
         
-        # Extended sizes with X prefix: NXP, BXL, GXXL, etc.
-        (r'(\d{5,6}-\d?[NBRGCVFLOA])(X{1,2}[PLG])(-)', r'\1-'),  # 100394-BXP- → 100394-B-
+        # Extended sizes with X prefix: NXP, BXL, GXXL, PXL, etc.
+        (r'(\d{5,6}-\d?[NBRGCVFLOAP])(X{1,2}[PLG])(-)', r'\1-'),  # 100394-BXP-, 100100-PXL- → remove size
         
-        # Single letter sizes: NP, NM, NG, BP, BM, BG, etc.
-        (r'(\d{5,6}-\d?[NBRGCVFLOA])([PMGSL])(-)', r'\1-'),      # 100394-BP- → 100394-B-
+        # Single letter sizes: NP, NM, NG, BP, BM, BG, PP, PM, PG etc.
+        (r'(\d{5,6}-\d?[NBRGCVFLOAP])([PMGSL])(-)', r'\1-'),      # 100394-BP-, 100100-PM- → remove size
         
         # ===========================================
         # DOT NOTATION (OKI style: REM.PREM.BLA.M)
