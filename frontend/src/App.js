@@ -225,8 +225,10 @@ function AppRouter() {
                       <img 
                         src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
                         alt="Avenue"
-                        className="h-10 cursor-pointer"
+                        className="h-7 cursor-pointer"
                         style={{
+                          transform: 'scale(1.8)',
+                          transformOrigin: 'left center',
                           filter: 'brightness(1.2) drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
                         }}
                       />
