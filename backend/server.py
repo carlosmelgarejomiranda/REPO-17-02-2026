@@ -874,6 +874,9 @@ async def ugc_apply(application: UGCApplication):
     await db.ugc_applications.insert_one(app_doc)
     app_doc.pop("_id", None)
     
+    # Send admin notification (WhatsApp + Email)
+    await notify_new_ugc_application(app_doc)
+    
     return {
         "application_id": application_id,
         "status": status,
