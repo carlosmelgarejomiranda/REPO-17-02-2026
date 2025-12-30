@@ -5,7 +5,7 @@ export const Brands = ({ t }) => {
     { name: 'Cristaline', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/43f8bnvu_cristaline.png' },
     { name: 'Sarelly', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/obb5nku6_sarelly.png' },
     { name: 'MP Suplemento', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/7hk6omux_mp%20suplemento.png' },
-    { name: 'Coraltheia', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/12alcuec_IMG_7056.PNG' },
+    { name: 'Coraltheia', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/vd1ynijp_Coraltheia%20%281%29.png' },
     { name: 'Brand', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/q0w0dccc_IMG_8325.PNG' },
     { name: 'Laese', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/o91gyue1_laese.png' },
     { name: 'Thula', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/y060bk89_thula.png' },
