@@ -28,7 +28,7 @@ export const AdminDashboard = ({ user }) => {
 
   useEffect(() => {
     fetchData();
-  }, [filterDate, filterStatus]);
+  }, [filterDate, filterStatus, ugcFilterStatus]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -38,12 +38,18 @@ export const AdminDashboard = ({ user }) => {
       if (filterDate) query += `?date=${filterDate}`;
       if (filterStatus) query += `${query ? '&' : '?'}status=${filterStatus}`;
 
-      const [resResponse, usersResponse] = await Promise.all([
+      let ugcQuery = ugcFilterStatus ? `?status=${ugcFilterStatus}` : '';
+
+      const [resResponse, usersResponse, ugcResponse] = await Promise.all([
         fetch(`${API_URL}/api/admin/reservations${query}`, {
           headers: getAuthHeaders(),
           credentials: 'include'
         }),
         fetch(`${API_URL}/api/admin/users`, {
+          headers: getAuthHeaders(),
+          credentials: 'include'
+        }),
+        fetch(`${API_URL}/api/admin/ugc${ugcQuery}`, {
           headers: getAuthHeaders(),
           credentials: 'include'
         })
@@ -57,6 +63,11 @@ export const AdminDashboard = ({ user }) => {
       if (usersResponse.ok) {
         const usersData = await usersResponse.json();
         setUsers(usersData);
+      }
+
+      if (ugcResponse.ok) {
+        const ugcData = await ugcResponse.json();
+        setUgcApplications(ugcData);
       }
     } catch (err) {
       console.error('Error fetching data:', err);
