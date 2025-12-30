@@ -56,21 +56,30 @@ export const Brands = ({ t }) => {
               className="flex items-center justify-center p-6 transition-all duration-300 hover:scale-110"
               style={{ 
                 backgroundColor: '#f7f2ed',
-                border: '1px solid rgba(212, 169, 104, 0.2)',
                 minHeight: '120px'
               }}
             >
-              <img 
-                src={brand.url}
-                alt={brand.name}
-                className="w-full h-auto max-h-24 object-contain"
+              {/* Border solo en desktop */}
+              <div 
+                className="w-full h-full flex items-center justify-center"
                 style={{
-                  filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
-                  transition: 'filter 0.3s ease'
+                  border: '1px solid rgba(212, 169, 104, 0.2)',
+                  borderWidth: window.innerWidth >= 1024 ? '1px' : '0'
                 }}
-                onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
-                onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
-              />
+              >
+                <img 
+                  src={brand.url}
+                  alt={brand.name}
+                  className="w-full h-auto object-contain"
+                  style={{
+                    maxHeight: window.innerWidth >= 1024 ? '96px' : '120px',
+                    filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
+                    transition: 'filter 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
+                  onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
+                />
+              </div>
             </div>
           ))}
         </div>
