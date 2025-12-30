@@ -83,16 +83,6 @@ export const Brands = ({ t }) => {
           .brand-card {
             border: none;
           }
-          
-          .brand-logo {
-            max-height: none;
-          }
-          
-          @media (min-width: 1024px) {
-            .brand-logo {
-              max-height: none;
-            }
-          }
         `}</style>
         
         <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
