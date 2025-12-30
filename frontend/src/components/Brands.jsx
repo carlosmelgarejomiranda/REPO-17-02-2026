@@ -66,12 +66,12 @@ export const Brands = ({ t }) => {
               mobileScaleValue = 4.5;
             }
             if (brand.name === 'OKI') {
-              scaleValue = 3.5;
-              mobileScaleValue = 3;
+              scaleValue = 2.2;
+              mobileScaleValue = 1.5;
             }
             if (brand.name === 'Brand Logo') {
-              scaleValue = 3.5;
-              mobileScaleValue = 3;
+              scaleValue = 2.2;
+              mobileScaleValue = 1.5;
             }
             if (brand.name === 'David Sandoval') scaleValue = 1.5;
             if (brand.name === 'Body Sculpt') scaleValue = 1.5;
