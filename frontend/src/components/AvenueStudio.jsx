@@ -28,10 +28,8 @@ export const AvenueStudio = ({ t }) => {
     { icon: Droplet, text: t.studio.equipment.water }
   ];
 
-  const handleContact = () => {
-    const message = `Hola! Me interesa reservar Avenue Studio. ¿Podrían darme más información sobre disponibilidad?`;
-    const whatsappUrl = `https://wa.me/595973666000?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+  const handleReserve = () => {
+    window.location.href = '/studio/reservar';
   };
 
   return (
