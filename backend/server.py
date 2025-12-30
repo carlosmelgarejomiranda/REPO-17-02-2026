@@ -294,6 +294,132 @@ async def send_confirmation_email(reservation: dict):
     except Exception as e:
         logger.error(f"Failed to send confirmation email: {str(e)}")
 
+# ==================== NOTIFICATION FUNCTIONS ====================
+
+async def send_whatsapp_notification(to_number: str, message: str):
+    """Send WhatsApp notification via Twilio"""
+    if not twilio_client:
+        logger.warning("Twilio client not configured, skipping WhatsApp notification")
+        return False
+    
+    try:
+        # Format the destination number for WhatsApp
+        formatted_to = f"whatsapp:{to_number}" if not to_number.startswith("whatsapp:") else to_number
+        
+        msg = await asyncio.to_thread(
+            twilio_client.messages.create,
+            body=message,
+            from_=TWILIO_WHATSAPP_FROM,
+            to=formatted_to
+        )
+        logger.info(f"WhatsApp notification sent to {to_number}, SID: {msg.sid}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp notification to {to_number}: {str(e)}")
+        return False
+
+async def send_admin_email_notification(subject: str, html_content: str):
+    """Send email notification to admin"""
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [ADMIN_EMAIL],
+            "subject": subject,
+            "html": html_content
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Admin email notification sent: {subject}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send admin email notification: {str(e)}")
+        return False
+
+async def notify_new_reservation(reservation: dict):
+    """Send notifications for new studio reservation"""
+    # WhatsApp notification
+    whatsapp_message = f"""🎬 *NUEVA RESERVA - Avenue Studio*
+
+👤 *Cliente:* {reservation['name']}
+📧 *Email:* {reservation['email']}
+📱 *Teléfono:* {reservation.get('phone', 'N/A')}
+🏢 *Empresa:* {reservation.get('company', 'N/A')}
+
+📅 *Fecha:* {reservation['date']}
+⏰ *Horario:* {reservation['start_time']} - {reservation['end_time']}
+⏱️ *Duración:* {reservation['duration_hours']} horas
+💰 *Precio:* {reservation['price']:,} Gs
+
+ID: {reservation['reservation_id']}"""
+
+    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_STUDIO, whatsapp_message)
+    
+    # Email notification
+    email_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #f5ede4; padding: 40px;">
+        <h1 style="color: #d4a968;">🎬 Nueva Reserva de Studio</h1>
+        <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #d4a968;">
+            <p><strong>Cliente:</strong> {reservation['name']}</p>
+            <p><strong>Email:</strong> {reservation['email']}</p>
+            <p><strong>Teléfono:</strong> {reservation.get('phone', 'N/A')}</p>
+            <p><strong>Empresa:</strong> {reservation.get('company', 'N/A')}</p>
+            <hr style="border-color: #333;">
+            <p><strong>Fecha:</strong> {reservation['date']}</p>
+            <p><strong>Horario:</strong> {reservation['start_time']} - {reservation['end_time']}</p>
+            <p><strong>Duración:</strong> {reservation['duration_hours']} horas</p>
+            <p><strong style="color: #d4a968;">Precio: {reservation['price']:,} Gs</strong></p>
+        </div>
+    </div>
+    """
+    await send_admin_email_notification(f"🎬 Nueva Reserva - {reservation['name']} - {reservation['date']}", email_html)
+
+async def notify_new_ugc_application(application: dict):
+    """Send notifications for new UGC application"""
+    nombre_completo = f"{application.get('nombre', '')} {application.get('apellido', '')}"
+    
+    # WhatsApp notification
+    whatsapp_message = f"""📸 *NUEVA APLICACIÓN UGC*
+
+👤 *Nombre:* {nombre_completo}
+📧 *Email:* {application['email']}
+📱 *WhatsApp:* {application.get('whatsapp', 'N/A')}
+📍 *Ciudad:* {application.get('ciudad', 'N/A')}
+
+📱 *Instagram:* {application.get('instagram_url', 'N/A')} ({application.get('instagram_seguidores', '0')} seg.)
+🎵 *TikTok:* {application.get('tiktok_url', 'N/A')} ({application.get('tiktok_seguidores', '0')} seg.)
+
+📊 *Estado:* {application.get('status', 'pendiente')}
+🎯 *Campaña:* {application.get('campaign_id', 'N/A')}
+
+🔗 *Videos:*
+• {application.get('video_link_1', 'N/A')}
+• {application.get('video_link_2', 'N/A')}"""
+
+    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_UGC, whatsapp_message)
+    
+    # Email notification
+    email_html = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #f5ede4; padding: 40px;">
+        <h1 style="color: #d4a968;">📸 Nueva Aplicación UGC</h1>
+        <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #d4a968;">
+            <p><strong>Nombre:</strong> {nombre_completo}</p>
+            <p><strong>Email:</strong> {application['email']}</p>
+            <p><strong>WhatsApp:</strong> {application.get('whatsapp', 'N/A')}</p>
+            <p><strong>Ciudad:</strong> {application.get('ciudad', 'N/A')}</p>
+            <hr style="border-color: #333;">
+            <p><strong>Instagram:</strong> {application.get('instagram_url', 'N/A')} ({application.get('instagram_seguidores', '0')} seguidores)</p>
+            <p><strong>TikTok:</strong> {application.get('tiktok_url', 'N/A')} ({application.get('tiktok_seguidores', '0')} seguidores)</p>
+            <hr style="border-color: #333;">
+            <p><strong>Estado:</strong> {application.get('status', 'pendiente')}</p>
+            <p><strong>Campaña:</strong> {application.get('campaign_id', 'N/A')}</p>
+            <hr style="border-color: #333;">
+            <p><strong>Videos:</strong></p>
+            <p>• <a href="{application.get('video_link_1', '#')}" style="color: #d4a968;">Video 1</a></p>
+            <p>• <a href="{application.get('video_link_2', '#')}" style="color: #d4a968;">Video 2</a></p>
+        </div>
+    </div>
+    """
+    await send_admin_email_notification(f"📸 Nueva Aplicación UGC - {nombre_completo}", email_html)
+
 # ==================== AUTH ROUTES ====================
 
 @api_router.post("/auth/register")
