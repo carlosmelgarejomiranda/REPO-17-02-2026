@@ -467,116 +467,182 @@ export const AdminDashboard = ({ user }) => {
                     <thead>
                       <tr style={{ borderBottom: '1px solid #333' }}>
                         <th className="text-left p-3" style={{ color: '#d4a968' }}>Nombre</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Email</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Contacto</th>
                         <th className="text-left p-3" style={{ color: '#d4a968' }}>Instagram</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Seguidores</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Contenido</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>TikTok</th>
+                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Videos</th>
                         <th className="text-left p-3" style={{ color: '#d4a968' }}>Estado</th>
                         <th className="text-left p-3" style={{ color: '#d4a968' }}>Fecha</th>
                         <th className="text-left p-3" style={{ color: '#d4a968' }}>Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {ugcApplications.map((app) => (
-                        <tr key={app.application_id} style={{ borderBottom: '1px solid #2a2a2a' }}>
-                          <td className="p-3" style={{ color: '#f5ede4' }}>{app.name}</td>
-                          <td className="p-3" style={{ color: '#f5ede4' }}>{app.email}</td>
-                          <td className="p-3">
-                            <a 
-                              href={app.instagram_handle.startsWith('@') ? `https://instagram.com/${app.instagram_handle.slice(1)}` : `https://instagram.com/${app.instagram_handle}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1"
-                              style={{ color: '#d4a968' }}
-                            >
-                              <Instagram className="w-4 h-4" />
-                              {app.instagram_handle}
-                            </a>
-                          </td>
-                          <td className="p-3" style={{ color: '#f5ede4' }}>
-                            {app.follower_count?.toLocaleString() || 'N/A'}
-                          </td>
-                          <td className="p-3">
-                            <div className="text-sm" style={{ color: '#a8a8a8' }}>
-                              {app.content_type}
-                            </div>
-                            {app.portfolio_url && (
+                      {ugcApplications.map((app) => {
+                        const instagramHandle = app.instagram_url?.startsWith('@') 
+                          ? app.instagram_url.slice(1) 
+                          : app.instagram_url;
+                        const tiktokHandle = app.tiktok_url?.startsWith('@') 
+                          ? app.tiktok_url.slice(1) 
+                          : app.tiktok_url;
+                        
+                        const getStatusInfo = (status) => {
+                          switch(status) {
+                            case 'approved':
+                              return { bg: 'rgba(34, 197, 94, 0.2)', color: '#22c55e', label: 'Aprobada' };
+                            case 'rejected':
+                              return { bg: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', label: 'Rechazada' };
+                            case 'pending':
+                              return { bg: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', label: 'Pendiente' };
+                            case 'no_elegible':
+                              return { bg: 'rgba(156, 163, 175, 0.2)', color: '#9ca3af', label: 'No elegible' };
+                            default:
+                              return { bg: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', label: status };
+                          }
+                        };
+                        const statusInfo = getStatusInfo(app.status);
+                        
+                        return (
+                          <tr key={app.application_id} style={{ borderBottom: '1px solid #2a2a2a' }}>
+                            <td className="p-3">
+                              <div style={{ color: '#f5ede4' }}>{app.nombre} {app.apellido}</div>
+                              <div className="text-sm" style={{ color: '#a8a8a8' }}>{app.ciudad}</div>
+                            </td>
+                            <td className="p-3">
+                              <div style={{ color: '#f5ede4' }}>{app.email}</div>
                               <a 
-                                href={app.portfolio_url}
+                                href={`https://wa.me/${app.whatsapp?.replace(/[^0-9]/g, '')}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm"
-                                style={{ color: '#d4a968' }}
+                                className="text-sm flex items-center gap-1"
+                                style={{ color: '#25D366' }}
                               >
-                                Ver portfolio
+                                <MessageCircle className="w-3 h-3" />
+                                {app.whatsapp}
                               </a>
-                            )}
-                          </td>
-                          <td className="p-3">
-                            <span
-                              className="px-2 py-1 rounded text-sm"
-                              style={{
-                                backgroundColor: 
-                                  app.status === 'approved' ? 'rgba(34, 197, 94, 0.2)' :
-                                  app.status === 'rejected' ? 'rgba(239, 68, 68, 0.2)' :
-                                  'rgba(245, 158, 11, 0.2)',
-                                color: 
-                                  app.status === 'approved' ? '#22c55e' :
-                                  app.status === 'rejected' ? '#ef4444' :
-                                  '#f59e0b'
-                              }}
-                            >
-                              {app.status === 'approved' ? 'Aprobada' :
-                               app.status === 'rejected' ? 'Rechazada' : 'Pendiente'}
-                            </span>
-                          </td>
-                          <td className="p-3" style={{ color: '#a8a8a8' }}>
-                            {new Date(app.created_at).toLocaleDateString()}
-                          </td>
-                          <td className="p-3">
-                            <div className="flex gap-2">
-                              {app.status === 'pending' && (
-                                <>
-                                  <button
-                                    onClick={() => updateUgcStatus(app.application_id, 'approved')}
-                                    className="p-1 rounded"
-                                    style={{ color: '#22c55e' }}
-                                    title="Aprobar"
-                                  >
-                                    <Check className="w-4 h-4" />
-                                  </button>
-                                  <button
-                                    onClick={() => updateUgcStatus(app.application_id, 'rejected')}
-                                    className="p-1 rounded"
-                                    style={{ color: '#ef4444' }}
-                                    title="Rechazar"
-                                  >
-                                    <X className="w-4 h-4" />
-                                  </button>
-                                </>
-                              )}
-                              {app.status !== 'pending' && (
-                                <button
-                                  onClick={() => updateUgcStatus(app.application_id, 'pending')}
-                                  className="p-1 rounded"
-                                  style={{ color: '#f59e0b' }}
-                                  title="Marcar como pendiente"
+                            </td>
+                            <td className="p-3">
+                              {app.instagram_url ? (
+                                <a 
+                                  href={`https://instagram.com/${instagramHandle}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1"
+                                  style={{ color: '#d4a968' }}
                                 >
-                                  <MessageCircle className="w-4 h-4" />
-                                </button>
-                              )}
-                              <button
-                                onClick={() => deleteUgcApplication(app.application_id)}
-                                className="p-1 rounded"
-                                style={{ color: '#666' }}
-                                title="Eliminar"
+                                  <Instagram className="w-4 h-4" />
+                                  {app.instagram_url}
+                                </a>
+                              ) : '-'}
+                              <div className="text-sm" style={{ color: '#a8a8a8' }}>
+                                {app.instagram_seguidores ? `${parseInt(app.instagram_seguidores).toLocaleString()} seg.` : ''}
+                              </div>
+                            </td>
+                            <td className="p-3">
+                              {app.tiktok_url ? (
+                                <a 
+                                  href={`https://tiktok.com/@${tiktokHandle}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1"
+                                  style={{ color: '#d4a968' }}
+                                >
+                                  {app.tiktok_url}
+                                </a>
+                              ) : '-'}
+                              <div className="text-sm" style={{ color: '#a8a8a8' }}>
+                                {app.tiktok_seguidores ? `${parseInt(app.tiktok_seguidores).toLocaleString()} seg.` : ''}
+                              </div>
+                            </td>
+                            <td className="p-3">
+                              <div className="flex flex-col gap-1">
+                                {app.video_link_1 && (
+                                  <a 
+                                    href={app.video_link_1}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm"
+                                    style={{ color: '#d4a968' }}
+                                  >
+                                    📹 Video 1
+                                  </a>
+                                )}
+                                {app.video_link_2 && (
+                                  <a 
+                                    href={app.video_link_2}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm"
+                                    style={{ color: '#d4a968' }}
+                                  >
+                                    📹 Video 2
+                                  </a>
+                                )}
+                              </div>
+                            </td>
+                            <td className="p-3">
+                              <span
+                                className="px-2 py-1 rounded text-sm"
+                                style={{
+                                  backgroundColor: statusInfo.bg,
+                                  color: statusInfo.color
+                                }}
                               >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                                {statusInfo.label}
+                              </span>
+                              {app.motivo_no_elegible && app.motivo_no_elegible.length > 0 && (
+                                <div className="text-xs mt-1" style={{ color: '#9ca3af' }}>
+                                  {app.motivo_no_elegible.map(m => m.replace(/_/g, ' ')).join(', ')}
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-3" style={{ color: '#a8a8a8' }}>
+                              {new Date(app.created_at).toLocaleDateString()}
+                            </td>
+                            <td className="p-3">
+                              <div className="flex gap-2">
+                                {(app.status === 'pending' || app.status === 'no_elegible') && (
+                                  <>
+                                    <button
+                                      onClick={() => updateUgcStatus(app.application_id, 'approved')}
+                                      className="p-1 rounded hover:bg-green-900/30"
+                                      style={{ color: '#22c55e' }}
+                                      title="Aprobar"
+                                    >
+                                      <Check className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                      onClick={() => updateUgcStatus(app.application_id, 'rejected')}
+                                      className="p-1 rounded hover:bg-red-900/30"
+                                      style={{ color: '#ef4444' }}
+                                      title="Rechazar"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  </>
+                                )}
+                                {(app.status === 'approved' || app.status === 'rejected') && (
+                                  <button
+                                    onClick={() => updateUgcStatus(app.application_id, 'pending')}
+                                    className="p-1 rounded hover:bg-yellow-900/30"
+                                    style={{ color: '#f59e0b' }}
+                                    title="Marcar como pendiente"
+                                  >
+                                    <MessageCircle className="w-4 h-4" />
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => deleteUgcApplication(app.application_id)}
+                                  className="p-1 rounded hover:bg-gray-900/30"
+                                  style={{ color: '#666' }}
+                                  title="Eliminar"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
