@@ -65,12 +65,13 @@ export const Brands = ({ t }) => {
                 <img 
                   src={brand.url}
                   alt={brand.name}
-                  className="w-full h-auto object-contain brand-logo"
+                  className={brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'h-auto object-contain brand-logo' : 'w-full h-auto object-contain brand-logo'}
                   style={{
                     maxHeight: brand.name === 'Serotonina' ? '2500px' :
                                brand.name === 'Coraltheia' ? '1000px' : 
                                brand.name === 'Fila' ? '40px' :
                                brand.name === 'UGG' ? '60px' : '200px',
+                    maxWidth: brand.name === 'Serotonina' || brand.name === 'Coraltheia' ? 'none' : '100%',
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease'
                   }}
