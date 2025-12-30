@@ -643,6 +643,146 @@ async def cancel_reservation(reservation_id: str, request: Request):
     
     return {"message": "Reservation cancelled successfully"}
 
+# ==================== UGC ROUTES ====================
+
+ELIGIBLE_FOLLOWER_RANGES = ['3000-5000', '5000-10000', '10000+']
+
+def check_ugc_eligibility(data: dict) -> tuple:
+    """Check if UGC application is eligible"""
+    reasons = []
+    
+    # Check age
+    birth_date = datetime.strptime(data['fecha_nacimiento'], "%Y-%m-%d")
+    today = datetime.now()
+    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+    if age < 18:
+        reasons.append('menor_de_edad')
+    
+    # Check social networks
+    has_eligible_network = False
+    
+    # Check Instagram
+    if data.get('instagram_url'):
+        if data.get('instagram_privado') == 'privado':
+            reasons.append('perfil_privado_ig')
+        elif data.get('instagram_seguidores') in ELIGIBLE_FOLLOWER_RANGES:
+            has_eligible_network = True
+        else:
+            reasons.append('sin_minimo_seguidores_ig')
+    
+    # Check TikTok
+    if data.get('tiktok_url'):
+        if data.get('tiktok_privado') == 'privado':
+            reasons.append('perfil_privado_tk')
+        elif data.get('tiktok_seguidores') in ELIGIBLE_FOLLOWER_RANGES:
+            has_eligible_network = True
+        else:
+            reasons.append('sin_minimo_seguidores_tk')
+    
+    # Must have at least one network
+    if not data.get('instagram_url') and not data.get('tiktok_url'):
+        reasons.append('sin_redes')
+    
+    # Must have at least one eligible network
+    if not has_eligible_network and 'sin_redes' not in reasons:
+        if 'sin_minimo_seguidores_ig' not in reasons and 'sin_minimo_seguidores_tk' not in reasons:
+            reasons.append('sin_minimo_seguidores')
+    
+    # Check video samples
+    if not data.get('video_link_1') or not data.get('video_link_2'):
+        reasons.append('sin_muestras')
+    
+    # Check filming confirmation
+    if not data.get('confirma_grabar_tienda'):
+        reasons.append('no_confirma_grabar_en_tienda')
+    
+    # Determine status
+    # Filter out the specific platform reasons if they have an eligible one
+    if has_eligible_network:
+        reasons = [r for r in reasons if r not in ['sin_minimo_seguidores_ig', 'sin_minimo_seguidores_tk', 'perfil_privado_ig', 'perfil_privado_tk']]
+    
+    if reasons:
+        return 'no_elegible', reasons
+    return 'pendiente', []
+
+@api_router.post("/ugc/aplicar")
+async def ugc_apply(application: UGCApplication):
+    """Submit a UGC creator application"""
+    # Check if email already applied
+    existing = await db.ugc_applications.find_one({"email": application.email}, {"_id": 0})
+    if existing:
+        raise HTTPException(status_code=400, detail="Ya existe una solicitud con este email")
+    
+    # Check eligibility
+    app_data = application.model_dump()
+    status, reasons = check_ugc_eligibility(app_data)
+    
+    # Create application
+    application_id = f"ugc_{uuid.uuid4().hex[:12]}"
+    
+    app_doc = {
+        "application_id": application_id,
+        **app_data,
+        "status": status,  # pendiente, no_elegible, preseleccionada
+        "motivo_no_elegible": reasons if reasons else None,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.ugc_applications.insert_one(app_doc)
+    app_doc.pop("_id", None)
+    
+    return {
+        "application_id": application_id,
+        "status": status,
+        "message": "Solicitud recibida correctamente" if status == 'pendiente' else "Solicitud recibida pero no cumple con los requisitos mínimos"
+    }
+
+@api_router.get("/admin/ugc")
+async def admin_get_ugc_applications(request: Request, status: Optional[str] = None):
+    """Get all UGC applications (admin only)"""
+    await require_admin(request)
+    
+    query = {}
+    if status:
+        query["status"] = status
+    
+    applications = await db.ugc_applications.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return applications
+
+@api_router.put("/admin/ugc/{application_id}")
+async def admin_update_ugc(application_id: str, updates: dict, request: Request):
+    """Update UGC application status (admin only)"""
+    await require_admin(request)
+    
+    application = await db.ugc_applications.find_one({"application_id": application_id}, {"_id": 0})
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Only allow updating status
+    allowed_fields = ["status", "notas"]
+    update_data = {k: v for k, v in updates.items() if k in allowed_fields}
+    
+    if update_data:
+        await db.ugc_applications.update_one(
+            {"application_id": application_id},
+            {"$set": update_data}
+        )
+    
+    updated = await db.ugc_applications.find_one({"application_id": application_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/admin/ugc/{application_id}")
+async def admin_delete_ugc(application_id: str, request: Request):
+    """Delete UGC application (admin only)"""
+    await require_admin(request)
+    
+    result = await db.ugc_applications.delete_one({"application_id": application_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Application not found")
+    
+    return {"message": "Application deleted successfully"}
+
 # ==================== ADMIN ROUTES ====================
 
 @api_router.post("/admin/test-email")
