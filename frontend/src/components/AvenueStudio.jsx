@@ -104,6 +104,16 @@ export const AvenueStudio = ({ t }) => {
             {t.studio.rates.title}
           </h2>
 
+          {/* Same-day booking notice */}
+          <div className="mb-8 p-4 rounded text-center" style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)', border: '1px solid #d4a968' }}>
+            <p style={{ color: '#d4a968', fontSize: '14px' }}>
+              📅 Las reservas online requieren al menos <strong>1 día de anticipación</strong>.
+            </p>
+            <p style={{ color: '#a8a8a8', fontSize: '13px', marginTop: '4px' }}>
+              Para reservas del mismo día, contactanos por WhatsApp: <a href="https://wa.me/595976691520" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a968', textDecoration: 'underline' }}>+595 976 691 520</a>
+            </p>
+          </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {rates.map((rate, index) => (
               <Card 
