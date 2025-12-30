@@ -39,22 +39,22 @@ export const Categories = ({ t }) => {
             return (
               <div
                 key={index}
-                className="group relative overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer"
+                className="group relative overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm"
                 style={{ aspectRatio: '1/1' }}
               >
-                <div className="absolute inset-0" style={{ backgroundColor: '#f5ede4' }}></div>
-                <div className="absolute inset-0 border" style={{ borderColor: '#d4a968' }}></div>
+                <div className="absolute inset-0" style={{ backgroundColor: 'rgba(245, 237, 228, 0.1)' }}></div>
+                <div className="absolute inset-0 border" style={{ borderColor: 'rgba(212, 169, 104, 0.4)' }}></div>
                 
                 <div className="relative h-full flex flex-col items-center justify-center p-3">
                   <div 
                     className="mb-2 p-2 rounded-full transition-all duration-300 group-hover:scale-110"
-                    style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)' }}
+                    style={{ backgroundColor: 'rgba(212, 169, 104, 0.2)' }}
                   >
                     <Icon className="w-5 h-5" style={{ color: '#d4a968' }} />
                   </div>
                   <p className="text-center font-light text-xs" 
                      style={{ 
-                       color: '#1a1a1a',
+                       color: '#f5ede4',
                        fontFamily: 'var(--font-secondary)',
                        letterSpacing: '0.03em'
                      }}>
