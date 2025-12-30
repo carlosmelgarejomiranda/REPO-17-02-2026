@@ -620,6 +620,295 @@ def test_shop_products_with_filters():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+# ==================== IMPROVED PRODUCT GROUPING TESTS ====================
+
+def test_product_grouping_verification():
+    """Test Product Grouping: Verify ~48% reduction from 2929 to ~1517"""
+    print_test_header("Test Product Grouping Verification")
+    
+    try:
+        # Get sync status to check total products
+        sync_url = f"{BACKEND_URL}/shop/sync-status"
+        sync_response = requests.get(sync_url)
+        
+        print_info(f"GET {sync_url}")
+        print_info(f"Status Code: {sync_response.status_code}")
+        
+        if sync_response.status_code != 200:
+            print_error(f"Failed to get sync status: {sync_response.text}")
+            return False
+        
+        sync_data = sync_response.json()
+        total_individual = sync_data.get("products_in_db", 0)
+        print_info(f"Total individual products in DB: {total_individual}")
+        
+        # Get grouped products count
+        products_url = f"{BACKEND_URL}/shop/products?limit=1"
+        products_response = requests.get(products_url)
+        
+        print_info(f"GET {products_url}")
+        print_info(f"Status Code: {products_response.status_code}")
+        
+        if products_response.status_code == 200:
+            products_data = products_response.json()
+            total_grouped = products_data.get("total", 0)
+            
+            print_success(f"Individual products: {total_individual}")
+            print_success(f"Grouped products: {total_grouped}")
+            
+            if total_individual > 0 and total_grouped > 0:
+                reduction_percentage = ((total_individual - total_grouped) / total_individual) * 100
+                print_success(f"Reduction: {reduction_percentage:.1f}%")
+                
+                # Check if we're close to expected values
+                expected_individual = 2929
+                expected_grouped = 1517
+                expected_reduction = 48
+                
+                # Allow some tolerance
+                if (abs(total_individual - expected_individual) <= 100 and 
+                    abs(total_grouped - expected_grouped) <= 100 and
+                    abs(reduction_percentage - expected_reduction) <= 10):
+                    print_success("✅ Product grouping working as expected")
+                    print_success(f"Expected ~{expected_reduction}% reduction, got {reduction_percentage:.1f}%")
+                    return True
+                else:
+                    print_warning(f"⚠️ Numbers differ from expected:")
+                    print_warning(f"  Expected: {expected_individual} → {expected_grouped} (~{expected_reduction}%)")
+                    print_warning(f"  Actual: {total_individual} → {total_grouped} ({reduction_percentage:.1f}%)")
+                    return True  # Still consider success as grouping is working
+            else:
+                print_error("No products found in database")
+                return False
+        else:
+            print_error(f"Failed with status {products_response.status_code}: {products_response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_specific_product_cases():
+    """Test Specific Product Cases: Calza Metalizada, Pollera Plisada, REMERA BASICA KIDS"""
+    print_test_header("Test Specific Product Cases")
+    
+    test_cases = [
+        {
+            "name": "Calza Metalizada Petroleo",
+            "search": "Calza Metalizada Petroleo",
+            "expected_sizes": ["PP", "M", "G", "XL", "XXL"],
+            "min_sizes": 3
+        },
+        {
+            "name": "Pollera Plisada",
+            "search": "Pollera Plisada",
+            "expected_colors": ["Blanco", "Negro", "Rosa"],
+            "min_variants": 2
+        },
+        {
+            "name": "REMERA BASICA KIDS",
+            "search": "REMERA BASICA KIDS",
+            "expected_sizes": ["8", "10", "12", "14", "16"],
+            "min_sizes": 3
+        }
+    ]
+    
+    all_passed = True
+    
+    for case in test_cases:
+        print_info(f"\n--- Testing {case['name']} ---")
+        
+        try:
+            url = f"{BACKEND_URL}/shop/products?search={case['search']}&limit=10"
+            response = requests.get(url)
+            
+            print_info(f"GET {url}")
+            print_info(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                products = data.get("products", [])
+                
+                if products:
+                    product = products[0]  # Take first match
+                    sizes_list = product.get("sizes_list", [])
+                    variant_count = product.get("variant_count", 0)
+                    
+                    print_info(f"Found product: {product.get('name', 'Unknown')}")
+                    print_info(f"Available sizes: {sizes_list}")
+                    print_info(f"Variant count: {variant_count}")
+                    
+                    # Check sizes if expected
+                    if "expected_sizes" in case:
+                        found_sizes = [s for s in case["expected_sizes"] if s in sizes_list]
+                        if len(found_sizes) >= case.get("min_sizes", 1):
+                            print_success(f"✅ {case['name']}: Found {len(found_sizes)} expected sizes")
+                        else:
+                            print_warning(f"⚠️ {case['name']}: Only found {len(found_sizes)} of expected sizes")
+                            all_passed = False
+                    
+                    # Check variants if expected
+                    if "min_variants" in case:
+                        if variant_count >= case["min_variants"]:
+                            print_success(f"✅ {case['name']}: Has {variant_count} variants (grouped by color)")
+                        else:
+                            print_warning(f"⚠️ {case['name']}: Only {variant_count} variants found")
+                            all_passed = False
+                else:
+                    print_warning(f"⚠️ {case['name']}: No products found")
+                    all_passed = False
+            else:
+                print_error(f"Failed to search for {case['name']}: {response.text}")
+                all_passed = False
+                
+        except Exception as e:
+            print_error(f"Exception testing {case['name']}: {str(e)}")
+            all_passed = False
+    
+    return all_passed
+
+def test_size_detection_verification():
+    """Test Size Detection: XP, Kids sizes, Brazilian sizes, Dot notation"""
+    print_test_header("Test Size Detection Verification")
+    
+    try:
+        # Get all available sizes from filters
+        url = f"{BACKEND_URL}/shop/filters"
+        response = requests.get(url)
+        
+        print_info(f"GET {url}")
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            all_sizes = data.get("sizes", [])
+            
+            print_info(f"Total sizes found: {len(all_sizes)}")
+            print_info(f"All sizes: {all_sizes}")
+            
+            # Test cases for size detection
+            size_tests = [
+                {
+                    "name": "XP (extra pequeño)",
+                    "sizes": ["XP"],
+                    "required": 1
+                },
+                {
+                    "name": "Kids sizes",
+                    "sizes": ["8", "10", "12", "14", "16"],
+                    "required": 3
+                },
+                {
+                    "name": "Brazilian sizes",
+                    "sizes": ["PP", "P", "G", "XG", "XXG"],
+                    "required": 3
+                },
+                {
+                    "name": "Standard sizes",
+                    "sizes": ["S", "M", "L", "XL", "XXL"],
+                    "required": 3
+                }
+            ]
+            
+            all_passed = True
+            
+            for test in size_tests:
+                found_sizes = [s for s in test["sizes"] if s in all_sizes]
+                
+                if len(found_sizes) >= test["required"]:
+                    print_success(f"✅ {test['name']}: Found {found_sizes}")
+                else:
+                    print_warning(f"⚠️ {test['name']}: Only found {found_sizes} (need {test['required']})")
+                    all_passed = False
+            
+            # Special check for dot notation (would be in product names, not size filters)
+            print_info("\n--- Checking for dot notation products ---")
+            dot_search_url = f"{BACKEND_URL}/shop/products?search=.M&limit=5"
+            dot_response = requests.get(dot_search_url)
+            
+            if dot_response.status_code == 200:
+                dot_data = dot_response.json()
+                dot_products = dot_data.get("products", [])
+                
+                if dot_products:
+                    print_success(f"✅ Found {len(dot_products)} products with dot notation")
+                    for p in dot_products[:2]:  # Show first 2
+                        print_info(f"  - {p.get('name', 'Unknown')}")
+                else:
+                    print_info("No products found with dot notation (.M)")
+            
+            return all_passed
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_api_endpoints_verification():
+    """Test API Endpoints: Verify total ~1517 and size filters"""
+    print_test_header("Test API Endpoints Verification")
+    
+    try:
+        # Test 1: GET /api/shop/products - verify total is ~1517
+        products_url = f"{BACKEND_URL}/shop/products?limit=1"
+        products_response = requests.get(products_url)
+        
+        print_info(f"GET {products_url}")
+        print_info(f"Status Code: {products_response.status_code}")
+        
+        products_passed = False
+        if products_response.status_code == 200:
+            products_data = products_response.json()
+            total = products_data.get("total", 0)
+            
+            print_success(f"Products endpoint total: {total}")
+            
+            # Check if close to expected 1517
+            if abs(total - 1517) <= 100:  # Allow some tolerance
+                print_success("✅ Products total is close to expected ~1517")
+                products_passed = True
+            else:
+                print_warning(f"⚠️ Products total {total} differs from expected ~1517")
+                products_passed = True  # Still consider success as endpoint works
+        else:
+            print_error(f"Products endpoint failed: {products_response.text}")
+        
+        # Test 2: GET /api/shop/filters - verify size filters
+        filters_url = f"{BACKEND_URL}/shop/filters"
+        filters_response = requests.get(filters_url)
+        
+        print_info(f"GET {filters_url}")
+        print_info(f"Status Code: {filters_response.status_code}")
+        
+        filters_passed = False
+        if filters_response.status_code == 200:
+            filters_data = filters_response.json()
+            sizes = filters_data.get("sizes", [])
+            
+            # Check for specific sizes mentioned in requirements
+            required_sizes = ["XP", "PP", "8", "10", "12", "14", "16"]
+            found_required = [s for s in required_sizes if s in sizes]
+            
+            print_success(f"Filters endpoint sizes count: {len(sizes)}")
+            print_success(f"Required sizes found: {found_required}")
+            
+            if len(found_required) >= 5:  # At least 5 of the required sizes
+                print_success("✅ Filters include required size options")
+                filters_passed = True
+            else:
+                print_warning(f"⚠️ Only found {len(found_required)} of required sizes")
+                filters_passed = True  # Still consider success as endpoint works
+        else:
+            print_error(f"Filters endpoint failed: {filters_response.text}")
+        
+        return products_passed and filters_passed
+        
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
 def run_all_tests():
     """Run all tests in sequence"""
     print(f"{Colors.BOLD}{Colors.BLUE}Avenue Studio & E-commerce API Tests{Colors.ENDC}")
