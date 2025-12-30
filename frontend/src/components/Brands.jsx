@@ -29,7 +29,7 @@ export const Brands = ({ t }) => {
   ];
 
   return (
-    <section className="py-12 px-6" style={{ backgroundColor: '#f7f2ed' }}>
+    <section className="py-12 px-6" style={{ backgroundColor: '#f5ede4' }}>
       <div className="max-w-5xl mx-auto">
         <div className="w-20 h-0.5 mx-auto mb-6" style={{ backgroundColor: '#d4a968' }}></div>
         

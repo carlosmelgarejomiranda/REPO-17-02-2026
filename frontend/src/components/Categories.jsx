@@ -12,7 +12,7 @@ export const Categories = ({ t }) => {
   ];
 
   return (
-    <section className="py-14 px-6" style={{ backgroundColor: '#ead7c8' }}>
+    <section className="py-14 px-6" style={{ backgroundColor: '#f5ede4' }}>
       <div className="max-w-5xl mx-auto">
         <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
         
