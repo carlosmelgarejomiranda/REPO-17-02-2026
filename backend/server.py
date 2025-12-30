@@ -507,16 +507,28 @@ async def create_reservation(reservation_data: ReservationCreate, request: Reque
     if start_hour < 9 or end_hour > 22:
         raise HTTPException(status_code=400, detail="Reservations must be between 9:00 and 22:00")
     
+    # Get current user if authenticated
+    user = await get_current_user(request)
+    user_id = user["user_id"] if user else None
+    is_admin = user and user.get("role") == "admin"
+    
+    # Validate date - must be at least 1 day in advance (except for admin)
+    reservation_date = datetime.strptime(reservation_data.date, "%Y-%m-%d").date()
+    today = datetime.now(timezone.utc).date()
+    
+    if not is_admin:
+        if reservation_date <= today:
+            raise HTTPException(
+                status_code=400, 
+                detail="Las reservas deben hacerse con al menos 1 día de anticipación. Para reservas del mismo día, contacta por WhatsApp: +595 976 691 520"
+            )
+    
     # Check availability
     availability = await get_availability(reservation_data.date)
     for slot in availability["slots"]:
         if slot["hour"] >= start_hour and slot["hour"] < end_hour:
             if not slot["available"]:
                 raise HTTPException(status_code=400, detail=f"Time slot {slot['time']} is not available")
-    
-    # Get current user if authenticated
-    user = await get_current_user(request)
-    user_id = user["user_id"] if user else None
     
     # Create reservation
     reservation_id = f"res_{uuid.uuid4().hex[:12]}"
