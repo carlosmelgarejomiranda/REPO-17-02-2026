@@ -54,7 +54,9 @@ export const Brands = ({ t }) => {
         <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-8">
           {brands.map((brand, index) => {
             // Logos que necesitan ser más grandes
-            const isLargerLogo = brand.name === 'Coraltheia' || brand.name === 'Serotonina';
+            let scaleValue = 1;
+            if (brand.name === 'Coraltheia') scaleValue = 5;
+            if (brand.name === 'Serotonina') scaleValue = 4;
             
             return (
               <div
@@ -70,7 +72,7 @@ export const Brands = ({ t }) => {
                   alt={brand.name}
                   className="w-full h-auto object-contain brand-logo"
                   style={{
-                    transform: isLargerLogo ? 'scale(5)' : 'scale(1)',
+                    transform: `scale(${scaleValue})`,
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease'
                   }}
