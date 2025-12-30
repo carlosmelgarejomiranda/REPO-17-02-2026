@@ -136,7 +136,7 @@ export const MainLanding = ({ t }) => {
             </a>
             <span style={{ color: '#d4a968' }}>•</span>
             <a 
-              href="https://wa.me/595976691520" 
+              href="https://wa.me/595973666000" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-sm transition-colors hover:opacity-70"
