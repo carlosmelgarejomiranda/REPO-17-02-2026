@@ -233,55 +233,6 @@ async def get_filters():
         
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Error: {str(e)}")
-                json={"limit": 500, "page": 1}
-            )
-            
-            if response.status_code != 200:
-                raise HTTPException(status_code=502, detail=f"Error connecting to ERP: status {response.status_code}")
-            
-            data = response.json()
-            products = data.get('data', [])
-            
-            # Filter products with stock
-            products = [p for p in products if float(p.get('stock', 0)) > 0]
-            
-            # Collect unique values
-            categories = {}
-            sizes = set()
-            genders = {'mujer': 0, 'hombre': 0, 'unisex': 0}
-            
-            for p in products:
-                # Categories
-                cat = p.get('category', '').strip()
-                if cat:
-                    categories[cat] = categories.get(cat, 0) + 1
-                
-                # Sizes from name
-                size = extract_size_from_name(p.get('Name', ''))
-                if size:
-                    sizes.add(size)
-                
-                # Gender
-                gender = determine_gender(p.get('category', ''), p.get('brand', ''))
-                genders[gender] += 1
-            
-            # Sort sizes (numeric first, then alpha)
-            numeric_sizes = sorted([s for s in sizes if s.isdigit()], key=int)
-            alpha_sizes = sorted([s for s in sizes if not s.isdigit()])
-            sorted_sizes = numeric_sizes + alpha_sizes
-            
-            return {
-                "categories": [{"name": k, "count": v} for k, v in sorted(categories.items(), key=lambda x: -x[1])],
-                "sizes": sorted_sizes,
-                "genders": [
-                    {"value": "mujer", "label": "Mujer", "count": genders['mujer']},
-                    {"value": "hombre", "label": "Hombre", "count": genders['hombre']},
-                    {"value": "unisex", "label": "Unisex", "count": genders['unisex']}
-                ]
-            }
-            
-    except httpx.RequestError as e:
-        raise HTTPException(status_code=502, detail=f"ERP connection error: {str(e)}")
 
 # ==================== PRODUCTS ENDPOINTS ====================
 
