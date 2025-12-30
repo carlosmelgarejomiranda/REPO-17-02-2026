@@ -83,51 +83,24 @@ export const Brands = ({ t }) => {
             return (
               <div
                 key={index}
-                className="flex items-center justify-center p-3 lg:p-6 brand-card"
+                className="flex items-center justify-center p-3 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
                 style={{ 
                   backgroundColor: '#f7f2ed',
-                  minHeight: '120px',
-                  overflow: 'visible'
+                  minHeight: '120px'
                 }}
               >
                 <img 
                   src={brand.url}
                   alt={brand.name}
-                  className={`h-auto object-contain brand-logo brand-logo-${index} ${brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'high-quality-logo' : ''}`}
+                  className="w-full h-auto object-contain brand-logo"
                   style={{
+                    maxHeight: brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? '100px' : '200px',
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
-                    transition: 'filter 0.3s ease',
-                    imageRendering: brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'high-quality' : 'crisp-edges',
-                    width: brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? 'auto' : '100%',
-                    maxWidth: 'none'
+                    transition: 'filter 0.3s ease'
                   }}
                   onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
                 />
-                <style jsx>{`
-                  .brand-logo-${index} {
-                    transform: scale(${mobileScaleValue}) translateZ(0);
-                    -webkit-font-smoothing: antialiased;
-                    will-change: transform;
-                  }
-                  
-                  .high-quality-logo {
-                    image-rendering: -webkit-optimize-contrast;
-                    image-rendering: -moz-crisp-edges;
-                    image-rendering: crisp-edges;
-                    -webkit-backface-visibility: hidden;
-                    backface-visibility: hidden;
-                    -webkit-perspective: 1000;
-                    perspective: 1000;
-                    -webkit-transform: translate3d(0,0,0);
-                  }
-                  
-                  @media (min-width: 1024px) {
-                    .brand-logo-${index} {
-                      transform: scale(${scaleValue}) translateZ(0);
-                    }
-                  }
-                `}</style>
               </div>
             );
           })}
