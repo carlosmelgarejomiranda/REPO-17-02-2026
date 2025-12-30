@@ -18,6 +18,7 @@ const languages = [
 
 export const LanguageSwitcher = ({ currentLang, onLanguageChange, isDark = false }) => {
   const currentLanguage = languages.find(lang => lang.code === currentLang);
+  const textColor = isDark ? '#f5ede4' : 'inherit';
 
   return (
     <DropdownMenu>
@@ -26,21 +27,30 @@ export const LanguageSwitcher = ({ currentLang, onLanguageChange, isDark = false
           variant="ghost" 
           size="sm" 
           className="gap-2"
-          style={{ color: isDark ? '#d4a968' : 'inherit' }}
+          style={{ color: textColor }}
         >
-          <Globe className="h-4 w-4" style={{ color: isDark ? '#d4a968' : 'inherit' }} />
+          <span className="text-base">{currentLanguage?.flag}</span>
           <span className="hidden sm:inline">{currentLanguage?.name}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent 
+        align="end"
+        style={{ 
+          backgroundColor: isDark ? '#1a1a1a' : 'white',
+          borderColor: isDark ? '#333' : '#e5e5e5'
+        }}
+      >
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
             onClick={() => onLanguageChange(lang.code)}
-            className="cursor-pointer"
+            className="cursor-pointer gap-2"
+            style={{ 
+              color: isDark ? '#f5ede4' : 'inherit',
+            }}
           >
-            <span className="mr-2">{lang.flag}</span>
-            {lang.name}
+            <span className="text-base">{lang.flag}</span>
+            <span>{lang.name}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
