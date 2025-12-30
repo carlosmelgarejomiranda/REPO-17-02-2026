@@ -87,10 +87,6 @@ export const Brands = ({ t }) => {
           }
           
           @media (min-width: 1024px) {
-            .brand-card {
-              border: 1px solid rgba(212, 169, 104, 0.2);
-            }
-            
             .brand-logo {
               max-height: 96px;
             }
