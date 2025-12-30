@@ -1,5 +1,5 @@
 # E-commerce routes for Avenue Online
-# This file contains all e-commerce related endpoints
+# Uses MongoDB for fast local queries, syncs from ERP periodically
 
 from fastapi import APIRouter, HTTPException, Request, BackgroundTasks
 from pydantic import BaseModel, EmailStr
@@ -8,7 +8,7 @@ import httpx
 import os
 import stripe
 import googlemaps
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import uuid
 import asyncio
 import math
@@ -28,14 +28,7 @@ STORE_LAT = float(os.environ.get('STORE_LAT', '-25.2867'))
 STORE_LNG = float(os.environ.get('STORE_LNG', '-57.6474'))
 DELIVERY_PRICE_PER_KM = float(os.environ.get('DELIVERY_PRICE_PER_KM', '2500'))
 DELIVERY_MIN_PRICE = float(os.environ.get('DELIVERY_MIN_PRICE', '15000'))
-
-# Cache configuration
-CACHE_TTL_SECONDS = 300  # 5 minutes cache
-products_cache: Dict[str, Any] = {
-    "data": None,
-    "last_updated": None,
-    "updating": False
-}
+SYNC_INTERVAL_SECONDS = 300  # 5 minutes
 
 # Initialize Stripe
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
@@ -45,96 +38,34 @@ gmaps = None
 if GOOGLE_MAPS_API_KEY:
     gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
 
+# Database reference (will be set from server.py)
+db = None
+
+def set_database(database):
+    global db
+    db = database
+
 # Gender mapping based on category/brand keywords
 FEMALE_KEYWORDS = ['malva', 'santal', 'ina clothing', 'efimera', 'thula', 'mariela', 'sarelly', 'cristaline', 'bravisima', 'olivia']
 MALE_KEYWORDS = ['bro fitwear', 'lacoste', 'immortal']
 UNISEX_KEYWORDS = ['aguara', 'ds', 'mp suplementos', 'ugg']
 
-# ==================== CACHE FUNCTIONS ====================
+# Sync status
+sync_status = {
+    "last_sync": None,
+    "syncing": False,
+    "product_count": 0
+}
 
-async def fetch_products_from_erp() -> List[dict]:
-    """Fetch all products from ERP"""
-    try:
-        async with httpx.AsyncClient(timeout=90) as client:
-            response = await client.post(
-                f"{ENCOM_API_URL}/products",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {ENCOM_API_TOKEN}"
-                },
-                json={"limit": 500, "page": 1}
-            )
-            
-            if response.status_code != 200:
-                logger.error(f"ERP API error: {response.status_code}")
-                return []
-            
-            data = response.json()
-            return data.get('data', [])
-    except Exception as e:
-        logger.error(f"Error fetching from ERP: {str(e)}")
-        return []
-
-async def get_cached_products() -> List[dict]:
-    """Get products from cache or fetch from ERP"""
-    global products_cache
-    
-    now = datetime.now(timezone.utc)
-    
-    # Check if cache is valid
-    if (products_cache["data"] is not None and 
-        products_cache["last_updated"] is not None and
-        (now - products_cache["last_updated"]).total_seconds() < CACHE_TTL_SECONDS):
-        return products_cache["data"]
-    
-    # If cache is stale but we have data, return it and update in background
-    if products_cache["data"] is not None and not products_cache["updating"]:
-        products_cache["updating"] = True
-        asyncio.create_task(update_cache_background())
-        return products_cache["data"]
-    
-    # No cache, must fetch
-    products = await fetch_products_from_erp()
-    if products:
-        products_cache["data"] = products
-        products_cache["last_updated"] = now
-    
-    return products_cache["data"] or []
-
-async def update_cache_background():
-    """Update cache in background"""
-    global products_cache
-    try:
-        products = await fetch_products_from_erp()
-        if products:
-            products_cache["data"] = products
-            products_cache["last_updated"] = datetime.now(timezone.utc)
-            logger.info(f"Cache updated with {len(products)} products")
-    except Exception as e:
-        logger.error(f"Background cache update failed: {str(e)}")
-    finally:
-        products_cache["updating"] = False
-
-@ecommerce_router.post("/refresh-cache")
-async def refresh_cache():
-    """Force refresh the products cache"""
-    global products_cache
-    products_cache["data"] = None
-    products_cache["last_updated"] = None
-    products = await fetch_products_from_erp()
-    if products:
-        products_cache["data"] = products
-        products_cache["last_updated"] = datetime.now(timezone.utc)
-        return {"message": f"Cache refreshed with {len(products)} products"}
-    return {"message": "Failed to refresh cache"}
+# ==================== HELPER FUNCTIONS ====================
 
 def extract_size_from_name(name: str) -> Optional[str]:
     """Extract size from product name"""
-    # Common patterns: -38-, -M-, -XL-, -U- (único)
+    if not name:
+        return None
     match = re.search(r'-([XSML]{1,3}|[0-9]{1,2}|U)-', name, re.IGNORECASE)
     if match:
         return match.group(1).upper()
-    # Also check at the end of name
     match = re.search(r'-([XSML]{1,3}|[0-9]{1,2}|U)$', name, re.IGNORECASE)
     if match:
         return match.group(1).upper()
@@ -154,6 +85,105 @@ def determine_gender(category: str, brand: str) -> str:
             return 'hombre'
     
     return 'unisex'
+
+def transform_product(p: dict) -> dict:
+    """Transform ERP product to our format"""
+    product_size = extract_size_from_name(p.get('Name', ''))
+    product_gender = determine_gender(p.get('category', ''), p.get('brand', ''))
+    
+    return {
+        "product_id": p.get('ID'),
+        "name": p.get('Name', ''),
+        "sku": p.get('sku', ''),
+        "price": float(p.get('price', 0) or 0),
+        "stock": float(p.get('stock', 0) or 0),
+        "discount": float(p.get('discount', 0) or 0),
+        "description": p.get('description', ''),
+        "image": p.get('img_url', ''),
+        "category": (p.get('category', '') or '').strip(),
+        "brand": (p.get('brand', '') or '').strip(),
+        "size": product_size,
+        "gender": product_gender,
+        "featured": bool(p.get('featured')),
+        "online": bool(p.get('online')),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+
+# ==================== SYNC FUNCTIONS ====================
+
+async def sync_products_from_erp():
+    """Sync all products from ERP to MongoDB"""
+    global sync_status
+    
+    if sync_status["syncing"]:
+        logger.info("Sync already in progress, skipping")
+        return
+    
+    sync_status["syncing"] = True
+    logger.info("Starting product sync from ERP...")
+    
+    try:
+        async with httpx.AsyncClient(timeout=120) as client:
+            response = await client.post(
+                f"{ENCOM_API_URL}/products",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {ENCOM_API_TOKEN}"
+                },
+                json={"limit": 1000, "page": 1}
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"ERP API error: {response.status_code}")
+                return
+            
+            data = response.json()
+            erp_products = data.get('data', [])
+            
+            if not erp_products:
+                logger.warning("No products received from ERP")
+                return
+            
+            # Transform and upsert products
+            for p in erp_products:
+                transformed = transform_product(p)
+                await db.shop_products.update_one(
+                    {"product_id": transformed["product_id"]},
+                    {"$set": transformed},
+                    upsert=True
+                )
+            
+            sync_status["last_sync"] = datetime.now(timezone.utc).isoformat()
+            sync_status["product_count"] = len(erp_products)
+            
+            logger.info(f"Product sync completed: {len(erp_products)} products")
+            
+    except Exception as e:
+        logger.error(f"Error syncing products: {str(e)}")
+    finally:
+        sync_status["syncing"] = False
+
+async def background_sync_loop():
+    """Background task that syncs products periodically"""
+    while True:
+        await asyncio.sleep(SYNC_INTERVAL_SECONDS)
+        await sync_products_from_erp()
+
+async def start_sync_on_startup():
+    """Initial sync and start background loop"""
+    # Check if we have products in DB
+    count = await db.shop_products.count_documents({})
+    
+    if count == 0:
+        logger.info("No products in database, performing initial sync...")
+        await sync_products_from_erp()
+    else:
+        logger.info(f"Found {count} products in database, starting background sync...")
+        # Sync in background to not block startup
+        asyncio.create_task(sync_products_from_erp())
+    
+    # Start periodic sync
+    asyncio.create_task(background_sync_loop())
 
 # ==================== MODELS ====================
 
@@ -176,63 +206,83 @@ class CheckoutData(BaseModel):
     customer_name: str
     customer_email: EmailStr
     customer_phone: str
-    delivery_type: str  # 'delivery' or 'pickup'
+    delivery_type: str
     delivery_address: Optional[DeliveryAddress] = None
-    payment_method: str  # 'stripe' or 'bancard'
+    payment_method: str
     notes: Optional[str] = None
 
 class DeliveryCalculation(BaseModel):
     lat: float
     lng: float
 
+# ==================== SYNC ENDPOINTS ====================
+
+@ecommerce_router.get("/sync-status")
+async def get_sync_status():
+    """Get product sync status"""
+    count = await db.shop_products.count_documents({})
+    return {
+        "last_sync": sync_status["last_sync"],
+        "syncing": sync_status["syncing"],
+        "products_in_db": count
+    }
+
+@ecommerce_router.post("/sync")
+async def force_sync():
+    """Force sync products from ERP"""
+    asyncio.create_task(sync_products_from_erp())
+    return {"message": "Sync started in background"}
+
 # ==================== FILTERS ENDPOINT ====================
 
 @ecommerce_router.get("/filters")
 async def get_filters():
-    """Get available filter options - uses cache"""
+    """Get available filter options from local DB - FAST"""
     try:
-        products = await get_cached_products()
+        # Get unique categories with count
+        categories_pipeline = [
+            {"$match": {"stock": {"$gt": 0}}},
+            {"$group": {"_id": "$category", "count": {"$sum": 1}}},
+            {"$match": {"_id": {"$ne": ""}}},
+            {"$sort": {"count": -1}}
+        ]
+        categories_result = await db.shop_products.aggregate(categories_pipeline).to_list(100)
+        categories = [{"name": c["_id"], "count": c["count"]} for c in categories_result if c["_id"]]
         
-        # Filter products with stock
-        products = [p for p in products if float(p.get('stock', 0)) > 0]
+        # Get unique sizes
+        sizes_pipeline = [
+            {"$match": {"stock": {"$gt": 0}, "size": {"$ne": None}}},
+            {"$group": {"_id": "$size"}}
+        ]
+        sizes_result = await db.shop_products.aggregate(sizes_pipeline).to_list(100)
+        all_sizes = [s["_id"] for s in sizes_result if s["_id"]]
         
-        # Collect unique values
-        categories = {}
-        sizes = set()
-        genders = {'mujer': 0, 'hombre': 0, 'unisex': 0}
-        
-        for p in products:
-            # Categories
-            cat = p.get('category', '').strip()
-            if cat:
-                categories[cat] = categories.get(cat, 0) + 1
-            
-            # Sizes from name
-            size = extract_size_from_name(p.get('Name', ''))
-            if size:
-                sizes.add(size)
-            
-            # Gender
-            gender = determine_gender(p.get('category', ''), p.get('brand', ''))
-            genders[gender] += 1
-        
-        # Sort sizes (numeric first, then alpha)
-        numeric_sizes = sorted([s for s in sizes if s.isdigit()], key=int)
-        alpha_sizes = sorted([s for s in sizes if not s.isdigit()])
+        # Sort sizes
+        numeric_sizes = sorted([s for s in all_sizes if s.isdigit()], key=int)
+        alpha_sizes = sorted([s for s in all_sizes if not s.isdigit()])
         sorted_sizes = numeric_sizes + alpha_sizes
         
+        # Get gender counts
+        gender_pipeline = [
+            {"$match": {"stock": {"$gt": 0}}},
+            {"$group": {"_id": "$gender", "count": {"$sum": 1}}}
+        ]
+        gender_result = await db.shop_products.aggregate(gender_pipeline).to_list(10)
+        gender_counts = {g["_id"]: g["count"] for g in gender_result}
+        
         return {
-            "categories": [{"name": k, "count": v} for k, v in sorted(categories.items(), key=lambda x: -x[1])],
+            "categories": categories,
             "sizes": sorted_sizes,
             "genders": [
-                {"value": "mujer", "label": "Mujer", "count": genders['mujer']},
-                {"value": "hombre", "label": "Hombre", "count": genders['hombre']},
-                {"value": "unisex", "label": "Unisex", "count": genders['unisex']}
+                {"value": "mujer", "label": "Mujer", "count": gender_counts.get('mujer', 0)},
+                {"value": "hombre", "label": "Hombre", "count": gender_counts.get('hombre', 0)},
+                {"value": "unisex", "label": "Unisex", "count": gender_counts.get('unisex', 0)}
             ]
         }
         
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Error: {str(e)}")
+        logger.error(f"Error getting filters: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== PRODUCTS ENDPOINTS ====================
 
@@ -247,132 +297,101 @@ async def get_products(
     min_price: Optional[float] = None,
     max_price: Optional[float] = None
 ):
-    """Get products - uses cache for fast response"""
+    """Get products from local MongoDB - FAST"""
     try:
-        # Get products from cache
-        all_products = await get_cached_products()
+        # Build query
+        query = {"stock": {"$gt": 0}}
         
-        # Filter products with stock > 0
-        products = [p for p in all_products if float(p.get('stock', 0)) > 0]
-        
-        # Apply filters
         if search:
-            search_lower = search.lower()
-            products = [p for p in products if search_lower in p.get('Name', '').lower()]
+            query["name"] = {"$regex": search, "$options": "i"}
         
         if category:
-            products = [p for p in products if p.get('category', '').strip().lower() == category.lower()]
+            query["category"] = {"$regex": f"^{category}$", "$options": "i"}
         
         if gender:
-            products = [p for p in products if determine_gender(p.get('category', ''), p.get('brand', '')) == gender]
+            query["gender"] = gender
         
         if size:
-            products = [p for p in products if extract_size_from_name(p.get('Name', '')) == size.upper()]
+            query["size"] = size.upper()
         
         if min_price:
-            products = [p for p in products if float(p.get('price', 0)) >= min_price]
+            query["price"] = {"$gte": min_price}
         
         if max_price:
-            products = [p for p in products if float(p.get('price', 0)) <= max_price]
+            if "price" in query:
+                query["price"]["$lte"] = max_price
+            else:
+                query["price"] = {"$lte": max_price}
         
-        # Pagination
-        total = len(products)
-        start = (page - 1) * limit
-        end = start + limit
-        paginated_products = products[start:end]
+        # Get total count
+        total = await db.shop_products.count_documents(query)
         
-        # Transform products for frontend
-        transformed = []
-        for p in paginated_products:
-            product_size = extract_size_from_name(p.get('Name', ''))
-            product_gender = determine_gender(p.get('category', ''), p.get('brand', ''))
-            
-            transformed.append({
-                "id": p.get('ID'),
-                "name": p.get('Name'),
-                "sku": p.get('sku'),
-                "price": float(p.get('price', 0)),
-                "stock": float(p.get('stock', 0)),
-                "discount": float(p.get('discount', 0)),
-                "description": p.get('description', ''),
-                "image": p.get('img_url', ''),
-                "category": p.get('category', '').strip(),
-                "brand": p.get('brand', '').strip(),
-                "size": product_size,
-                "gender": product_gender,
-                "featured": p.get('featured', False)
-            })
+        # Get paginated products
+        skip = (page - 1) * limit
+        products = await db.shop_products.find(
+            query,
+            {"_id": 0}
+        ).sort("name", 1).skip(skip).limit(limit).to_list(limit)
+        
+        # Transform for frontend (rename product_id to id)
+        for p in products:
+            p["id"] = p.pop("product_id", None)
         
         return {
-            "products": transformed,
+            "products": products,
             "total": total,
             "page": page,
             "limit": limit,
-            "total_pages": math.ceil(total / limit)
+            "total_pages": math.ceil(total / limit) if total > 0 else 1
         }
         
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Error: {str(e)}")
+        logger.error(f"Error getting products: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @ecommerce_router.get("/products/{product_id}")
 async def get_product(product_id: str):
-    """Get single product details - uses cache"""
+    """Get single product from local DB - FAST"""
     try:
-        all_products = await get_cached_products()
-        
-        # Find the product
-        product = next((p for p in all_products if p.get('ID') == product_id), None)
+        product = await db.shop_products.find_one(
+            {"product_id": product_id},
+            {"_id": 0}
+        )
         
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         
-        return {
-            "id": product.get('ID'),
-            "name": product.get('Name'),
-            "sku": product.get('sku'),
-            "price": float(product.get('price', 0)),
-            "stock": float(product.get('stock', 0)),
-            "discount": float(product.get('discount', 0)),
-            "description": product.get('description', ''),
-            "image": product.get('img_url', ''),
-            "category": product.get('category', '').strip(),
-            "brand": product.get('brand', '').strip(),
-            "featured": product.get('featured', False)
-        }
-            
+        product["id"] = product.pop("product_id", None)
+        return product
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @ecommerce_router.get("/featured")
 async def get_featured_products():
-    """Get featured products for homepage - uses cache"""
+    """Get featured products - FAST"""
     try:
-        all_products = await get_cached_products()
+        products = await db.shop_products.find(
+            {"stock": {"$gt": 0}},
+            {"_id": 0}
+        ).limit(8).to_list(8)
         
-        # Filter products with stock
-        products = [p for p in all_products if float(p.get('stock', 0)) > 0]
-        
-        # Filter featured products
-        featured = [p for p in products if p.get('featured')][:8]
-        
-        # If not enough featured, get first products with stock
-        if len(featured) < 8:
-            featured = products[:8]
-        
-        transformed = []
-        for p in featured:
-            transformed.append({
-                "id": p.get('ID'),
-                "name": p.get('Name'),
-                "price": float(p.get('price', 0)),
-                "image": p.get('img_url', ''),
-                "discount": float(p.get('discount', 0))
+        result = []
+        for p in products:
+            result.append({
+                "id": p.get("product_id"),
+                "name": p.get("name"),
+                "price": p.get("price"),
+                "image": p.get("image"),
+                "discount": p.get("discount", 0)
             })
         
-        return transformed
+        return result
         
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 # ==================== DELIVERY CALCULATION ====================
 
@@ -380,11 +399,9 @@ async def get_featured_products():
 async def calculate_delivery(data: DeliveryCalculation):
     """Calculate delivery cost based on distance"""
     if not gmaps:
-        # Fallback: calculate using Haversine formula
         distance_km = haversine_distance(STORE_LAT, STORE_LNG, data.lat, data.lng)
     else:
         try:
-            # Use Google Maps Distance Matrix
             result = gmaps.distance_matrix(
                 origins=[(STORE_LAT, STORE_LNG)],
                 destinations=[(data.lat, data.lng)],
@@ -395,12 +412,10 @@ async def calculate_delivery(data: DeliveryCalculation):
                 distance_meters = result['rows'][0]['elements'][0]['distance']['value']
                 distance_km = distance_meters / 1000
             else:
-                # Fallback to Haversine
                 distance_km = haversine_distance(STORE_LAT, STORE_LNG, data.lat, data.lng)
         except Exception:
             distance_km = haversine_distance(STORE_LAT, STORE_LNG, data.lat, data.lng)
     
-    # Calculate cost
     delivery_cost = distance_km * DELIVERY_PRICE_PER_KM
     delivery_cost = max(delivery_cost, DELIVERY_MIN_PRICE)
     
@@ -413,8 +428,7 @@ async def calculate_delivery(data: DeliveryCalculation):
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     """Calculate distance between two points using Haversine formula"""
-    R = 6371  # Earth's radius in kilometers
-    
+    R = 6371
     lat1_rad = math.radians(lat1)
     lat2_rad = math.radians(lat2)
     delta_lat = math.radians(lat2 - lat1)
@@ -430,9 +444,8 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 @ecommerce_router.post("/checkout/stripe")
 async def create_stripe_checkout(data: CheckoutData, request: Request):
     """Create Stripe checkout session"""
-    from server import db, notify_new_order
+    from server import notify_new_order
     
-    # Calculate totals
     subtotal = sum(item.price * item.quantity for item in data.items if item.price)
     delivery_cost = 0
     
@@ -445,7 +458,6 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
     
     total = subtotal + delivery_cost
     
-    # Create order in database
     order_id = f"ORD-{uuid.uuid4().hex[:8].upper()}"
     order_doc = {
         "order_id": order_id,
@@ -468,7 +480,6 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
     await db.orders.insert_one(order_doc)
     
     try:
-        # Create Stripe checkout session
         line_items = []
         
         for item in data.items:
@@ -484,20 +495,16 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
                 "quantity": item.quantity
             })
         
-        # Add delivery cost if applicable
         if delivery_cost > 0:
             line_items.append({
                 "price_data": {
                     "currency": "pyg",
-                    "product_data": {
-                        "name": "Costo de envío"
-                    },
+                    "product_data": {"name": "Costo de envío"},
                     "unit_amount": int(delivery_cost)
                 },
                 "quantity": 1
             })
         
-        # Get base URL
         base_url = str(request.base_url).rstrip('/')
         if 'localhost' not in base_url:
             base_url = os.environ.get('REACT_APP_BACKEND_URL', base_url)
@@ -510,12 +517,9 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
             mode='payment',
             success_url=f"{frontend_url}/shop/order-success?order_id={order_id}",
             cancel_url=f"{frontend_url}/shop/cart",
-            metadata={
-                "order_id": order_id
-            }
+            metadata={"order_id": order_id}
         )
         
-        # Update order with Stripe session ID
         await db.orders.update_one(
             {"order_id": order_id},
             {"$set": {"stripe_session_id": session.id}}
@@ -537,10 +541,9 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
 @ecommerce_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
     """Handle Stripe webhooks"""
-    from server import db, notify_new_order
+    from server import notify_new_order
     
     payload = await request.body()
-    sig_header = request.headers.get('stripe-signature')
     
     try:
         event = stripe.Event.construct_from(
@@ -554,7 +557,6 @@ async def stripe_webhook(request: Request):
         order_id = session.get('metadata', {}).get('order_id')
         
         if order_id:
-            # Update order status
             await db.orders.update_one(
                 {"order_id": order_id},
                 {"$set": {
@@ -564,7 +566,6 @@ async def stripe_webhook(request: Request):
                 }}
             )
             
-            # Get order and send notification
             order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
             if order:
                 await notify_new_order(order)
@@ -574,8 +575,6 @@ async def stripe_webhook(request: Request):
 @ecommerce_router.get("/orders/{order_id}")
 async def get_order(order_id: str):
     """Get order details"""
-    from server import db
-    
     order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
     
     if not order:
