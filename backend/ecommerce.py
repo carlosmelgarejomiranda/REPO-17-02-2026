@@ -170,6 +170,11 @@ def extract_base_model(name: str) -> str:
     
     Removes all size patterns to get the base product model name
     for grouping variants together.
+    
+    Handles complex patterns like:
+    - Wuarani: 100394-BP- (Blanco Pequeño), 100394-NM- (Negro Mediano)
+    - OKI: REM.PREM.BLA.M (ends with .M for size)
+    - Standard: -P-, -M-, -G-, -XL-, etc.
     """
     if not name:
         return name
@@ -177,40 +182,71 @@ def extract_base_model(name: str) -> str:
     base = name
     
     # Patterns to remove sizes (order matters - more specific first)
-    # Must match the patterns in extract_size_from_name
     patterns = [
-        # Product code patterns with embedded size: XXXXX-N[PMGSL]- or XXXXX-[0-9]N[PMGSL]-
-        # Examples: 100065-NG-, 100065-NM-, 100074-1NP-
-        (r'(\d{5,6}-\d?)N([PMGSL])-', r'\1N-'),  # 100065-NG- → 100065-N-
+        # ===========================================
+        # PRODUCT CODE PATTERNS (Wuarani style)
+        # Format: XXXXX-[COLOR][SIZE]- where COLOR is letter(s) and SIZE is P/M/G/XL/etc
+        # ===========================================
+        # Color codes: N=Negro, B=Blanco, R=Rosa/Rojo, G=Gris, C=Celeste, V=Verde, F=Fucsia, L=Lila, O=Ocre
+        # Size codes: XP, P, M, G, XL, XXL, XG, XXG
         
-        # US sizes
+        # Extended sizes with X prefix: NXP, BXL, GXXL, etc.
+        (r'(\d{5,6}-\d?[NBRGCVFLOA])(X{1,2}[PLG])(-)', r'\1-'),  # 100394-BXP- → 100394-B-
+        
+        # Single letter sizes: NP, NM, NG, BP, BM, BG, etc.
+        (r'(\d{5,6}-\d?[NBRGCVFLOA])([PMGSL])(-)', r'\1-'),      # 100394-BP- → 100394-B-
+        
+        # ===========================================
+        # DOT NOTATION (OKI style: REM.PREM.BLA.M)
+        # ===========================================
+        (r'\.(X{1,2}[SLGP])$', ''),           # .XL, .XG, .XP at end → remove
+        (r'\.([PMGSL])$', ''),                # .P, .M, .G at end → remove
+        (r'\.(X{1,2}[SLGP])-', '-'),          # .XL- → -
+        (r'\.([PMGSL])-', '-'),               # .M- → -
+        
+        # ===========================================
+        # US SIZES
+        # ===========================================
         (r'-(US\d{1,2})$', ''),           # -US8 at end → remove
         (r'-(US\d{1,2})-', '-'),          # -US8- → keep one dash
         (r'\s(US\d{1,2})(?:\s|$)', ' '),  # space US8 → space
         
-        # Combined sizes with slash
+        # ===========================================
+        # COMBINED SIZES WITH SLASH
+        # ===========================================
         (r'-([XSMLPG]{1,3}/[XSMLPG]{1,3})$', ''),      # -S/M at end → remove
         (r'-([XSMLPG]{1,3}/[XSMLPG]{1,3})-', '-'),     # -S/M- → -
         
-        # Extended alpha sizes (XXL, XXXL, XXG, XXXG, XS, etc.)
-        (r'-((?:X{1,3})[SLG])$', ''),      # -XXL, -XXG at end → remove
-        (r'-((?:X{1,3})[SLG])-', '-'),     # -XXL-, -XXG- → -
-        (r'\s((?:X{1,3})[SLG])$', ''),     # space XXL at end → remove
-        (r'\s((?:X{1,3})[SLG])\s', ' '),   # space XXL space → space
+        # ===========================================
+        # EXTENDED ALPHA SIZES (XS, XL, XXL, XG, XXG, XP)
+        # ===========================================
+        (r'-(X{1,3}[SLGP])$', ''),         # -XXL, -XXG, -XP at end → remove
+        (r'-(X{1,3}[SLGP])-', '-'),        # -XXL-, -XXG-, -XP- → -
+        (r'\s(X{1,3}[SLGP])$', ''),        # space XXL at end → remove
+        (r'\s(X{1,3}[SLGP])\s', ' '),      # space XXL space → space
         
-        # Brazilian/Spanish double sizes (PP, GG)
-        (r'-(PP|GG)$', ''),                # -PP, -GG at end → remove
-        (r'-(PP|GG)-', '-'),               # -PP-, -GG- → -
-        (r'\s(PP|GG)$', ''),               # space PP at end → remove
-        (r'\s(PP|GG)\s', ' '),             # space PP space → space
+        # ===========================================
+        # DOUBLE LETTER SIZES (PP, GG)
+        # ===========================================
+        (r'-(PP)$', ''),                   # -PP at end → remove
+        (r'-(PP)-', '-'),                  # -PP- → -
+        (r'\s(PP)$', ''),                  # space PP at end → remove
+        (r'\s(PP)\s', ' '),                # space PP space → space
+        # Note: GG is ambiguous (could be Gris Grande) - handle in context
         
-        # Single letter sizes (P, M, G, S, L) - be careful not to remove parts of words
+        # ===========================================
+        # SINGLE LETTER SIZES (P, M, G, S, L)
+        # ===========================================
         (r'-([PMGSL])$', ''),              # -P, -M, -G, -S, -L at end → remove
         (r'-([PMGSL])-', '-'),             # -P-, -M- etc → -
         (r'\s([PMGSL])$', ''),             # space P at end → remove
         (r'\s([PMGSL])\s', ' '),           # space P space → space (P in middle of name)
         
-        # Numeric sizes (2 digits)
+        # ===========================================
+        # NUMERIC SIZES (kids: 8-16, adults: 34-50)
+        # ===========================================
+        (r'-([8]|1[0246])$', ''),          # -8, -10, -12, -14, -16 at end (kids)
+        (r'-([8]|1[0246])-', '-'),         # -8-, -10- etc (kids) → -
         (r'-(\d{2})$', ''),                # -38 at end → remove
         (r'-(\d{2})-', '-'),               # -38- → -
         (r'\s(\d{2})$', ''),               # space 38 at end → remove
