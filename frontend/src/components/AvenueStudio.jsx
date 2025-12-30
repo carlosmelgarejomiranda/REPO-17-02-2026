@@ -241,7 +241,7 @@ export const AvenueStudio = ({ t }) => {
               letterSpacing: '0.1em',
               fontWeight: '600'
             }}
-            onClick={handleContact}
+            onClick={handleReserve}
           >
             {t.studio.cta}
           </Button>
