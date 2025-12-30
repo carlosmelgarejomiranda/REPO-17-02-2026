@@ -362,6 +362,9 @@ function AppRouter() {
             />
           } />
 
+          {/* Terms and Conditions */}
+          <Route path="/terminos" element={<TerminosCondiciones />} />
+
           {/* Booking Page */}
           <Route path="/studio/reservar" element={
             <>
