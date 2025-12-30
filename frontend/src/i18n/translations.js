@@ -86,6 +86,37 @@ export const translations = {
       delivery: 'Pedidos y Delivery',
       follow: 'Síguenos',
       rights: 'Avenue. Todos los derechos reservados.'
+    },
+    studio: {
+      title: 'Avenue Studio',
+      subtitle: 'Tu espacio creativo en el corazón de Asunción',
+      description: 'Un estudio profesional de creación de contenido disponible para alquiler, equipado con tecnología de última generación y diseñado para potenciar tu marca.',
+      promoTitle: 'Precios Promocionales de Apertura',
+      rates: {
+        title: 'Tarifas',
+        hours2: '2 Horas',
+        hours4: '4 Horas',
+        hours6: '6 Horas',
+        hours8: '8 Horas',
+        price2: '250.000 Gs',
+        price4: '450.000 Gs',
+        price6: '650.000 Gs',
+        price8: '800.000 Gs'
+      },
+      equipment: {
+        title: 'Equipamiento Incluido',
+        light: 'Luz Godox SL-100 Bicolor',
+        flash: 'Flash Godox AD200 II',
+        savings: 'Valor 20.000 Gs/hora c/u - Exhonerados',
+        table: 'Mesa de reuniones para 8 personas',
+        backdrop: 'Fondo Infinito',
+        lounge: 'Área de descanso y esparcimiento',
+        tv: 'TV en sala de esparcimiento',
+        wifi: 'WiFi de alta velocidad',
+        water: 'Agua incluida'
+      },
+      cta: 'Reservar Ahora',
+      contact: 'Consultar Disponibilidad'
     }
   },
   en: {
