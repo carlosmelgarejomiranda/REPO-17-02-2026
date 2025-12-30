@@ -106,6 +106,19 @@ function AppRouter() {
     login(userData);
     setShowAuthModal(false);
   };
+
+  return (
+    <BrowserRouter>
+      {showAuthModal && (
+        <AuthForms 
+          onLogin={handleAuthSuccess} 
+          onClose={() => setShowAuthModal(false)} 
+        />
+      )}
+      
+      <div className="App">
+        <Routes>
+          <Route path="/" element={
             <>
               {/* Navigation */}
               <nav 
