@@ -63,12 +63,23 @@ def extract_size_from_name(name: str) -> Optional[str]:
     """Extract size from product name"""
     if not name:
         return None
-    match = re.search(r'-([XSML]{1,3}|[0-9]{1,2}|U)-', name, re.IGNORECASE)
-    if match:
-        return match.group(1).upper()
-    match = re.search(r'-([XSML]{1,3}|[0-9]{1,2}|U)$', name, re.IGNORECASE)
-    if match:
-        return match.group(1).upper()
+    
+    # Patterns to match sizes
+    patterns = [
+        r'-(\d{2})-',              # -38-, -39-
+        r'-([XSMLGUP]{1,4})-',     # -M-, -XL-, -XXG-
+        r'-([XSMLGUP]{1,4})$',     # ends with -M, -XL
+        r'-(\d{2})$',              # ends with -38
+        r' ([XSMLGUP]{1,4}) ',     # space M space
+        r' ([XSMLGUP]{1,4})$',     # space M at end
+        r'-(\d{2})-[A-Z]',         # -38-SOMETHING
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, name, re.IGNORECASE)
+        if match:
+            return match.group(1).upper()
+    
     return None
 
 def determine_gender(category: str, brand: str) -> str:
@@ -90,11 +101,28 @@ def extract_base_model(name: str) -> str:
     """Extract base model name by removing size from product name"""
     if not name:
         return name
-    # Remove size patterns like -XG-, -M-, -38-, -U- from middle
-    base = re.sub(r'-([XSMLG]{1,4}|[0-9]{2}|U)-', '-', name)
-    # Remove size at end like -XG, -M, -38
-    base = re.sub(r'-([XSMLG]{1,4}|[0-9]{2}|U)$', '', base)
-    return base.strip()
+    
+    base = name
+    
+    # Patterns to remove sizes (order matters - more specific first)
+    patterns = [
+        (r'-(\d{2})-', '-'),           # -38- → -
+        (r'-([XSMLGUP]{1,4})-', '-'),  # -XL- → -
+        (r'-([XSMLGUP]{1,4})$', ''),   # -XL at end → remove
+        (r'-(\d{2})$', ''),            # -38 at end → remove
+        (r' ([XSMLGUP]) (?=[A-Z])', ' '),  # space M space before word → space
+        (r' ([XSMLGUP])$', ''),        # space M at end → remove
+    ]
+    
+    for pattern, replacement in patterns:
+        base = re.sub(pattern, replacement, base, flags=re.IGNORECASE)
+    
+    # Clean up
+    base = re.sub(r'-+', '-', base)  # multiple dashes to one
+    base = re.sub(r'\s+', ' ', base)  # multiple spaces to one
+    base = base.strip('-').strip()
+    
+    return base
 
 def transform_product(p: dict) -> dict:
     """Transform ERP product to our format"""
