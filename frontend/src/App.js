@@ -363,7 +363,7 @@ function AppRouter() {
           } />
 
           {/* Terms and Conditions */}
-          <Route path="/terminos" element={<TerminosCondiciones />} />
+          <Route path="/studio/ugc/terms" element={<TerminosCondiciones />} />
 
           {/* Booking Page */}
           <Route path="/studio/reservar" element={
