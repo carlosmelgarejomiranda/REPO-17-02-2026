@@ -58,20 +58,20 @@ export const Brands = ({ t }) => {
             let mobileScaleValue = 1;
             
             if (brand.name === 'Coraltheia') {
-              scaleValue = 5;
-              mobileScaleValue = 3.5;
+              scaleValue = 7;
+              mobileScaleValue = 5;
             }
             if (brand.name === 'Serotonina') {
-              scaleValue = 4;
-              mobileScaleValue = 3;
+              scaleValue = 6;
+              mobileScaleValue = 4.5;
             }
             if (brand.name === 'OKI') {
-              scaleValue = 2.2;
-              mobileScaleValue = 2;
+              scaleValue = 3.5;
+              mobileScaleValue = 3;
             }
             if (brand.name === 'Brand Logo') {
-              scaleValue = 2.2;
-              mobileScaleValue = 2;
+              scaleValue = 3.5;
+              mobileScaleValue = 3;
             }
             if (brand.name === 'David Sandoval') scaleValue = 1.5;
             if (brand.name === 'Body Sculpt') scaleValue = 1.5;
