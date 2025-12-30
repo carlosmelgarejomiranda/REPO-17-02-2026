@@ -611,6 +611,32 @@ async def cancel_reservation(reservation_id: str, request: Request):
 
 # ==================== ADMIN ROUTES ====================
 
+@api_router.post("/admin/test-email")
+async def admin_test_email(request: Request):
+    """Send a test confirmation email (admin only)"""
+    await require_admin(request)
+    
+    # Create a sample reservation for the test email
+    test_reservation = {
+        "reservation_id": "res_test123456",
+        "date": "2025-01-15",
+        "start_time": "10:00",
+        "end_time": "14:00",
+        "duration_hours": 4,
+        "price": 450000,
+        "name": "Cliente de Prueba",
+        "phone": "+595 971 234 567",
+        "email": ADMIN_EMAIL,  # Send to admin email
+        "company": "Marca Premium SRL",
+        "razon_social": "Marca Premium SRL",
+        "ruc": "80012345-6",
+        "status": "confirmed"
+    }
+    
+    await send_confirmation_email(test_reservation)
+    
+    return {"message": f"Email de prueba enviado a {ADMIN_EMAIL}"}
+
 @api_router.get("/admin/reservations")
 async def admin_get_all_reservations(request: Request, date: Optional[str] = None, status: Optional[str] = None):
     """Get all reservations (admin only)"""
