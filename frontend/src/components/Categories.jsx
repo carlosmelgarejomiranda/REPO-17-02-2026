@@ -12,21 +12,21 @@ export const Categories = ({ t }) => {
   ];
 
   return (
-    <section className="py-14 px-6" style={{ backgroundColor: '#1a1a1a' }}>
+    <section className="py-14 px-6" style={{ backgroundColor: '#ead7c8' }}>
       <div className="max-w-5xl mx-auto">
         <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
         
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-4xl font-light mb-3 italic" 
               style={{ 
-                color: '#f5ede4',
+                color: '#1a1a1a',
                 fontFamily: 'var(--font-primary)'
               }}>
             {t.categories.title}
           </h2>
           <p className="text-sm max-w-2xl mx-auto leading-relaxed" 
              style={{ 
-               color: '#ead7c8',
+               color: '#5a5a5a',
                fontFamily: 'var(--font-secondary)'
              }}>
             {t.categories.subtitle}
@@ -39,10 +39,10 @@ export const Categories = ({ t }) => {
             return (
               <div
                 key={index}
-                className="group relative overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm"
+                className="group relative overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer"
                 style={{ aspectRatio: '1/1' }}
               >
-                <div className="absolute inset-0" style={{ backgroundColor: 'rgba(245, 237, 228, 0.1)' }}></div>
+                <div className="absolute inset-0" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)' }}></div>
                 <div className="absolute inset-0 border" style={{ borderColor: 'rgba(212, 169, 104, 0.4)' }}></div>
                 
                 <div className="relative h-full flex flex-col items-center justify-center p-3">
@@ -54,7 +54,7 @@ export const Categories = ({ t }) => {
                   </div>
                   <p className="text-center font-light text-xs" 
                      style={{ 
-                       color: '#f5ede4',
+                       color: '#1a1a1a',
                        fontFamily: 'var(--font-secondary)',
                        letterSpacing: '0.03em'
                      }}>

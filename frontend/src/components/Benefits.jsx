@@ -14,16 +14,8 @@ export const Benefits = ({ t }) => {
   return (
     <section 
       className="py-14 px-6 relative" 
-      style={{ backgroundColor: '#f7f2ed' }}
+      style={{ backgroundColor: '#f5ede4' }}
     >
-      <div className="absolute inset-0 opacity-10">
-        <img 
-          src="https://images.unsplash.com/photo-1676517243531-69e3b27276e9?w=1920&q=80" 
-          alt="Neoclassical Architecture"
-          className="w-full h-full object-cover"
-        />
-      </div>
-      
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
         
@@ -43,9 +35,8 @@ export const Benefits = ({ t }) => {
                 key={index}
                 className="p-5 rounded-sm transition-all duration-300 hover:shadow-lg"
                 style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
-                  border: '1px solid rgba(212, 169, 104, 0.3)',
-                  backdropFilter: 'blur(10px)'
+                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  border: '1px solid rgba(212, 169, 104, 0.3)'
                 }}
               >
                 <div className="mb-3 inline-block p-2.5 rounded-full" 

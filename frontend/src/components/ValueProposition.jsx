@@ -49,15 +49,15 @@ export const ValueProposition = ({ t }) => {
             return (
               <Card 
                 key={index} 
-                className="border-none transition-all duration-300 hover:scale-102 hover:shadow-xl backdrop-blur-sm"
+                className="border-none transition-all duration-300 hover:scale-102 hover:shadow-xl"
                 style={{ 
-                  backgroundColor: 'rgba(245, 237, 228, 0.12)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
                   border: '1px solid rgba(212, 169, 104, 0.3)'
                 }}
               >
                 <CardContent className="p-5">
                   <div className="mb-3 inline-block p-2.5 rounded-full" 
-                       style={{ backgroundColor: 'rgba(212, 169, 104, 0.2)' }}>
+                       style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)' }}>
                     <Icon className="w-5 h-5" style={{ color: '#d4a968' }} />
                   </div>
                   <h3 className="text-lg font-light mb-2 italic" 
@@ -69,7 +69,7 @@ export const ValueProposition = ({ t }) => {
                   </h3>
                   <p className="text-sm leading-relaxed" 
                      style={{ 
-                       color: '#ead7c8',
+                       color: '#a8a8a8',
                        fontFamily: 'var(--font-secondary)'
                      }}>
                     {feature.description}
