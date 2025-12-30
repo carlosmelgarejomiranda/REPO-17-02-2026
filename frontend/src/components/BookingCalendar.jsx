@@ -265,6 +265,14 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Same-day notice */}
+            <div className="mb-4 p-3 rounded text-center text-sm" style={{ backgroundColor: 'rgba(212, 169, 104, 0.1)', border: '1px solid rgba(212, 169, 104, 0.3)' }}>
+              <p style={{ color: '#a8a8a8' }}>
+                📅 Reservas con al menos <strong style={{ color: '#d4a968' }}>1 día de anticipación</strong>. 
+                Para hoy, <a href="https://wa.me/595976691520" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a968' }}>contactanos por WhatsApp</a>.
+              </p>
+            </div>
+
             {/* Month Navigation */}
             <div className="flex items-center justify-between mb-4">
               <Button
