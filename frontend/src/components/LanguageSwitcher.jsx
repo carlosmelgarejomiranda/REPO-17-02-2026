@@ -16,14 +16,19 @@ const languages = [
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
 ];
 
-export const LanguageSwitcher = ({ currentLang, onLanguageChange }) => {
+export const LanguageSwitcher = ({ currentLang, onLanguageChange, isDark = false }) => {
   const currentLanguage = languages.find(lang => lang.code === currentLang);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Globe className="h-4 w-4" />
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="gap-2"
+          style={{ color: isDark ? '#d4a968' : 'inherit' }}
+        >
+          <Globe className="h-4 w-4" style={{ color: isDark ? '#d4a968' : 'inherit' }} />
           <span className="hidden sm:inline">{currentLanguage?.name}</span>
         </Button>
       </DropdownMenuTrigger>
