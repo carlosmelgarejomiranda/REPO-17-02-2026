@@ -21,8 +21,12 @@ import { StudioLanding } from "./components/StudioLanding";
 import { UGCCreators } from "./components/UGCCreators";
 import { UGCCampaignsList } from "./components/UGCCampaignsList";
 import { TerminosCondiciones } from "./components/TerminosCondiciones";
+import { ShopPage } from "./components/ShopPage";
+import { CartPage } from "./components/CartPage";
+import { CheckoutPage } from "./components/CheckoutPage";
+import { OrderSuccessPage } from "./components/OrderSuccessPage";
 import { Button } from "./components/ui/button";
-import { Menu, X, User, LogOut, Calendar } from "lucide-react";
+import { Menu, X, User, LogOut, Calendar, ShoppingBag } from "lucide-react";
 
 // Auth context helper
 const useAuth = () => {
