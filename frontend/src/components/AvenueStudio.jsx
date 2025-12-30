@@ -35,21 +35,21 @@ export const AvenueStudio = ({ t }) => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f7f2ed' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#0d0d0d' }}>
       {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         {/* Background Image with B&W Filter */}
         <div className="absolute inset-0">
           <img 
             src={studioImages.hero}
             alt="Avenue Studio"
             className="w-full h-full object-cover"
-            style={{ filter: 'grayscale(100%) contrast(1.1)' }}
+            style={{ filter: 'grayscale(100%) contrast(1.2)' }}
           />
           {/* Dark Overlay for text readability */}
-          <div className="absolute inset-0 bg-black/70"></div>
+          <div className="absolute inset-0 bg-black/75"></div>
           {/* Gold accent glow */}
-          <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 opacity-15">
             <div className="absolute top-20 left-10 w-96 h-96 bg-[#d4a968] rounded-full blur-3xl"></div>
             <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#d4a968] rounded-full blur-3xl"></div>
           </div>
@@ -64,36 +64,35 @@ export const AvenueStudio = ({ t }) => {
             {t.studio.title}
           </h1>
           <p className="text-xl md:text-2xl mb-4 font-light" 
-             style={{ color: '#ead7c8' }}>
+             style={{ color: '#d4a968' }}>
             {t.studio.subtitle}
           </p>
           <p className="text-base md:text-lg max-w-3xl mx-auto leading-relaxed" 
-             style={{ color: '#ead7c8' }}>
+             style={{ color: '#a8a8a8' }}>
             {t.studio.description}
           </p>
         </div>
       </section>
 
       {/* Promo Badge */}
-      <div className="py-6 text-center" style={{ backgroundColor: '#d4a968' }}>
-        <p className="text-lg md:text-xl font-semibold" 
+      <div className="py-5 text-center" style={{ backgroundColor: '#d4a968' }}>
+        <p className="text-lg md:text-xl font-semibold tracking-wider" 
            style={{ 
-             color: '#1a1a1a',
-             fontFamily: 'var(--font-primary)',
-             letterSpacing: '0.05em'
+             color: '#0d0d0d',
+             fontFamily: 'var(--font-primary)'
            }}>
           {t.studio.promoTitle}
         </p>
       </div>
 
       {/* Rates Section */}
-      <section className="py-20 px-6" style={{ backgroundColor: '#f7f2ed' }}>
+      <section className="py-20 px-6" style={{ backgroundColor: '#141414' }}>
         <div className="max-w-6xl mx-auto">
           <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
           
           <h2 className="text-4xl md:text-5xl font-light text-center mb-16 italic" 
               style={{ 
-                color: '#1a1a1a',
+                color: '#f5ede4',
                 fontFamily: 'var(--font-primary)'
               }}>
             {t.studio.rates.title}
@@ -103,16 +102,16 @@ export const AvenueStudio = ({ t }) => {
             {rates.map((rate, index) => (
               <Card 
                 key={index}
-                className="border-2 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                className="border transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#d4a968]/20"
                 style={{ 
                   borderColor: '#d4a968',
-                  backgroundColor: 'white'
+                  backgroundColor: '#1a1a1a'
                 }}
               >
                 <CardContent className="p-8 text-center">
                   <p className="text-lg mb-4 font-light" 
                      style={{ 
-                       color: '#5a5a5a',
+                       color: '#a8a8a8',
                        fontFamily: 'var(--font-secondary)'
                      }}>
                     {rate.hours}
@@ -139,9 +138,9 @@ export const AvenueStudio = ({ t }) => {
             src={studioImages.equipment}
             alt="Studio Equipment"
             className="w-full h-full object-cover"
-            style={{ filter: 'grayscale(100%) contrast(1.1)' }}
+            style={{ filter: 'grayscale(100%) contrast(1.2)' }}
           />
-          <div className="absolute inset-0 bg-black/85"></div>
+          <div className="absolute inset-0 bg-black/90"></div>
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto">
@@ -169,10 +168,10 @@ export const AvenueStudio = ({ t }) => {
               return (
                 <div 
                   key={index}
-                  className="flex items-start gap-4 p-6 rounded-sm backdrop-blur-sm"
+                  className="flex items-start gap-4 p-6 rounded-sm backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]"
                   style={{ 
-                    backgroundColor: item.highlight ? 'rgba(212, 169, 104, 0.2)' : 'rgba(245, 237, 228, 0.1)',
-                    border: item.highlight ? '1px solid #d4a968' : '1px solid rgba(245, 237, 228, 0.2)'
+                    backgroundColor: item.highlight ? 'rgba(212, 169, 104, 0.15)' : 'rgba(30, 30, 30, 0.8)',
+                    border: item.highlight ? '1px solid #d4a968' : '1px solid rgba(212, 169, 104, 0.3)'
                   }}
                 >
                   <div className="flex-shrink-0">
@@ -180,7 +179,7 @@ export const AvenueStudio = ({ t }) => {
                   </div>
                   <p className="text-base leading-relaxed" 
                      style={{ 
-                       color: '#ead7c8',
+                       color: '#e0e0e0',
                        fontFamily: 'var(--font-secondary)'
                      }}>
                     {item.text}
@@ -195,19 +194,20 @@ export const AvenueStudio = ({ t }) => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-20 px-6 text-center overflow-hidden">
+      <section className="relative py-24 px-6 text-center overflow-hidden">
         {/* Background Image with B&W Filter */}
         <div className="absolute inset-0">
           <img 
             src={studioImages.cta}
             alt="Creative Studio"
             className="w-full h-full object-cover"
-            style={{ filter: 'grayscale(100%) contrast(1.1)' }}
+            style={{ filter: 'grayscale(100%) contrast(1.2)' }}
           />
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/80"></div>
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto">
+          <div className="w-24 h-0.5 mx-auto mb-10" style={{ backgroundColor: '#d4a968' }}></div>
           <h3 className="text-3xl md:text-4xl font-light mb-8 italic" 
               style={{ 
                 color: '#f5ede4',
@@ -218,18 +218,20 @@ export const AvenueStudio = ({ t }) => {
           
           <Button 
             size="lg" 
-            className="text-lg px-12 py-6 transition-all duration-300 hover:scale-105 border-2"
+            className="text-lg px-12 py-6 transition-all duration-300 hover:scale-105 border"
             style={{ 
               backgroundColor: '#d4a968',
-              borderColor: '#b88f4f',
-              color: '#1a1a1a',
+              borderColor: '#d4a968',
+              color: '#0d0d0d',
               fontFamily: 'var(--font-secondary)',
-              letterSpacing: '0.05em'
+              letterSpacing: '0.1em',
+              fontWeight: '600'
             }}
             onClick={handleContact}
           >
             {t.studio.cta}
           </Button>
+          <div className="w-24 h-0.5 mx-auto mt-10" style={{ backgroundColor: '#d4a968' }}></div>
         </div>
       </section>
     </div>
