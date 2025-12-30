@@ -53,36 +53,46 @@ export const Brands = ({ t }) => {
           {brands.map((brand, index) => (
             <div
               key={index}
-              className="flex items-center justify-center p-6 transition-all duration-300 hover:scale-110"
+              className="flex items-center justify-center p-4 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
               style={{ 
                 backgroundColor: '#f7f2ed',
                 minHeight: '120px'
               }}
             >
-              {/* Border solo en desktop */}
-              <div 
-                className="w-full h-full flex items-center justify-center"
+              <img 
+                src={brand.url}
+                alt={brand.name}
+                className="w-full h-auto object-contain brand-logo"
                 style={{
-                  border: '1px solid rgba(212, 169, 104, 0.2)',
-                  borderWidth: window.innerWidth >= 1024 ? '1px' : '0'
+                  filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
+                  transition: 'filter 0.3s ease'
                 }}
-              >
-                <img 
-                  src={brand.url}
-                  alt={brand.name}
-                  className="w-full h-auto object-contain"
-                  style={{
-                    maxHeight: window.innerWidth >= 1024 ? '96px' : '120px',
-                    filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
-                    transition: 'filter 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
-                  onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
-                />
-              </div>
+                onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
+                onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
+              />
             </div>
           ))}
         </div>
+        
+        <style jsx>{`
+          .brand-card {
+            border: none;
+          }
+          
+          .brand-logo {
+            max-height: 150px;
+          }
+          
+          @media (min-width: 1024px) {
+            .brand-card {
+              border: 1px solid rgba(212, 169, 104, 0.2);
+            }
+            
+            .brand-logo {
+              max-height: 96px;
+            }
+          }
+        `}</style>
         
         <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
       </div>
