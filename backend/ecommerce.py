@@ -60,29 +60,90 @@ sync_status = {
 # ==================== HELPER FUNCTIONS ====================
 
 def extract_size_from_name(name: str) -> Optional[str]:
-    """Extract size from product name"""
+    """Extract size from product name
+    
+    Handles multiple size conventions:
+    - Standard: XS, S, M, L, XL, XXL, XXXL
+    - Brazilian/Spanish: PP, P, M, G, GG, XG, XXG, XXXG
+    - Numeric: 34, 36, 38, 40, 42, etc.
+    - US sizes: US5, US6, US7, etc.
+    - Combined: S/M, M/L, etc.
+    """
     if not name:
         return None
     
-    # Patterns to match sizes (order matters - more specific first)
+    # Normalize name for easier matching
+    name_upper = name.upper()
+    
+    # Comprehensive size patterns (order matters - more specific first)
     patterns = [
-        r'-(US\d{1,2})$',          # ends with -US8, -US10
-        r'-(US\d{1,2})-',          # -US8-
-        r'-(\d{2})-',              # -38-, -39-
-        r'-([XSMLGUP]{1,4})-',     # -M-, -XL-, -XXG-
-        r'-([XSMLGUP]{1,4})$',     # ends with -M, -XL
-        r'-(\d{2})$',              # ends with -38
-        r' ([XSMLGUP]{1,4}) ',     # space M space
-        r' ([XSMLGUP]{1,4})$',     # space M at end
-        r'-(\d{2})-[A-Z]',         # -38-SOMETHING
+        # US sizes
+        r'[-\s](US\d{1,2})(?:[-\s]|$)',     # -US8, -US10, US8-, " US8 "
+        
+        # Combined sizes with slash
+        r'[-\s]([XSMLPG]{1,3}/[XSMLPG]{1,3})(?:[-\s]|$)',  # S/M, M/L
+        
+        # Extended alpha sizes (XXL, XXXL, XXG, XXXG, etc.)
+        r'[-\s]((?:X{1,3})[SLG])(?:[-\s]|$)',  # XS, XXS, XXXS, XL, XXL, XXXL, XG, XXG, XXXG
+        r'[-\s]((?:X{1,3})G)(?:[-\s]|$)',       # XG, XXG, XXXG
+        
+        # Brazilian/Spanish sizes - PP, GG
+        r'[-\s](PP|GG)(?:[-\s]|$)',              # PP (extra small), GG (extra large)
+        
+        # Single letter sizes - P, M, G, S, L
+        r'[-\s]([PMGSL])(?:[-\s]|$)',            # P, M, G, S, L (single letter)
+        
+        # Numeric sizes (2 digits)
+        r'[-\s](\d{2})(?:[-\s]|$)',              # 34, 36, 38, etc.
+        
+        # At end of string patterns
+        r'-(US\d{1,2})$',                        # ends with -US8
+        r'-((?:X{1,3})[SLG])$',                  # ends with -XL, -XXL, -XG, -XXG
+        r'-(PP|GG)$',                            # ends with -PP, -GG
+        r'-([PMGSL])$',                          # ends with -P, -M, -G, -S, -L
+        r'-(\d{2})$',                            # ends with -38
+        
+        # Space separated at end
+        r'\s((?:X{1,3})[SLG])$',                 # ends with " XL"
+        r'\s(PP|GG)$',                           # ends with " PP"
+        r'\s([PMGSL])$',                         # ends with " M"
+        r'\s(\d{2})$',                           # ends with " 38"
     ]
     
     for pattern in patterns:
-        match = re.search(pattern, name, re.IGNORECASE)
+        match = re.search(pattern, name_upper)
         if match:
-            return match.group(1).upper()
+            size = match.group(1).upper()
+            # Normalize common equivalents (optional - can be used for grouping)
+            return size
     
     return None
+
+
+def normalize_size(size: str) -> str:
+    """Normalize size to standard format for grouping purposes
+    
+    Converts Brazilian/Spanish sizes to standard equivalents:
+    - PP -> XS, P -> S, G -> L, GG -> XL, XG -> XL, XXG -> XXL, etc.
+    """
+    if not size:
+        return size
+    
+    size = size.upper()
+    
+    # Brazilian to Standard mapping
+    size_map = {
+        'PP': 'XS',      # Extra pequeno -> Extra small
+        'P': 'S',        # Pequeno -> Small
+        # M stays M
+        'G': 'L',        # Grande -> Large
+        'GG': 'XL',      # Extra grande -> Extra large
+        'XG': 'XL',      # Extra grande -> Extra large  
+        'XXG': 'XXL',    # Extra extra grande -> XXL
+        'XXXG': 'XXXL',  # XXXG -> XXXL
+    }
+    
+    return size_map.get(size, size)
 
 def determine_gender(category: str, brand: str) -> str:
     """Determine gender based on category/brand"""
