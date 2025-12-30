@@ -273,12 +273,12 @@ function AppRouter() {
                     <button onClick={() => scrollToSection('categories')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.categories}
                     </button>
-                    <a href="/studio" className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
-                      {t.nav.studio}
-                    </a>
                     <button onClick={() => scrollToSection('contact-form')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.contact}
                     </button>
+                    <a href="/studio" className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                      {t.nav.studio}
+                    </a>
                   </div>
                 )}
               </nav>
