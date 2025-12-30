@@ -108,6 +108,18 @@ frontend:
         agent: "testing"
         comment: "Frontend testing not performed as per testing agent instructions - only backend API testing conducted."
 
+  - task: "Terms & Conditions Integration"
+    implemented: true
+    working: "needs_verification"
+    file: "frontend/src/components/UGCCreators.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "needs_verification"
+        agent: "main"
+        comment: "✅ T&C page created at /studio/ugc/terms. UGC form checkboxes updated with Link to T&C page. 3 checkboxes: (1) Accept T&C with link, (2) Authorize content use, (3) Optional marketing communications."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
