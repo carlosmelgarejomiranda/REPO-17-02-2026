@@ -208,7 +208,7 @@ function App() {
                       {t.nav.home}
                     </a>
                     <div className="h-4 w-px" style={{ backgroundColor: '#d4a968' }}></div>
-                    <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} />
+                    <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
                   </div>
                 </div>
               </nav>
