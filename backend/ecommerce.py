@@ -523,13 +523,15 @@ async def get_product(product_id: str):
         
         if product:
             available_sizes = product.get("available_sizes", [])
-            sizes_sorted = sorted(
-                available_sizes,
-                key=lambda x: (
-                    0 if x.get("size", "").isdigit() else 1,
-                    int(x.get("size", "0")) if x.get("size", "").isdigit() else x.get("size", "")
-                )
-            )
+            sizes_sorted = []
+            for s in available_sizes:
+                size_val = s.get("size") if s else None
+                if size_val:
+                    sizes_sorted.append(s)
+            sizes_sorted.sort(key=lambda x: (
+                0 if (x.get("size") or "").isdigit() else 1,
+                int(x.get("size") or "0") if (x.get("size") or "").isdigit() else (x.get("size") or "")
+            ))
             
             return {
                 "id": product.get("grouped_id"),
