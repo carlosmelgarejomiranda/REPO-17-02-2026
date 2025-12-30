@@ -108,6 +108,8 @@ def extract_base_model(name: str) -> str:
     
     # Patterns to remove sizes (order matters - more specific first)
     patterns = [
+        (r'-(US\d{1,2})$', ''),        # -US8 at end → remove
+        (r'-(US\d{1,2})-', '-'),       # -US8- → -
         (r'-(\d{2})-', '-'),           # -38- → -
         (r'-([XSMLGUP]{1,4})-', '-'),  # -XL- → -
         (r'-([XSMLGUP]{1,4})$', ''),   # -XL at end → remove
