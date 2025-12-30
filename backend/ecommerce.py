@@ -247,67 +247,54 @@ async def get_products(
     min_price: Optional[float] = None,
     max_price: Optional[float] = None
 ):
-    """Get products from Encom ERP"""
+    """Get products - uses cache for fast response"""
     try:
-        async with httpx.AsyncClient(timeout=60) as client:
-            response = await client.post(
-                f"{ENCOM_API_URL}/products",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {ENCOM_API_TOKEN}"
-                },
-                json={"limit": 500, "page": 1}
-            )
+        # Get products from cache
+        all_products = await get_cached_products()
+        
+        # Filter products with stock > 0
+        products = [p for p in all_products if float(p.get('stock', 0)) > 0]
+        
+        # Apply filters
+        if search:
+            search_lower = search.lower()
+            products = [p for p in products if search_lower in p.get('Name', '').lower()]
+        
+        if category:
+            products = [p for p in products if p.get('category', '').strip().lower() == category.lower()]
+        
+        if gender:
+            products = [p for p in products if determine_gender(p.get('category', ''), p.get('brand', '')) == gender]
+        
+        if size:
+            products = [p for p in products if extract_size_from_name(p.get('Name', '')) == size.upper()]
+        
+        if min_price:
+            products = [p for p in products if float(p.get('price', 0)) >= min_price]
+        
+        if max_price:
+            products = [p for p in products if float(p.get('price', 0)) <= max_price]
+        
+        # Pagination
+        total = len(products)
+        start = (page - 1) * limit
+        end = start + limit
+        paginated_products = products[start:end]
+        
+        # Transform products for frontend
+        transformed = []
+        for p in paginated_products:
+            product_size = extract_size_from_name(p.get('Name', ''))
+            product_gender = determine_gender(p.get('category', ''), p.get('brand', ''))
             
-            if response.status_code != 200:
-                raise HTTPException(status_code=502, detail=f"Error connecting to ERP: status {response.status_code}")
-            
-            data = response.json()
-            products = data.get('data', [])
-            
-            # Filter products with stock > 0
-            products = [p for p in products if float(p.get('stock', 0)) > 0]
-            
-            # Apply filters
-            if search:
-                search_lower = search.lower()
-                products = [p for p in products if search_lower in p.get('Name', '').lower()]
-            
-            if category:
-                products = [p for p in products if p.get('category', '').strip().lower() == category.lower()]
-            
-            if gender:
-                products = [p for p in products if determine_gender(p.get('category', ''), p.get('brand', '')) == gender]
-            
-            if size:
-                products = [p for p in products if extract_size_from_name(p.get('Name', '')) == size.upper()]
-            
-            if min_price:
-                products = [p for p in products if float(p.get('price', 0)) >= min_price]
-            
-            if max_price:
-                products = [p for p in products if float(p.get('price', 0)) <= max_price]
-            
-            # Pagination
-            total = len(products)
-            start = (page - 1) * limit
-            end = start + limit
-            paginated_products = products[start:end]
-            
-            # Transform products for frontend
-            transformed = []
-            for p in paginated_products:
-                product_size = extract_size_from_name(p.get('Name', ''))
-                product_gender = determine_gender(p.get('category', ''), p.get('brand', ''))
-                
-                transformed.append({
-                    "id": p.get('ID'),
-                    "name": p.get('Name'),
-                    "sku": p.get('sku'),
-                    "price": float(p.get('price', 0)),
-                    "stock": float(p.get('stock', 0)),
-                    "discount": float(p.get('discount', 0)),
-                    "description": p.get('description', ''),
+            transformed.append({
+                "id": p.get('ID'),
+                "name": p.get('Name'),
+                "sku": p.get('sku'),
+                "price": float(p.get('price', 0)),
+                "stock": float(p.get('stock', 0)),
+                "discount": float(p.get('discount', 0)),
+                "description": p.get('description', ''),
                     "image": p.get('img_url', ''),
                     "category": p.get('category', '').strip(),
                     "brand": p.get('brand', '').strip(),
