@@ -95,7 +95,12 @@ export const Brands = ({ t }) => {
                   className={`w-full h-auto object-contain brand-logo brand-logo-${index}`}
                   style={{
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
-                    transition: 'filter 0.3s ease'
+                    transition: 'filter 0.3s ease',
+                    imageRendering: '-webkit-optimize-contrast',
+                    WebkitBackfaceVisibility: 'hidden',
+                    backfaceVisibility: 'hidden',
+                    WebkitTransform: 'translateZ(0)',
+                    transform: 'translateZ(0)'
                   }}
                   onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
