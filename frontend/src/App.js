@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { translations } from "./i18n/translations";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { Hero } from "./components/Hero";
@@ -13,13 +13,78 @@ import { Location } from "./components/Location";
 import { ContactForm } from "./components/ContactForm";
 import { Footer } from "./components/Footer";
 import { AvenueStudio } from "./components/AvenueStudio";
+import { BookingCalendar } from "./components/BookingCalendar";
+import { AuthForms, AuthCallback } from "./components/AuthForms";
+import { AdminDashboard } from "./components/AdminDashboard";
 import { Button } from "./components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, LogOut, Calendar } from "lucide-react";
 
-function App() {
+// Auth context helper
+const useAuth = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${API_URL}/api/auth/me`, {
+        credentials: 'include',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
+      
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      }
+    } catch (err) {
+      console.error('Auth check failed:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = (userData) => {
+    setUser(userData);
+  };
+
+  const logout = async () => {
+    try {
+      await fetch(`${API_URL}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+    localStorage.removeItem('auth_token');
+    setUser(null);
+  };
+
+  return { user, loading, login, logout, checkAuth };
+};
+
+// App Router component to handle session_id in URL
+function AppRouter() {
+  const location = useLocation();
   const [language, setLanguage] = useState('es');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { user, loading, login, logout, checkAuth } = useAuth();
+  const navigate = useNavigate();
   const t = translations[language];
+
+  // Check URL fragment for session_id (Google OAuth callback)
+  if (location.hash?.includes('session_id=')) {
+    return <AuthCallback onAuthComplete={(userData) => {
+      login(userData);
+      navigate('/studio/reservar');
+    }} />;
+  }
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -37,11 +102,10 @@ function App() {
     window.open('https://wa.me/595973666000', '_blank');
   };
 
-  return (
-    <BrowserRouter>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={
+  const handleAuthSuccess = (userData) => {
+    login(userData);
+    setShowAuthModal(false);
+  };
             <>
               {/* Navigation */}
               <nav 
