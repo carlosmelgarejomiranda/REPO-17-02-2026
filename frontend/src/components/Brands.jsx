@@ -58,11 +58,11 @@ export const Brands = ({ t }) => {
             let maxHeightDesktop = '200px';
             
             if (brand.name === 'Serotonina') {
-              maxHeightMobile = '250px';
-              maxHeightDesktop = '375px';
+              maxHeightMobile = '180px';
+              maxHeightDesktop = '250px';
             } else if (brand.name === 'Coraltheia') {
-              maxHeightMobile = '250px';
-              maxHeightDesktop = '375px';
+              maxHeightMobile = '180px';
+              maxHeightDesktop = '250px';
             } else if (brand.name === 'Fila') {
               maxHeightMobile = '40px';
               maxHeightDesktop = '40px';
