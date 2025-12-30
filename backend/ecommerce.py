@@ -270,10 +270,14 @@ async def sync_products_from_erp():
                 if (i + 1) % 500 == 0:
                     logger.info(f"Saved {i + 1}/{len(all_products)} products...")
             
+            # Create grouped products
+            grouped_count = await create_grouped_products()
+            
             sync_status["last_sync"] = datetime.now(timezone.utc).isoformat()
             sync_status["product_count"] = len(all_products)
+            sync_status["grouped_count"] = grouped_count
             
-            logger.info(f"Product sync completed: {len(all_products)} products saved to MongoDB")
+            logger.info(f"Product sync completed: {len(all_products)} products, {grouped_count} grouped")
             
     except Exception as e:
         logger.error(f"Error syncing products: {str(e)}")
@@ -288,14 +292,20 @@ async def background_sync_loop():
 
 async def start_sync_on_startup():
     """Initial sync and start background loop"""
-    # Check if we have products in DB
-    count = await db.shop_products.count_documents({})
+    # Check if we have grouped products
+    grouped_count = await db.shop_products_grouped.count_documents({})
     
-    if count == 0:
-        logger.info("No products in database, performing initial sync...")
-        await sync_products_from_erp()
+    if grouped_count == 0:
+        # Check individual products
+        count = await db.shop_products.count_documents({})
+        if count > 0:
+            logger.info(f"Found {count} products, creating grouped products...")
+            await create_grouped_products()
+        else:
+            logger.info("No products in database, performing initial sync...")
+            await sync_products_from_erp()
     else:
-        logger.info(f"Found {count} products in database, starting background sync...")
+        logger.info(f"Found {grouped_count} grouped products, starting background sync...")
         # Sync in background to not block startup
         asyncio.create_task(sync_products_from_erp())
     
