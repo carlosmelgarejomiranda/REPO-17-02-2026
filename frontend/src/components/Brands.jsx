@@ -49,11 +49,11 @@ export const Brands = ({ t }) => {
         </div>
 
         {/* Grid de logos: 3 columnas mobile, 6 desktop */}
-        <div className="grid grid-cols-3 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-8">
           {brands.map((brand, index) => (
             <div
               key={index}
-              className="flex items-center justify-center p-4 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
+              className="flex items-center justify-center p-3 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
               style={{ 
                 backgroundColor: '#f7f2ed',
                 minHeight: '120px'
@@ -80,7 +80,7 @@ export const Brands = ({ t }) => {
           }
           
           .brand-logo {
-            max-height: 150px;
+            max-height: 200px;
           }
           
           @media (min-width: 1024px) {
