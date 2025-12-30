@@ -259,6 +259,9 @@ def extract_base_model(name: str) -> str:
     # Clean up
     base = re.sub(r'-+', '-', base)    # multiple dashes to one
     base = re.sub(r'\s+', ' ', base)   # multiple spaces to one
+    base = re.sub(r'\s*-\s*', '-', base)  # normalize spaces around dashes: " - " or "- " or " -" → "-"
+    base = re.sub(r'-\s*(\d{4})\s*$', '', base)  # remove trailing codes like "-3721", "- 3721", "-3723"
+    base = re.sub(r'\s*-\s*(\d{4})\s*$', '', base)  # also handle " - 3721"
     base = base.strip('-').strip()
     
     return base
