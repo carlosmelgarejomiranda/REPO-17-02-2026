@@ -720,6 +720,9 @@ async def create_reservation(reservation_data: ReservationCreate, request: Reque
     # Send confirmation email
     await send_confirmation_email(reservation_doc)
     
+    # Send admin notification (WhatsApp + Email)
+    await notify_new_reservation(reservation_doc)
+    
     # Remove MongoDB _id before returning
     reservation_doc.pop("_id", None)
     
