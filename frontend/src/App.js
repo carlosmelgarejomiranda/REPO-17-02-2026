@@ -264,19 +264,19 @@ function AppRouter() {
 
                 {mobileMenuOpen && (
                   <div className="md:hidden mt-4 pb-4 space-y-3">
-                    <button onClick={() => scrollToSection('value')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <button onClick={() => scrollToSection('value')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.about}
                     </button>
-                    <button onClick={() => scrollToSection('benefits')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <button onClick={() => scrollToSection('benefits')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.benefits}
                     </button>
-                    <button onClick={() => scrollToSection('categories')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <button onClick={() => scrollToSection('categories')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.categories}
                     </button>
-                    <a href="/studio" className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
+                    <a href="/studio" className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
                       {t.nav.studio}
                     </a>
-                    <button onClick={() => scrollToSection('contact-form')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <button onClick={() => scrollToSection('contact-form')} className="block w-full text-left text-sm font-medium py-2 transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.contact}
                     </button>
                   </div>
