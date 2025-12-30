@@ -61,6 +61,7 @@ class UserBase(BaseModel):
 
 # UGC Application Model
 class UGCApplication(BaseModel):
+    campaign_id: str
     email: EmailStr
     nombre: str
     apellido: str
