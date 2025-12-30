@@ -10,7 +10,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://editorial-avenue.preview.emergentagent.com/api"
+BACKEND_URL = "https://multi-store-avenue.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'

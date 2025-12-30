@@ -1,95 +1,111 @@
 <analysis>**original_problem_statement:**
-The user wants to build a high-end, editorial fashion-style landing page for Avenue, a multi-brand store with a neoclassical architectural style.
+The user initially requested a high-end, editorial-style landing page for Avenue, a multi-brand store. The scope expanded significantly to include:
+1.  **Avenue Studio Page**: A separate page for renting a photography studio.
+2.  **Full Booking System**: An integrated system for the studio page allowing users to book time slots. This includes user authentication (email/password and Google OAuth), an admin dashboard to manage reservations, and email confirmations.
+3.  **Site Architecture Refactor**: The main landing page was restructured to be a gateway, directing users to either Join Avenue (for brands) or Avenue Studio.
+4.  **UGC Creator Platform**: A new section under Avenue Studio for managing user-generated content campaigns. This platform supports multiple, distinct campaigns (e.g., for AVENUE, for SANTAL), each with its own requirements and a detailed application form with complex validation logic.
+5.  **Terms and Conditions**: A dedicated page for legal terms, to be linked from the UGC campaign forms.
 
 **PRODUCT REQUIREMENTS:**
-- **Homepage Content**: Based on the provided AVENUE INVITATION 2025.pdf.
-- **Aesthetic**:
-    - **Palette**: light beige/nude (70%), black (20%), gold (10%).
-    - **Style**: Super editorial fashion, with artistic and high-fashion photos. Neoclassical elements like mouldings.
-- **Sections**:
-    - Hero section with a large logo.
-    - Value Proposition, Benefits, Product Categories.
-    - Design Showcase section featuring an image of the actual store.
-    - Brands section to display logos of ~25 partner brands with specific, non-uniform sizing.
-    - Location section with an integrated Google Map pointing to the exact address.
-    - Contact form (name, brand name, business type, phone number) that sends submissions to a WhatsApp number.
-    - Header and Footer.
-- **Functionality**:
-    - **Social Links**: WhatsApp (for brands and for delivery), Instagram, TikTok.
-    - **Internationalization (i18n)**: The page must be in Spanish, with options to switch to English, Portuguese, German, and French.
-    - **Google Analytics**: Integration is required.
-    - **Custom Domain**: User needs guidance on how to set this up.
-- **Avenue Studio Page**:
-    - A separate page at .
-    - Content includes pricing tiers for studio rental (2, 4, 6, 8 hours), details of included equipment (Godox lights), and amenities (meeting table, infinity background, rest area, TV, WiFi, water).
-    - Background should feature black and white, artistic photos of creative/photographic studios.
-    - A WhatsApp button for reservations.
+- **Booking System**:
+    - Users can reserve studio time based on available slots (9 AM - 10 PM daily).
+    - Admins can manually create/manage bookings via a dashboard.
+    - Users can register/login with email or Google.
+    - An admin account is pre-defined ().
+    - Booking confirmations are sent via email.
+    - Payment is handled offline.
+    - Users cannot book for the same day (must be done via WhatsApp).
+- **UGC Creator Platform**:
+    - Display multiple, distinct campaigns with unique requirements.
+    - A detailed application form with fields for personal data, social media links, follower counts, and content samples.
+    - Complex client-side and server-side validation (age > 18, public profiles, min follower count).
+    - Store applications in a database with a status (, , etc.).
+    - Include a page for Terms and Conditions linked from the application form.
 
 **User's preferred language**: Spanish
 
 **what currently exists?**
-A frontend-only React application has been built, styled with TailwindCSS. It consists of a main landing page and a new, separate page for Avenue Studio (). The main page includes all requested sections: Hero, Value Proposition, Benefits, Categories, Design Showcase, Brands, Location, Contact Form, and Footer. The design incorporates the user's specified color palette, typography, and imagery. Internationalization (i18n) is set up with translations for Spanish. The Brands section displays 24 partner logos with custom, user-defined sizes. The Avenue Studio page has been created with its content and is accessible via the navigation bar. The entire application is currently running on mock data; no backend has been implemented.
+A full-stack application featuring a multi-page structure.
+- **Frontend (React)**:
+    - A main landing page () that directs users.
+    - An Avenue Studio landing page () that links to the booking system and the UGC platform.
+    - A complete studio reservation system () with a calendar, time slot selection, and a booking form.
+    - A multi-campaign UGC platform () that lists available campaigns and provides a detailed application form for each ().
+    - A dedicated Terms and Conditions page ().
+    - Authentication modals and an admin dashboard ().
+- **Backend (FastAPI)**:
+    - Endpoints for user registration, login (email & Google), and authentication.
+    - Full CRUD API for managing reservations.
+    - API for submitting and storing UGC campaign applications.
+    - Integration with Resend for sending email confirmations.
+    - An endpoint to send a test email for verification.
 
 **Last working item**:
-    - Last item agent was working: The user requested the creation of a new page for Avenue Studio. The agent created the component, added the content (pricing, features), set up the new route (), and added links to the main navigation (desktop and mobile). The user's most recent request is to add specific background imagery to this new page.
+    - Last item agent was working: The agent was tasked with adding a dedicated Terms and Conditions page and integrating it into the UGC campaign application form. This involved creating the new page/component, adding the route, and updating the form's checkboxes to link to the new page and reflect the legal text provided by the user.
     - Status: IN PROGRESS
-    - Agent Testing Done: Y
+    - Agent Testing Done: N
     - Which testing method agent to use? screenshot tool
     - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-  - Issue 1: The user wants to add background images to the Avenue Studio page. (Priority: P0)
+  - Issue 1: The UGC form's checkboxes have not been updated with the final legal text and the link to the new Terms and Conditions page. (Priority: P0)
   
   Issues Detail:
   - Issue 1: 
-     - Attempted fixes: None yet. The agent has just acknowledged the request.
+     - Attempted fixes: The agent successfully created the  component and added the  route. It viewed the  file to prepare for the final edit but did not complete the  operation to update the checkboxes.
      - Next debug checklist: 
-        1. Call the  to get appropriate super editorial, black and white, aesthetic, creative, artistic photos in creative/photographic studio spaces.
-        2. Update  to include the selected images as a background.
-        3. Ensure the text remains legible over the new background images.
-        4. Use the  to verify the visual changes.
-     - Why fix this issue and what will be achieved with the fix? To complete the design of the Avenue Studio page as per the user's aesthetic requirements.
-     - Status:  NOT STARTED
+        1. Edit .
+        2. Locate the checkbox section near the end of the form.
+        3. Replace the existing checkboxes with the new structure provided by the user, which includes a  component from  pointing to .
+        4. Ensure the new checkbox logic is correctly wired to the form's state.
+        5. Verify the changes using the screenshot tool on a campaign page (e.g., ).
+     - Why fix this issue and what will be achieved with the fix? This is a legal requirement for the UGC platform and a direct user request to finalize the application form.
+     - Status:  IN PROGRESS
      - Is recurring issue? N
      - Should Test frontend/backend/both after fix? Frontend
      - Blocked on other issue: None
 
 **In progress Task List**:
-  - Task 1:  Finalize the design of the Avenue Studio page.
+  - Task 1:  Finalize the integration of the Terms and Conditions page into the UGC form.
   
  Task Detail:
   - Task 1: 
-     - Where to resume: The agent has just received the request to add background images. The next step is to source these images via  and implement them in .
-     - What will be achieved with this? The initial version of the Avenue Studio page will be complete.
+     - Where to resume: In , implement the final  to update the checkbox section.
+     - What will be achieved with this? The UGC application form will be functionally complete, including the required legal consent mechanism.
      - Status:  IN PROGRESS
      - Should Test frontend/backend/both after fix? Frontend
      - Blocked on something: None
 
 **Upcoming and Future Tasks**
     Upcoming Tasks:
-    - **P0: Backend for Contact Form**: Implement the backend logic for the contact form. The user specified that submissions should trigger a message to a WhatsApp number. This will require an endpoint in  and likely a third-party integration (e.g., Twilio API for WhatsApp).
-    - **P1: Add Language Translations**: The i18n framework is in place (), but only contains Spanish content. Add the actual translations for English, Portuguese, German, and French.
+    - **P0: Implement Gmail SMTP for Email Confirmation**: The current Resend integration only allows sending emails to the user's registered email address, which is a blocker for production. The user has agreed to switch to Gmail SMTP but postponed providing the necessary App Password. The agent needs to guide the user to generate this password and then refactor the backend email service.
+    - **P1: Admin Panel for UGC Applications**: The backend collects UGC applications, but the admin has no way to view or manage them. The  dashboard needs to be extended with a new section to list, filter, and update the status of these applications.
 
     Future Tasks:
+    - **Add Language Translations**: The i18n framework is in place, but only Spanish content exists. Add translations for English, Portuguese, German, and French to .
     - **Domain & Analytics Finalization**: Assist the user with the steps outlined in  to connect their custom domain and finalize Google Analytics setup.
 
 **Completed work in this session**
-- **Landing Page Structure**: Created all sections for the main landing page (, , , , , , , ).
-- **Styling and Theming**: Applied the user's brand identity (light beige/nude, black, gold palette) and editorial fashion aesthetic across the site.
-- **Logo Integration**: Integrated user-provided JPG logos, then resolved background issues by requesting and implementing transparent PNG versions.
-- **Icon Integration**: Installed  to use official WhatsApp and TikTok icons in the footer as requested.
-- **Google Maps Integration**: Embedded a map in the  component pointing to the user's provided coordinates.
-- **Google Analytics**: Added the boilerplate script for Google Analytics to .
-- **Brands Section**: Created the component, added 24 brand logos, and performed extensive, iterative size adjustments for individual logos based on user feedback, settling on a  approach to maintain layout consistency.
-- **Avenue Studio Page**: Created the new page at , including its content, routing in , and navigation links in the header and mobile menu.
-- **Documentation**: Created  to guide the user on domain and analytics setup.
+- **Avenue Studio Page Enhancements**: Implemented a dark theme, added editorial background images, and styled the navigation bar with a dark background and gold accents.
+- **Booking System**: Implemented a complete, full-stack reservation system with user authentication (email/password & Google OAuth), a calendar UI, booking logic, and an admin dashboard for management.
+- **Booking Restrictions**: Added logic to prevent users from booking on the current day, directing them to WhatsApp instead.
+- **Email Confirmation**: Integrated  for sending booking confirmation emails, including a test-email button in the admin panel.
+- **Site Architecture Refactor**: Restructured the entire site, creating new landing pages (, ) to guide user flow.
+- **UGC Creator Platform**: Built a dynamic, multi-campaign platform with a detailed application form and complex validation rules.
+- **Backend Development**: Created FastAPI models and endpoints for users, reservations, and UGC applications, storing data in MongoDB.
+- **Terms & Conditions Page**: Created the component and route for the T&C page.
 
 **Earlier issues found/mentioned but not fixed**
-   - Issue 1: **Logo Sizing in Brands Section**
-     - Debug checklist: The user and agent went through a very long and frustrating loop trying to scale individual logos (, , etc.) using CSS . This was complicated by CSS specificity, layout constraints (), and browser caching issues. The final implemented solution uses  on each logo to control size, which ensures uniform row spacing but may not be the exact proportional scaling the user originally wanted. This could be a point of future contention.
-     - Why to solve this issue and what will be achieved with this? Achieving the user's desired visual hierarchy without breaking the layout would improve user satisfaction.
+   - Issue 1: **Email Confirmation Limitation**
+     - Debug checklist: The agent discovered that Resend's free tier only allows sending emails to the registered account holder, not to the customers making bookings. The agent proposed using Gmail SMTP as a free and effective alternative.
+     - Why to solve this issue and what will be achieved with this? This is critical for the booking system to be functional, as customers will not receive confirmation emails.
+     - Should Test frontend/backend/both after fix: Backend
+     - Is recurring issue? N
+   - Issue 2: **body stream already read error**
+     - Debug checklist: User reported this frontend error during login/registration. The agent correctly identified that the  was being read before checking . A fix was implemented to first check the response status and then conditionally parse the JSON, along with showing a more user-friendly error message if the email is already registered.
+     - Why to solve this issue and what will be achieved with this? Provides better error handling and user experience during authentication.
      - Should Test frontend/backend/both after fix: Frontend
-     - Is recurring issue? Y
+     - Is recurring issue? Y (It's a common frontend error pattern)
 
 **Known issue recurrence from previous fork**
   - None
@@ -98,71 +114,87 @@ A frontend-only React application has been built, styled with TailwindCSS. It co
 
 
 **Key Technical Concepts**
-- **Frontend**: React, TailwindCSS
-- **Routing**: 
-- **Internationalization**: A custom solution using a  object and a state-managed  function passed down through props.
-- **Icons**:  (default) and  (added for brand icons).
+- **Frontend**: React, TailwindCSS, 
+- **Backend**: FastAPI, Pydantic
+- **Database**: MongoDB
+- **Authentication**: JWT (email/password), Google OAuth (via Emergent-managed integration)
+- **Integrations**: Resend (for email), Google Maps
+- **State Management**: React Hooks (, , )
 
 **key DB schema**
-  - No database schema has been defined or implemented yet.
+  - **users**: 
+  - **reservations**: 
+  - **ugc_applications**: 
 
 **changes in tech stack**
-  -  was added as a frontend dependency to provide specific brand icons (WhatsApp, TikTok).
+  - **Backend**: Added  and  to .
+  - **Frontend**: No new libraries were added, but the project structure was significantly altered.
 
 **All files of reference**
-- : Modified to implement  for multi-page navigation.
-- : Modified to add the link to the new  page.
-- : New file for the Avenue Studio page.
-- : New file for the brands showcase, heavily modified through user feedback.
-- : New file to handle multi-language text content.
-- : Modified to use correct  and adjust logo sizes.
-- : Modified to adjust logo size and placement.
-- : New documentation file.
+- : Heavily modified to handle new routing, authentication context, and multi-page layouts.
+- : Heavily modified with new Pydantic models and endpoints for auth, reservations, and UGC applications.
+- : New, large component for the UGC application form.
+- : New component for the reservation system UI.
+- : New component for login/registration modals.
+- : New component for the admin panel.
+- : New data file defining the UGC campaigns.
+- : New component for the T&C page.
 
 **Areas that need refactoring**:
-- ****: This component contains a significant amount of hardcoded conditional logic and inline styling to manage the size of individual logos. This approach is brittle and hard to maintain. It should be refactored to use a more scalable method, such as defining brand-specific classes or moving the size configurations into the data array.
-- **Internationalization**: The current i18n implementation involves passing the  function down through props manually. Using a React Context or a library like  would be a cleaner, more standard approach.
+- ****: This file has grown very large and handles routing, auth state, modal state, and multiple layouts. It could be broken down into smaller, more focused components (e.g., a dedicated router component, layout components).
+- ****: This component is over 600 lines long and contains complex state management and validation logic. It could be split into smaller sub-components for each section of the form.
 
 **key api endpoints**
-- : The default hello-world endpoint. No new application-specific endpoints have been created yet.
+- 
+- 
+-  & 
+-  (GET, POST)
+- 
+-  (POST)
+- 
 
 **Critical Info for New Agent**
-- **User is highly detail-oriented**: The user is very specific about visual details, especially logo sizes and spacing. Be prepared for multiple, small, iterative adjustments. Explicitly ask the user to perform a hard refresh ( or ) after CSS changes to avoid cache-related confusion, which was a major source of frustration in the previous session.
-- **Brands section is sensitive**: The sizing of logos in this section was a major pain point. The final implementation uses  to enforce uniform row height. If the user asks for size changes again, be aware of the past issues with  causing layout overlaps and cache problems.
-- **Contact Form to WhatsApp**: The user's requirement to have the contact form send a WhatsApp message is non-trivial. This will require backend work and likely a third-party API (like Twilio). Plan for this integration.
-- **Backend is pending**: The entire application is a frontend mock. The next major phase will be implementing the backend functionality.
+- **Admin Credentials**: The admin account exists. Use  and  to log in and access the  panel.
+- **Email Limitation**: The email confirmation feature is NOT production-ready. It uses Resend, which can only send emails to the developer's registered email (). The user has postponed the migration to Gmail SMTP. Do not attempt to test email delivery to other addresses until this is fixed.
+- **Browser Cache**: The user frequently experiences issues seeing updates due to browser cache on their mobile device. Always remind the user to perform a hard refresh or use an incognito window after deploying changes.
 
 **documents and test reports created in this job**
   - 
+  - Test reports from the backend testing agent confirming the reservation API works.
 
 **Last 10 User Messages and any pending HUMAN messages** 
- 1. **User**: The separation between rows in the Brands section is uneven, especially around the first/last rows. (Issue: In progress)
- 2. **Agent**: Reduced the size of  and  to try and even out row heights.
- 3. **User**: I want the separation between all rows to be exactly the same. (Issue: In progress)
- 4. **Agent**: Set  for all logos to 150px to enforce uniform row height.
- 5. **User**: It's wrong, the separation is still not the same. (Issue: In progress)
- 6. **Agent**: Set a fixed  on all grid cells to force uniform row height.
- 7. **User**: Now I want to add a new page for Avenue Studio with specific pricing and features. (Status: Completed)
- 8. **Agent**: Created the Avenue Studio page with content, routing, and navigation links.
- 9. **User (Pending)**: For the new Avenue Studio page, I want the background to have super editorial, black and white, artistic photos of creative/photographic studios. (Status: **PENDING - HIGHEST PRIORITY**)
- 10. **Agent**: Acknowledged the request and is about to start working on finding and implementing the images.
+ 10. **User**: Provided detailed text for a second UGC campaign (SANTAL). (Status: Completed)
+ 9. **Agent**: Implemented the multi-campaign architecture. (Status: Completed)
+ 8. **User**: Provided the full text for the Terms and Conditions page and specified how the checkboxes in the form should work. (Status: In Progress)
+ 7. **Agent**: Created the  component. (Status: Completed)
+ 6. **User**:  (Urging agent to continue). (Status: Actioned)
+ 5. **Agent**: Added the route for the T&C page and prepared to edit the UGC form. (Status: In Progress)
+ 4. **User**: (User has not messaged since the agent started editing the UGC form for the T&C link).
+ 3. (No further messages)
+ 2. (No further messages)
+ 1. (No further messages)
 
 **Project Health Check:**
-- Mocked: The entire frontend is mocked. The contact form does not work, and language switching only shows Spanish content.
+- Broken: Email confirmation for end-users is broken due to the Resend sandbox limitation.
+- Mocked: Nothing is mocked; all features are connected to the backend.
 
 **3rd Party Integrations**
- - **Google Maps**: Frontend integration via an iframe in .
- - **Google Analytics**: Placeholder script in .
- - **react-icons**: Used for  and  icons in the footer.
+- **Google Maps**: Frontend integration via an iframe.
+- **Google Analytics**: Placeholder script in .
+- **Resend**: Used for email confirmations (partially functional).
+- **Emergent-managed Google Auth**: Used for user login/registration.
 
 **Testing status**
-  - Testing agent used after significant changes: NO
-  - Troubleshoot agent used after agent stuck in loop: YES (Agent restarted the frontend server to clear potential hot-reload issues during the brand logo sizing loop).
+  - Testing agent used after significant changes: YES (for the backend reservation API).
+  - Troubleshoot agent used after agent stuck in loop: NO
   - Test files created: []
   - Known regressions: None.
 
 **Credentials to test flow:**
-None required.
+- **Admin User**:
+    - **Email**: 
+    - **Password**: 
+- **Resend API Key**:  (already in ).
 
 **What agent forgot to execute**
-The agent initially struggled to solve the logo scaling issue in the Brands section, leading to significant user frustration. The core problems were CSS layout constraints (, container height) and browser caching, which the agent took many attempts to diagnose. The final solution (fixed ) was a compromise to solve the layout issue, but may not reflect the user's original intent for proportional scaling.</analysis>
+The agent was in the process of finishing the Terms and Conditions integration. It had created the component and the route but was interrupted before it could execute the final  command to update the checkboxes in the  form. This is the highest priority pending action.</analysis>
