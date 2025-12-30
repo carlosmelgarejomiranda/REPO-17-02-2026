@@ -23,7 +23,10 @@ export const Brands = ({ t }) => {
     { name: 'Brofitwear', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/pv6lug6t_brofitwear.png' },
     { name: 'Bravisima', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/sl1cdb62_bravisima.png' },
     { name: 'Santal', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/9ug3sffi_santal.png' },
-    { name: 'Undisturbed', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/qigxzvwt_undisturbed.png' }
+    { name: 'Undisturbed', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/qigxzvwt_undisturbed.png' },
+    { name: 'Serotonina', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/uj3dond3_serotoninaa.png' },
+    { name: 'Brand Logo', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/h7iv03cn_Design%20sem%20nome%20%284%29.png' },
+    { name: 'OKI', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/trqd3flg_OKI.png' }
   ];
 
   return (
