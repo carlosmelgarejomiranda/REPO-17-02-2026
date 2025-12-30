@@ -112,7 +112,7 @@ def transform_product(p: dict) -> dict:
 # ==================== SYNC FUNCTIONS ====================
 
 async def sync_products_from_erp():
-    """Sync all products from ERP to MongoDB"""
+    """Sync ALL products from ERP to MongoDB with pagination"""
     global sync_status
     
     if sync_status["syncing"]:
@@ -120,17 +120,22 @@ async def sync_products_from_erp():
         return
     
     sync_status["syncing"] = True
-    logger.info("Starting product sync from ERP...")
+    logger.info("Starting FULL product sync from ERP...")
     
     try:
-        async with httpx.AsyncClient(timeout=120) as client:
+        all_products = []
+        page = 1
+        per_page = 500  # Products per page
+        
+        async with httpx.AsyncClient(timeout=180) as client:
+            # First, get total count
             response = await client.post(
                 f"{ENCOM_API_URL}/products",
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {ENCOM_API_TOKEN}"
                 },
-                json={"limit": 1000, "page": 1}
+                json={"limit": 1, "page": 1}
             )
             
             if response.status_code != 200:
@@ -138,25 +143,58 @@ async def sync_products_from_erp():
                 return
             
             data = response.json()
-            erp_products = data.get('data', [])
+            total_products = data.get('total', 0)
+            total_pages = math.ceil(total_products / per_page)
             
-            if not erp_products:
+            logger.info(f"ERP has {total_products} products in {total_pages} pages")
+            
+            # Fetch all pages
+            for page in range(1, total_pages + 1):
+                logger.info(f"Fetching page {page}/{total_pages}...")
+                
+                response = await client.post(
+                    f"{ENCOM_API_URL}/products",
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {ENCOM_API_TOKEN}"
+                    },
+                    json={"limit": per_page, "page": page}
+                )
+                
+                if response.status_code != 200:
+                    logger.error(f"ERP API error on page {page}: {response.status_code}")
+                    continue
+                
+                page_data = response.json()
+                products = page_data.get('data', [])
+                all_products.extend(products)
+                
+                # Small delay to not overwhelm the API
+                await asyncio.sleep(0.5)
+            
+            if not all_products:
                 logger.warning("No products received from ERP")
                 return
             
-            # Transform and upsert products
-            for p in erp_products:
+            logger.info(f"Fetched {len(all_products)} products, saving to MongoDB...")
+            
+            # Transform and upsert products in batches
+            for i, p in enumerate(all_products):
                 transformed = transform_product(p)
                 await db.shop_products.update_one(
                     {"product_id": transformed["product_id"]},
                     {"$set": transformed},
                     upsert=True
                 )
+                
+                # Log progress every 500 products
+                if (i + 1) % 500 == 0:
+                    logger.info(f"Saved {i + 1}/{len(all_products)} products...")
             
             sync_status["last_sync"] = datetime.now(timezone.utc).isoformat()
-            sync_status["product_count"] = len(erp_products)
+            sync_status["product_count"] = len(all_products)
             
-            logger.info(f"Product sync completed: {len(erp_products)} products")
+            logger.info(f"Product sync completed: {len(all_products)} products saved to MongoDB")
             
     except Exception as e:
         logger.error(f"Error syncing products: {str(e)}")
