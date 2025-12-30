@@ -224,19 +224,24 @@ export const UGCCreators = ({ t, campaignId }) => {
       {/* Hero Section */}
       <section className="relative py-20 px-6 overflow-hidden">
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-[#d4a968] rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#d4a968] rounded-full blur-3xl"></div>
+          <div className="absolute top-20 left-10 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: campaign.color }}></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full blur-3xl" style={{ backgroundColor: campaign.color }}></div>
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-light mb-6 italic" style={{ color: '#f5ede4', fontFamily: 'var(--font-primary)' }}>
-            UGC Creators
+          {/* Campaign Badge */}
+          <div 
+            className="inline-block px-6 py-2 rounded-full text-sm font-medium mb-6"
+            style={{ backgroundColor: campaign.color, color: '#0d0d0d' }}
+          >
+            Campaña {campaign.brand}
+          </div>
+          
+          <h1 className="text-3xl md:text-5xl font-light mb-6 italic" style={{ color: '#f5ede4', fontFamily: 'var(--font-primary)' }}>
+            {campaign.title}
           </h1>
-          <p className="text-xl mb-4" style={{ color: '#d4a968' }}>
-            ¿Te gustaría compartir tu experiencia en AVENUE con tu comunidad?
-          </p>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: '#a8a8a8' }}>
-            AVENUE te invita a ser parte de esta experiencia y a mostrar cómo se vive la moda, el detalle y el descubrimiento en un solo lugar.
+            {campaign.description}
           </p>
         </div>
       </section>
@@ -244,16 +249,18 @@ export const UGCCreators = ({ t, campaignId }) => {
       {/* Canje Info */}
       <section className="py-12 px-6" style={{ backgroundColor: '#141414' }}>
         <div className="max-w-4xl mx-auto">
-          <div className="p-6 rounded-lg text-center" style={{ backgroundColor: 'rgba(212, 169, 104, 0.15)', border: '1px solid #d4a968' }}>
-            <Gift className="w-12 h-12 mx-auto mb-4" style={{ color: '#d4a968' }} />
-            <h3 className="text-xl font-medium mb-3" style={{ color: '#d4a968' }}>
+          <div className="p-6 rounded-lg text-center" style={{ backgroundColor: `${campaign.color}20`, border: `1px solid ${campaign.color}` }}>
+            <Gift className="w-12 h-12 mx-auto mb-4" style={{ color: campaign.color }} />
+            <h3 className="text-xl font-medium mb-3" style={{ color: campaign.color }}>
               🎁 Mega Canje en Tienda
             </h3>
             <p className="text-lg mb-2" style={{ color: '#f5ede4' }}>
-              Podés elegir productos del <strong>OUTLET de AVENUE</strong> y de <strong>SANTAL</strong> hasta <strong style={{ color: '#d4a968' }}>Gs. 500.000</strong>
+              {campaign.canje.description.split('Gs.')[0]}
+              <strong style={{ color: campaign.color }}>Gs. {campaign.canje.amount}</strong>
+              {campaign.canje.description.split(campaign.canje.amount)[1] || '.'}
             </p>
             <p className="text-sm" style={{ color: '#a8a8a8' }}>
-              📍 El video/contenido se debe grabar dentro de AVENUE (en tienda)
+              📍 {campaign.location}
             </p>
           </div>
         </div>
@@ -267,14 +274,14 @@ export const UGCCreators = ({ t, campaignId }) => {
           </h3>
           <div className="grid md:grid-cols-2 gap-4">
             {[
-              'Mujeres y hombres',
-              'Mayores de 18 años',
-              'Residencia en Asunción y Gran Asunción',
-              'Perfiles públicos de Instagram y/o TikTok',
-              '+3.000 followers (mínimo)',
+              campaign.requirements.genderText,
+              `Mayores de ${campaign.requirements.minAge} años`,
+              campaign.requirements.location,
+              campaign.requirements.publicProfile,
+              `+${campaign.requirements.minFollowers.toLocaleString()} followers (mínimo)`,
             ].map((req, i) => (
               <div key={i} className="flex items-center gap-3 p-4 rounded" style={{ backgroundColor: '#1a1a1a' }}>
-                <CheckCircle className="w-5 h-5 flex-shrink-0" style={{ color: '#d4a968' }} />
+                <CheckCircle className="w-5 h-5 flex-shrink-0" style={{ color: campaign.color }} />
                 <span style={{ color: '#a8a8a8' }}>{req}</span>
               </div>
             ))}
