@@ -185,8 +185,11 @@ function AppRouter() {
       
       <div className="App">
         <Routes>
-          {/* Main Landing Page */}
-          <Route path="/" element={
+          {/* New Main Landing - Entry Point */}
+          <Route path="/" element={<MainLanding t={t} />} />
+
+          {/* Brands Page (Former Landing) */}
+          <Route path="/marcas" element={
             <>
               <nav 
                 className="fixed top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md"
