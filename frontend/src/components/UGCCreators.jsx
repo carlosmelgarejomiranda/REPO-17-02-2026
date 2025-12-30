@@ -582,11 +582,12 @@ export const UGCCreators = ({ t, campaignId }) => {
                   </h4>
                   
                   <div className="p-3 rounded text-sm" style={{ backgroundColor: '#2a2a2a', color: '#a8a8a8' }}>
-                    <p><strong style={{ color: '#d4a968' }}>Canje:</strong> Hasta Gs. 500.000 en productos del Outlet de AVENUE + SANTAL</p>
-                    <p><strong style={{ color: '#d4a968' }}>Condición:</strong> El contenido se graba en AVENUE</p>
+                    <p><strong style={{ color: '#d4a968' }}>Canje:</strong> Hasta Gs. {campaign.canje.amount} en productos</p>
+                    <p><strong style={{ color: '#d4a968' }}>Condición:</strong> {campaign.location}</p>
                     <p className="text-xs mt-2" style={{ color: '#666' }}>No canjeable por dinero. Cupos limitados. 1 canje por persona seleccionada.</p>
                   </div>
 
+                  {/* Main checkbox - covers everything */}
                   <label className="flex items-start gap-3 cursor-pointer p-3 rounded" style={{ backgroundColor: '#2a2a2a' }}>
                     <input
                       type="checkbox"
@@ -595,11 +596,12 @@ export const UGCCreators = ({ t, campaignId }) => {
                       className="mt-1"
                     />
                     <span className="text-sm" style={{ color: '#a8a8a8' }}>
-                      He leído y acepto las condiciones de uso y privacidad *
+                      Leí y acepto las <a href="/terminos" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a968', textDecoration: 'underline' }}>Bases y Condiciones</a> (Contrato de Adhesión), la Política de Privacidad y la Autorización de uso de imagen/voz y licencia de contenido, incluyendo el uso por AVENUE MALL EAS y por el Cliente de la Campaña, y autorizo el contacto por WhatsApp/email para coordinación. *
                     </span>
                   </label>
                   {errors.acepta_condiciones && <p className="text-sm" style={{ color: '#ef4444' }}>{errors.acepta_condiciones}</p>}
 
+                  {/* Optional checkbox */}
                   <label className="flex items-start gap-3 cursor-pointer p-3 rounded" style={{ backgroundColor: '#2a2a2a' }}>
                     <input
                       type="checkbox"
@@ -608,16 +610,10 @@ export const UGCCreators = ({ t, campaignId }) => {
                       className="mt-1"
                     />
                     <span className="text-sm" style={{ color: '#a8a8a8' }}>
-                      Acepto recibir comunicaciones por WhatsApp sobre la campaña
+                      Quiero recibir novedades, promociones y comunicaciones comerciales de AVENUE por WhatsApp/email
                     </span>
                   </label>
-
-                  <label className="flex items-start gap-3 cursor-pointer p-3 rounded" style={{ backgroundColor: '#2a2a2a' }}>
-                    <input
-                      type="checkbox"
-                      checked={formData.autoriza_contenido}
-                      onChange={(e) => updateField('autoriza_contenido', e.target.checked)}
-                      className="mt-1"
+                </div>
                     />
                     <span className="text-sm" style={{ color: '#a8a8a8' }}>
                       Autorizo a AVENUE a reutilizar el contenido en sus redes (orgánico) *
