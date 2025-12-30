@@ -36,12 +36,17 @@ export const AuthForms = ({ onLogin, onClose }) => {
         body: JSON.stringify(body)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Error de autenticación');
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error('Error del servidor');
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || 'Error de autenticación');
+      }
 
       // Store token in localStorage as backup
       if (data.token) {
