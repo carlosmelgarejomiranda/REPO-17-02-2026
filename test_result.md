@@ -158,7 +158,9 @@ test_plan:
     - "All backend API endpoints tested successfully"
     - "Terms & Conditions Integration completed and verified"
     - "Admin Dashboard UGC Section completed and verified"
-  stuck_tasks: []
+    - "Avenue Online E-commerce Section - API integration issues need fixing"
+  stuck_tasks:
+    - "Avenue Online E-commerce Section - Products API failing in browser"
   test_all: false
   test_priority: "high_first"
 
