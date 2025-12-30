@@ -41,7 +41,7 @@ export const ContactForm = ({ t }) => {
   };
 
   return (
-    <section className="py-14 px-6 relative" style={{ backgroundColor: '#f7f2ed' }} id="contact-form">
+    <section className="py-14 px-6 relative" style={{ backgroundColor: '#f5ede4' }} id="contact-form">
       <div className="absolute inset-0 opacity-10">
         <img 
           src="https://images.unsplash.com/photo-1673010523525-bcf9cfb4b8b5?w=1920&q=80" 
@@ -51,7 +51,20 @@ export const ContactForm = ({ t }) => {
       </div>
       
       <div className="max-w-md mx-auto relative z-10">
-        <div className="w-20 h-0.5 mx-auto mb-8" style={{ backgroundColor: '#d4a968' }}></div>
+        <div className="w-20 h-0.5 mx-auto mb-6" style={{ backgroundColor: '#d4a968' }}></div>
+        
+        {/* AVENUE Logo */}
+        <div className="text-center mb-6">
+          <img 
+            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
+            alt="Avenue"
+            className="h-6 mx-auto"
+            style={{
+              transform: 'scale(4)',
+              filter: 'drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
+            }}
+          />
+        </div>
         
         <Card className="border-none shadow-xl" 
               style={{ 
