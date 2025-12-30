@@ -236,21 +236,21 @@ function AppRouter() {
                   </div>
 
                   <div className="hidden md:flex items-center gap-6">
-                    <button onClick={() => scrollToSection('value')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <button onClick={() => scrollToSection('value')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.about}
                     </button>
-                    <button onClick={() => scrollToSection('benefits')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <button onClick={() => scrollToSection('benefits')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.benefits}
                     </button>
-                    <button onClick={() => scrollToSection('categories')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <button onClick={() => scrollToSection('categories')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.categories}
                     </button>
-                    <a href="/studio" className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
-                      {t.nav.studio}
-                    </a>
-                    <button onClick={() => scrollToSection('contact-form')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                    <button onClick={() => scrollToSection('contact-form')} className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#f5ede4' }}>
                       {t.nav.contact}
                     </button>
+                    <a href="/studio" className="text-sm font-medium transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
+                      {t.nav.studio}
+                    </a>
                     <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
                   </div>
 
