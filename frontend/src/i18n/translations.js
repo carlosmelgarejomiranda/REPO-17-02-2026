@@ -5,7 +5,8 @@ export const translations = {
       about: 'Acerca de',
       benefits: 'Beneficios',
       categories: 'Categorías',
-      contact: 'Contacto'
+      contact: 'Contacto',
+      studio: 'Avenue Studio'
     },
     hero: {
       title: 'AVENUE',
