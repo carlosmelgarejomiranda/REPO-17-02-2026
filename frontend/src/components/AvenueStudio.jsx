@@ -136,46 +136,6 @@ export const AvenueStudio = ({ t }) => {
         </div>
       </section>
 
-      {/* Gallery Section - Nuestro Espacio */}
-      <section className="py-20 px-6" style={{ backgroundColor: '#0d0d0d' }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="w-32 h-1 mx-auto mb-12" style={{ backgroundColor: '#d4a968' }}></div>
-          
-          <h2 className="text-4xl md:text-5xl font-light text-center mb-6 italic" 
-              style={{ 
-                color: '#f5ede4',
-                fontFamily: 'var(--font-primary)'
-              }}>
-            {t.studio.gallery?.title || 'Nuestro Espacio'}
-          </h2>
-          
-          <p className="text-center text-base mb-12" 
-             style={{ 
-               color: '#a8a8a8',
-               fontFamily: 'var(--font-secondary)'
-             }}>
-            {t.studio.gallery?.subtitle || 'Conocé el estudio donde tu marca cobra vida'}
-          </p>
-
-          {/* Studio Image */}
-          <div className="mb-8">
-            <div 
-              className="relative overflow-hidden rounded-sm border"
-              style={{ borderColor: '#d4a968' }}
-            >
-              <img 
-                src="/studio_space.jpg"
-                alt="Avenue Studio Space"
-                className="w-full h-auto object-cover"
-                style={{ maxHeight: '500px', objectFit: 'cover', width: '100%' }}
-              />
-            </div>
-          </div>
-
-          <div className="w-32 h-1 mx-auto mt-12" style={{ backgroundColor: '#d4a968' }}></div>
-        </div>
-      </section>
-
       {/* Equipment Section */}
       <section className="relative py-20 px-6 overflow-hidden">
         {/* Background Image with B&W Filter */}
