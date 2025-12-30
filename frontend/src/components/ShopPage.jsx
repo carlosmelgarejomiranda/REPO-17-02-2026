@@ -396,6 +396,18 @@ export const ShopPage = ({ cart, setCart }) => {
 
 const ProductCard = ({ product, onAddToCart, formatPrice }) => {
   const [imageError, setImageError] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
+  
+  const availableSizes = product.available_sizes || [];
+  const sizesList = product.sizes_list || [];
+  
+  const handleAddToCart = () => {
+    if (availableSizes.length > 0 && !selectedSize) {
+      // Auto-select first available size
+      setSelectedSize(availableSizes[0]);
+    }
+    onAddToCart(selectedSize || availableSizes[0]);
+  };
   
   return (
     <div 
@@ -426,18 +438,18 @@ const ProductCard = ({ product, onAddToCart, formatPrice }) => {
               -{product.discount}%
             </span>
           )}
-          {product.size && (
+          {product.variant_count > 1 && (
             <span 
               className="px-2 py-1 text-xs rounded"
               style={{ backgroundColor: 'rgba(212, 169, 104, 0.9)', color: '#0d0d0d' }}
             >
-              {product.size}
+              {product.variant_count} talles
             </span>
           )}
         </div>
         
         <button
-          onClick={onAddToCart}
+          onClick={handleAddToCart}
           className="absolute bottom-2 right-2 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
           style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
         >
@@ -452,9 +464,40 @@ const ProductCard = ({ product, onAddToCart, formatPrice }) => {
         <h3 className="text-sm font-medium line-clamp-2 mb-2" style={{ color: '#f5ede4' }}>
           {product.name}
         </h3>
+        
+        {/* Available Sizes */}
+        {sizesList.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {sizesList.slice(0, 6).map((size) => (
+              <span
+                key={size}
+                className="px-2 py-0.5 text-xs rounded"
+                style={{ 
+                  backgroundColor: '#2a2a2a', 
+                  color: '#a8a8a8',
+                  border: '1px solid #333'
+                }}
+              >
+                {size}
+              </span>
+            ))}
+            {sizesList.length > 6 && (
+              <span className="text-xs" style={{ color: '#666' }}>
+                +{sizesList.length - 6}
+              </span>
+            )}
+          </div>
+        )}
+        
         <p className="text-lg font-light" style={{ color: '#d4a968' }}>
           {formatPrice(product.price)}
+          {product.max_price && product.max_price !== product.price && (
+            <span className="text-xs ml-1" style={{ color: '#666' }}>
+              - {formatPrice(product.max_price)}
+            </span>
+          )}
         </p>
+        
         {product.stock < 5 && product.stock > 0 && (
           <p className="text-xs mt-1" style={{ color: '#f59e0b' }}>
             ¡Últimas {Math.floor(product.stock)} unidades!
