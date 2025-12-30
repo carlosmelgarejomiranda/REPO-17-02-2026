@@ -1140,8 +1140,9 @@ async def root():
 # Include the router in the main app
 app.include_router(api_router)
 
-# Include e-commerce router
-from ecommerce import ecommerce_router, get_cached_products
+# Include e-commerce router and set database
+from ecommerce import ecommerce_router, set_database, start_sync_on_startup
+set_database(db)
 app.include_router(ecommerce_router)
 
 app.add_middleware(
@@ -1154,13 +1155,9 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    """Pre-warm the products cache on startup"""
-    logger.info("Pre-warming products cache...")
-    try:
-        products = await get_cached_products()
-        logger.info(f"Cache pre-warmed with {len(products)} products")
-    except Exception as e:
-        logger.error(f"Failed to pre-warm cache: {str(e)}")
+    """Initialize e-commerce product sync"""
+    logger.info("Starting e-commerce product sync...")
+    await start_sync_on_startup()
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
