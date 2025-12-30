@@ -272,7 +272,7 @@ function AppRouter() {
             </>
           } />
           
-          {/* Studio Page */}
+          {/* Studio Landing - Options Page */}
           <Route path="/studio" element={
             <>
               <StudioNav 
@@ -284,7 +284,43 @@ function AppRouter() {
                 onLogout={logout}
               />
               <div style={{ paddingTop: '80px' }}>
+                <StudioLanding t={t} />
+              </div>
+              <Footer t={t} />
+            </>
+          } />
+
+          {/* Studio Rental Page */}
+          <Route path="/studio/alquiler" element={
+            <>
+              <StudioNav 
+                t={t} 
+                language={language} 
+                setLanguage={setLanguage}
+                user={user}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+              />
+              <div style={{ paddingTop: '80px' }}>
                 <AvenueStudio t={t} />
+              </div>
+              <Footer t={t} />
+            </>
+          } />
+
+          {/* UGC Creators Page */}
+          <Route path="/studio/ugc" element={
+            <>
+              <StudioNav 
+                t={t} 
+                language={language} 
+                setLanguage={setLanguage}
+                user={user}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+              />
+              <div style={{ paddingTop: '80px' }}>
+                <UGCCreators t={t} />
               </div>
               <Footer t={t} />
             </>
