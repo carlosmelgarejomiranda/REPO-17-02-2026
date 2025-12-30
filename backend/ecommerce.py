@@ -102,7 +102,7 @@ class DeliveryCalculation(BaseModel):
 async def get_filters():
     """Get available filter options"""
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=60) as client:
             response = await client.post(
                 f"{ENCOM_API_URL}/products",
                 headers={
@@ -113,7 +113,7 @@ async def get_filters():
             )
             
             if response.status_code != 200:
-                raise HTTPException(status_code=502, detail="Error connecting to ERP")
+                raise HTTPException(status_code=502, detail=f"Error connecting to ERP: status {response.status_code}")
             
             data = response.json()
             products = data.get('data', [])
