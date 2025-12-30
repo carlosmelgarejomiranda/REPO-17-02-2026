@@ -233,10 +233,10 @@ export const AdminDashboard = ({ user }) => {
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
             <CardContent className="p-4">
-              <p className="text-sm" style={{ color: '#a8a8a8' }}>Total Reservas</p>
+              <p className="text-sm" style={{ color: '#a8a8a8' }}>Reservas</p>
               <p className="text-2xl font-light" style={{ color: '#d4a968' }}>{stats.total}</p>
             </CardContent>
           </Card>
@@ -248,22 +248,28 @@ export const AdminDashboard = ({ user }) => {
           </Card>
           <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
             <CardContent className="p-4">
-              <p className="text-sm" style={{ color: '#a8a8a8' }}>Canceladas</p>
-              <p className="text-2xl font-light" style={{ color: '#ef4444' }}>{stats.cancelled}</p>
-            </CardContent>
-          </Card>
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardContent className="p-4">
               <p className="text-sm" style={{ color: '#a8a8a8' }}>Ingresos</p>
               <p className="text-2xl font-light" style={{ color: '#d4a968' }}>
                 {stats.totalRevenue.toLocaleString()} Gs
               </p>
             </CardContent>
           </Card>
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardContent className="p-4">
+              <p className="text-sm" style={{ color: '#a8a8a8' }}>UGC Aplicaciones</p>
+              <p className="text-2xl font-light" style={{ color: '#d4a968' }}>{stats.ugcTotal}</p>
+            </CardContent>
+          </Card>
+          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
+            <CardContent className="p-4">
+              <p className="text-sm" style={{ color: '#a8a8a8' }}>UGC Pendientes</p>
+              <p className="text-2xl font-light" style={{ color: '#f59e0b' }}>{stats.ugcPending}</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab('reservations')}
             className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
@@ -273,6 +279,16 @@ export const AdminDashboard = ({ user }) => {
             }}
           >
             <Calendar className="w-4 h-4" /> Reservas
+          </button>
+          <button
+            onClick={() => setActiveTab('ugc')}
+            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
+            style={{
+              backgroundColor: activeTab === 'ugc' ? '#d4a968' : '#2a2a2a',
+              color: activeTab === 'ugc' ? '#0d0d0d' : '#a8a8a8'
+            }}
+          >
+            <Instagram className="w-4 h-4" /> UGC Creators
           </button>
           <button
             onClick={() => setActiveTab('users')}
