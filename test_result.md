@@ -110,15 +110,18 @@ frontend:
 
   - task: "Terms & Conditions Integration"
     implemented: true
-    working: "needs_verification"
+    working: true
     file: "frontend/src/components/UGCCreators.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "needs_verification"
         agent: "main"
         comment: "✅ T&C page created at /studio/ugc/terms. UGC form checkboxes updated with Link to T&C page. 3 checkboxes: (1) Accept T&C with link, (2) Authorize content use, (3) Optional marketing communications."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE TESTING COMPLETED - All requirements verified: (1) UGC form loads at /studio/ugc/avenue with 3 checkboxes in Condiciones section, (2) Terms link opens /studio/ugc/terms in new tab with target='_blank', (3) Terms page displays 'Bases y Condiciones' title with 15 legal sections, (4) 'Volver a campañas' navigation works correctly, (5) Campaigns list shows AVENUE campaign card, (6) All checkboxes functional and clickable. Navigation flows work smoothly between all pages."
 
 metadata:
   created_by: "testing_agent"
