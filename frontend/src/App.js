@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams } from "react-router-dom";
 import { translations } from "./i18n/translations";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { Hero } from "./components/Hero";
@@ -19,6 +19,7 @@ import { AdminDashboard } from "./components/AdminDashboard";
 import { MainLanding } from "./components/MainLanding";
 import { StudioLanding } from "./components/StudioLanding";
 import { UGCCreators } from "./components/UGCCreators";
+import { UGCCampaignsList } from "./components/UGCCampaignsList";
 import { Button } from "./components/ui/button";
 import { Menu, X, User, LogOut, Calendar } from "lucide-react";
 
