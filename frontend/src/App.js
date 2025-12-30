@@ -87,6 +87,13 @@ function App() {
             >
               {t.nav.categories}
             </button>
+            <a 
+              href="/studio"
+              className="text-sm font-medium transition-colors hover:opacity-70"
+              style={{ color: '#d4a968' }}
+            >
+              {t.nav.studio}
+            </a>
             <button 
               onClick={() => scrollToSection('contact-form')}
               className="text-sm font-medium transition-colors hover:opacity-70"
