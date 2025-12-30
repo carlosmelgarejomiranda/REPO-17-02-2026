@@ -96,23 +96,21 @@ export const Brands = ({ t }) => {
                   style={{
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease',
-                    imageRendering: '-webkit-optimize-contrast',
-                    WebkitBackfaceVisibility: 'hidden',
-                    backfaceVisibility: 'hidden',
-                    WebkitTransform: 'translateZ(0)',
-                    transform: 'translateZ(0)'
+                    imageRendering: 'crisp-edges'
                   }}
                   onMouseEnter={(e) => e.target.style.filter = 'grayscale(0%) brightness(1) contrast(1)'}
                   onMouseLeave={(e) => e.target.style.filter = 'grayscale(100%) brightness(0.3) contrast(1.2)'}
                 />
                 <style jsx>{`
                   .brand-logo-${index} {
-                    transform: scale(${mobileScaleValue});
+                    transform: scale(${mobileScaleValue}) translateZ(0);
+                    -webkit-font-smoothing: antialiased;
+                    will-change: transform;
                   }
                   
                   @media (min-width: 1024px) {
                     .brand-logo-${index} {
-                      transform: scale(${scaleValue});
+                      transform: scale(${scaleValue}) translateZ(0);
                     }
                   }
                 `}</style>
