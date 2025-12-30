@@ -101,7 +101,12 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
     if (!date) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return date >= today;
+    
+    // Must be at least tomorrow (1 day in advance)
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    return date >= tomorrow;
   };
 
   const handleDateClick = (date) => {
