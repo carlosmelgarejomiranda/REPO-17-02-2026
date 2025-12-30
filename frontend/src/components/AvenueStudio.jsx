@@ -6,7 +6,7 @@ import { Button } from './ui/button';
 export const AvenueStudio = ({ t }) => {
   // Editorial B&W photography studio images
   const studioImages = {
-    hero: 'https://images.unsplash.com/photo-1604514628550-37477afdf4e3?q=80&w=2127&auto=format&fit=crop',
+    hero: 'https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?q=80&w=2132&auto=format&fit=crop',
     equipment: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=2070&auto=format&fit=crop',
     cta: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?q=80&w=2070&auto=format&fit=crop'
   };
