@@ -68,7 +68,8 @@ export const Brands = ({ t }) => {
                   className="w-full h-auto object-contain brand-logo"
                   style={{
                     maxHeight: brand.name === 'Coraltheia' || brand.name === 'Serotonina' ? '1000px' : 
-                               brand.name === 'Fila' || brand.name === 'UGG' ? '60px' : '200px',
+                               brand.name === 'Fila' ? '40px' :
+                               brand.name === 'UGG' ? '60px' : '200px',
                     filter: 'grayscale(100%) brightness(0.3) contrast(1.2)',
                     transition: 'filter 0.3s ease'
                   }}
