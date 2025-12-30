@@ -424,13 +424,13 @@ async def get_products(
     min_price: Optional[float] = None,
     max_price: Optional[float] = None
 ):
-    """Get products from local MongoDB - FAST"""
+    """Get GROUPED products from local MongoDB - shows unique models with sizes"""
     try:
-        # Build query
-        query = {"stock": {"$gt": 0}}
+        # Build query for grouped products
+        query = {"total_stock": {"$gt": 0}}
         
         if search:
-            query["name"] = {"$regex": search, "$options": "i"}
+            query["base_model"] = {"$regex": search, "$options": "i"}
         
         if category:
             query["category"] = {"$regex": f"^{category}$", "$options": "i"}
@@ -439,7 +439,8 @@ async def get_products(
             query["gender"] = gender
         
         if size:
-            query["size"] = size.upper()
+            # Filter products that have this size available
+            query["sizes_list"] = size.upper()
         
         if min_price:
             query["price"] = {"$gte": min_price}
