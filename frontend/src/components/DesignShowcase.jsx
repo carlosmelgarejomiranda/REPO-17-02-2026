@@ -13,11 +13,11 @@ export const DesignShowcase = ({ t }) => {
 
   return (
     <section className="py-24 px-6 relative" style={{ backgroundColor: '#f5ede4' }}>
-      {/* Luxury boutique background */}
+      {/* Imagen real de Avenue */}
       <div className="absolute top-0 left-0 right-0 h-96 overflow-hidden">
         <img 
-          src="https://images.unsplash.com/photo-1763914766563-d15bef819106?w=1920&q=80" 
-          alt="Luxury Boutique"
+          src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/gbm22p9w_IMG_9625.HEIC" 
+          alt="Avenue Interior"
           className="w-full h-full object-cover opacity-30"
         />
       </div>
