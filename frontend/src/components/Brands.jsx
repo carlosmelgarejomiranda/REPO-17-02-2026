@@ -50,8 +50,8 @@ export const Brands = ({ t }) => {
           </p>
         </div>
 
-        {/* Grid de logos: 3 columnas mobile, 6 desktop */}
-        <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6">
+        {/* Grid de logos: 3 columnas mobile, 6 desktop - filas uniformes */}
+        <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6" style={{ gridAutoRows: '1fr' }}>
           {brands.map((brand, index) => {
             // Todos los logos con el mismo maxHeight para filas uniformes
             let maxHeightMobile = '150px';
@@ -71,7 +71,7 @@ export const Brands = ({ t }) => {
                 className="flex items-center justify-center p-3 lg:p-6 transition-all duration-300 hover:scale-110 brand-card"
                 style={{ 
                   backgroundColor: '#f7f2ed',
-                  minHeight: '120px'
+                  height: '150px'
                 }}
               >
                 <img 
