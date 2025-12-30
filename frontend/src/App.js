@@ -170,8 +170,18 @@ function AppRouter() {
   const [language, setLanguage] = useState('es');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [cart, setCart] = useState(() => {
+    // Load cart from localStorage
+    const saved = localStorage.getItem('avenue_cart');
+    return saved ? JSON.parse(saved) : [];
+  });
   const { user, loading, login, logout } = useAuth();
   const t = translations[language];
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('avenue_cart', JSON.stringify(cart));
+  }, [cart]);
 
   // Check URL fragment for session_id (Google OAuth callback)
   if (location.hash?.includes('session_id=')) {
