@@ -1096,6 +1096,41 @@ async def admin_get_users(request: Request):
     users = await db.users.find({}, {"_id": 0, "password": 0}).to_list(1000)
     return users
 
+# ==================== ADMIN ORDERS ====================
+
+@api_router.get("/admin/orders")
+async def admin_get_orders(request: Request, status: Optional[str] = None):
+    """Get all orders (admin only)"""
+    await require_admin(request)
+    
+    query = {}
+    if status:
+        query["order_status"] = status
+    
+    orders = await db.orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return orders
+
+@api_router.put("/admin/orders/{order_id}")
+async def admin_update_order(order_id: str, updates: dict, request: Request):
+    """Update order status (admin only)"""
+    await require_admin(request)
+    
+    order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    allowed_fields = ["order_status", "notes"]
+    update_data = {k: v for k, v in updates.items() if k in allowed_fields}
+    
+    if update_data:
+        await db.orders.update_one(
+            {"order_id": order_id},
+            {"$set": update_data}
+        )
+    
+    updated = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+    return updated
+
 # ==================== BASIC ROUTES ====================
 
 @api_router.get("/")
@@ -1104,6 +1139,10 @@ async def root():
 
 # Include the router in the main app
 app.include_router(api_router)
+
+# Include e-commerce router
+from ecommerce import ecommerce_router
+app.include_router(ecommerce_router)
 
 app.add_middleware(
     CORSMiddleware,
