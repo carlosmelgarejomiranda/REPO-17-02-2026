@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { CheckCircle, Package, MapPin, Phone, Mail, Loader2 } from 'lucide-react';
+import { CheckCircle, Package, MapPin, Phone, Mail, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
@@ -10,29 +10,80 @@ export const OrderSuccessPage = ({ setCart }) => {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [paymentStatus, setPaymentStatus] = useState('checking');
+  const [pollAttempts, setPollAttempts] = useState(0);
 
   const orderId = searchParams.get('order_id');
+  const sessionId = searchParams.get('session_id');
+
+  const pollPaymentStatus = useCallback(async (attempts = 0) => {
+    const maxAttempts = 10;
+    const pollInterval = 2000;
+
+    if (attempts >= maxAttempts) {
+      setPaymentStatus('timeout');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/api/shop/checkout/status/${sessionId}`);
+      if (!response.ok) throw new Error('Failed to check status');
+      
+      const data = await response.json();
+      
+      if (data.payment_status === 'paid') {
+        setPaymentStatus('paid');
+        // Fetch updated order
+        const orderRes = await fetch(`${API_URL}/api/shop/orders/${orderId}`);
+        if (orderRes.ok) {
+          const orderData = await orderRes.json();
+          setOrder(orderData);
+        }
+        return;
+      } else if (data.status === 'expired') {
+        setPaymentStatus('expired');
+        return;
+      }
+      
+      // Continue polling
+      setPollAttempts(attempts + 1);
+      setTimeout(() => pollPaymentStatus(attempts + 1), pollInterval);
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+      setPaymentStatus('error');
+    }
+  }, [sessionId, orderId]);
 
   useEffect(() => {
-    // Clear cart on success
+    // Clear cart on success page load
     setCart([]);
+    localStorage.removeItem('avenue_cart');
     
-    // Fetch order details
-    if (orderId) {
-      fetch(`${API_URL}/api/shop/orders/${orderId}`)
-        .then(res => res.json())
-        .then(data => {
-          setOrder(data);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('Error fetching order:', err);
-          setLoading(false);
-        });
-    } else {
+    if (!orderId) {
       setLoading(false);
+      return;
     }
-  }, [orderId, setCart]);
+
+    // Fetch order details
+    fetch(`${API_URL}/api/shop/orders/${orderId}`)
+      .then(res => res.json())
+      .then(data => {
+        setOrder(data);
+        setLoading(false);
+        
+        // If we have a session_id, poll for payment status
+        if (sessionId && data.payment_status !== 'paid') {
+          setPaymentStatus('checking');
+          pollPaymentStatus(0);
+        } else if (data.payment_status === 'paid') {
+          setPaymentStatus('paid');
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching order:', err);
+        setLoading(false);
+      });
+  }, [orderId, sessionId, setCart, pollPaymentStatus]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
@@ -46,18 +97,35 @@ export const OrderSuccessPage = ({ setCart }) => {
     );
   }
 
+  const isPaid = paymentStatus === 'paid' || order?.payment_status === 'paid';
+
   return (
     <div className="min-h-screen py-12 px-4" style={{ backgroundColor: '#0d0d0d' }}>
       <div className="max-w-2xl mx-auto">
-        {/* Success Icon */}
+        {/* Status Icon */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4"
-            style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)' }}>
-            <CheckCircle className="w-10 h-10" style={{ color: '#22c55e' }} />
-          </div>
-          <h1 className="text-3xl font-light italic mb-2" style={{ color: '#d4a968' }}>
-            ¡Pedido confirmado!
-          </h1>
+          {paymentStatus === 'checking' ? (
+            <>
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4"
+                style={{ backgroundColor: 'rgba(212, 169, 104, 0.2)' }}>
+                <Loader2 className="w-10 h-10 animate-spin" style={{ color: '#d4a968' }} />
+              </div>
+              <h1 className="text-3xl font-light italic mb-2" style={{ color: '#d4a968' }}>
+                Verificando pago...
+              </h1>
+              <p style={{ color: '#a8a8a8' }}>
+                Por favor espera mientras confirmamos tu pago.
+              </p>
+            </>
+          ) : isPaid ? (
+            <>
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4"
+                style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)' }}>
+                <CheckCircle className="w-10 h-10" style={{ color: '#22c55e' }} />
+              </div>
+              <h1 className="text-3xl font-light italic mb-2" style={{ color: '#d4a968' }}>
+                ¡Pedido confirmado!
+              </h1>
           <p style={{ color: '#a8a8a8' }}>
             Gracias por tu compra. Te hemos enviado un email con los detalles.
           </p>
