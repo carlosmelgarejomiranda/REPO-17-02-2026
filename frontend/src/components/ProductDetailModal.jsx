@@ -73,9 +73,9 @@ export const ProductDetailModal = ({ product, onClose, onAddToCart, formatPrice 
             className="aspect-square md:aspect-auto md:min-h-[500px] relative"
             style={{ backgroundColor: '#2a2a2a' }}
           >
-            {product.image && !imageError ? (
+            {resolveImageUrl(product.image) && !imageError ? (
               <img
-                src={product.image}
+                src={resolveImageUrl(product.image)}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 onError={() => setImageError(true)}
