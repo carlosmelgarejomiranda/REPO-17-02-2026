@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingBag, Search, X, ChevronDown, ChevronUp, Menu } from 'lucide-react';
+import { ShoppingBag, Search, X } from 'lucide-react';
 import { ProductDetailModal } from './ProductDetailModal';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
@@ -17,45 +17,78 @@ const resolveImageUrl = (imageUrl) => {
   return imageUrl;
 };
 
-// Filter Section Component - Moved outside to prevent re-creation on every render
-const FilterSection = ({ title, name, options, selectedValue, onChange, expanded, onToggle }) => (
-  <div className="border-b border-gray-200">
-    <button
-      onClick={() => onToggle(name)}
-      className="w-full py-4 flex items-center justify-between text-left"
-    >
-      <span className="text-xs tracking-[0.2em] uppercase font-medium text-gray-900">{title}</span>
-      {expanded ? (
-        <ChevronUp className="w-4 h-4 text-gray-400" />
-      ) : (
-        <ChevronDown className="w-4 h-4 text-gray-400" />
-      )}
-    </button>
-    {expanded && (
-      <div className="pb-4 space-y-2">
-        <button
-          onClick={() => onChange('')}
-          className={`block w-full text-left py-1.5 text-sm transition-colors ${
-            !selectedValue ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'
-          }`}
-        >
-          Todos
-        </button>
-        {options.map(option => (
-          <button
-            key={option}
-            onClick={() => onChange(option)}
-            className={`block w-full text-left py-1.5 text-sm transition-colors ${
-              selectedValue === option ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'
-            }`}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
-    )}
-  </div>
-);
+// Brand categories mapping
+const BRAND_CATEGORIES = {
+  indumentaria: {
+    title: 'Indumentaria',
+    brands: ['SEROTONINA', 'EFIMERA', 'CORALTHEIA', 'KARLA', 'BRAVISIMA', 'SANTAL', 'BODY SCULPT', 'BRO FITWEAR', 'WUARANI', 'AGUARA', 'FILA', 'UNDISTURBED', 'DAVID SANDOVAL', 'SKYLINE', 'OKI', 'AVENUE OUTLET']
+  },
+  calzados: {
+    title: 'Calzados',
+    brands: ['PREMIATA', 'SUN68', 'HUNTER', 'UGG', 'SPERRY', 'CRISTALINE']
+  },
+  joyas: {
+    title: 'Joyas & Accesorios',
+    brands: ['SARELLY', 'THULA', 'OLIVIA', 'KAESE']
+  },
+  cosmetica: {
+    title: 'Cosmética',
+    brands: ['MALVA', 'IMMORTAL', 'MARIA E MAKE UP']
+  },
+  otros: {
+    title: 'Otros',
+    brands: [] // Will be populated with remaining brands
+  }
+};
+
+// Brands to merge into AVENUE OUTLET
+const OUTLET_BRANDS = [
+  'GOOD AMERICAN', 'FRAME', 'BDA FACTORY', 'RUSTY', 'LACOSTE', 'SANTAL/US', 
+  'AVENUE AK', 'JAZMIN CHEBAR', 'MARIA CHER', 'TOP DESIGN', 'RICARDO ALMEIDA',
+  'HOWICK', 'ROTUNDA', 'JUICY', 'KOSIUKO', 'VOYAGEUR', 'MERSEA', 'AVENUE', 
+  'EST1985', 'QUICKSILVER'
+];
+
+// Brands to merge into SUN68
+const SUN_BRANDS = ['SUN68', 'SUN69', 'SUN70', 'SUN71', 'SUN72'];
+
+// DS should be renamed to David Sandoval
+const DS_RENAME = { 'DS': 'DAVID SANDOVAL' };
+
+// Normalize brand name for comparison
+const normalizeBrand = (brand) => {
+  if (!brand) return '';
+  const upper = brand.toUpperCase().trim();
+  
+  // Check if it's an outlet brand
+  if (OUTLET_BRANDS.some(ob => upper.includes(ob) || ob.includes(upper))) {
+    return 'AVENUE OUTLET';
+  }
+  
+  // Check if it's a SUN brand
+  if (SUN_BRANDS.some(sb => upper === sb || upper.includes('SUN6') || upper.includes('SUN7'))) {
+    return 'SUN68';
+  }
+  
+  // Check if it's DS
+  if (upper === 'DS') {
+    return 'DAVID SANDOVAL';
+  }
+  
+  return upper;
+};
+
+// Get category for a brand
+const getBrandCategory = (brand) => {
+  const normalized = normalizeBrand(brand);
+  
+  for (const [key, category] of Object.entries(BRAND_CATEGORIES)) {
+    if (category.brands.some(b => b === normalized || normalized.includes(b) || b.includes(normalized))) {
+      return key;
+    }
+  }
+  return 'otros';
+};
 
 export const ShopPage = ({ cart, setCart }) => {
   const [products, setProducts] = useState([]);
@@ -65,44 +98,84 @@ export const ShopPage = ({ cart, setCart }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const [showFilters, setShowFilters] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [expandedFilters, setExpandedFilters] = useState({
-    category: true,
-    gender: false,
-    size: false,
-    price: false
-  });
-  const [filters, setFilters] = useState({
-    category: '',
-    gender: '',
-    size: '',
-    minPrice: '',
-    maxPrice: ''
-  });
-  const [filterOptions, setFilterOptions] = useState({
-    categories: [],
-    genders: [],
-    sizes: []
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [showBrandsMenu, setShowBrandsMenu] = useState(false);
+  const [organizedBrands, setOrganizedBrands] = useState({
+    indumentaria: [],
+    calzados: [],
+    joyas: [],
+    cosmetica: [],
+    otros: []
   });
   const navigate = useNavigate();
 
-  // Fetch filter options
+  // Fetch and organize brands
   useEffect(() => {
     const fetchFilters = async () => {
       try {
         const response = await fetch(`${API_URL}/api/shop/filters`);
         const data = await response.json();
-        // Extract names/values from objects if needed
-        const categories = (data.categories || []).map(c => typeof c === 'object' ? c.name : c);
-        const genders = (data.genders || []).map(g => typeof g === 'object' ? g.label || g.value : g);
-        const sizes = (data.sizes || []).map(s => typeof s === 'object' ? s.name || s.value : s);
         
-        setFilterOptions({
-          categories,
-          genders,
-          sizes
+        // Extract brand names
+        const rawBrands = (data.categories || []).map(c => 
+          typeof c === 'object' ? c.name : c
+        );
+        
+        // Organize brands into categories
+        const organized = {
+          indumentaria: [],
+          calzados: [],
+          joyas: [],
+          cosmetica: [],
+          otros: []
+        };
+        
+        const processedBrands = new Set();
+        
+        rawBrands.forEach(brand => {
+          const normalized = normalizeBrand(brand);
+          
+          if (processedBrands.has(normalized)) return;
+          processedBrands.add(normalized);
+          
+          const category = getBrandCategory(brand);
+          
+          // Check if brand is in the predefined list for this category
+          const categoryBrands = BRAND_CATEGORIES[category]?.brands || [];
+          if (categoryBrands.some(b => normalized.includes(b) || b.includes(normalized))) {
+            if (!organized[category].includes(normalized)) {
+              organized[category].push(normalized);
+            }
+          } else if (category === 'otros') {
+            if (!organized.otros.includes(normalized)) {
+              organized.otros.push(normalized);
+            }
+          }
         });
+        
+        // Add predefined brands that might not be in the API
+        Object.entries(BRAND_CATEGORIES).forEach(([key, category]) => {
+          category.brands.forEach(brand => {
+            if (!organized[key].includes(brand)) {
+              // Only add if similar brand exists in raw data
+              const hasMatch = rawBrands.some(rb => {
+                const normalizedRb = normalizeBrand(rb);
+                return normalizedRb === brand || normalizedRb.includes(brand) || brand.includes(normalizedRb);
+              });
+              if (hasMatch) {
+                organized[key].push(brand);
+              }
+            }
+          });
+        });
+        
+        // Sort each category
+        Object.keys(organized).forEach(key => {
+          organized[key] = [...new Set(organized[key])].sort();
+        });
+        
+        setOrganizedBrands(organized);
       } catch (err) {
         console.error('Error fetching filters:', err);
       }
@@ -115,11 +188,19 @@ export const ShopPage = ({ cart, setCart }) => {
     try {
       let url = `${API_URL}/api/shop/products?page=${currentPage}&limit=16`;
       if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
-      if (filters.category) url += `&category=${encodeURIComponent(filters.category)}`;
-      if (filters.gender) url += `&gender=${encodeURIComponent(filters.gender)}`;
-      if (filters.size) url += `&size=${encodeURIComponent(filters.size)}`;
-      if (filters.minPrice) url += `&min_price=${filters.minPrice}`;
-      if (filters.maxPrice) url += `&max_price=${filters.maxPrice}`;
+      if (selectedBrand) {
+        // Handle special brand mappings for API
+        let brandQuery = selectedBrand;
+        if (selectedBrand === 'DAVID SANDOVAL') {
+          brandQuery = 'DS';
+        } else if (selectedBrand === 'AVENUE OUTLET') {
+          // Search for any outlet brand
+          brandQuery = 'avenue';
+        } else if (selectedBrand === 'SUN68') {
+          brandQuery = 'SUN';
+        }
+        url += `&category=${encodeURIComponent(brandQuery)}`;
+      }
       
       const response = await fetch(url);
       const data = await response.json();
@@ -132,7 +213,7 @@ export const ShopPage = ({ cart, setCart }) => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm, filters]);
+  }, [currentPage, searchTerm, selectedBrand]);
 
   useEffect(() => {
     fetchProducts();
@@ -182,26 +263,16 @@ export const ShopPage = ({ cart, setCart }) => {
     setSearchOpen(false);
   };
 
-  const clearFilters = () => {
-    setFilters({
-      category: '',
-      gender: '',
-      size: '',
-      minPrice: '',
-      maxPrice: ''
-    });
-    setSearchTerm('');
+  const handleBrandSelect = (brand) => {
+    setSelectedBrand(brand);
+    setCurrentPage(1);
+    setShowBrandsMenu(false);
+  };
+
+  const clearBrandFilter = () => {
+    setSelectedBrand('');
     setCurrentPage(1);
   };
-
-  const toggleFilter = (filterName) => {
-    setExpandedFilters(prev => ({
-      ...prev,
-      [filterName]: !prev[filterName]
-    }));
-  };
-
-  const hasActiveFilters = filters.category || filters.gender || filters.size || filters.minPrice || filters.maxPrice || searchTerm;
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -209,16 +280,141 @@ export const ShopPage = ({ cart, setCart }) => {
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <div className="max-w-[1800px] mx-auto">
           {/* Top bar */}
-          <div className="flex items-center justify-between px-6 py-4">
-            {/* Menu & Filters */}
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors flex items-center gap-2"
-              >
-                <Menu className="w-4 h-4" />
-                <span className="hidden sm:inline">Filtros</span>
+          <div className="flex items-center justify-between px-8 py-5">
+            {/* Brands Menu */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setShowBrandsMenu(true)}
+              onMouseLeave={() => setShowBrandsMenu(false)}
+            >
+              <button className="text-xs tracking-[0.2em] uppercase text-gray-900 hover:text-gray-600 transition-colors font-medium">
+                Brands
               </button>
+              
+              {/* Mega Menu Dropdown */}
+              {showBrandsMenu && (
+                <div 
+                  className="absolute top-full left-0 mt-0 bg-white shadow-lg border-t border-gray-100 z-50"
+                  style={{ width: '800px', marginLeft: '-100px' }}
+                >
+                  <div className="grid grid-cols-5 gap-0 p-8">
+                    {/* Indumentaria */}
+                    <div className="pr-6">
+                      <h3 className="text-xs tracking-[0.15em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        {BRAND_CATEGORIES.indumentaria.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {organizedBrands.indumentaria.map(brand => (
+                          <li key={brand}>
+                            <button
+                              onClick={() => handleBrandSelect(brand)}
+                              className={`text-sm transition-colors hover:text-gray-900 hover:underline ${
+                                selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}
+                            >
+                              {brand}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Calzados */}
+                    <div className="pr-6">
+                      <h3 className="text-xs tracking-[0.15em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        {BRAND_CATEGORIES.calzados.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {organizedBrands.calzados.map(brand => (
+                          <li key={brand}>
+                            <button
+                              onClick={() => handleBrandSelect(brand)}
+                              className={`text-sm transition-colors hover:text-gray-900 hover:underline ${
+                                selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}
+                            >
+                              {brand}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Joyas & Accesorios */}
+                    <div className="pr-6">
+                      <h3 className="text-xs tracking-[0.15em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        {BRAND_CATEGORIES.joyas.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {organizedBrands.joyas.map(brand => (
+                          <li key={brand}>
+                            <button
+                              onClick={() => handleBrandSelect(brand)}
+                              className={`text-sm transition-colors hover:text-gray-900 hover:underline ${
+                                selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}
+                            >
+                              {brand}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Cosmética */}
+                    <div className="pr-6">
+                      <h3 className="text-xs tracking-[0.15em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        {BRAND_CATEGORIES.cosmetica.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {organizedBrands.cosmetica.map(brand => (
+                          <li key={brand}>
+                            <button
+                              onClick={() => handleBrandSelect(brand)}
+                              className={`text-sm transition-colors hover:text-gray-900 hover:underline ${
+                                selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}
+                            >
+                              {brand}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Otros */}
+                    <div>
+                      <h3 className="text-xs tracking-[0.15em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                        {BRAND_CATEGORIES.otros.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {organizedBrands.otros.slice(0, 10).map(brand => (
+                          <li key={brand}>
+                            <button
+                              onClick={() => handleBrandSelect(brand)}
+                              className={`text-sm transition-colors hover:text-gray-900 hover:underline ${
+                                selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}
+                            >
+                              {brand}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  {/* View All */}
+                  <div className="px-8 py-4 border-t border-gray-100 bg-gray-50">
+                    <button
+                      onClick={() => { setSelectedBrand(''); setShowBrandsMenu(false); }}
+                      className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      Ver todas las marcas
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Logo */}
@@ -229,7 +425,7 @@ export const ShopPage = ({ cart, setCart }) => {
             </a>
 
             {/* Actions */}
-            <div className="flex items-center gap-5">
+            <div className="flex items-center gap-6">
               {/* Search */}
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
@@ -255,7 +451,7 @@ export const ShopPage = ({ cart, setCart }) => {
 
           {/* Search Bar - Expandable */}
           {searchOpen && (
-            <div className="border-t border-gray-100 px-6 py-4">
+            <div className="border-t border-gray-100 px-8 py-4">
               <form onSubmit={handleSearch} className="max-w-xl mx-auto">
                 <div className="relative">
                   <input
@@ -277,216 +473,94 @@ export const ShopPage = ({ cart, setCart }) => {
               </form>
             </div>
           )}
-
-          {/* Category Navigation */}
-          <nav className="flex items-center justify-center gap-8 px-6 py-3 border-t border-gray-100 overflow-x-auto">
-            <button
-              onClick={() => { setFilters({...filters, category: ''}); setCurrentPage(1); }}
-              className={`text-xs tracking-[0.15em] uppercase whitespace-nowrap transition-colors ${
-                !filters.category ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              Todo
-            </button>
-            {filterOptions.categories.slice(0, 8).map(cat => (
-              <button
-                key={cat}
-                onClick={() => { setFilters({...filters, category: cat}); setCurrentPage(1); }}
-                className={`text-xs tracking-[0.15em] uppercase whitespace-nowrap transition-colors ${
-                  filters.category === cat ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </nav>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-[1800px] mx-auto">
-        <div className="flex">
-          {/* Sidebar Filters */}
-          <aside
-            className={`fixed lg:relative inset-y-0 left-0 z-40 w-72 bg-white transform transition-transform duration-300 ease-in-out lg:transform-none ${
-              showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:hidden'
-            }`}
-            style={{ top: '120px' }}
-          >
-            <div className="h-full overflow-y-auto px-6 py-6 lg:sticky lg:top-[140px]">
-              {/* Close button - mobile */}
-              <div className="flex items-center justify-between mb-6 lg:hidden">
-                <span className="text-xs tracking-[0.2em] uppercase font-medium">Filtros</span>
-                <button onClick={() => setShowFilters(false)}>
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Active filters */}
-              {hasActiveFilters && (
+      <main className="max-w-[1800px] mx-auto px-4 lg:px-8 py-8">
+        {/* Results header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <p className="text-xs tracking-[0.1em] uppercase text-gray-500">
+              {totalProducts} {totalProducts === 1 ? 'producto' : 'productos'}
+            </p>
+            {selectedBrand && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">|</span>
+                <span className="text-xs tracking-[0.1em] uppercase text-gray-900 font-medium">
+                  {selectedBrand}
+                </span>
                 <button
-                  onClick={clearFilters}
-                  className="mb-6 text-xs tracking-[0.1em] uppercase text-gray-500 hover:text-gray-900 underline"
+                  onClick={clearBrandFilter}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  Limpiar filtros
+                  <X className="w-3 h-3" />
                 </button>
-              )}
-
-              {/* Filter Sections */}
-              <FilterSection
-                title="Categoría"
-                name="category"
-                options={filterOptions.categories}
-                selectedValue={filters.category}
-                onChange={(val) => { setFilters({...filters, category: val}); setCurrentPage(1); }}
-                expanded={expandedFilters.category}
-                onToggle={toggleFilter}
-              />
-
-              <FilterSection
-                title="Género"
-                name="gender"
-                options={filterOptions.genders}
-                selectedValue={filters.gender}
-                onChange={(val) => { setFilters({...filters, gender: val}); setCurrentPage(1); }}
-                expanded={expandedFilters.gender}
-                onToggle={toggleFilter}
-              />
-
-              <FilterSection
-                title="Talla"
-                name="size"
-                options={filterOptions.sizes}
-                selectedValue={filters.size}
-                onChange={(val) => { setFilters({...filters, size: val}); setCurrentPage(1); }}
-                expanded={expandedFilters.size}
-                onToggle={toggleFilter}
-              />
-
-              {/* Price Range */}
-              <div className="border-b border-gray-200">
-                <button
-                  onClick={() => toggleFilter('price')}
-                  className="w-full py-4 flex items-center justify-between text-left"
-                >
-                  <span className="text-xs tracking-[0.2em] uppercase font-medium text-gray-900">Precio</span>
-                  {expandedFilters.price ? (
-                    <ChevronUp className="w-4 h-4 text-gray-400" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
-                  )}
-                </button>
-                {expandedFilters.price && (
-                  <div className="pb-4 space-y-3">
-                    <div className="flex gap-3">
-                      <input
-                        type="number"
-                        placeholder="Min"
-                        value={filters.minPrice}
-                        onChange={(e) => setFilters({...filters, minPrice: e.target.value})}
-                        className="w-full px-3 py-2 text-sm bg-gray-50 border-0 focus:outline-none focus:ring-1 focus:ring-gray-200"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Max"
-                        value={filters.maxPrice}
-                        onChange={(e) => setFilters({...filters, maxPrice: e.target.value})}
-                        className="w-full px-3 py-2 text-sm bg-gray-50 border-0 focus:outline-none focus:ring-1 focus:ring-gray-200"
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
-          </aside>
-
-          {/* Overlay for mobile filters */}
-          {showFilters && (
-            <div
-              className="fixed inset-0 bg-black/30 z-30 lg:hidden"
-              onClick={() => setShowFilters(false)}
-            />
-          )}
-
-          {/* Products Grid */}
-          <div className="flex-1 px-4 lg:px-8 py-8">
-            {/* Results count */}
-            <div className="flex items-center justify-between mb-8">
-              <p className="text-xs tracking-[0.1em] uppercase text-gray-500">
-                {totalProducts} {totalProducts === 1 ? 'producto' : 'productos'}
-              </p>
-              {hasActiveFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="text-xs tracking-[0.1em] uppercase text-gray-500 hover:text-gray-900 underline lg:hidden"
-                >
-                  Limpiar
-                </button>
-              )}
-            </div>
-
-            {/* Loading State */}
-            {loading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="animate-pulse">
-                    <div className="aspect-[3/4] bg-gray-100 mb-4"></div>
-                    <div className="h-4 bg-gray-100 mb-2 w-3/4"></div>
-                    <div className="h-4 bg-gray-100 w-1/2"></div>
-                  </div>
-                ))}
-              </div>
-            ) : products.length === 0 ? (
-              <div className="text-center py-20">
-                <p className="text-gray-500 text-sm">No se encontraron productos</p>
-                {hasActiveFilters && (
-                  <button
-                    onClick={clearFilters}
-                    className="mt-4 text-xs tracking-[0.1em] uppercase text-gray-900 underline"
-                  >
-                    Limpiar filtros
-                  </button>
-                )}
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-                  {products.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onProductClick={() => setSelectedProduct(product)}
-                      formatPrice={formatPrice}
-                    />
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-4 mt-16">
-                    <button
-                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                      className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      Anterior
-                    </button>
-                    <span className="text-xs text-gray-400">
-                      {currentPage} / {totalPages}
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
-                      className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      Siguiente
-                    </button>
-                  </div>
-                )}
-              </>
             )}
           </div>
         </div>
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="aspect-[3/4] bg-gray-100 mb-4"></div>
+                <div className="h-4 bg-gray-100 mb-2 w-3/4"></div>
+                <div className="h-4 bg-gray-100 w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-500 text-sm">No se encontraron productos</p>
+            {(selectedBrand || searchTerm) && (
+              <button
+                onClick={() => { setSelectedBrand(''); setSearchTerm(''); setCurrentPage(1); }}
+                className="mt-4 text-xs tracking-[0.1em] uppercase text-gray-900 underline"
+              >
+                Limpiar filtros
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+              {products.map(product => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onProductClick={() => setSelectedProduct(product)}
+                  formatPrice={formatPrice}
+                />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-4 mt-16">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Anterior
+                </button>
+                <span className="text-xs text-gray-400">
+                  {currentPage} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Siguiente
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </main>
 
       {/* Product Detail Modal */}
