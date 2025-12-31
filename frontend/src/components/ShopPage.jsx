@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Search, Filter, X, Plus, Minus, ChevronLeft, ChevronRight, Tag, Users, Ruler } from 'lucide-react';
 import { Button } from './ui/button';
+import { ProductDetailModal } from './ProductDetailModal';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -13,6 +14,7 @@ export const ShopPage = ({ cart, setCart }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [showFilters, setShowFilters] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [filters, setFilters] = useState({
     category: '',
     gender: '',
