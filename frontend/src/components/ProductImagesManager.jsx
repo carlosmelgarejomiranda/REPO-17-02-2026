@@ -1,9 +1,132 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Upload, Image, Search, Check, X, AlertCircle, FileImage, Download, Trash2, RefreshCw } from 'lucide-react';
+import { Upload, Image, Search, Check, X, AlertCircle, FileImage, Trash2, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+// Single Upload Modal Component
+const SingleUploadModal = ({ product, onClose, onUpload, uploading }) => {
+  const [dragOver, setDragOver] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setSelectedFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+  
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+  
+  const handleUpload = () => {
+    if (selectedFile) {
+      onUpload(product.grouped_id, selectedFile);
+    }
+  };
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
+      <Card className="w-full max-w-lg" style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle style={{ color: '#f5ede4' }}>Subir Imagen</CardTitle>
+            <button onClick={onClose} style={{ color: '#666' }} className="text-2xl">×</button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-4">
+            <p className="text-sm mb-2" style={{ color: '#a8a8a8' }}>Producto:</p>
+            <p style={{ color: '#f5ede4' }}>{product.base_model}</p>
+          </div>
+          
+          {/* Current image */}
+          <div className="mb-4">
+            <p className="text-sm mb-2" style={{ color: '#a8a8a8' }}>Imagen actual:</p>
+            <div className="w-32 h-32 rounded overflow-hidden" style={{ backgroundColor: '#2a2a2a' }}>
+              {(product.custom_image || product.image) ? (
+                <img 
+                  src={product.custom_image || product.image} 
+                  alt={product.base_model}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <FileImage className="w-8 h-8" style={{ color: '#666' }} />
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Upload area */}
+          <div 
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-all cursor-pointer ${dragOver ? 'border-solid' : ''}`}
+            style={{ 
+              borderColor: dragOver ? '#d4a968' : '#333',
+              backgroundColor: dragOver ? 'rgba(212, 169, 104, 0.1)' : 'transparent'
+            }}
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            onClick={() => document.getElementById('single-file-input').click()}
+          >
+            <input 
+              id="single-file-input"
+              type="file" 
+              accept="image/*" 
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+            
+            {preview ? (
+              <div>
+                <img src={preview} alt="Preview" className="w-32 h-32 object-cover mx-auto rounded mb-4" />
+                <p className="text-sm" style={{ color: '#22c55e' }}>{selectedFile?.name}</p>
+                <p className="text-xs mt-1" style={{ color: '#a8a8a8' }}>
+                  {(selectedFile?.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-10 h-10 mx-auto mb-4" style={{ color: '#666' }} />
+                <p style={{ color: '#a8a8a8' }}>Arrastra una imagen o haz clic para seleccionar</p>
+                <p className="text-sm mt-2" style={{ color: '#666' }}>Máximo 5MB • JPG, PNG, WEBP</p>
+              </>
+            )}
+          </div>
+          
+          <div className="flex gap-2 mt-6">
+            <Button
+              onClick={onClose}
+              className="flex-1"
+              style={{ backgroundColor: '#2a2a2a', color: '#a8a8a8' }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleUpload}
+              disabled={!selectedFile || uploading}
+              className="flex-1"
+              style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+            >
+              {uploading ? 'Subiendo...' : 'Subir Imagen'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
 export const ProductImagesManager = () => {
   const [products, setProducts] = useState([]);
@@ -78,6 +201,7 @@ export const ProductImagesManager = () => {
           p.grouped_id === productId ? { ...p, custom_image: data.image_url } : p
         ));
         setSelectedProduct(null);
+        fetchProducts(); // Refresh stats
       } else {
         const error = await response.json();
         alert(error.detail || 'Error al subir imagen');
@@ -147,133 +271,11 @@ export const ProductImagesManager = () => {
         setProducts(prev => prev.map(p => 
           p.grouped_id === productId ? { ...p, custom_image: null } : p
         ));
+        fetchProducts(); // Refresh stats
       }
     } catch (err) {
       console.error('Delete error:', err);
     }
-  };
-
-  // Single product upload modal
-  const SingleUploadModal = ({ product, onClose }) => {
-    const [dragOver, setDragOver] = useState(false);
-    const [preview, setPreview] = useState(null);
-    const [selectedFile, setSelectedFile] = useState(null);
-    
-    const handleDrop = (e) => {
-      e.preventDefault();
-      setDragOver(false);
-      const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) {
-        setSelectedFile(file);
-        setPreview(URL.createObjectURL(file));
-      }
-    };
-    
-    const handleFileSelect = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        setSelectedFile(file);
-        setPreview(URL.createObjectURL(file));
-      }
-    };
-    
-    const handleUpload = () => {
-      if (selectedFile) {
-        handleImageUpload(product.grouped_id, selectedFile);
-      }
-    };
-    
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
-        <Card className="w-full max-w-lg" style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle style={{ color: '#f5ede4' }}>Subir Imagen</CardTitle>
-              <button onClick={onClose} style={{ color: '#666' }} className="text-2xl">×</button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-4">
-              <p className="text-sm mb-2" style={{ color: '#a8a8a8' }}>Producto:</p>
-              <p style={{ color: '#f5ede4' }}>{product.base_model}</p>
-            </div>
-            
-            {/* Current image */}
-            <div className="mb-4">
-              <p className="text-sm mb-2" style={{ color: '#a8a8a8' }}>Imagen actual:</p>
-              <div className="w-32 h-32 rounded overflow-hidden" style={{ backgroundColor: '#2a2a2a' }}>
-                {(product.custom_image || product.image) ? (
-                  <img 
-                    src={product.custom_image || product.image} 
-                    alt={product.base_model}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <FileImage className="w-8 h-8" style={{ color: '#666' }} />
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* Upload area */}
-            <div 
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-all cursor-pointer ${dragOver ? 'border-solid' : ''}`}
-              style={{ 
-                borderColor: dragOver ? '#d4a968' : '#333',
-                backgroundColor: dragOver ? 'rgba(212, 169, 104, 0.1)' : 'transparent'
-              }}
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={handleDrop}
-              onClick={() => document.getElementById('single-file-input').click()}
-            >
-              <input 
-                id="single-file-input"
-                type="file" 
-                accept="image/*" 
-                className="hidden"
-                onChange={handleFileSelect}
-              />
-              
-              {preview ? (
-                <div>
-                  <img src={preview} alt="Preview" className="w-32 h-32 object-cover mx-auto rounded mb-4" />
-                  <p className="text-sm" style={{ color: '#22c55e' }}>{selectedFile?.name}</p>
-                  <p className="text-xs mt-1" style={{ color: '#a8a8a8' }}>
-                    {(selectedFile?.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <Upload className="w-10 h-10 mx-auto mb-4" style={{ color: '#666' }} />
-                  <p style={{ color: '#a8a8a8' }}>Arrastra una imagen o haz clic para seleccionar</p>
-                  <p className="text-sm mt-2" style={{ color: '#666' }}>Máximo 5MB • JPG, PNG, WEBP</p>
-                </>
-              )}
-            </div>
-            
-            <div className="flex gap-2 mt-6">
-              <Button
-                onClick={onClose}
-                className="flex-1"
-                style={{ backgroundColor: '#2a2a2a', color: '#a8a8a8' }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleUpload}
-                disabled={!selectedFile || uploadingProduct}
-                className="flex-1"
-                style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-              >
-                {uploadingProduct ? 'Subiendo...' : 'Subir Imagen'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
   };
 
   return (
@@ -349,7 +351,7 @@ export const ProductImagesManager = () => {
                   El nombre del archivo se vinculará con el título del producto
                 </p>
                 <p className="text-xs mt-1" style={{ color: '#666' }}>
-                  Ejemplo: "CAMISA DAVID SANDOVAL.jpg" → Producto "CAMISA DAVID SANDOVAL"
+                  Ejemplo: CAMISA DAVID SANDOVAL.jpg → Producto CAMISA DAVID SANDOVAL
                 </p>
               </div>
               
@@ -588,7 +590,9 @@ export const ProductImagesManager = () => {
       {selectedProduct && (
         <SingleUploadModal 
           product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
+          onClose={() => setSelectedProduct(null)}
+          onUpload={handleImageUpload}
+          uploading={uploadingProduct === selectedProduct.grouped_id}
         />  
       )}
     </div>
