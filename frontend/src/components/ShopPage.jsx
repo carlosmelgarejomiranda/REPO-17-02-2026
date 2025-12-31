@@ -93,10 +93,15 @@ export const ShopPage = ({ cart, setCart }) => {
       try {
         const response = await fetch(`${API_URL}/api/shop/filters`);
         const data = await response.json();
+        // Extract names/values from objects if needed
+        const categories = (data.categories || []).map(c => typeof c === 'object' ? c.name : c);
+        const genders = (data.genders || []).map(g => typeof g === 'object' ? g.label || g.value : g);
+        const sizes = (data.sizes || []).map(s => typeof s === 'object' ? s.name || s.value : s);
+        
         setFilterOptions({
-          categories: data.categories || [],
-          genders: data.genders || [],
-          sizes: data.sizes || []
+          categories,
+          genders,
+          sizes
         });
       } catch (err) {
         console.error('Error fetching filters:', err);
