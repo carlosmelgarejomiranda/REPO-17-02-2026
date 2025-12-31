@@ -2,6 +2,20 @@ import React, { useState } from 'react';
 import { X, ShoppingCart, Minus, Plus, Check } from 'lucide-react';
 import { Button } from './ui/button';
 
+const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+// Helper to resolve image URLs - handles both relative and absolute URLs
+const resolveImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  if (imageUrl.startsWith('/api/')) {
+    return `${API_URL}${imageUrl}`;
+  }
+  return imageUrl;
+};
+
 export const ProductDetailModal = ({ product, onClose, onAddToCart, formatPrice }) => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
