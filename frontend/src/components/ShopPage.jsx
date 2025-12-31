@@ -123,57 +123,55 @@ export const ShopPage = ({ cart, setCart }) => {
         const response = await fetch(`${API_URL}/api/shop/filters`);
         const data = await response.json();
         
-        // Extract brand names
+        // Extract brand names from API
         const rawBrands = (data.categories || []).map(c => 
           typeof c === 'object' ? c.name : c
-        );
+        ).map(b => b.toUpperCase().trim());
         
-        // Organize brands into categories
+        // Use predefined display lists, but only show brands that exist in API
         const organized = {
-          indumentaria: [],
-          calzados: [],
-          joyas: [],
-          cosmetica: [],
+          indumentaria: DISPLAY_BRANDS.indumentaria.filter(brand => 
+            rawBrands.some(rb => {
+              const normalized = normalizeBrand(rb);
+              return normalized === brand || rb.includes(brand) || brand.includes(rb);
+            }) || brand === 'AVENUE OUTLET' || brand === 'DAVID SANDOVAL' || brand === 'SUN68'
+          ),
+          calzados: DISPLAY_BRANDS.calzados.filter(brand => 
+            rawBrands.some(rb => {
+              const normalized = normalizeBrand(rb);
+              return normalized === brand || rb.includes(brand) || brand.includes(rb);
+            }) || brand === 'SUN68'
+          ),
+          joyas: DISPLAY_BRANDS.joyas.filter(brand => 
+            rawBrands.some(rb => rb.includes(brand) || brand.includes(rb))
+          ),
+          cosmetica: DISPLAY_BRANDS.cosmetica.filter(brand => 
+            rawBrands.some(rb => rb.includes(brand) || brand.includes(rb))
+          ),
           otros: []
         };
         
-        const processedBrands = new Set();
+        // Add remaining brands to "otros"
+        const allCategorizedBrands = [
+          ...DISPLAY_BRANDS.indumentaria,
+          ...DISPLAY_BRANDS.calzados,
+          ...DISPLAY_BRANDS.joyas,
+          ...DISPLAY_BRANDS.cosmetica,
+          ...OUTLET_PATTERNS,
+          ...SUN_PATTERNS,
+          'DS'
+        ];
         
         rawBrands.forEach(brand => {
           const normalized = normalizeBrand(brand);
-          
-          if (processedBrands.has(normalized)) return;
-          processedBrands.add(normalized);
-          
-          const category = getBrandCategory(brand);
-          
-          // Check if brand is in the predefined list for this category
-          const categoryBrands = BRAND_CATEGORIES[category]?.brands || [];
-          if (categoryBrands.some(b => normalized.includes(b) || b.includes(normalized))) {
-            if (!organized[category].includes(normalized)) {
-              organized[category].push(normalized);
-            }
-          } else if (category === 'otros') {
-            if (!organized.otros.includes(normalized)) {
-              organized.otros.push(normalized);
+          // Check if this brand is not in any category
+          if (!allCategorizedBrands.some(cb => 
+            normalized === cb || brand.includes(cb) || cb.includes(brand) || normalized.includes(cb)
+          )) {
+            if (!organized.otros.includes(brand)) {
+              organized.otros.push(brand);
             }
           }
-        });
-        
-        // Add predefined brands that might not be in the API
-        Object.entries(BRAND_CATEGORIES).forEach(([key, category]) => {
-          category.brands.forEach(brand => {
-            if (!organized[key].includes(brand)) {
-              // Only add if similar brand exists in raw data
-              const hasMatch = rawBrands.some(rb => {
-                const normalizedRb = normalizeBrand(rb);
-                return normalizedRb === brand || normalizedRb.includes(brand) || brand.includes(normalizedRb);
-              });
-              if (hasMatch) {
-                organized[key].push(brand);
-              }
-            }
-          });
         });
         
         // Sort each category
