@@ -1,21 +1,31 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-import { ArrowLeft, MapPin, Store, Truck, CreditCard, Loader2 } from 'lucide-react';
-import { Button } from './ui/button';
+import { ArrowLeft, MapPin, Store, Truck, Loader2 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 const GOOGLE_MAPS_KEY = process.env.REACT_APP_GOOGLE_MAPS_KEY || '';
 
 const mapContainerStyle = {
   width: '100%',
-  height: '300px',
-  borderRadius: '8px'
+  height: '300px'
 };
 
 const defaultCenter = {
   lat: -25.2867,
   lng: -57.6474
+};
+
+// Helper to resolve image URLs
+const resolveImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  if (imageUrl.startsWith('/api/')) {
+    return `${API_URL}${imageUrl}`;
+  }
+  return imageUrl;
 };
 
 export const CheckoutPage = ({ cart, setCart, user }) => {
@@ -34,7 +44,6 @@ export const CheckoutPage = ({ cart, setCart, user }) => {
     phone: user?.phone || '',
     notes: ''
   });
-  const [paymentMethod, setPaymentMethod] = useState('stripe');
   const geocoderRef = useRef(null);
 
   const { isLoaded } = useJsApiLoader({
@@ -43,7 +52,6 @@ export const CheckoutPage = ({ cart, setCart, user }) => {
   });
 
   useEffect(() => {
-    // Fetch store location
     fetch(`${API_URL}/api/shop/store-location`)
       .then(res => res.json())
       .then(data => {
@@ -73,7 +81,6 @@ export const CheckoutPage = ({ cart, setCart, user }) => {
     setSelectedLocation({ lat, lng });
     calculateDelivery(lat, lng);
 
-    // Reverse geocode to get address
     if (geocoderRef.current) {
       geocoderRef.current.geocode({ location: { lat, lng } }, (results, status) => {
         if (status === 'OK' && results[0]) {
@@ -130,7 +137,7 @@ export const CheckoutPage = ({ cart, setCart, user }) => {
           address: address,
           reference: reference
         } : null,
-        payment_method: paymentMethod,
+        payment_method: 'stripe',
         notes: formData.notes
       };
 
@@ -143,7 +150,6 @@ export const CheckoutPage = ({ cart, setCart, user }) => {
       const data = await response.json();
 
       if (data.checkout_url) {
-        // Clear cart and redirect to Stripe checkout
         setCart([]);
         localStorage.removeItem('avenue_cart');
         window.location.href = data.checkout_url;
@@ -164,298 +170,308 @@ export const CheckoutPage = ({ cart, setCart, user }) => {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#0d0d0d' }}>
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+    <div className="min-h-screen bg-[#FAFAFA]">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-6 py-6">
           <button
             onClick={() => navigate('/shop/cart')}
-            className="p-2 rounded-full"
-            style={{ backgroundColor: '#1a1a1a' }}
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-6"
           >
-            <ArrowLeft className="w-5 h-5" style={{ color: '#d4a968' }} />
+            <ArrowLeft className="w-4 h-4" />
+            <span className="tracking-[0.1em] uppercase">Volver al carrito</span>
           </button>
-          <h1 className="text-2xl font-light italic" style={{ color: '#d4a968' }}>
-            Checkout
-          </h1>
+          <h1 className="text-2xl font-normal text-gray-900">Checkout</h1>
         </div>
+      </header>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Customer Info */}
-          <div className="rounded-lg p-6" style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
-            <h2 className="text-lg font-medium mb-4" style={{ color: '#f5ede4' }}>
-              Información de contacto
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Nombre completo *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg"
-                  style={{ backgroundColor: '#2a2a2a', border: '1px solid #333', color: '#f5ede4' }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Email *</label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg"
-                  style={{ backgroundColor: '#2a2a2a', border: '1px solid #333', color: '#f5ede4' }}
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Teléfono/WhatsApp *</label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg"
-                  placeholder="+595..."
-                  style={{ backgroundColor: '#2a2a2a', border: '1px solid #333', color: '#f5ede4' }}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Delivery Type */}
-          <div className="rounded-lg p-6" style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
-            <h2 className="text-lg font-medium mb-4" style={{ color: '#f5ede4' }}>
-              Método de entrega
-            </h2>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                type="button"
-                onClick={() => setDeliveryType('delivery')}
-                className={`p-4 rounded-lg flex flex-col items-center gap-2 transition-all ${
-                  deliveryType === 'delivery' ? 'ring-2 ring-[#d4a968]' : ''
-                }`}
-                style={{ backgroundColor: '#2a2a2a', border: '1px solid #333' }}
-              >
-                <Truck className="w-6 h-6" style={{ color: deliveryType === 'delivery' ? '#d4a968' : '#666' }} />
-                <span style={{ color: deliveryType === 'delivery' ? '#d4a968' : '#a8a8a8' }}>Delivery</span>
-                <span className="text-xs" style={{ color: '#666' }}>2.500 Gs/km (mín. 15.000)</span>
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => { setDeliveryType('pickup'); setDeliveryCost(0); }}
-                className={`p-4 rounded-lg flex flex-col items-center gap-2 transition-all ${
-                  deliveryType === 'pickup' ? 'ring-2 ring-[#d4a968]' : ''
-                }`}
-                style={{ backgroundColor: '#2a2a2a', border: '1px solid #333' }}
-              >
-                <Store className="w-6 h-6" style={{ color: deliveryType === 'pickup' ? '#d4a968' : '#666' }} />
-                <span style={{ color: deliveryType === 'pickup' ? '#d4a968' : '#a8a8a8' }}>Retiro en tienda</span>
-                <span className="text-xs" style={{ color: '#22c55e' }}>Gratis</span>
-              </button>
-            </div>
-
-            {/* Map for delivery */}
-            {deliveryType === 'delivery' && (
-              <div className="mt-6 space-y-4">
-                <p className="text-sm" style={{ color: '#a8a8a8' }}>
-                  Haz clic en el mapa para seleccionar tu ubicación de entrega
-                </p>
+      {/* Content */}
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        <form onSubmit={handleSubmit}>
+          <div className="grid lg:grid-cols-3 gap-12">
+            {/* Form Section */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Contact Info */}
+              <section className="bg-white p-8">
+                <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-6">
+                  Información de contacto
+                </h2>
                 
-                {isLoaded ? (
-                  <GoogleMap
-                    mapContainerStyle={mapContainerStyle}
-                    center={selectedLocation || storeLocation}
-                    zoom={13}
-                    onClick={onMapClick}
-                    onLoad={onMapLoad}
-                    options={{
-                      styles: [
-                        { elementType: "geometry", stylers: [{ color: "#1a1a1a" }] },
-                        { elementType: "labels.text.stroke", stylers: [{ color: "#1a1a1a" }] },
-                        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-                        { featureType: "road", elementType: "geometry", stylers: [{ color: "#2a2a2a" }] },
-                        { featureType: "water", elementType: "geometry", stylers: [{ color: "#0d0d0d" }] },
-                      ]
-                    }}
-                  >
-                    {/* Store marker */}
-                    <Marker
-                      position={storeLocation}
-                      icon={{
-                        url: 'data:image/svg+xml,' + encodeURIComponent(`
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#d4a968" width="32" height="32">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                          </svg>
-                        `),
-                        scaledSize: new window.google.maps.Size(32, 32)
-                      }}
-                      title="Avenue Store"
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-2">Nombre completo *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 border-0 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-200"
                     />
-                    
-                    {/* Delivery location marker */}
-                    {selectedLocation && (
-                      <Marker
-                        position={selectedLocation}
-                        icon={{
-                          url: 'data:image/svg+xml,' + encodeURIComponent(`
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#22c55e" width="32" height="32">
-                              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                            </svg>
-                          `),
-                          scaledSize: new window.google.maps.Size(32, 32)
-                        }}
-                        title="Tu ubicación"
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">Email *</label>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-50 border-0 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-200"
                       />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">Teléfono/WhatsApp *</label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+595..."
+                        className="w-full px-4 py-3 bg-gray-50 border-0 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-200"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Delivery Method */}
+              <section className="bg-white p-8">
+                <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-6">
+                  Método de entrega
+                </h2>
+                
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <button
+                    type="button"
+                    onClick={() => setDeliveryType('delivery')}
+                    className={`p-6 text-left transition-all border ${
+                      deliveryType === 'delivery' 
+                        ? 'border-gray-900 bg-gray-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Truck className={`w-5 h-5 mb-3 ${deliveryType === 'delivery' ? 'text-gray-900' : 'text-gray-400'}`} />
+                    <p className={`text-sm font-medium ${deliveryType === 'delivery' ? 'text-gray-900' : 'text-gray-600'}`}>
+                      Delivery
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">2.500 Gs/km (mín. 15.000)</p>
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => { setDeliveryType('pickup'); setDeliveryCost(0); }}
+                    className={`p-6 text-left transition-all border ${
+                      deliveryType === 'pickup' 
+                        ? 'border-gray-900 bg-gray-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Store className={`w-5 h-5 mb-3 ${deliveryType === 'pickup' ? 'text-gray-900' : 'text-gray-400'}`} />
+                    <p className={`text-sm font-medium ${deliveryType === 'pickup' ? 'text-gray-900' : 'text-gray-600'}`}>
+                      Retiro en tienda
+                    </p>
+                    <p className="text-xs text-green-600 mt-1">Gratis</p>
+                  </button>
+                </div>
+
+                {/* Map for delivery */}
+                {deliveryType === 'delivery' && (
+                  <div className="space-y-4">
+                    <p className="text-sm text-gray-500">
+                      Selecciona tu ubicación de entrega en el mapa
+                    </p>
+                    
+                    {isLoaded ? (
+                      <GoogleMap
+                        mapContainerStyle={mapContainerStyle}
+                        center={selectedLocation || storeLocation}
+                        zoom={13}
+                        onClick={onMapClick}
+                        onLoad={onMapLoad}
+                        options={{
+                          styles: [
+                            { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+                            { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+                            { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+                            { featureType: "water", elementType: "geometry", stylers: [{ color: "#e9e9e9" }] },
+                          ]
+                        }}
+                      >
+                        <Marker
+                          position={storeLocation}
+                          icon={{
+                            url: 'data:image/svg+xml,' + encodeURIComponent(`
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000" width="32" height="32">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                              </svg>
+                            `),
+                            scaledSize: new window.google.maps.Size(32, 32)
+                          }}
+                          title="Avenue Store"
+                        />
+                        
+                        {selectedLocation && (
+                          <Marker
+                            position={selectedLocation}
+                            icon={{
+                              url: 'data:image/svg+xml,' + encodeURIComponent(`
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#16a34a" width="32" height="32">
+                                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                              `),
+                              scaledSize: new window.google.maps.Size(32, 32)
+                            }}
+                            title="Tu ubicación"
+                          />
+                        )}
+                      </GoogleMap>
+                    ) : (
+                      <div className="h-[300px] bg-gray-100 flex items-center justify-center">
+                        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                      </div>
                     )}
-                  </GoogleMap>
-                ) : (
-                  <div className="h-[300px] rounded-lg flex items-center justify-center" style={{ backgroundColor: '#2a2a2a' }}>
-                    <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#d4a968' }} />
+
+                    {selectedLocation && (
+                      <div className="p-4 bg-gray-50">
+                        <div className="flex items-start gap-3">
+                          <MapPin className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-900">{address || 'Ubicación seleccionada'}</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Distancia: {deliveryDistance.toFixed(1)} km • Costo: {formatPrice(deliveryCost)}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4">
+                          <input
+                            type="text"
+                            value={reference}
+                            onChange={(e) => setReference(e.target.value)}
+                            placeholder="Referencia (opcional): Casa blanca, portón negro..."
+                            className="w-full px-4 py-3 bg-white border-0 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-200"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                {selectedLocation && (
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: '#2a2a2a' }}>
-                    <div className="flex items-start gap-2">
-                      <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#22c55e' }} />
-                      <div className="flex-1">
-                        <p className="text-sm" style={{ color: '#f5ede4' }}>{address || 'Ubicación seleccionada'}</p>
-                        <p className="text-xs mt-1" style={{ color: '#a8a8a8' }}>
-                          Distancia: {deliveryDistance.toFixed(1)} km • Costo: {formatPrice(deliveryCost)}
+                {deliveryType === 'pickup' && (
+                  <div className="p-4 bg-gray-50">
+                    <div className="flex items-start gap-3">
+                      <Store className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm text-gray-900">Avenue Store</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Paseo Los Árboles, Av. San Martín, Asunción
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Lunes a Sábado: 10:00 - 20:00
                         </p>
                       </div>
                     </div>
-                    
-                    <div className="mt-3">
-                      <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Referencia (opcional)</label>
-                      <input
-                        type="text"
-                        value={reference}
-                        onChange={(e) => setReference(e.target.value)}
-                        placeholder="Ej: Casa blanca, portón negro"
-                        className="w-full px-3 py-2 rounded text-sm"
-                        style={{ backgroundColor: '#1a1a1a', border: '1px solid #333', color: '#f5ede4' }}
-                      />
-                    </div>
                   </div>
                 )}
-              </div>
-            )}
-          </div>
+              </section>
 
-          {/* Payment Method */}
-          <div className="rounded-lg p-6" style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
-            <h2 className="text-lg font-medium mb-4" style={{ color: '#f5ede4' }}>
-              Método de pago
-            </h2>
-            
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('stripe')}
-                className={`w-full p-4 rounded-lg flex items-center gap-4 transition-all ${
-                  paymentMethod === 'stripe' ? 'ring-2 ring-[#d4a968]' : ''
-                }`}
-                style={{ backgroundColor: '#2a2a2a', border: '1px solid #333' }}
-              >
-                <CreditCard className="w-6 h-6" style={{ color: paymentMethod === 'stripe' ? '#d4a968' : '#666' }} />
-                <div className="text-left">
-                  <span style={{ color: paymentMethod === 'stripe' ? '#d4a968' : '#f5ede4' }}>
-                    Tarjeta de crédito/débito
-                  </span>
-                  <p className="text-xs" style={{ color: '#666' }}>Visa, Mastercard, American Express</p>
-                </div>
-              </button>
-              
-              {/* Bancard - Coming soon */}
-              <div
-                className="w-full p-4 rounded-lg flex items-center gap-4 opacity-50 cursor-not-allowed"
-                style={{ backgroundColor: '#2a2a2a', border: '1px solid #333' }}
-              >
-                <CreditCard className="w-6 h-6" style={{ color: '#666' }} />
-                <div className="text-left">
-                  <span style={{ color: '#a8a8a8' }}>Bancard</span>
-                  <p className="text-xs" style={{ color: '#666' }}>Próximamente</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div className="rounded-lg p-6" style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
-            <h2 className="text-lg font-medium mb-4" style={{ color: '#f5ede4' }}>
-              Notas del pedido
-            </h2>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Instrucciones especiales, comentarios..."
-              rows={3}
-              className="w-full px-4 py-2 rounded-lg resize-none"
-              style={{ backgroundColor: '#2a2a2a', border: '1px solid #333', color: '#f5ede4' }}
-            />
-          </div>
-
-          {/* Order Summary */}
-          <div className="rounded-lg p-6" style={{ backgroundColor: '#1a1a1a', border: '1px solid #d4a968' }}>
-            <h2 className="text-lg font-medium mb-4" style={{ color: '#f5ede4' }}>
-              Resumen del pedido
-            </h2>
-            
-            <div className="space-y-2 mb-4">
-              {cart.map((item) => (
-                <div key={item.product_id} className="flex justify-between text-sm">
-                  <span style={{ color: '#a8a8a8' }}>{item.name} x{item.quantity}</span>
-                  <span style={{ color: '#f5ede4' }}>{formatPrice(item.price * item.quantity)}</span>
-                </div>
-              ))}
-            </div>
-            
-            <div className="space-y-2 pt-4" style={{ borderTop: '1px solid #333' }}>
-              <div className="flex justify-between">
-                <span style={{ color: '#a8a8a8' }}>Subtotal</span>
-                <span style={{ color: '#f5ede4' }}>{formatPrice(subtotal)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: '#a8a8a8' }}>Envío</span>
-                <span style={{ color: deliveryType === 'pickup' ? '#22c55e' : '#f5ede4' }}>
-                  {deliveryType === 'pickup' ? 'Gratis' : formatPrice(deliveryCost)}
-                </span>
-              </div>
-              <div className="flex justify-between pt-2" style={{ borderTop: '1px solid #333' }}>
-                <span className="text-lg font-medium" style={{ color: '#f5ede4' }}>Total</span>
-                <span className="text-xl font-medium" style={{ color: '#d4a968' }}>{formatPrice(total)}</span>
-              </div>
+              {/* Notes */}
+              <section className="bg-white p-8">
+                <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-6">
+                  Notas adicionales
+                </h2>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  placeholder="Instrucciones especiales para tu pedido..."
+                  rows={3}
+                  className="w-full px-4 py-3 bg-gray-50 border-0 text-gray-900 resize-none focus:outline-none focus:ring-1 focus:ring-gray-200"
+                />
+              </section>
             </div>
 
-            <Button
-              type="submit"
-              disabled={loading || (deliveryType === 'delivery' && !selectedLocation)}
-              className="w-full mt-6 py-3 flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Procesando...
-                </>
-              ) : (
-                <>
-                  <CreditCard className="w-5 h-5" />
-                  Pagar {formatPrice(total)}
-                </>
-              )}
-            </Button>
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-white p-8 sticky top-8">
+                <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-6">
+                  Resumen del pedido
+                </h2>
+
+                {/* Cart Items */}
+                <div className="space-y-4 pb-6 border-b border-gray-100">
+                  {cart.map(item => (
+                    <div key={item.cart_item_id} className="flex gap-4">
+                      <div className="w-16 h-20 bg-gray-100 flex-shrink-0">
+                        {resolveImageUrl(item.image) ? (
+                          <img
+                            src={resolveImageUrl(item.image)}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                            Sin img
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-900 truncate">{item.name}</p>
+                        {item.size && (
+                          <p className="text-xs text-gray-500">Talla: {item.size}</p>
+                        )}
+                        <p className="text-xs text-gray-500">Cant: {item.quantity}</p>
+                        <p className="text-sm text-gray-900 mt-1">
+                          {formatPrice(item.price * item.quantity)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Totals */}
+                <div className="space-y-3 py-6 border-b border-gray-100">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Subtotal</span>
+                    <span className="text-gray-900">{formatPrice(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Envío</span>
+                    <span className="text-gray-900">
+                      {deliveryType === 'pickup' ? 'Gratis' : formatPrice(deliveryCost)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between py-6">
+                  <span className="text-sm text-gray-900">Total</span>
+                  <span className="text-lg text-gray-900">{formatPrice(total)}</span>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading || (deliveryType === 'delivery' && !selectedLocation)}
+                  className="w-full py-4 bg-gray-900 text-white text-sm tracking-[0.15em] uppercase hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Procesando...
+                    </>
+                  ) : (
+                    'Pagar con Stripe'
+                  )}
+                </button>
+
+                <p className="text-xs text-gray-400 text-center mt-6">
+                  Al realizar el pedido, aceptas nuestros términos y condiciones
+                </p>
+              </div>
+            </div>
           </div>
         </form>
       </div>
     </div>
   );
 };
-
-export default CheckoutPage;
