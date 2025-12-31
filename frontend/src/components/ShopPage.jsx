@@ -421,32 +421,23 @@ export const ShopPage = ({ cart, setCart }) => {
   );
 };
 
-const ProductCard = ({ product, onAddToCart, formatPrice }) => {
+const ProductCard = ({ product, onProductClick, formatPrice }) => {
   const [imageError, setImageError] = useState(false);
-  const [selectedSize, setSelectedSize] = useState(null);
   
-  const availableSizes = product.available_sizes || [];
   const sizesList = product.sizes_list || [];
-  
-  const handleAddToCart = () => {
-    if (availableSizes.length > 0 && !selectedSize) {
-      // Auto-select first available size
-      setSelectedSize(availableSizes[0]);
-    }
-    onAddToCart(selectedSize || availableSizes[0]);
-  };
   
   return (
     <div 
-      className="rounded-lg overflow-hidden group transition-all hover:scale-[1.02]"
+      className="rounded-lg overflow-hidden group transition-all hover:scale-[1.02] cursor-pointer"
       style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
+      onClick={onProductClick}
     >
       <div className="aspect-square relative overflow-hidden" style={{ backgroundColor: '#2a2a2a' }}>
         {product.image && !imageError ? (
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
           />
         ) : (
@@ -475,13 +466,14 @@ const ProductCard = ({ product, onAddToCart, formatPrice }) => {
           )}
         </div>
         
-        <button
-          onClick={handleAddToCart}
-          className="absolute bottom-2 right-2 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+        {/* View button on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
         >
-          <Plus className="w-5 h-5" />
-        </button>
+          <span className="px-4 py-2 rounded-lg text-sm" style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}>
+            Ver Producto
+          </span>
+        </div>
       </div>
       
       <div className="p-4">
@@ -495,7 +487,7 @@ const ProductCard = ({ product, onAddToCart, formatPrice }) => {
         {/* Available Sizes */}
         {sizesList.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
-            {sizesList.slice(0, 6).map((size) => (
+            {sizesList.slice(0, 5).map((size) => (
               <span
                 key={size}
                 className="px-2 py-0.5 text-xs rounded"
@@ -508,9 +500,9 @@ const ProductCard = ({ product, onAddToCart, formatPrice }) => {
                 {size}
               </span>
             ))}
-            {sizesList.length > 6 && (
-              <span className="text-xs" style={{ color: '#666' }}>
-                +{sizesList.length - 6}
+            {sizesList.length > 5 && (
+              <span className="text-xs px-2 py-0.5" style={{ color: '#666' }}>
+                +{sizesList.length - 5}
               </span>
             )}
           </div>
