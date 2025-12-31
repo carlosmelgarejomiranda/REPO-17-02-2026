@@ -337,7 +337,7 @@ export const ShopPage = ({ cart, setCart }) => {
                 )}
                 {searchTerm && (
                   <span className="px-3 py-1 rounded-full text-xs flex items-center gap-1" style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}>
-                    "{searchTerm}"
+                    &quot;{searchTerm}&quot;
                     <X className="w-3 h-3 cursor-pointer" onClick={() => setSearchTerm('')} />
                   </span>
                 )}
