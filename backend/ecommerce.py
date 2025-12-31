@@ -961,3 +961,266 @@ async def get_store_location():
         "address": "Paseo Los Árboles, Av. San Martín, Asunción",
         "name": "Avenue Store"
     }
+
+
+# ==================== ADMIN: ORDER MANAGEMENT ====================
+
+class OrderStatusUpdate(BaseModel):
+    status: str  # pending, confirmed, preparing, shipped, delivered, cancelled
+
+class OrderFilters(BaseModel):
+    status: Optional[str] = None
+    payment_status: Optional[str] = None
+    date_from: Optional[str] = None
+    date_to: Optional[str] = None
+
+@ecommerce_router.get("/admin/orders")
+async def get_admin_orders(
+    status: Optional[str] = None,
+    payment_status: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    page: int = 1,
+    limit: int = 20
+):
+    """Get all orders with filters for admin"""
+    query = {}
+    
+    if status:
+        query["order_status"] = status
+    if payment_status:
+        query["payment_status"] = payment_status
+    if date_from:
+        query["created_at"] = {"$gte": date_from}
+    if date_to:
+        if "created_at" in query:
+            query["created_at"]["$lte"] = date_to
+        else:
+            query["created_at"] = {"$lte": date_to}
+    
+    skip = (page - 1) * limit
+    
+    orders = await db.orders.find(query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    total = await db.orders.count_documents(query)
+    
+    return {
+        "orders": orders,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": math.ceil(total / limit) if total > 0 else 1
+    }
+
+@ecommerce_router.put("/admin/orders/{order_id}/status")
+async def update_order_status(order_id: str, data: OrderStatusUpdate):
+    """Update order status"""
+    valid_statuses = ["pending", "confirmed", "preparing", "shipped", "delivered", "cancelled"]
+    
+    if data.status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {valid_statuses}")
+    
+    result = await db.orders.update_one(
+        {"order_id": order_id},
+        {"$set": {
+            "order_status": data.status,
+            "status_updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # If cancelled, also update payment status
+    if data.status == "cancelled":
+        await db.orders.update_one(
+            {"order_id": order_id},
+            {"$set": {"payment_status": "cancelled"}}
+        )
+    
+    return {"message": "Order status updated", "order_id": order_id, "new_status": data.status}
+
+@ecommerce_router.get("/admin/orders/{order_id}")
+async def get_admin_order_detail(order_id: str):
+    """Get detailed order info for admin"""
+    order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    return order
+
+# ==================== ADMIN: SALES METRICS & REPORTS ====================
+
+@ecommerce_router.get("/admin/metrics/summary")
+async def get_sales_summary(
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None
+):
+    """Get sales summary metrics"""
+    query = {"payment_status": "paid"}
+    
+    if date_from or date_to:
+        query["created_at"] = {}
+        if date_from:
+            query["created_at"]["$gte"] = date_from
+        if date_to:
+            query["created_at"]["$lte"] = date_to
+    
+    # Get all paid orders
+    orders = await db.orders.find(query, {"_id": 0}).to_list(10000)
+    
+    # Calculate metrics
+    total_revenue = sum(order.get("total", 0) for order in orders)
+    total_orders = len(orders)
+    avg_order_value = total_revenue / total_orders if total_orders > 0 else 0
+    
+    # Count by status
+    status_counts = {}
+    all_orders = await db.orders.find({}, {"_id": 0, "order_status": 1}).to_list(10000)
+    for order in all_orders:
+        status = order.get("order_status", "unknown")
+        status_counts[status] = status_counts.get(status, 0) + 1
+    
+    # Count by payment status
+    payment_counts = {}
+    for order in all_orders:
+        status = order.get("payment_status", "unknown")
+        payment_counts[status] = payment_counts.get(status, 0) + 1
+    
+    # Delivery vs pickup
+    delivery_counts = {"delivery": 0, "pickup": 0}
+    for order in orders:
+        dtype = order.get("delivery_type", "pickup")
+        delivery_counts[dtype] = delivery_counts.get(dtype, 0) + 1
+    
+    return {
+        "total_revenue": round(total_revenue),
+        "total_orders": total_orders,
+        "avg_order_value": round(avg_order_value),
+        "orders_by_status": status_counts,
+        "orders_by_payment": payment_counts,
+        "delivery_breakdown": delivery_counts,
+        "period": {
+            "from": date_from,
+            "to": date_to
+        }
+    }
+
+@ecommerce_router.get("/admin/metrics/daily")
+async def get_daily_metrics(days: int = 30):
+    """Get daily sales for the last N days"""
+    from datetime import timedelta
+    
+    end_date = datetime.now(timezone.utc)
+    start_date = end_date - timedelta(days=days)
+    
+    orders = await db.orders.find({
+        "payment_status": "paid",
+        "created_at": {"$gte": start_date.isoformat()}
+    }, {"_id": 0, "created_at": 1, "total": 1}).to_list(10000)
+    
+    # Group by date
+    daily_data = {}
+    for order in orders:
+        date_str = order.get("created_at", "")[:10]  # Get YYYY-MM-DD
+        if date_str:
+            if date_str not in daily_data:
+                daily_data[date_str] = {"revenue": 0, "orders": 0}
+            daily_data[date_str]["revenue"] += order.get("total", 0)
+            daily_data[date_str]["orders"] += 1
+    
+    # Fill missing dates with zeros
+    result = []
+    current = start_date
+    while current <= end_date:
+        date_str = current.strftime("%Y-%m-%d")
+        data = daily_data.get(date_str, {"revenue": 0, "orders": 0})
+        result.append({
+            "date": date_str,
+            "revenue": data["revenue"],
+            "orders": data["orders"]
+        })
+        current += timedelta(days=1)
+    
+    return {"daily_metrics": result, "days": days}
+
+@ecommerce_router.get("/admin/metrics/top-products")
+async def get_top_products(limit: int = 10):
+    """Get top selling products"""
+    orders = await db.orders.find(
+        {"payment_status": "paid"},
+        {"_id": 0, "items": 1}
+    ).to_list(10000)
+    
+    product_sales = {}
+    for order in orders:
+        for item in order.get("items", []):
+            name = item.get("name", "Unknown")
+            size = item.get("size", "")
+            key = f"{name} ({size})" if size else name
+            
+            if key not in product_sales:
+                product_sales[key] = {"quantity": 0, "revenue": 0, "name": name, "size": size}
+            
+            product_sales[key]["quantity"] += item.get("quantity", 1)
+            product_sales[key]["revenue"] += item.get("price", 0) * item.get("quantity", 1)
+    
+    # Sort by quantity
+    sorted_products = sorted(product_sales.values(), key=lambda x: x["quantity"], reverse=True)
+    
+    return {"top_products": sorted_products[:limit]}
+
+@ecommerce_router.get("/admin/reports/export")
+async def export_orders_report(
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    status: Optional[str] = None
+):
+    """Export orders for reporting (CSV-ready format)"""
+    query = {}
+    
+    if status:
+        query["order_status"] = status
+    if date_from or date_to:
+        query["created_at"] = {}
+        if date_from:
+            query["created_at"]["$gte"] = date_from
+        if date_to:
+            query["created_at"]["$lte"] = date_to
+    
+    orders = await db.orders.find(query, {"_id": 0}).sort("created_at", -1).to_list(10000)
+    
+    # Format for export
+    export_data = []
+    for order in orders:
+        items_str = "; ".join([
+            f"{item.get('name', '')} x{item.get('quantity', 1)} ({item.get('size', '')})"
+            for item in order.get("items", [])
+        ])
+        
+        export_data.append({
+            "order_id": order.get("order_id"),
+            "created_at": order.get("created_at"),
+            "customer_name": order.get("customer_name"),
+            "customer_email": order.get("customer_email"),
+            "customer_phone": order.get("customer_phone"),
+            "items": items_str,
+            "subtotal": order.get("subtotal", 0),
+            "delivery_cost": order.get("delivery_cost", 0),
+            "total": order.get("total", 0),
+            "delivery_type": order.get("delivery_type"),
+            "order_status": order.get("order_status"),
+            "payment_status": order.get("payment_status"),
+            "payment_method": order.get("payment_method")
+        })
+    
+    return {
+        "report": export_data,
+        "total_records": len(export_data),
+        "filters_applied": {
+            "date_from": date_from,
+            "date_to": date_to,
+            "status": status
+        }
+    }
+
