@@ -102,16 +102,23 @@ export const CheckoutPage = ({ cart, setCart, user }) => {
       return;
     }
 
+    if (!formData.name || !formData.email || !formData.phone) {
+      alert('Por favor completa todos los campos obligatorios');
+      return;
+    }
+
     setLoading(true);
 
     try {
       const checkoutData = {
         items: cart.map(item => ({
-          product_id: item.product_id,
+          product_id: item.product_id || item.cart_item_id,
           quantity: item.quantity,
           name: item.name,
           price: item.price,
-          image: item.image
+          size: item.size || null,
+          image: item.image,
+          sku: item.sku || ''
         })),
         customer_name: formData.name,
         customer_email: formData.email,
@@ -136,7 +143,9 @@ export const CheckoutPage = ({ cart, setCart, user }) => {
       const data = await response.json();
 
       if (data.checkout_url) {
-        // Redirect to Stripe checkout
+        // Clear cart and redirect to Stripe checkout
+        setCart([]);
+        localStorage.removeItem('avenue_cart');
         window.location.href = data.checkout_url;
       } else {
         throw new Error(data.detail || 'Error al procesar el pago');
