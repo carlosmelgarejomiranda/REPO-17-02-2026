@@ -334,6 +334,8 @@ export const ShopPage = ({ cart, setCart }) => {
                 options={filterOptions.categories}
                 selectedValue={filters.category}
                 onChange={(val) => { setFilters({...filters, category: val}); setCurrentPage(1); }}
+                expanded={expandedFilters.category}
+                onToggle={toggleFilter}
               />
 
               <FilterSection
@@ -342,6 +344,8 @@ export const ShopPage = ({ cart, setCart }) => {
                 options={filterOptions.genders}
                 selectedValue={filters.gender}
                 onChange={(val) => { setFilters({...filters, gender: val}); setCurrentPage(1); }}
+                expanded={expandedFilters.gender}
+                onToggle={toggleFilter}
               />
 
               <FilterSection
@@ -350,6 +354,8 @@ export const ShopPage = ({ cart, setCart }) => {
                 options={filterOptions.sizes}
                 selectedValue={filters.size}
                 onChange={(val) => { setFilters({...filters, size: val}); setCurrentPage(1); }}
+                expanded={expandedFilters.size}
+                onToggle={toggleFilter}
               />
 
               {/* Price Range */}
