@@ -439,6 +439,7 @@ const ProductCard = ({ product, onProductClick, formatPrice }) => {
   const [imageError, setImageError] = useState(false);
   
   const sizesList = product.sizes_list || [];
+  const imageUrl = resolveImageUrl(product.image);
   
   return (
     <div 
@@ -447,9 +448,9 @@ const ProductCard = ({ product, onProductClick, formatPrice }) => {
       onClick={onProductClick}
     >
       <div className="aspect-square relative overflow-hidden" style={{ backgroundColor: '#2a2a2a' }}>
-        {product.image && !imageError ? (
+        {imageUrl && !imageError ? (
           <img
-            src={product.image}
+            src={imageUrl}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
