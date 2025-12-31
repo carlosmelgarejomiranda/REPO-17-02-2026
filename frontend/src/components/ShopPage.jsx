@@ -84,18 +84,6 @@ const normalizeBrand = (brand) => {
   return upper;
 };
 
-// Get category for a brand
-const getBrandCategory = (brand) => {
-  const normalized = normalizeBrand(brand);
-  
-  for (const [key, category] of Object.entries(BRAND_CATEGORIES)) {
-    if (category.brands.some(b => b === normalized || normalized.includes(b) || b.includes(normalized))) {
-      return key;
-    }
-  }
-  return 'otros';
-};
-
 export const ShopPage = ({ cart, setCart }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
