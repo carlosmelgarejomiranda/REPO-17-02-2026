@@ -928,7 +928,7 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
             "session_id": session.session_id
         }
         
-    except stripe.error.StripeError as e:
+    except Exception as e:
         await db.orders.update_one(
             {"order_id": order_id},
             {"$set": {"payment_status": "failed", "error": str(e)}}
@@ -941,33 +941,94 @@ async def stripe_webhook(request: Request):
     from server import notify_new_order
     
     payload = await request.body()
+    sig_header = request.headers.get("Stripe-Signature")
     
     try:
-        event = stripe.Event.construct_from(
-            stripe.util.json.loads(payload), stripe.api_key
-        )
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid payload")
-    
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        order_id = session.get('metadata', {}).get('order_id')
+        # Initialize Stripe checkout
+        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url="")
         
-        if order_id:
-            await db.orders.update_one(
-                {"order_id": order_id},
-                {"$set": {
-                    "payment_status": "paid",
-                    "order_status": "confirmed",
-                    "paid_at": datetime.now(timezone.utc).isoformat()
-                }}
-            )
+        # Handle webhook
+        webhook_response = await stripe_checkout.handle_webhook(payload, sig_header)
+        
+        if webhook_response.event_type == "checkout.session.completed":
+            session_id = webhook_response.session_id
+            order_id = webhook_response.metadata.get("order_id") if webhook_response.metadata else None
             
-            order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
-            if order:
-                await notify_new_order(order)
-    
-    return {"status": "success"}
+            if order_id:
+                # Update order status
+                await db.orders.update_one(
+                    {"order_id": order_id},
+                    {"$set": {
+                        "payment_status": "paid",
+                        "order_status": "confirmed",
+                        "paid_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                
+                # Update payment transaction
+                await db.payment_transactions.update_one(
+                    {"session_id": session_id},
+                    {"$set": {
+                        "payment_status": "paid",
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                
+                # Send notifications
+                order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+                if order:
+                    await notify_new_order(order)
+        
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Webhook error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@ecommerce_router.get("/checkout/status/{session_id}")
+async def get_checkout_status(session_id: str):
+    """Get checkout session status (for polling from frontend)"""
+    try:
+        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url="")
+        status: CheckoutStatusResponse = await stripe_checkout.get_checkout_status(session_id)
+        
+        # If payment is successful, update order
+        if status.payment_status == "paid":
+            order_id = status.metadata.get("order_id") if status.metadata else None
+            if order_id:
+                # Check if already processed
+                order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+                if order and order.get("payment_status") != "paid":
+                    from server import notify_new_order
+                    
+                    await db.orders.update_one(
+                        {"order_id": order_id},
+                        {"$set": {
+                            "payment_status": "paid",
+                            "order_status": "confirmed",
+                            "paid_at": datetime.now(timezone.utc).isoformat()
+                        }}
+                    )
+                    
+                    await db.payment_transactions.update_one(
+                        {"session_id": session_id},
+                        {"$set": {"payment_status": "paid", "updated_at": datetime.now(timezone.utc).isoformat()}}
+                    )
+                    
+                    # Send notifications
+                    order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+                    if order:
+                        await notify_new_order(order)
+        
+        return {
+            "status": status.status,
+            "payment_status": status.payment_status,
+            "amount_total": status.amount_total,
+            "currency": status.currency,
+            "metadata": status.metadata
+        }
+    except Exception as e:
+        logger.error(f"Checkout status error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
 
 @ecommerce_router.get("/orders/{order_id}")
 async def get_order(order_id: str):
