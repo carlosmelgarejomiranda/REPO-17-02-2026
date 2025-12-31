@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle } from 'lucide-react';
+import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
+import { OrdersManagement } from './OrdersManagement';
 
 export const AdminDashboard = ({ user }) => {
   const [reservations, setReservations] = useState([]);
   const [users, setUsers] = useState([]);
   const [ugcApplications, setUgcApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('reservations');
+  const [activeTab, setActiveTab] = useState('orders');
   const [filterDate, setFilterDate] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [ugcFilterStatus, setUgcFilterStatus] = useState('');
