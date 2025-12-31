@@ -283,6 +283,16 @@ export const AdminDashboard = ({ user }) => {
             <ShoppingBag className="w-4 h-4" /> Pedidos E-commerce
           </button>
           <button
+            onClick={() => setActiveTab('images')}
+            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
+            style={{
+              backgroundColor: activeTab === 'images' ? '#d4a968' : '#2a2a2a',
+              color: activeTab === 'images' ? '#0d0d0d' : '#a8a8a8'
+            }}
+          >
+            <Image className="w-4 h-4" /> Imágenes Productos
+          </button>
+          <button
             onClick={() => setActiveTab('reservations')}
             className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
             style={{
@@ -317,6 +327,11 @@ export const AdminDashboard = ({ user }) => {
         {/* Orders Management Tab */}
         {activeTab === 'orders' && (
           <OrdersManagement />
+        )}
+
+        {/* Product Images Management Tab */}
+        {activeTab === 'images' && (
+          <ProductImagesManager />
         )}
 
         {/* Reservations Tab */}
