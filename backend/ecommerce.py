@@ -42,9 +42,6 @@ DELIVERY_PRICE_PER_KM = float(os.environ.get('DELIVERY_PRICE_PER_KM', '2500'))
 DELIVERY_MIN_PRICE = float(os.environ.get('DELIVERY_MIN_PRICE', '15000'))
 SYNC_INTERVAL_SECONDS = 300  # 5 minutes
 
-# Initialize Stripe
-stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', '')
-
 # Initialize Google Maps client
 gmaps = None
 if GOOGLE_MAPS_API_KEY:
