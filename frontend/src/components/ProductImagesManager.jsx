@@ -278,6 +278,54 @@ export const ProductImagesManager = () => {
     }
   };
 
+  // Download products report for image naming
+  const downloadProductsReport = async (onlyWithoutImage = false) => {
+    try {
+      let url = `${API_URL}/api/shop/admin/export-products-for-images`;
+      if (onlyWithoutImage) {
+        url += '?has_image=false';
+      }
+      
+      const response = await fetch(url, {
+        headers: getAuthHeaders()
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Convert to CSV
+        const headers = data.columns.map(c => c.label);
+        const keys = data.columns.map(c => c.key);
+        
+        let csv = headers.join(',') + '\n';
+        
+        data.products.forEach(product => {
+          const row = keys.map(key => {
+            const value = product[key] || '';
+            // Escape commas and quotes in CSV
+            if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+              return `"${value.replace(/"/g, '""')}"`;
+            }
+            return value;
+          });
+          csv += row.join(',') + '\n';
+        });
+        
+        // Download CSV file
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `productos_para_imagenes_${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+    } catch (err) {
+      console.error('Download error:', err);
+      alert('Error al descargar reporte');
+    }
+  };
+
+
   return (
     <div className="space-y-6">
       {/* Stats */}
