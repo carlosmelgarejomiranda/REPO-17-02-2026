@@ -1593,8 +1593,6 @@ async def delete_product_image(product_id: str):
 @ecommerce_router.get("/images/{filename}")
 async def serve_product_image(filename: str):
     """Serve uploaded product images"""
-    from fastapi.responses import FileResponse
-    
     filepath = os.path.join(UPLOAD_DIR, filename)
     
     if not os.path.exists(filepath):
