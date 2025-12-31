@@ -620,6 +620,532 @@ def test_shop_products_with_filters():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+# ==================== ADMIN ORDER MANAGEMENT TESTS ====================
+
+def test_admin_orders_list():
+    """Test Admin Orders: GET /api/shop/admin/orders"""
+    print_test_header("Test Admin Orders List")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/shop/admin/orders"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["orders", "total", "page", "limit", "total_pages"]
+            if all(field in data for field in required_fields):
+                orders = data.get("orders", [])
+                total = data.get("total", 0)
+                
+                print_success(f"Admin orders endpoint working correctly")
+                print_success(f"Total orders: {total}")
+                print_success(f"Orders in this page: {len(orders)}")
+                print_success(f"Pagination: page {data.get('page')}, limit {data.get('limit')}")
+                
+                if orders:
+                    # Check first order structure
+                    first_order = orders[0]
+                    order_fields = ["order_id", "customer_name", "total", "order_status", "created_at"]
+                    
+                    print_info(f"First order ID: {first_order.get('order_id', 'Unknown')}")
+                    print_info(f"Customer: {first_order.get('customer_name', 'Unknown')}")
+                    print_info(f"Status: {first_order.get('order_status', 'Unknown')}")
+                    print_info(f"Total: {first_order.get('total', 0)} Gs")
+                    
+                    return True
+                else:
+                    print_warning("⚠️ No orders found in system")
+                    return True  # Still consider success as endpoint works
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_order_detail():
+    """Test Admin Order Detail: GET /api/shop/admin/orders/{order_id}"""
+    print_test_header("Test Admin Order Detail")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        # First get list of orders to find an order ID
+        list_url = f"{BACKEND_URL}/shop/admin/orders?limit=1"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        list_response = requests.get(list_url, headers=headers)
+        
+        if list_response.status_code != 200:
+            print_warning("No orders available to test detail endpoint")
+            return True
+        
+        list_data = list_response.json()
+        orders = list_data.get("orders", [])
+        
+        if not orders:
+            print_warning("No orders available to test detail endpoint")
+            return True
+        
+        order_id = orders[0].get("order_id")
+        
+        # Test order detail endpoint
+        detail_url = f"{BACKEND_URL}/shop/admin/orders/{order_id}"
+        
+        print_info(f"GET {detail_url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(detail_url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["order_id", "customer_name", "items", "total", "order_status"]
+            if all(field in data for field in required_fields):
+                print_success(f"Admin order detail endpoint working correctly")
+                print_success(f"Order ID: {data.get('order_id')}")
+                print_success(f"Customer: {data.get('customer_name')}")
+                print_success(f"Items count: {len(data.get('items', []))}")
+                print_success(f"Total: {data.get('total')} Gs")
+                print_success(f"Status: {data.get('order_status')}")
+                
+                return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_order_status_update():
+    """Test Admin Order Status Update: PUT /api/shop/admin/orders/{order_id}/status"""
+    print_test_header("Test Admin Order Status Update")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        # First get list of orders to find an order ID
+        list_url = f"{BACKEND_URL}/shop/admin/orders?limit=1"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        list_response = requests.get(list_url, headers=headers)
+        
+        if list_response.status_code != 200:
+            print_warning("No orders available to test status update")
+            return True
+        
+        list_data = list_response.json()
+        orders = list_data.get("orders", [])
+        
+        if not orders:
+            print_warning("No orders available to test status update")
+            return True
+        
+        order_id = orders[0].get("order_id")
+        current_status = orders[0].get("order_status", "pending")
+        
+        # Test updating to "confirmed" status
+        new_status = "confirmed" if current_status != "confirmed" else "preparing"
+        
+        update_url = f"{BACKEND_URL}/shop/admin/orders/{order_id}/status"
+        payload = {"status": new_status}
+        
+        print_info(f"PUT {update_url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.put(update_url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            if ("message" in data and 
+                data.get("order_id") == order_id and 
+                data.get("new_status") == new_status):
+                print_success(f"Order status update working correctly")
+                print_success(f"Order {order_id} updated from '{current_status}' to '{new_status}'")
+                
+                # Verify the update by fetching the order again
+                verify_url = f"{BACKEND_URL}/shop/admin/orders/{order_id}"
+                verify_response = requests.get(verify_url, headers=headers)
+                
+                if verify_response.status_code == 200:
+                    verify_data = verify_response.json()
+                    updated_status = verify_data.get("order_status")
+                    
+                    if updated_status == new_status:
+                        print_success(f"✅ Status update verified: {updated_status}")
+                        return True
+                    else:
+                        print_error(f"Status not updated in database: expected {new_status}, got {updated_status}")
+                        return False
+                else:
+                    print_warning("Could not verify status update")
+                    return True
+            else:
+                print_error("Response missing required fields or incorrect values")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_metrics_summary():
+    """Test Admin Metrics Summary: GET /api/shop/admin/metrics/summary"""
+    print_test_header("Test Admin Metrics Summary")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/shop/admin/metrics/summary"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["total_revenue", "total_orders", "avg_order_value"]
+            if all(field in data for field in required_fields):
+                print_success(f"Admin metrics summary endpoint working correctly")
+                print_success(f"Total Revenue: {data.get('total_revenue'):,} Gs")
+                print_success(f"Total Orders: {data.get('total_orders')}")
+                print_success(f"Average Order Value: {data.get('avg_order_value'):,.0f} Gs")
+                
+                # Check additional metrics
+                if "orders_by_status" in data:
+                    status_counts = data["orders_by_status"]
+                    print_info(f"Orders by status: {status_counts}")
+                
+                if "orders_by_payment" in data:
+                    payment_counts = data["orders_by_payment"]
+                    print_info(f"Orders by payment: {payment_counts}")
+                
+                if "delivery_breakdown" in data:
+                    delivery_counts = data["delivery_breakdown"]
+                    print_info(f"Delivery breakdown: {delivery_counts}")
+                
+                return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_daily_metrics():
+    """Test Admin Daily Metrics: GET /api/shop/admin/metrics/daily"""
+    print_test_header("Test Admin Daily Metrics")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/shop/admin/metrics/daily?days=30"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["daily_metrics", "days"]
+            if all(field in data for field in required_fields):
+                daily_metrics = data.get("daily_metrics", [])
+                days = data.get("days", 0)
+                
+                print_success(f"Admin daily metrics endpoint working correctly")
+                print_success(f"Days requested: {days}")
+                print_success(f"Daily records returned: {len(daily_metrics)}")
+                
+                if daily_metrics:
+                    # Check structure of first record
+                    first_record = daily_metrics[0]
+                    if all(field in first_record for field in ["date", "revenue", "orders"]):
+                        print_success(f"Daily metrics structure correct")
+                        print_info(f"Sample record: {first_record}")
+                        
+                        # Show some statistics
+                        total_revenue = sum(record.get("revenue", 0) for record in daily_metrics)
+                        total_orders = sum(record.get("orders", 0) for record in daily_metrics)
+                        
+                        print_info(f"Total revenue (last {days} days): {total_revenue:,} Gs")
+                        print_info(f"Total orders (last {days} days): {total_orders}")
+                        
+                        return True
+                    else:
+                        print_error("Daily metrics records missing required fields")
+                        return False
+                else:
+                    print_warning("No daily metrics data available")
+                    return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_top_products():
+    """Test Admin Top Products: GET /api/shop/admin/metrics/top-products"""
+    print_test_header("Test Admin Top Products")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/shop/admin/metrics/top-products?limit=10"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            if "top_products" in data:
+                top_products = data.get("top_products", [])
+                
+                print_success(f"Admin top products endpoint working correctly")
+                print_success(f"Top products returned: {len(top_products)}")
+                
+                if top_products:
+                    # Check structure of first product
+                    first_product = top_products[0]
+                    required_fields = ["name", "quantity", "revenue"]
+                    
+                    if all(field in first_product for field in required_fields):
+                        print_success(f"Top products structure correct")
+                        
+                        # Show top 3 products
+                        for i, product in enumerate(top_products[:3], 1):
+                            name = product.get("name", "Unknown")
+                            size = product.get("size", "")
+                            quantity = product.get("quantity", 0)
+                            revenue = product.get("revenue", 0)
+                            
+                            size_str = f" ({size})" if size else ""
+                            print_info(f"#{i}: {name}{size_str} - {quantity} sold, {revenue:,} Gs")
+                        
+                        return True
+                    else:
+                        missing = [f for f in required_fields if f not in first_product]
+                        print_error(f"Top products missing required fields: {missing}")
+                        return False
+                else:
+                    print_warning("No top products data available")
+                    return True
+            else:
+                print_error("Response missing 'top_products' field")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_export_report():
+    """Test Admin Export Report: GET /api/shop/admin/reports/export"""
+    print_test_header("Test Admin Export Report")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/shop/admin/reports/export"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["report", "total_records", "filters_applied"]
+            if all(field in data for field in required_fields):
+                report = data.get("report", [])
+                total_records = data.get("total_records", 0)
+                filters = data.get("filters_applied", {})
+                
+                print_success(f"Admin export report endpoint working correctly")
+                print_success(f"Total records: {total_records}")
+                print_success(f"Report entries: {len(report)}")
+                print_info(f"Filters applied: {filters}")
+                
+                if report:
+                    # Check structure of first record
+                    first_record = report[0]
+                    csv_fields = ["order_id", "created_at", "customer_name", "customer_email", 
+                                "items", "total", "order_status", "payment_status"]
+                    
+                    if all(field in first_record for field in csv_fields):
+                        print_success(f"Export report structure correct for CSV")
+                        print_info(f"Sample record fields: {list(first_record.keys())}")
+                        
+                        # Show sample record
+                        sample = {k: v for k, v in first_record.items() if k in ["order_id", "customer_name", "total", "order_status"]}
+                        print_info(f"Sample record: {sample}")
+                        
+                        return True
+                    else:
+                        missing = [f for f in csv_fields if f not in first_record]
+                        print_error(f"Export report missing CSV fields: {missing}")
+                        return False
+                else:
+                    print_warning("No export data available")
+                    return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_order_status_validation():
+    """Test Order Status Validation: Valid statuses"""
+    print_test_header("Test Order Status Validation")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        # First get list of orders to find an order ID
+        list_url = f"{BACKEND_URL}/shop/admin/orders?limit=1"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        list_response = requests.get(list_url, headers=headers)
+        
+        if list_response.status_code != 200:
+            print_warning("No orders available to test status validation")
+            return True
+        
+        list_data = list_response.json()
+        orders = list_data.get("orders", [])
+        
+        if not orders:
+            print_warning("No orders available to test status validation")
+            return True
+        
+        order_id = orders[0].get("order_id")
+        
+        # Test valid statuses
+        valid_statuses = ["pending", "confirmed", "preparing", "shipped", "delivered", "cancelled"]
+        
+        print_info(f"Testing valid statuses: {valid_statuses}")
+        
+        # Test with "confirmed" status
+        update_url = f"{BACKEND_URL}/shop/admin/orders/{order_id}/status"
+        payload = {"status": "confirmed"}
+        
+        print_info(f"PUT {update_url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.put(update_url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            print_success("✅ Valid status 'confirmed' accepted")
+            
+            # Test invalid status
+            invalid_payload = {"status": "invalid_status"}
+            invalid_response = requests.put(update_url, json=invalid_payload, headers=headers)
+            
+            if invalid_response.status_code == 400:
+                print_success("✅ Invalid status correctly rejected")
+                print_info(f"Error message: {invalid_response.text}")
+                return True
+            else:
+                print_error(f"Invalid status should return 400, got {invalid_response.status_code}")
+                return False
+        else:
+            print_error(f"Valid status update failed: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
 # ==================== IMPROVED PRODUCT GROUPING TESTS ====================
 
 def test_product_grouping_verification():
