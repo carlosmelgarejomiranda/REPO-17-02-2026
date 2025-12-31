@@ -864,59 +864,68 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
     await db.orders.insert_one(order_doc)
     
     try:
-        line_items = []
-        
-        for item in data.items:
-            product_name = item.name or f"Producto {item.product_id}"
-            if item.size:
-                product_name += f" - Talle {item.size}"
-            
-            line_items.append({
-                "price_data": {
-                    "currency": "pyg",
-                    "product_data": {
-                        "name": product_name,
-                        "images": [item.image] if item.image else []
-                    },
-                    "unit_amount": int(item.price) if item.price else 0
-                },
-                "quantity": item.quantity
-            })
-        
-        if delivery_cost > 0:
-            line_items.append({
-                "price_data": {
-                    "currency": "pyg",
-                    "product_data": {"name": "Costo de envío"},
-                    "unit_amount": int(delivery_cost)
-                },
-                "quantity": 1
-            })
-        
+        # Build dynamic URLs from request origin
         base_url = str(request.base_url).rstrip('/')
         if 'localhost' not in base_url:
             base_url = os.environ.get('REACT_APP_BACKEND_URL', base_url)
         
         frontend_url = base_url.replace('/api', '').replace(':8001', ':3000')
         
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=line_items,
-            mode='payment',
-            success_url=f"{frontend_url}/shop/order-success?order_id={order_id}",
+        # Create webhook URL for Stripe
+        webhook_url = f"{base_url}api/shop/webhook/stripe"
+        
+        # Initialize Stripe checkout with emergentintegrations
+        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        
+        # Build items description for metadata
+        items_desc = ", ".join([
+            f"{item.name or 'Producto'}" + (f" ({item.size})" if item.size else "") + f" x{item.quantity}"
+            for item in data.items
+        ])[:500]  # Stripe metadata limit
+        
+        # Create checkout session with total amount in USD (Stripe requires)
+        # Convert PYG to USD approximately (1 USD = ~7300 PYG)
+        amount_usd = round(total / 7300, 2)
+        
+        checkout_request = CheckoutSessionRequest(
+            amount=amount_usd,
+            currency="usd",
+            success_url=f"{frontend_url}/shop/order-success?order_id={order_id}&session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{frontend_url}/shop/cart",
-            metadata={"order_id": order_id}
+            metadata={
+                "order_id": order_id,
+                "customer_email": data.customer_email,
+                "items": items_desc,
+                "total_pyg": str(int(total))
+            }
         )
         
+        session: CheckoutSessionResponse = await stripe_checkout.create_checkout_session(checkout_request)
+        
+        # Update order with session ID
         await db.orders.update_one(
             {"order_id": order_id},
-            {"$set": {"stripe_session_id": session.id}}
+            {"$set": {"stripe_session_id": session.session_id}}
         )
+        
+        # Create payment transaction record
+        await db.payment_transactions.insert_one({
+            "transaction_id": f"TXN-{uuid.uuid4().hex[:8].upper()}",
+            "order_id": order_id,
+            "session_id": session.session_id,
+            "amount_usd": amount_usd,
+            "amount_pyg": total,
+            "currency": "usd",
+            "customer_email": data.customer_email,
+            "payment_status": "pending",
+            "metadata": checkout_request.metadata,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
         
         return {
             "checkout_url": session.url,
             "order_id": order_id,
-            "session_id": session.id
+            "session_id": session.session_id
         }
         
     except stripe.error.StripeError as e:
