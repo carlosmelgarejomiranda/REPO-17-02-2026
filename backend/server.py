@@ -422,8 +422,13 @@ async def notify_new_ugc_application(application: dict):
     await send_admin_email_notification(f"📸 Nueva Aplicación UGC - {nombre_completo}", email_html)
 
 async def notify_new_order(order: dict):
-    """Send notifications for new e-commerce order"""
-    items_text = "\n".join([f"• {item.get('name', 'Producto')} x{item.get('quantity', 1)} - {item.get('price', 0):,.0f} Gs" for item in order.get('items', [])])
+    """Send notifications for new e-commerce order to admin and customer"""
+    items_text = "\n".join([
+        f"• {item.get('name', 'Producto')}" + 
+        (f" - Talle: {item.get('size')}" if item.get('size') else "") + 
+        f" x{item.get('quantity', 1)} - {item.get('price', 0):,.0f} Gs" 
+        for item in order.get('items', [])
+    ])
     
     delivery_info = ""
     if order.get('delivery_type') == 'delivery' and order.get('delivery_address'):
@@ -436,7 +441,9 @@ async def notify_new_order(order: dict):
     else:
         delivery_info = "🏪 *Retiro en tienda*"
     
-    # WhatsApp notification
+    # ========== ADMIN NOTIFICATIONS ==========
+    
+    # WhatsApp notification to admin
     whatsapp_message = f"""🛒 *NUEVO PEDIDO - Avenue Online*
 
 📦 *Pedido:* {order.get('order_id', 'N/A')}
@@ -456,10 +463,15 @@ async def notify_new_order(order: dict):
 
 📝 *Notas:* {order.get('notes', 'Sin notas')}"""
 
-    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_STUDIO, whatsapp_message)
+    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_ECOMMERCE, whatsapp_message)
     
-    # Email notification
-    items_html = "".join([f"<tr><td style='padding: 8px; border-bottom: 1px solid #333;'>{item.get('name', 'Producto')}</td><td style='padding: 8px; border-bottom: 1px solid #333;'>{item.get('quantity', 1)}</td><td style='padding: 8px; border-bottom: 1px solid #333; color: #d4a968;'>{item.get('price', 0):,.0f} Gs</td></tr>" for item in order.get('items', [])])
+    # Admin Email notification
+    items_html = "".join([
+        f"<tr><td style='padding: 8px; border-bottom: 1px solid #333;'>{item.get('name', 'Producto')}" +
+        (f"<br><small style='color: #a8a8a8;'>Talle: {item.get('size')}</small>" if item.get('size') else "") +
+        f"</td><td style='padding: 8px; border-bottom: 1px solid #333;'>{item.get('quantity', 1)}</td><td style='padding: 8px; border-bottom: 1px solid #333; color: #d4a968;'>{item.get('price', 0):,.0f} Gs</td></tr>" 
+        for item in order.get('items', [])
+    ])
     
     email_html = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #f5ede4; padding: 40px;">
@@ -497,6 +509,143 @@ async def notify_new_order(order: dict):
     </div>
     """
     await send_admin_email_notification(f"🛒 Nuevo Pedido #{order.get('order_id', 'N/A')} - {order.get('total', 0):,.0f} Gs", email_html)
+    
+    # ========== CUSTOMER NOTIFICATIONS ==========
+    
+    customer_email = order.get('customer_email')
+    if customer_email:
+        await send_customer_order_confirmation(order)
+
+async def send_customer_order_confirmation(order: dict):
+    """Send order confirmation email to customer"""
+    try:
+        items_html = "".join([
+            f"""<tr>
+                <td style='padding: 12px; border-bottom: 1px solid #333;'>
+                    {item.get('name', 'Producto')}
+                    {f"<br><span style='color: #a8a8a8; font-size: 12px;'>Talle: {item.get('size')}</span>" if item.get('size') else ""}
+                </td>
+                <td style='padding: 12px; border-bottom: 1px solid #333; text-align: center;'>{item.get('quantity', 1)}</td>
+                <td style='padding: 12px; border-bottom: 1px solid #333; text-align: right; color: #d4a968;'>{item.get('price', 0):,.0f} Gs</td>
+            </tr>""" 
+            for item in order.get('items', [])
+        ])
+        
+        delivery_html = ""
+        if order.get('delivery_type') == 'delivery' and order.get('delivery_address'):
+            addr = order['delivery_address']
+            delivery_html = f"""
+            <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #333; margin-bottom: 20px; border-radius: 8px;">
+                <h3 style="color: #d4a968; margin-top: 0;">📍 Dirección de Entrega</h3>
+                <p style="margin: 0;">{addr.get('address', 'N/A')}</p>
+                {f"<p style='color: #a8a8a8; margin: 5px 0 0 0;'>Referencia: {addr.get('reference')}</p>" if addr.get('reference') else ""}
+            </div>
+            """
+        else:
+            delivery_html = """
+            <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #333; margin-bottom: 20px; border-radius: 8px;">
+                <h3 style="color: #d4a968; margin-top: 0;">🏪 Retiro en Tienda</h3>
+                <p style="margin: 0;">Av. San Martín, Asunción</p>
+                <p style="color: #a8a8a8; margin: 5px 0 0 0;">Te notificaremos cuando tu pedido esté listo.</p>
+            </div>
+            """
+        
+        customer_email_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #0d0d0d; font-family: Arial, sans-serif;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #d4a968; font-size: 28px; font-weight: 300; font-style: italic; margin: 0;">Avenue</h1>
+                    <p style="color: #a8a8a8; margin: 10px 0 0 0;">Tu tienda de moda</p>
+                </div>
+                
+                <!-- Success Message -->
+                <div style="background-color: #22c55e20; border: 1px solid #22c55e; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                    <h2 style="color: #22c55e; margin: 0 0 10px 0;">✅ ¡Gracias por tu compra!</h2>
+                    <p style="color: #f5ede4; margin: 0;">Tu pedido ha sido confirmado exitosamente.</p>
+                </div>
+                
+                <!-- Order Info -->
+                <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #d4a968; border-radius: 8px; margin-bottom: 20px;">
+                    <p style="margin: 0 0 10px 0; color: #f5ede4;"><strong>Pedido:</strong> <span style="color: #d4a968;">{order.get('order_id', 'N/A')}</span></p>
+                    <p style="margin: 0; color: #a8a8a8;">Fecha: {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')}</p>
+                </div>
+                
+                <!-- Products -->
+                <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #333; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: #d4a968; margin: 0 0 15px 0;">🛍️ Tu Pedido</h3>
+                    <table style="width: 100%; color: #f5ede4; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #d4a968;">
+                                <th style="text-align: left; padding: 12px; color: #a8a8a8;">Producto</th>
+                                <th style="text-align: center; padding: 12px; color: #a8a8a8;">Cant.</th>
+                                <th style="text-align: right; padding: 12px; color: #a8a8a8;">Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {items_html}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Delivery -->
+                {delivery_html}
+                
+                <!-- Totals -->
+                <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #333; border-radius: 8px; margin-bottom: 20px;">
+                    <table style="width: 100%; color: #f5ede4;">
+                        <tr>
+                            <td style="padding: 8px 0;">Subtotal:</td>
+                            <td style="text-align: right; padding: 8px 0;">{order.get('subtotal', 0):,.0f} Gs</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0;">Envío:</td>
+                            <td style="text-align: right; padding: 8px 0;">{order.get('delivery_cost', 0):,.0f} Gs</td>
+                        </tr>
+                        <tr style="border-top: 2px solid #d4a968;">
+                            <td style="padding: 15px 0; font-size: 18px;"><strong>TOTAL:</strong></td>
+                            <td style="text-align: right; padding: 15px 0; font-size: 20px; color: #d4a968;"><strong>{order.get('total', 0):,.0f} Gs</strong></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <!-- Customer Info -->
+                <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #333; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="color: #d4a968; margin: 0 0 15px 0;">👤 Datos de Contacto</h3>
+                    <p style="color: #f5ede4; margin: 5px 0;"><strong>Nombre:</strong> {order.get('customer_name', 'N/A')}</p>
+                    <p style="color: #f5ede4; margin: 5px 0;"><strong>Email:</strong> {order.get('customer_email', 'N/A')}</p>
+                    <p style="color: #f5ede4; margin: 5px 0;"><strong>Teléfono:</strong> {order.get('customer_phone', 'N/A')}</p>
+                </div>
+                
+                <!-- Footer -->
+                <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+                    <p style="color: #a8a8a8; margin: 0 0 10px 0;">¿Tienes preguntas? Contáctanos:</p>
+                    <p style="color: #d4a968; margin: 0;">WhatsApp: +595 973 666 000</p>
+                    <p style="color: #666; font-size: 12px; margin-top: 20px;">© 2025 Avenue - Todos los derechos reservados</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [order.get('customer_email')],
+            "subject": f"✅ Confirmación de Pedido #{order.get('order_id')} - Avenue Online",
+            "html": customer_email_html
+        }
+        await asyncio.to_thread(resend.Emails.send, params)
+        logger.info(f"Customer confirmation email sent to {order.get('customer_email')}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send customer confirmation email: {str(e)}")
+        return False
 
 # ==================== AUTH ROUTES ====================
 
