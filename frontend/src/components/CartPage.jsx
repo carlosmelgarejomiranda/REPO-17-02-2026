@@ -6,9 +6,9 @@ import { Button } from './ui/button';
 export const CartPage = ({ cart, setCart }) => {
   const navigate = useNavigate();
 
-  const updateQuantity = (productId, delta) => {
+  const updateQuantity = (cartItemId, delta) => {
     setCart(prev => prev.map(item => {
-      if (item.product_id === productId) {
+      if (item.cart_item_id === cartItemId) {
         const newQuantity = item.quantity + delta;
         return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
       }
@@ -16,8 +16,8 @@ export const CartPage = ({ cart, setCart }) => {
     }).filter(item => item.quantity > 0));
   };
 
-  const removeItem = (productId) => {
-    setCart(prev => prev.filter(item => item.product_id !== productId));
+  const removeItem = (cartItemId) => {
+    setCart(prev => prev.filter(item => item.cart_item_id !== cartItemId));
   };
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -67,7 +67,7 @@ export const CartPage = ({ cart, setCart }) => {
         <div className="space-y-4 mb-8">
           {cart.map((item) => (
             <div
-              key={item.product_id}
+              key={item.cart_item_id}
               className="flex gap-4 p-4 rounded-lg"
               style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
             >
@@ -87,6 +87,11 @@ export const CartPage = ({ cart, setCart }) => {
                 <h3 className="font-medium line-clamp-2 mb-1" style={{ color: '#f5ede4' }}>
                   {item.name}
                 </h3>
+                {item.size && (
+                  <p className="text-sm mb-1" style={{ color: '#a8a8a8' }}>
+                    Talle: <span style={{ color: '#d4a968' }}>{item.size}</span>
+                  </p>
+                )}
                 <p className="text-lg" style={{ color: '#d4a968' }}>
                   {formatPrice(item.price)}
                 </p>
@@ -94,7 +99,7 @@ export const CartPage = ({ cart, setCart }) => {
                 {/* Quantity controls */}
                 <div className="flex items-center gap-3 mt-3">
                   <button
-                    onClick={() => updateQuantity(item.product_id, -1)}
+                    onClick={() => updateQuantity(item.cart_item_id, -1)}
                     className="p-1 rounded"
                     style={{ backgroundColor: '#2a2a2a' }}
                   >
@@ -102,7 +107,7 @@ export const CartPage = ({ cart, setCart }) => {
                   </button>
                   <span style={{ color: '#f5ede4' }}>{item.quantity}</span>
                   <button
-                    onClick={() => updateQuantity(item.product_id, 1)}
+                    onClick={() => updateQuantity(item.cart_item_id, 1)}
                     className="p-1 rounded"
                     style={{ backgroundColor: '#2a2a2a' }}
                   >
@@ -114,7 +119,7 @@ export const CartPage = ({ cart, setCart }) => {
               {/* Subtotal & Remove */}
               <div className="flex flex-col items-end justify-between">
                 <button
-                  onClick={() => removeItem(item.product_id)}
+                  onClick={() => removeItem(item.cart_item_id)}
                   className="p-2 rounded"
                   style={{ color: '#666' }}
                 >
