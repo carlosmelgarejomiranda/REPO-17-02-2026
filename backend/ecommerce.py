@@ -1475,12 +1475,10 @@ async def get_products_for_images(
 
 @ecommerce_router.post("/admin/upload-product-image")
 async def upload_product_image(
-    product_id: str = None,
+    product_id: str = Form(...),
     file: UploadFile = File(...)
 ):
     """Upload a single product image"""
-    if not product_id:
-        raise HTTPException(status_code=400, detail="product_id is required")
     
     # Validate file type
     allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff']
