@@ -351,7 +351,7 @@ export const ProductImagesManager = () => {
       </div>
 
       {/* Mode Toggle */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <Button
           onClick={() => setBulkUploadMode(false)}
           style={{ 
@@ -370,7 +370,40 @@ export const ProductImagesManager = () => {
         >
           <Upload className="w-4 h-4 mr-2" /> Carga Masiva
         </Button>
+        
+        {/* Download Reports */}
+        <div className="ml-auto flex gap-2">
+          <Button
+            onClick={() => downloadProductsReport(false)}
+            style={{ backgroundColor: '#2a2a2a', color: '#22c55e' }}
+            title="Descargar todos los productos"
+          >
+            <Download className="w-4 h-4 mr-2" /> Todos los Productos
+          </Button>
+          <Button
+            onClick={() => downloadProductsReport(true)}
+            style={{ backgroundColor: '#2a2a2a', color: '#f59e0b' }}
+            title="Descargar solo productos sin imagen"
+          >
+            <Download className="w-4 h-4 mr-2" /> Sin Imagen
+          </Button>
+        </div>
       </div>
+
+      {/* Instructions */}
+      <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968', borderStyle: 'dashed' }}>
+        <CardContent className="p-4">
+          <p className="text-sm" style={{ color: '#d4a968' }}>
+            <strong>Instrucciones para carga de imágenes:</strong>
+          </p>
+          <ol className="text-sm mt-2 space-y-1" style={{ color: '#a8a8a8' }}>
+            <li>1. Descarga el reporte de productos (CSV)</li>
+            <li>2. Copia el nombre de la columna <strong style={{ color: '#f5ede4' }}>&quot;Nombre para Imagen&quot;</strong></li>
+            <li>3. Renombra tu imagen con ese nombre exacto (ej: <span style={{ color: '#22c55e' }}>CAMISA DAVID SANDOVAL.jpg</span>)</li>
+            <li>4. Sube las imágenes usando <strong style={{ color: '#f5ede4' }}>&quot;Carga Masiva&quot;</strong></li>
+          </ol>
+        </CardContent>
+      </Card>
 
       {/* Bulk Upload Mode */}
       {bulkUploadMode && (
