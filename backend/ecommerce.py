@@ -766,11 +766,13 @@ async def get_featured_products():
         
         result = []
         for p in products:
+            # Use custom image if available
+            display_image = p.get("custom_image") or p.get("image")
             result.append({
                 "id": p.get("grouped_id"),
                 "name": p.get("base_model"),
                 "price": p.get("price"),
-                "image": p.get("image"),
+                "image": display_image,
                 "discount": p.get("discount", 0),
                 "sizes_list": p.get("sizes_list", [])
             })
