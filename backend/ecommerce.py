@@ -1,7 +1,8 @@
 # E-commerce routes for Avenue Online
 # Uses MongoDB for fast local queries, syncs from ERP periodically
 
-from fastapi import APIRouter, HTTPException, Request, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Request, BackgroundTasks, UploadFile, File, Form
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional, Dict, Any
 import httpx
@@ -13,6 +14,9 @@ import asyncio
 import math
 import re
 import logging
+import unicodedata
+from io import BytesIO
+from PIL import Image as PILImage
 from dotenv import load_dotenv
 
 # Load environment variables
