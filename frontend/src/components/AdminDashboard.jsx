@@ -272,6 +272,16 @@ export const AdminDashboard = ({ user }) => {
         {/* Tabs */}
         <div className="flex gap-4 mb-6 flex-wrap">
           <button
+            onClick={() => setActiveTab('orders')}
+            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
+            style={{
+              backgroundColor: activeTab === 'orders' ? '#d4a968' : '#2a2a2a',
+              color: activeTab === 'orders' ? '#0d0d0d' : '#a8a8a8'
+            }}
+          >
+            <ShoppingBag className="w-4 h-4" /> Pedidos E-commerce
+          </button>
+          <button
             onClick={() => setActiveTab('reservations')}
             className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
             style={{
@@ -279,7 +289,7 @@ export const AdminDashboard = ({ user }) => {
               color: activeTab === 'reservations' ? '#0d0d0d' : '#a8a8a8'
             }}
           >
-            <Calendar className="w-4 h-4" /> Reservas
+            <Calendar className="w-4 h-4" /> Reservas Studio
           </button>
           <button
             onClick={() => setActiveTab('ugc')}
@@ -302,6 +312,11 @@ export const AdminDashboard = ({ user }) => {
             <Users className="w-4 h-4" /> Usuarios
           </button>
         </div>
+
+        {/* Orders Management Tab */}
+        {activeTab === 'orders' && (
+          <OrdersManagement />
+        )}
 
         {/* Reservations Tab */}
         {activeTab === 'reservations' && (
