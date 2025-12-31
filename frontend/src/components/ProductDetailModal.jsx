@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { X, ShoppingCart, Minus, Plus, Check } from 'lucide-react';
-import { Button } from './ui/button';
+import { X, Minus, Plus, Check } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
-// Helper to resolve image URLs - handles both relative and absolute URLs
+// Helper to resolve image URLs
 const resolveImageUrl = (imageUrl) => {
   if (!imageUrl) return null;
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -22,245 +21,199 @@ export const ProductDetailModal = ({ product, onClose, onAddToCart, formatPrice 
   const [imageError, setImageError] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  const availableSizes = product.available_sizes || [];
-  const sizesList = product.sizes_list || [];
+  const sizes = product.available_sizes || [];
+  const imageUrl = resolveImageUrl(product.image);
 
   const handleAddToCart = () => {
-    if (!selectedSize && availableSizes.length > 0) {
-      return; // Don't add if no size selected
+    if (!selectedSize && sizes.length > 0) {
+      return;
     }
-    
     onAddToCart(product, selectedSize, quantity);
     setAddedToCart(true);
-    
-    // Reset after animation
     setTimeout(() => {
       setAddedToCart(false);
-    }, 2000);
+      onClose();
+    }, 1200);
   };
 
-  const getSelectedSizeStock = () => {
-    if (!selectedSize) return 0;
-    const sizeInfo = availableSizes.find(s => s.size === selectedSize);
-    return sizeInfo ? sizeInfo.stock : 0;
-  };
-
-  const selectedStock = getSelectedSizeStock();
+  // Get selected size info for stock check
+  const selectedSizeInfo = selectedSize 
+    ? sizes.find(s => s.size === selectedSize)
+    : null;
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 overflow-hidden">
+      {/* Backdrop */}
       <div 
-        className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg"
-        style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full z-10 transition-colors hover:bg-black/20"
-          style={{ color: '#a8a8a8' }}
-        >
-          <X className="w-6 h-6" />
-        </button>
-
-        <div className="grid md:grid-cols-2 gap-0">
-          {/* Image Section */}
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      {/* Modal Content */}
+      <div className="absolute inset-0 overflow-y-auto">
+        <div className="min-h-full flex items-center justify-center p-4">
           <div 
-            className="aspect-square md:aspect-auto md:min-h-[500px] relative"
-            style={{ backgroundColor: '#2a2a2a' }}
+            className="relative bg-white w-full max-w-5xl shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            {resolveImageUrl(product.image) && !imageError ? (
-              <img
-                src={resolveImageUrl(product.image)}
-                alt={product.name}
-                className="w-full h-full object-cover"
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center min-h-[400px]">
-                <div className="text-center">
-                  <span className="text-6xl mb-4 block" style={{ color: '#333' }}>
-                    📷
-                  </span>
-                  <span style={{ color: '#666' }}>Imagen no disponible</span>
-                </div>
-              </div>
-            )}
+            {/* Close Button */}
+            <button
+              onClick={onClose}
+              className="absolute top-6 right-6 z-10 p-2 text-gray-400 hover:text-gray-900 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
 
-            {/* Badges */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
-              {product.discount > 0 && (
-                <span 
-                  className="px-3 py-1 text-sm rounded-full"
-                  style={{ backgroundColor: '#ef4444', color: 'white' }}
-                >
-                  -{product.discount}%
-                </span>
-              )}
-              {product.variant_count > 1 && (
-                <span 
-                  className="px-3 py-1 text-sm rounded-full"
-                  style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-                >
-                  {product.variant_count} variantes
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Product Info Section */}
-          <div className="p-6 md:p-8 flex flex-col">
-            {/* Brand/Category */}
-            <p className="text-sm tracking-wide mb-2" style={{ color: '#d4a968' }}>
-              {product.brand || product.category}
-            </p>
-
-            {/* Product Name */}
-            <h2 className="text-2xl md:text-3xl font-light mb-4" style={{ color: '#f5ede4' }}>
-              {product.name}
-            </h2>
-
-            {/* Price */}
-            <div className="mb-6">
-              <p className="text-3xl font-light" style={{ color: '#d4a968' }}>
-                {formatPrice(product.price)}
-              </p>
-              {product.max_price && product.max_price !== product.price && (
-                <p className="text-sm mt-1" style={{ color: '#666' }}>
-                  Hasta {formatPrice(product.max_price)}
-                </p>
-              )}
-            </div>
-
-            {/* Size Selection */}
-            {sizesList.length > 0 && (
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-sm font-medium" style={{ color: '#f5ede4' }}>
-                    Seleccionar Talle
-                  </p>
-                  {selectedSize && (
-                    <p className="text-xs" style={{ color: '#a8a8a8' }}>
-                      {selectedStock > 0 ? `${selectedStock} disponibles` : 'Sin stock'}
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {availableSizes.map((sizeInfo) => {
-                    const isSelected = selectedSize === sizeInfo.size;
-                    const hasStock = sizeInfo.stock > 0;
-                    
-                    return (
-                      <button
-                        key={sizeInfo.size}
-                        onClick={() => hasStock && setSelectedSize(sizeInfo.size)}
-                        disabled={!hasStock}
-                        className={`
-                          px-4 py-2 rounded-lg text-sm font-medium transition-all
-                          ${!hasStock ? 'opacity-30 cursor-not-allowed line-through' : 'cursor-pointer hover:scale-105'}
-                        `}
-                        style={{ 
-                          backgroundColor: isSelected ? '#d4a968' : '#2a2a2a',
-                          color: isSelected ? '#0d0d0d' : '#f5ede4',
-                          border: isSelected ? '2px solid #d4a968' : '1px solid #444'
-                        }}
-                      >
-                        {sizeInfo.size}
-                      </button>
-                    );
-                  })}
-                </div>
-                {!selectedSize && availableSizes.length > 0 && (
-                  <p className="text-xs mt-2" style={{ color: '#ef4444' }}>
-                    * Selecciona un talle para continuar
-                  </p>
+            <div className="grid md:grid-cols-2">
+              {/* Image Section */}
+              <div className="aspect-[3/4] md:aspect-auto md:min-h-[600px] bg-[#F5F5F5] relative">
+                {imageUrl && !imageError ? (
+                  <img
+                    src={imageUrl}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-xs text-gray-400 tracking-[0.1em] uppercase">Sin imagen</span>
+                  </div>
                 )}
               </div>
-            )}
 
-            {/* Quantity Selector */}
-            {selectedSize && selectedStock > 0 && (
-              <div className="mb-6">
-                <p className="text-sm font-medium mb-3" style={{ color: '#f5ede4' }}>
-                  Cantidad
+              {/* Product Info */}
+              <div className="p-8 md:p-12 flex flex-col">
+                {/* Brand/Category */}
+                {product.brand && (
+                  <p className="text-xs tracking-[0.2em] uppercase text-gray-400 mb-2">
+                    {product.brand}
+                  </p>
+                )}
+
+                {/* Name */}
+                <h2 className="text-2xl font-normal text-gray-900 mb-4 leading-tight">
+                  {product.name}
+                </h2>
+
+                {/* Price */}
+                <p className="text-lg text-gray-900 mb-8">
+                  {formatPrice(product.price)}
                 </p>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="p-2 rounded-lg transition-colors"
-                    style={{ backgroundColor: '#2a2a2a', color: '#f5ede4' }}
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="text-lg font-medium w-8 text-center" style={{ color: '#f5ede4' }}>
-                    {quantity}
+
+                {/* Description */}
+                {product.description && (
+                  <p className="text-sm text-gray-500 leading-relaxed mb-8">
+                    {product.description}
+                  </p>
+                )}
+
+                {/* Size Selection */}
+                {sizes.length > 0 && (
+                  <div className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs tracking-[0.15em] uppercase text-gray-900">
+                        Seleccionar talla
+                      </span>
+                      {!selectedSize && (
+                        <span className="text-xs text-red-500">Requerido</span>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {sizes.map((sizeInfo) => {
+                        const isAvailable = sizeInfo.stock > 0;
+                        const isSelected = selectedSize === sizeInfo.size;
+                        return (
+                          <button
+                            key={sizeInfo.size}
+                            onClick={() => isAvailable && setSelectedSize(sizeInfo.size)}
+                            disabled={!isAvailable}
+                            className={`min-w-[50px] h-12 px-4 text-sm border transition-all duration-200 ${
+                              isSelected
+                                ? 'bg-gray-900 text-white border-gray-900'
+                                : isAvailable
+                                  ? 'bg-white text-gray-900 border-gray-200 hover:border-gray-900'
+                                  : 'bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed line-through'
+                            }`}
+                          >
+                            {sizeInfo.size}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {selectedSizeInfo && (
+                      <p className="text-xs text-gray-400 mt-3">
+                        {selectedSizeInfo.stock} {selectedSizeInfo.stock === 1 ? 'disponible' : 'disponibles'}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Quantity */}
+                <div className="mb-8">
+                  <span className="text-xs tracking-[0.15em] uppercase text-gray-900 block mb-4">
+                    Cantidad
                   </span>
-                  <button
-                    onClick={() => setQuantity(q => Math.min(selectedStock, q + 1))}
-                    disabled={quantity >= selectedStock}
-                    className="p-2 rounded-lg transition-colors disabled:opacity-50"
-                    style={{ backgroundColor: '#2a2a2a', color: '#f5ede4' }}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center border border-gray-200 w-fit">
+                    <button
+                      onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                      className="w-12 h-12 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-12 h-12 flex items-center justify-center text-sm text-gray-900 border-x border-gray-200">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(q => q + 1)}
+                      className="w-12 h-12 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Add to Cart Button */}
+                <button
+                  onClick={handleAddToCart}
+                  disabled={sizes.length > 0 && !selectedSize}
+                  className={`w-full py-4 text-sm tracking-[0.15em] uppercase transition-all duration-300 ${
+                    addedToCart
+                      ? 'bg-green-600 text-white'
+                      : sizes.length > 0 && !selectedSize
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-gray-900 text-white hover:bg-gray-800'
+                  }`}
+                >
+                  {addedToCart ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Check className="w-5 h-5" />
+                      Agregado
+                    </span>
+                  ) : (
+                    'Agregar al carrito'
+                  )}
+                </button>
+
+                {/* Additional Info */}
+                <div className="mt-auto pt-8 border-t border-gray-100 space-y-4">
+                  {product.category && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Categoría</span>
+                      <span className="text-gray-900">{product.category}</span>
+                    </div>
+                  )}
+                  {product.variant_count > 1 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Variantes</span>
+                      <span className="text-gray-900">{product.variant_count} opciones</span>
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
-
-            {/* Stock info */}
-            {product.stock <= 5 && product.stock > 0 && (
-              <p className="text-sm mb-4" style={{ color: '#ef4444' }}>
-                ¡Últimas {Math.floor(product.stock)} unidades!
-              </p>
-            )}
-
-            {/* Spacer */}
-            <div className="flex-grow" />
-
-            {/* Add to Cart Button */}
-            <Button
-              onClick={handleAddToCart}
-              disabled={availableSizes.length > 0 && !selectedSize}
-              className={`
-                w-full py-4 text-lg font-medium rounded-lg flex items-center justify-center gap-3
-                transition-all
-                ${addedToCart ? 'scale-95' : ''}
-              `}
-              style={{ 
-                backgroundColor: addedToCart ? '#22c55e' : '#d4a968', 
-                color: '#0d0d0d',
-                opacity: (availableSizes.length > 0 && !selectedSize) ? 0.5 : 1
-              }}
-            >
-              {addedToCart ? (
-                <>
-                  <Check className="w-5 h-5" />
-                  ¡Agregado al carrito!
-                </>
-              ) : (
-                <>
-                  <ShoppingCart className="w-5 h-5" />
-                  Agregar al Carrito
-                  {selectedSize && quantity > 1 && ` (${quantity})`}
-                </>
-              )}
-            </Button>
-
-            {/* Subtotal */}
-            {selectedSize && (
-              <p className="text-center mt-3 text-sm" style={{ color: '#a8a8a8' }}>
-                Subtotal: {formatPrice(product.price * quantity)}
-              </p>
-            )}
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-export default ProductDetailModal;
