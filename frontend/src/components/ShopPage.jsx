@@ -370,11 +370,24 @@ export const ShopPage = ({ cart, setCart }) => {
               <ProductCard
                 key={product.id}
                 product={product}
-                onAddToCart={() => addToCart(product)}
+                onProductClick={() => setSelectedProduct(product)}
                 formatPrice={formatPrice}
               />
             ))}
           </div>
+        )}
+
+        {/* Product Detail Modal */}
+        {selectedProduct && (
+          <ProductDetailModal
+            product={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            onAddToCart={(product, size, qty) => {
+              addToCart(product, size, qty);
+              setSelectedProduct(null);
+            }}
+            formatPrice={formatPrice}
+          />
         )}
 
         {/* Pagination */}
