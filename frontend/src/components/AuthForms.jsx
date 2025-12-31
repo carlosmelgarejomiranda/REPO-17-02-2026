@@ -32,7 +32,7 @@ export const AuthForms = ({ onLogin, onClose }) => {
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        
         body: JSON.stringify(body)
       });
 
@@ -254,7 +254,7 @@ export const AuthCallback = ({ onAuthComplete }) => {
         const response = await fetch(`${API_URL}/api/auth/google/callback`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
+          
           body: JSON.stringify({ session_id: sessionId })
         });
 

@@ -147,7 +147,7 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
+        
         body: JSON.stringify({
           date: selectedDate,
           start_time: selectedTime,

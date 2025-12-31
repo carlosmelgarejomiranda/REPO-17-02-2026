@@ -43,15 +43,15 @@ export const AdminDashboard = ({ user }) => {
       const [resResponse, usersResponse, ugcResponse] = await Promise.all([
         fetch(`${API_URL}/api/admin/reservations${query}`, {
           headers: getAuthHeaders(),
-          credentials: 'include'
+          
         }),
         fetch(`${API_URL}/api/admin/users`, {
           headers: getAuthHeaders(),
-          credentials: 'include'
+          
         }),
         fetch(`${API_URL}/api/admin/ugc${ugcQuery}`, {
           headers: getAuthHeaders(),
-          credentials: 'include'
+          
         })
       ]);
 
@@ -83,7 +83,7 @@ export const AdminDashboard = ({ user }) => {
       const response = await fetch(`${API_URL}/api/admin/test-email`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        credentials: 'include'
+        
       });
       
       const data = await response.json();
@@ -105,7 +105,7 @@ export const AdminDashboard = ({ user }) => {
       const response = await fetch(`${API_URL}/api/admin/reservations/${reservationId}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        credentials: 'include',
+        
         body: JSON.stringify({ status: newStatus })
       });
 
@@ -124,7 +124,7 @@ export const AdminDashboard = ({ user }) => {
       const response = await fetch(`${API_URL}/api/admin/reservations/${reservationId}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
-        credentials: 'include'
+        
       });
 
       if (response.ok) {
@@ -140,7 +140,7 @@ export const AdminDashboard = ({ user }) => {
       const response = await fetch(`${API_URL}/api/admin/ugc/${applicationId}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        credentials: 'include',
+        
         body: JSON.stringify({ status: newStatus })
       });
 
@@ -159,7 +159,7 @@ export const AdminDashboard = ({ user }) => {
       const response = await fetch(`${API_URL}/api/admin/ugc/${applicationId}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
-        credentials: 'include'
+        
       });
 
       if (response.ok) {
@@ -749,7 +749,7 @@ const CreateReservationModal = ({ onClose, onSuccess }) => {
           'Content-Type': 'application/json',
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         },
-        credentials: 'include',
+        
         body: JSON.stringify(formData)
       });
 

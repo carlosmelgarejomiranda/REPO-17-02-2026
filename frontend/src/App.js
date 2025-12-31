@@ -42,7 +42,7 @@ const useAuth = () => {
     try {
       const token = localStorage.getItem('auth_token');
       const response = await fetch(`${API_URL}/api/auth/me`, {
-        credentials: 'include',
+        
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       
@@ -65,7 +65,7 @@ const useAuth = () => {
     try {
       await fetch(`${API_URL}/api/auth/logout`, {
         method: 'POST',
-        credentials: 'include'
+        
       });
     } catch (err) {
       console.error('Logout error:', err);
