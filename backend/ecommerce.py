@@ -718,6 +718,9 @@ async def get_product(product_id: str):
                 int(x.get("size") or "0") if (x.get("size") or "").isdigit() else (x.get("size") or "")
             ))
             
+            # Use custom image if available
+            display_image = product.get("custom_image") or product.get("image")
+            
             return {
                 "id": product.get("grouped_id"),
                 "name": product.get("base_model"),
@@ -725,7 +728,7 @@ async def get_product(product_id: str):
                 "price": product.get("price"),
                 "max_price": product.get("max_price"),
                 "stock": product.get("total_stock"),
-                "image": product.get("image"),
+                "image": display_image,
                 "category": product.get("category"),
                 "brand": product.get("brand"),
                 "gender": product.get("gender"),
