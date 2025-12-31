@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag } from 'lucide-react';
+import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { OrdersManagement } from './OrdersManagement';
+import { ProductImagesManager } from './ProductImagesManager';
 
 export const AdminDashboard = ({ user }) => {
   const [reservations, setReservations] = useState([]);
