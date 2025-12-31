@@ -75,22 +75,34 @@ export const ShopPage = ({ cart, setCart }) => {
     fetchProducts();
   }, [fetchProducts]);
 
-  const addToCart = (product) => {
+  const addToCart = (product, selectedSize, quantity = 1) => {
+    // Get the specific variant info if a size was selected
+    const sizeInfo = selectedSize 
+      ? (product.available_sizes || []).find(s => s.size === selectedSize)
+      : null;
+    
+    const cartItemId = sizeInfo 
+      ? `${product.id}_${selectedSize}` 
+      : product.id;
+    
     setCart(prev => {
-      const existing = prev.find(item => item.product_id === product.id);
+      const existing = prev.find(item => item.cart_item_id === cartItemId);
       if (existing) {
         return prev.map(item =>
-          item.product_id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+          item.cart_item_id === cartItemId
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
       return [...prev, {
-        product_id: product.id,
+        cart_item_id: cartItemId,
+        product_id: sizeInfo?.product_id || product.id,
         name: product.name,
-        price: product.price,
+        size: selectedSize || null,
+        price: sizeInfo?.price || product.price,
         image: product.image,
-        quantity: 1
+        quantity: quantity,
+        sku: sizeInfo?.sku || ''
       }];
     });
   };
