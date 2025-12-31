@@ -126,12 +126,27 @@ export const OrderSuccessPage = ({ setCart }) => {
               <h1 className="text-3xl font-light italic mb-2" style={{ color: '#d4a968' }}>
                 ¡Pedido confirmado!
               </h1>
-          <p style={{ color: '#a8a8a8' }}>
-            Gracias por tu compra. Te hemos enviado un email con los detalles.
-          </p>
+              <p style={{ color: '#a8a8a8' }}>
+                Gracias por tu compra. Te hemos enviado un email con los detalles.
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4"
+                style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)' }}>
+                <AlertCircle className="w-10 h-10" style={{ color: '#ef4444' }} />
+              </div>
+              <h1 className="text-3xl font-light italic mb-2" style={{ color: '#ef4444' }}>
+                Error de pago
+              </h1>
+              <p style={{ color: '#a8a8a8' }}>
+                Hubo un problema procesando tu pago. Por favor intenta de nuevo.
+              </p>
+            </>
+          )}
         </div>
 
-        {order && (
+        {order && isPaid && (
           <div className="space-y-6">
             {/* Order Info */}
             <div className="rounded-lg p-6" style={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}>
