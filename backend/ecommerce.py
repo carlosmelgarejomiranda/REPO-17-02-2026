@@ -663,6 +663,9 @@ async def get_products(
             # Filter None from sizes_list
             sizes_list = [s for s in p.get("sizes_list", []) if s]
             
+            # Use custom image if available, otherwise use ERP image
+            display_image = p.get("custom_image") or p.get("image")
+            
             result.append({
                 "id": p.get("grouped_id"),
                 "name": p.get("base_model"),  # Use base model as display name
@@ -670,7 +673,7 @@ async def get_products(
                 "price": p.get("price"),
                 "max_price": p.get("max_price"),
                 "stock": p.get("total_stock"),
-                "image": p.get("image"),
+                "image": display_image,
                 "category": p.get("category"),
                 "brand": p.get("brand"),
                 "gender": p.get("gender"),
