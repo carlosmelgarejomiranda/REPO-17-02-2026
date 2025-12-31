@@ -1622,3 +1622,61 @@ async def serve_product_image(filename: str):
     
     return FileResponse(filepath, media_type="image/jpeg")
 
+
+@ecommerce_router.get("/admin/export-products-for-images")
+async def export_products_for_images(
+    has_image: Optional[bool] = None,
+    category: Optional[str] = None
+):
+    """Export grouped products list for image naming
+    Returns CSV-ready data with product names for bulk image upload
+    """
+    query = {}
+    
+    if has_image is not None:
+        if has_image:
+            query["custom_image"] = {"$exists": True, "$ne": None}
+        else:
+            query["$or"] = [
+                {"custom_image": {"$exists": False}},
+                {"custom_image": None}
+            ]
+    
+    if category:
+        query["category"] = {"$regex": category, "$options": "i"}
+    
+    # Get all grouped products
+    products = await db.shop_products_grouped.find(
+        query,
+        {"_id": 0, "grouped_id": 1, "base_model": 1, "category": 1, "brand": 1, 
+         "total_stock": 1, "variant_count": 1, "custom_image": 1}
+    ).sort("base_model", 1).to_list(10000)
+    
+    # Format for export - the base_model is the name to use for images
+    export_data = []
+    for p in products:
+        export_data.append({
+            "nombre_para_imagen": p.get("base_model", ""),  # THIS IS THE NAME TO USE FOR IMAGE FILES
+            "categoria": p.get("category", ""),
+            "marca": p.get("brand", ""),
+            "stock_total": p.get("total_stock", 0),
+            "variantes": p.get("variant_count", 1),
+            "tiene_imagen_custom": "Sí" if p.get("custom_image") else "No",
+            "id_producto": p.get("grouped_id", "")
+        })
+    
+    return {
+        "products": export_data,
+        "total": len(export_data),
+        "columns": [
+            {"key": "nombre_para_imagen", "label": "Nombre para Imagen (usar este nombre para el archivo)"},
+            {"key": "categoria", "label": "Categoría"},
+            {"key": "marca", "label": "Marca"},
+            {"key": "stock_total", "label": "Stock Total"},
+            {"key": "variantes", "label": "Variantes/Talles"},
+            {"key": "tiene_imagen_custom", "label": "Tiene Imagen Custom"},
+            {"key": "id_producto", "label": "ID Producto"}
+        ],
+        "instructions": "Para subir imágenes: 1) Copia el nombre de la columna 'nombre_para_imagen', 2) Renombra tu imagen con ese nombre exacto (ej: CAMISA DAVID SANDOVAL.jpg), 3) Sube las imágenes en 'Carga Masiva'"
+    }
+
