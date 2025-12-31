@@ -1457,7 +1457,17 @@ def run_all_tests():
         ("Test Shop Products", test_shop_products),
         ("Test Shop Products with Filters", test_shop_products_with_filters),
         
-        # NEW: Improved Product Grouping Tests
+        # NEW: Admin Order Management Tests
+        ("Test Admin Orders List", test_admin_orders_list),
+        ("Test Admin Order Detail", test_admin_order_detail),
+        ("Test Admin Order Status Update", test_admin_order_status_update),
+        ("Test Admin Metrics Summary", test_admin_metrics_summary),
+        ("Test Admin Daily Metrics", test_admin_daily_metrics),
+        ("Test Admin Top Products", test_admin_top_products),
+        ("Test Admin Export Report", test_admin_export_report),
+        ("Test Order Status Validation", test_order_status_validation),
+        
+        # Improved Product Grouping Tests
         ("Test Product Grouping Verification", test_product_grouping_verification),
         ("Test Specific Product Cases", test_specific_product_cases),
         ("Test Size Detection Verification", test_size_detection_verification),
