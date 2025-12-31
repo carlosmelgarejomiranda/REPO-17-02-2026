@@ -37,23 +37,29 @@ const BRAND_CATEGORIES = {
   },
   otros: {
     title: 'Otros',
-    brands: [] // Will be populated with remaining brands
+    brands: []
   }
 };
 
-// Brands to merge into AVENUE OUTLET
-const OUTLET_BRANDS = [
+// Brands to merge into AVENUE OUTLET (case insensitive patterns)
+const OUTLET_PATTERNS = [
   'GOOD AMERICAN', 'FRAME', 'BDA FACTORY', 'RUSTY', 'LACOSTE', 'SANTAL/US', 
   'AVENUE AK', 'JAZMIN CHEBAR', 'MARIA CHER', 'TOP DESIGN', 'RICARDO ALMEIDA',
-  'HOWICK', 'ROTUNDA', 'JUICY', 'KOSIUKO', 'VOYAGEUR', 'MERSEA', 'AVENUE', 
-  'EST1985', 'QUICKSILVER'
+  'HOWICK', 'ROTUNDA', 'JUICY', 'KOSIUKO', 'VOYAGEUR', 'MERSEA', 
+  'EST1985', 'QUICKSILVER', 'EST 1985'
 ];
 
 // Brands to merge into SUN68
-const SUN_BRANDS = ['SUN68', 'SUN69', 'SUN70', 'SUN71', 'SUN72'];
+const SUN_PATTERNS = ['SUN68', 'SUN69', 'SUN70', 'SUN71', 'SUN72'];
 
-// DS should be renamed to David Sandoval
-const DS_RENAME = { 'DS': 'DAVID SANDOVAL' };
+// All known brands organized by category for display
+const DISPLAY_BRANDS = {
+  indumentaria: ['SEROTONINA', 'EFIMERA', 'CORALTHEIA', 'KARLA', 'BRAVISIMA', 'SANTAL', 'BODY SCULPT', 'BRO FITWEAR', 'WUARANI', 'AGUARA', 'FILA', 'UNDISTURBED', 'DAVID SANDOVAL', 'SKYLINE', 'OKI', 'AVENUE OUTLET'],
+  calzados: ['PREMIATA', 'SUN68', 'HUNTER', 'UGG', 'SPERRY', 'CRISTALINE'],
+  joyas: ['SARELLY', 'THULA', 'OLIVIA', 'KAESE'],
+  cosmetica: ['MALVA', 'IMMORTAL', 'MARIA E MAKE UP'],
+  otros: []
+};
 
 // Normalize brand name for comparison
 const normalizeBrand = (brand) => {
@@ -61,12 +67,12 @@ const normalizeBrand = (brand) => {
   const upper = brand.toUpperCase().trim();
   
   // Check if it's an outlet brand
-  if (OUTLET_BRANDS.some(ob => upper.includes(ob) || ob.includes(upper))) {
+  if (OUTLET_PATTERNS.some(ob => upper.includes(ob) || (upper === 'AVENUE' && !upper.includes('OUTLET')))) {
     return 'AVENUE OUTLET';
   }
   
   // Check if it's a SUN brand
-  if (SUN_BRANDS.some(sb => upper === sb || upper.includes('SUN6') || upper.includes('SUN7'))) {
+  if (SUN_PATTERNS.some(sb => upper === sb)) {
     return 'SUN68';
   }
   
