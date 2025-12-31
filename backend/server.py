@@ -647,6 +647,66 @@ async def send_customer_order_confirmation(order: dict):
         logger.error(f"Failed to send customer confirmation email: {str(e)}")
         return False
 
+# ==================== GENERATED FLYERS ====================
+
+from fastapi.responses import FileResponse
+import zipfile
+from io import BytesIO
+
+FLYERS_DIR = ROOT_DIR / "generated_flyers"
+
+@api_router.get("/admin/flyers")
+async def list_generated_flyers():
+    """List all generated Instagram flyers"""
+    if not FLYERS_DIR.exists():
+        return {"flyers": [], "message": "No flyers generated yet"}
+    
+    flyers = []
+    for f in sorted(FLYERS_DIR.iterdir()):
+        if f.suffix.lower() in ['.jpg', '.jpeg', '.png']:
+            flyers.append({
+                "filename": f.name,
+                "url": f"/api/admin/flyers/{f.name}",
+                "size_kb": round(f.stat().st_size / 1024, 1)
+            })
+    
+    return {
+        "flyers": flyers,
+        "total": len(flyers),
+        "download_all": "/api/admin/flyers/download-all"
+    }
+
+@api_router.get("/admin/flyers/{filename}")
+async def get_flyer_image(filename: str):
+    """Get a specific flyer image"""
+    filepath = FLYERS_DIR / filename
+    if not filepath.exists():
+        raise HTTPException(status_code=404, detail="Flyer not found")
+    
+    media_type = "image/jpeg" if filename.lower().endswith('.jpg') else "image/png"
+    return FileResponse(filepath, media_type=media_type)
+
+@api_router.get("/admin/flyers/download-all")
+async def download_all_flyers():
+    """Download all flyers as a ZIP file"""
+    if not FLYERS_DIR.exists():
+        raise HTTPException(status_code=404, detail="No flyers available")
+    
+    # Create ZIP in memory
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        for f in FLYERS_DIR.iterdir():
+            if f.suffix.lower() in ['.jpg', '.jpeg', '.png']:
+                zip_file.write(f, f.name)
+    
+    zip_buffer.seek(0)
+    
+    return Response(
+        content=zip_buffer.getvalue(),
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=avenue_studio_flyers.zip"}
+    )
+
 # ==================== AUTH ROUTES ====================
 
 @api_router.post("/auth/register")
