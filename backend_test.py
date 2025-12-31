@@ -1763,6 +1763,13 @@ def run_all_tests():
         ("Test Specific Product Cases", test_specific_product_cases),
         ("Test Size Detection Verification", test_size_detection_verification),
         ("Test API Endpoints Verification", test_api_endpoints_verification),
+        
+        # NEW: Stripe Checkout & Notifications Tests
+        ("Test Stripe Checkout API", test_stripe_checkout_api),
+        ("Test Order Creation in Database", test_order_creation_in_database),
+        ("Test Checkout Status Endpoint", test_checkout_status_endpoint),
+        ("Test Notifications System", test_notifications_system),
+        ("Test Admin Orders Endpoint", test_admin_orders_endpoint),
     ]
     
     results = []
