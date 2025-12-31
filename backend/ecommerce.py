@@ -491,6 +491,8 @@ class CartItem(BaseModel):
     name: Optional[str] = None
     price: Optional[float] = None
     image: Optional[str] = None
+    size: Optional[str] = None
+    sku: Optional[str] = None
 
 class DeliveryAddress(BaseModel):
     lat: float
