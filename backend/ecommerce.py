@@ -855,11 +855,15 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
         line_items = []
         
         for item in data.items:
+            product_name = item.name or f"Producto {item.product_id}"
+            if item.size:
+                product_name += f" - Talle {item.size}"
+            
             line_items.append({
                 "price_data": {
                     "currency": "pyg",
                     "product_data": {
-                        "name": item.name or f"Producto {item.product_id}",
+                        "name": product_name,
                         "images": [item.image] if item.image else []
                     },
                     "unit_amount": int(item.price) if item.price else 0
