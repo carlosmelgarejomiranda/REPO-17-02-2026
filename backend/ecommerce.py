@@ -1506,7 +1506,7 @@ async def upload_product_image(
     return {"message": "Image uploaded successfully", "image_url": image_url}
 
 @ecommerce_router.post("/admin/bulk-upload-images")
-async def bulk_upload_images(files: TypeList[UploadFile] = File(...)):
+async def bulk_upload_images(files: List[UploadFile] = File(...)):
     """Bulk upload images with automatic product matching"""
     # Get all products for matching
     all_products = await db.shop_products_grouped.find({}, {"_id": 0, "grouped_id": 1, "base_model": 1}).to_list(5000)
