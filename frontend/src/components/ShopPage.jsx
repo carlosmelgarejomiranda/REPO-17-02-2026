@@ -6,6 +6,20 @@ import { ProductDetailModal } from './ProductDetailModal';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
+// Helper to resolve image URLs - handles both relative and absolute URLs
+const resolveImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  // If it's already an absolute URL (http/https), return as is
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+  // If it's a relative API URL, prepend the API_URL
+  if (imageUrl.startsWith('/api/')) {
+    return `${API_URL}${imageUrl}`;
+  }
+  return imageUrl;
+};
+
 export const ShopPage = ({ cart, setCart }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
