@@ -54,10 +54,10 @@ const SUN_PATTERNS = ['SUN68', 'SUN69', 'SUN70', 'SUN71', 'SUN72'];
 
 // All known brands organized by category for display
 const DISPLAY_BRANDS = {
-  indumentaria: ['SEROTONINA', 'EFIMERA', 'CORALTHEIA', 'KARLA', 'BRAVISIMA', 'SANTAL', 'BODY SCULPT', 'BRO FITWEAR', 'WUARANI', 'AGUARA', 'FILA', 'UNDISTURBED', 'DAVID SANDOVAL', 'SKYLINE', 'OKI', 'AVENUE OUTLET'],
-  calzados: ['PREMIATA', 'SUN68', 'HUNTER', 'UGG', 'SPERRY', 'CRISTALINE'],
-  joyas: ['SARELLY', 'THULA', 'OLIVIA', 'KAESE'],
-  cosmetica: ['MALVA', 'IMMORTAL', 'MARIA E MAKE UP'],
+  indumentaria: ['AGUARA', 'AVENUE OUTLET', 'BODY SCULPT', 'BRAVISIMA', 'BRO FITWEAR', 'CORALTHEIA', 'DAVID SANDOVAL', 'EFIMERA', 'FILA', 'KARLA', 'OKI', 'SANTAL', 'SEROTONINA', 'SKYLINE', 'UNDISTURBED', 'WUARANI'],
+  calzados: ['CRISTALINE', 'HUNTER', 'PREMIATA', 'SPERRY', 'SUN68', 'UGG'],
+  joyas: ['KAESE', 'OLIVIA', 'SARELLY', 'THULA'],
+  cosmetica: ['IMMORTAL', 'MALVA', 'MARIA E MAKE UP'],
   otros: []
 };
 
