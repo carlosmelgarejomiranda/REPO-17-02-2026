@@ -1324,13 +1324,6 @@ async def export_orders_report(
 
 # ==================== ADMIN: PRODUCT IMAGE MANAGEMENT ====================
 
-import unicodedata
-from io import BytesIO
-from PIL import Image as PILImage
-import base64
-from fastapi import UploadFile, File
-from typing import List as TypeList
-
 # Directory for uploaded images
 UPLOAD_DIR = "/app/backend/uploads/products"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
