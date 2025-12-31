@@ -17,6 +17,46 @@ const resolveImageUrl = (imageUrl) => {
   return imageUrl;
 };
 
+// Filter Section Component - Moved outside to prevent re-creation on every render
+const FilterSection = ({ title, name, options, selectedValue, onChange, expanded, onToggle }) => (
+  <div className="border-b border-gray-200">
+    <button
+      onClick={() => onToggle(name)}
+      className="w-full py-4 flex items-center justify-between text-left"
+    >
+      <span className="text-xs tracking-[0.2em] uppercase font-medium text-gray-900">{title}</span>
+      {expanded ? (
+        <ChevronUp className="w-4 h-4 text-gray-400" />
+      ) : (
+        <ChevronDown className="w-4 h-4 text-gray-400" />
+      )}
+    </button>
+    {expanded && (
+      <div className="pb-4 space-y-2">
+        <button
+          onClick={() => onChange('')}
+          className={`block w-full text-left py-1.5 text-sm transition-colors ${
+            !selectedValue ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'
+          }`}
+        >
+          Todos
+        </button>
+        {options.map(option => (
+          <button
+            key={option}
+            onClick={() => onChange(option)}
+            className={`block w-full text-left py-1.5 text-sm transition-colors ${
+              selectedValue === option ? 'text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-900'
+            }`}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+);
+
 export const ShopPage = ({ cart, setCart }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
