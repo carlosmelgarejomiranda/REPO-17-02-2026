@@ -105,8 +105,14 @@ export const OrderSuccessPage = ({ setCart }) => {
               <div className="space-y-3">
                 {order.items?.map((item, index) => (
                   <div key={index} className="flex justify-between text-sm">
-                    <span style={{ color: '#a8a8a8' }}>{item.name} x{item.quantity}</span>
-                    <span style={{ color: '#f5ede4' }}>{formatPrice(item.price * item.quantity)}</span>
+                    <div>
+                      <span style={{ color: '#f5ede4' }}>{item.name}</span>
+                      {item.size && (
+                        <span style={{ color: '#a8a8a8' }}> - Talle {item.size}</span>
+                      )}
+                      <span style={{ color: '#666' }}> x{item.quantity}</span>
+                    </div>
+                    <span style={{ color: '#d4a968' }}>{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
