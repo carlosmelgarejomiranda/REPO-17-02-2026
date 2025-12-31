@@ -306,8 +306,26 @@ def transform_product(p: dict) -> dict:
     }
 
 async def create_grouped_products():
-    """Create grouped products collection from individual products"""
+    """Create grouped products collection from individual products
+    Preserves custom images when re-syncing
+    """
     logger.info("Creating grouped products...")
+    
+    # First, get existing custom images to preserve them
+    existing_custom_images = {}
+    existing_products = await db.shop_products_grouped.find(
+        {"custom_image": {"$exists": True, "$ne": None}},
+        {"_id": 0, "base_model": 1, "custom_image": 1, "image_updated_at": 1}
+    ).to_list(5000)
+    
+    for p in existing_products:
+        if p.get("base_model"):
+            existing_custom_images[p["base_model"]] = {
+                "custom_image": p.get("custom_image"),
+                "image_updated_at": p.get("image_updated_at")
+            }
+    
+    logger.info(f"Preserving {len(existing_custom_images)} custom images")
     
     # Aggregate products by base_model
     pipeline = [
@@ -362,13 +380,19 @@ async def create_grouped_products():
     await db.shop_products_grouped.delete_many({})
     
     if grouped:
-        # Add a unique ID to each grouped product
+        # Add a unique ID to each grouped product and restore custom images
         for i, g in enumerate(grouped):
             g["grouped_id"] = f"grp_{i}"
             g.pop("_id", None)
+            
+            # Restore custom image if it exists
+            base_model = g.get("base_model")
+            if base_model and base_model in existing_custom_images:
+                g["custom_image"] = existing_custom_images[base_model]["custom_image"]
+                g["image_updated_at"] = existing_custom_images[base_model].get("image_updated_at")
         
         await db.shop_products_grouped.insert_many(grouped)
-        logger.info(f"Created {len(grouped)} grouped products")
+        logger.info(f"Created {len(grouped)} grouped products, restored {len([g for g in grouped if g.get('custom_image')])} custom images")
     
     return len(grouped)
 
