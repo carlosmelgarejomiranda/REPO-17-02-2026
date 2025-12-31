@@ -1309,3 +1309,291 @@ async def export_orders_report(
         }
     }
 
+
+# ==================== ADMIN: PRODUCT IMAGE MANAGEMENT ====================
+
+import unicodedata
+from io import BytesIO
+from PIL import Image as PILImage
+import base64
+from fastapi import UploadFile, File
+from typing import List as TypeList
+
+# Directory for uploaded images
+UPLOAD_DIR = "/app/backend/uploads/products"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+def normalize_text_for_matching(text: str) -> str:
+    """Normalize text for flexible matching
+    - Remove accents/diacritics
+    - Lowercase
+    - Remove extra spaces
+    - Remove special characters
+    """
+    if not text:
+        return ""
+    # Remove file extension if present
+    text = re.sub(r'\.[^.]+$', '', text)
+    # Normalize unicode (remove accents)
+    text = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
+    # Lowercase
+    text = text.lower()
+    # Replace special chars with spaces
+    text = re.sub(r'[^a-z0-9\s]', ' ', text)
+    # Multiple spaces to one
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+def find_matching_product(filename: str, products: list) -> Optional[dict]:
+    """Find a product that matches the filename using flexible matching"""
+    normalized_filename = normalize_text_for_matching(filename)
+    
+    best_match = None
+    best_score = 0
+    
+    for product in products:
+        base_model = product.get('base_model', '')
+        normalized_product = normalize_text_for_matching(base_model)
+        
+        # Exact match after normalization
+        if normalized_filename == normalized_product:
+            return product
+        
+        # Check if one contains the other
+        if normalized_filename in normalized_product or normalized_product in normalized_filename:
+            # Score based on length similarity
+            score = len(normalized_product) / max(len(normalized_filename), 1)
+            if score > best_score:
+                best_score = score
+                best_match = product
+    
+    # Return match if score is good enough (>0.7)
+    if best_score > 0.7:
+        return best_match
+    
+    return None
+
+async def process_and_save_image(file_content: bytes, filename: str, product_id: str) -> str:
+    """Process image (resize if needed) and save to disk"""
+    try:
+        # Open image with PIL
+        img = PILImage.open(BytesIO(file_content))
+        
+        # Convert to RGB if necessary (for PNG with transparency)
+        if img.mode in ('RGBA', 'P'):
+            img = img.convert('RGB')
+        
+        # Check file size - if > 5MB, reduce quality
+        max_size = 5 * 1024 * 1024  # 5MB
+        output = BytesIO()
+        
+        # Start with high quality
+        quality = 90
+        
+        while True:
+            output.seek(0)
+            output.truncate()
+            
+            # Resize if image is very large
+            max_dimension = 1500
+            if max(img.size) > max_dimension:
+                ratio = max_dimension / max(img.size)
+                new_size = (int(img.size[0] * ratio), int(img.size[1] * ratio))
+                img = img.resize(new_size, PILImage.Resampling.LANCZOS)
+            
+            img.save(output, format='JPEG', quality=quality, optimize=True)
+            
+            if output.tell() <= max_size or quality <= 30:
+                break
+            
+            quality -= 10
+        
+        # Save to disk
+        safe_filename = re.sub(r'[^a-zA-Z0-9_-]', '_', product_id) + '.jpg'
+        filepath = os.path.join(UPLOAD_DIR, safe_filename)
+        
+        with open(filepath, 'wb') as f:
+            output.seek(0)
+            f.write(output.read())
+        
+        # Return relative URL
+        return f"/api/shop/images/{safe_filename}"
+        
+    except Exception as e:
+        logger.error(f"Error processing image: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
+
+@ecommerce_router.get("/admin/products-images")
+async def get_products_for_images(
+    page: int = 1,
+    limit: int = 20,
+    search: Optional[str] = None,
+    has_image: Optional[bool] = None
+):
+    """Get grouped products for image management"""
+    query = {}
+    
+    if search:
+        query["base_model"] = {"$regex": search, "$options": "i"}
+    
+    if has_image is not None:
+        if has_image:
+            query["custom_image"] = {"$exists": True, "$ne": None}
+        else:
+            query["$or"] = [
+                {"custom_image": {"$exists": False}},
+                {"custom_image": None}
+            ]
+    
+    skip = (page - 1) * limit
+    
+    # Get products
+    products = await db.shop_products_grouped.find(query, {"_id": 0}).sort("base_model", 1).skip(skip).limit(limit).to_list(limit)
+    total = await db.shop_products_grouped.count_documents(query)
+    
+    # Get stats
+    total_products = await db.shop_products_grouped.count_documents({})
+    with_image = await db.shop_products_grouped.count_documents({"custom_image": {"$exists": True, "$ne": None}})
+    
+    return {
+        "products": products,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "total_pages": math.ceil(total / limit) if total > 0 else 1,
+        "stats": {
+            "total": total_products,
+            "with_image": with_image,
+            "without_image": total_products - with_image
+        }
+    }
+
+@ecommerce_router.post("/admin/upload-product-image")
+async def upload_product_image(
+    product_id: str = None,
+    file: UploadFile = File(...)
+):
+    """Upload a single product image"""
+    if not product_id:
+        raise HTTPException(status_code=400, detail="product_id is required")
+    
+    # Validate file type
+    allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff']
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail=f"Invalid file type. Allowed: {allowed_types}")
+    
+    # Read file content
+    content = await file.read()
+    
+    # Check size (5MB max before processing)
+    if len(content) > 10 * 1024 * 1024:  # 10MB max upload, will be reduced
+        raise HTTPException(status_code=400, detail="File too large. Maximum 10MB")
+    
+    # Process and save image
+    image_url = await process_and_save_image(content, file.filename, product_id)
+    
+    # Update product in database
+    await db.shop_products_grouped.update_one(
+        {"grouped_id": product_id},
+        {"$set": {"custom_image": image_url, "image_updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Image uploaded successfully", "image_url": image_url}
+
+@ecommerce_router.post("/admin/bulk-upload-images")
+async def bulk_upload_images(files: TypeList[UploadFile] = File(...)):
+    """Bulk upload images with automatic product matching"""
+    # Get all products for matching
+    all_products = await db.shop_products_grouped.find({}, {"_id": 0, "grouped_id": 1, "base_model": 1}).to_list(5000)
+    
+    matched = []
+    not_matched = []
+    errors = []
+    
+    for file in files:
+        try:
+            # Validate file type
+            if not file.content_type or not file.content_type.startswith('image/'):
+                errors.append(f"{file.filename}: Invalid file type")
+                continue
+            
+            # Read content
+            content = await file.read()
+            
+            if len(content) > 10 * 1024 * 1024:
+                errors.append(f"{file.filename}: File too large")
+                continue
+            
+            # Find matching product
+            product = find_matching_product(file.filename, all_products)
+            
+            if product:
+                # Process and save image
+                image_url = await process_and_save_image(content, file.filename, product['grouped_id'])
+                
+                # Update database
+                await db.shop_products_grouped.update_one(
+                    {"grouped_id": product['grouped_id']},
+                    {"$set": {"custom_image": image_url, "image_updated_at": datetime.now(timezone.utc).isoformat()}}
+                )
+                
+                matched.append({
+                    "filename": file.filename,
+                    "product": product['base_model'],
+                    "image_url": image_url
+                })
+            else:
+                not_matched.append(file.filename)
+                
+        except Exception as e:
+            logger.error(f"Error processing {file.filename}: {str(e)}")
+            errors.append(f"{file.filename}: {str(e)}")
+    
+    return {
+        "matched": len(matched),
+        "not_matched": len(not_matched),
+        "errors": len(errors),
+        "matched_details": matched,
+        "not_matched_details": not_matched,
+        "error_details": errors
+    }
+
+@ecommerce_router.delete("/admin/delete-product-image/{product_id}")
+async def delete_product_image(product_id: str):
+    """Delete custom image for a product"""
+    # Get product to find image path
+    product = await db.shop_products_grouped.find_one({"grouped_id": product_id}, {"_id": 0, "custom_image": 1})
+    
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    if product.get('custom_image'):
+        # Try to delete file
+        try:
+            filename = product['custom_image'].split('/')[-1]
+            filepath = os.path.join(UPLOAD_DIR, filename)
+            if os.path.exists(filepath):
+                os.remove(filepath)
+        except Exception as e:
+            logger.error(f"Error deleting file: {str(e)}")
+    
+    # Remove from database
+    await db.shop_products_grouped.update_one(
+        {"grouped_id": product_id},
+        {"$unset": {"custom_image": "", "image_updated_at": ""}}
+    )
+    
+    return {"message": "Image deleted successfully"}
+
+@ecommerce_router.get("/images/{filename}")
+async def serve_product_image(filename: str):
+    """Serve uploaded product images"""
+    from fastapi.responses import FileResponse
+    
+    filepath = os.path.join(UPLOAD_DIR, filename)
+    
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    return FileResponse(filepath, media_type="image/jpeg")
+
