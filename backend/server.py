@@ -673,20 +673,10 @@ async def list_generated_flyers():
     return {
         "flyers": flyers,
         "total": len(flyers),
-        "download_all": "/api/admin/flyers/download-all"
+        "download_all": "/api/admin/flyers-zip"
     }
 
-@api_router.get("/admin/flyers/{filename}")
-async def get_flyer_image(filename: str):
-    """Get a specific flyer image"""
-    filepath = FLYERS_DIR / filename
-    if not filepath.exists():
-        raise HTTPException(status_code=404, detail="Flyer not found")
-    
-    media_type = "image/jpeg" if filename.lower().endswith('.jpg') else "image/png"
-    return FileResponse(filepath, media_type=media_type)
-
-@api_router.get("/admin/flyers/download-all")
+@api_router.get("/admin/flyers-zip")
 async def download_all_flyers():
     """Download all flyers as a ZIP file"""
     if not FLYERS_DIR.exists():
@@ -706,6 +696,16 @@ async def download_all_flyers():
         media_type="application/zip",
         headers={"Content-Disposition": "attachment; filename=avenue_studio_flyers.zip"}
     )
+
+@api_router.get("/admin/flyers/{filename}")
+async def get_flyer_image(filename: str):
+    """Get a specific flyer image"""
+    filepath = FLYERS_DIR / filename
+    if not filepath.exists():
+        raise HTTPException(status_code=404, detail="Flyer not found")
+    
+    media_type = "image/jpeg" if filename.lower().endswith('.jpg') else "image/png"
+    return FileResponse(filepath, media_type=media_type)
 
 # ==================== AUTH ROUTES ====================
 
