@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   X, Save, Eye, Smartphone, Monitor, ChevronLeft, Upload, Check,
-  Edit3, Loader2, Image, Images, ChevronRight
+  Edit3, Loader2, Image, Images, ChevronRight, Move
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
-// Available pages for editing
 const EDITABLE_PAGES = [
   { id: 'main-landing', name: 'Página Principal', path: '/' },
   { id: 'studio-landing', name: 'Avenue Studio', path: '/studio' },
@@ -29,6 +28,7 @@ export const WebsiteBuilder = ({ onClose }) => {
   
   const iframeRef = useRef(null);
 
+  // Load saved modifications
   useEffect(() => {
     loadPageModifications(selectedPage.id);
   }, [selectedPage]);
@@ -45,27 +45,66 @@ export const WebsiteBuilder = ({ onClose }) => {
     }
   };
 
-  const handleImageChange = useCallback((newUrl) => {
+  // Apply saved modifications to iframe
+  const applyModifications = useCallback((iframeDoc, mods) => {
+    if (!iframeDoc || !mods) return;
+    
+    Object.entries(mods).forEach(([key, value]) => {
+      try {
+        if (key.startsWith('text:')) {
+          const editId = key.replace('text:', '');
+          const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
+          if (el) el.textContent = value;
+        } else if (key.startsWith('img:')) {
+          const editId = key.replace('img:', '');
+          const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
+          if (el) el.src = value;
+        } else if (key.startsWith('imgpos:')) {
+          const editId = key.replace('imgpos:', '');
+          const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
+          if (el) el.style.objectPosition = value;
+        } else if (key.startsWith('background:')) {
+          const editId = key.replace('background:', '');
+          const el = iframeDoc.querySelector(`[data-bg-edit-id="${editId}"]`);
+          if (el) el.style.backgroundImage = `url('${value}')`;
+        } else if (key === 'carousel:hero') {
+          const urls = JSON.parse(value);
+          urls.forEach((url, idx) => {
+            const img = iframeDoc.querySelector(`[data-carousel-index="${idx}"]`);
+            if (img) img.src = url;
+          });
+        }
+      } catch (err) {
+        console.error('Error applying modification:', key, err);
+      }
+    });
+  }, []);
+
+  const handleImageChange = useCallback((newUrl, position) => {
     if (mediaTarget && iframeRef.current) {
       const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
       
       if (mediaTarget.type === 'img') {
         const img = iframeDoc.querySelector(`[data-edit-id="${mediaTarget.editId}"]`);
-        if (img) img.src = newUrl;
+        if (img) {
+          img.src = newUrl;
+          if (position) img.style.objectPosition = position;
+        }
       } else if (mediaTarget.type === 'background') {
         const element = iframeDoc.querySelector(`[data-bg-edit-id="${mediaTarget.editId}"]`);
         if (element) element.style.backgroundImage = `url('${newUrl}')`;
       }
       
-      setPageModifications(prev => ({
-        ...prev,
-        [`${mediaTarget.type}:${mediaTarget.editId}`]: newUrl
-      }));
+      const newMods = { ...pageModifications };
+      newMods[`${mediaTarget.type}:${mediaTarget.editId}`] = newUrl;
+      if (position) newMods[`imgpos:${mediaTarget.editId}`] = position;
+      
+      setPageModifications(newMods);
       setHasChanges(true);
     }
     setShowMediaModal(false);
     setMediaTarget(null);
-  }, [mediaTarget]);
+  }, [mediaTarget, pageModifications]);
 
   const handleCarouselChange = useCallback((newImages) => {
     if (iframeRef.current) {
@@ -74,6 +113,7 @@ export const WebsiteBuilder = ({ onClose }) => {
         const img = iframeDoc.querySelector(`[data-carousel-index="${index}"]`);
         if (img) img.src = url;
       });
+      
       setPageModifications(prev => ({
         ...prev,
         'carousel:hero': JSON.stringify(newImages)
@@ -287,7 +327,8 @@ export const WebsiteBuilder = ({ onClose }) => {
         if (img.hasAttribute('data-carousel-index')) return;
         if (img.hasAttribute('data-builder-img')) return;
         
-        img.setAttribute('data-edit-id', `img-${selectedPage.id}-${index}`);
+        const editId = `img-${selectedPage.id}-${index}`;
+        img.setAttribute('data-edit-id', editId);
         img.setAttribute('data-builder-img', 'true');
         
         const parent = img.parentElement;
@@ -303,7 +344,16 @@ export const WebsiteBuilder = ({ onClose }) => {
             btn.onclick = (e) => {
               e.preventDefault();
               e.stopPropagation();
-              window.parent.postMessage({ type: 'openImageModal', data: { currentUrl: img.src, editId: img.getAttribute('data-edit-id'), imageType: 'img' } }, '*');
+              const currentPos = img.style.objectPosition || '50% 50%';
+              window.parent.postMessage({ 
+                type: 'openImageModal', 
+                data: { 
+                  currentUrl: img.src, 
+                  editId: editId, 
+                  imageType: 'img',
+                  currentPosition: currentPos
+                } 
+              }, '*');
             };
             parent.appendChild(btn);
           }
@@ -334,6 +384,9 @@ export const WebsiteBuilder = ({ onClose }) => {
         }
       });
 
+      // Apply saved modifications AFTER marking elements
+      applyModifications(iframeDoc, pageModifications);
+      
       console.log('Builder ready:', iframeDoc.querySelectorAll('[data-editable]').length, 'texts,', iframeDoc.querySelectorAll('[data-builder-img]').length, 'images');
     };
 
@@ -389,12 +442,17 @@ export const WebsiteBuilder = ({ onClose }) => {
 
     iframeDoc.addEventListener('click', handleTextClick, true);
     setTimeout(markEditableElements, 800);
-  }, [selectedPage]);
+  }, [selectedPage, pageModifications, applyModifications]);
 
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data.type === 'openImageModal') {
-        setMediaTarget({ currentUrl: event.data.data.currentUrl, editId: event.data.data.editId, type: event.data.data.imageType });
+        setMediaTarget({ 
+          currentUrl: event.data.data.currentUrl, 
+          editId: event.data.data.editId, 
+          type: event.data.data.imageType,
+          currentPosition: event.data.data.currentPosition || '50% 50%'
+        });
         setShowMediaModal(true);
       } else if (event.data.type === 'openCarouselModal') {
         setCarouselImages(event.data.data.images);
@@ -413,14 +471,19 @@ export const WebsiteBuilder = ({ onClose }) => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await fetch(`${API_URL}/api/builder/modifications/${selectedPage.id}`, {
+      const response = await fetch(`${API_URL}/api/builder/modifications/${selectedPage.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ modifications: pageModifications })
       });
-      setHasChanges(false);
-      alert('¡Cambios guardados!');
+      if (response.ok) {
+        setHasChanges(false);
+        alert('¡Cambios guardados correctamente!');
+      } else {
+        alert('Error al guardar');
+      }
     } catch (err) {
+      console.error('Save error:', err);
       alert('Error al guardar');
     } finally {
       setSaving(false);
@@ -452,22 +515,66 @@ export const WebsiteBuilder = ({ onClose }) => {
           </button>
         </div>
       </div>
-      {isEditing && <div className="bg-[#d4a968]/10 border-b border-[#d4a968]/30 px-4 py-2 text-center"><p className="text-[#d4a968] text-sm">💡 <strong>Modo Edición:</strong> Clic en textos para editar • Hover sobre imágenes para cambiarlas • Los carruseles muestran botón para editar todas las fotos</p></div>}
+      {isEditing && <div className="bg-[#d4a968]/10 border-b border-[#d4a968]/30 px-4 py-2 text-center"><p className="text-[#d4a968] text-sm">💡 <strong>Modo Edición:</strong> Clic en textos para editar • Hover sobre imágenes para cambiarlas • Arrastra para encuadrar</p></div>}
       <div className="flex-1 overflow-auto p-4 md:p-8 flex justify-center" style={{ backgroundColor: '#0d0d0d' }}>
         <div className="bg-white rounded-xl shadow-2xl overflow-hidden" style={{ width: previewDevice === 'mobile' ? '375px' : '100%', maxWidth: previewDevice === 'desktop' ? '1400px' : '375px', height: 'calc(100vh - 160px)' }}>
           <iframe ref={iframeRef} src={getIframeUrl()} className="w-full h-full border-0" title="Preview" onLoad={handleIframeLoad} />
         </div>
       </div>
-      {showMediaModal && <MediaModal onClose={() => { setShowMediaModal(false); setMediaTarget(null); }} onSelect={handleImageChange} currentUrl={mediaTarget?.currentUrl} type={mediaTarget?.type} />}
+      {showMediaModal && <MediaModal onClose={() => { setShowMediaModal(false); setMediaTarget(null); }} onSelect={handleImageChange} currentUrl={mediaTarget?.currentUrl} currentPosition={mediaTarget?.currentPosition} type={mediaTarget?.type} />}
       {showCarouselModal && <CarouselModal onClose={() => { setShowCarouselModal(false); setCarouselImages([]); }} onSave={handleCarouselChange} images={carouselImages} />}
     </div>
   );
 };
 
-const MediaModal = ({ onClose, onSelect, currentUrl, type }) => {
+// Media Modal with Image Positioning
+const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) => {
   const [url, setUrl] = useState(currentUrl || '');
+  const [position, setPosition] = useState(currentPosition || '50% 50%');
   const [uploading, setUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const imageRef = useRef(null);
+  const containerRef = useRef(null);
+  const dragStartRef = useRef({ x: 0, y: 0, posX: 50, posY: 50 });
+
+  const parsePosition = (pos) => {
+    const match = pos.match(/(\d+)%\s+(\d+)%/);
+    return match ? { x: parseInt(match[1]), y: parseInt(match[2]) } : { x: 50, y: 50 };
+  };
+
+  const handleMouseDown = (e) => {
+    if (type === 'background') return;
+    e.preventDefault();
+    const pos = parsePosition(position);
+    dragStartRef.current = { x: e.clientX, y: e.clientY, posX: pos.x, posY: pos.y };
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    const sensitivity = 0.3;
+    let newX = Math.max(0, Math.min(100, dragStartRef.current.posX - dx * sensitivity));
+    let newY = Math.max(0, Math.min(100, dragStartRef.current.posY - dy * sensitivity));
+    setPosition(`${Math.round(newX)}% ${Math.round(newY)}%`);
+  }, [isDragging]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -477,47 +584,125 @@ const MediaModal = ({ onClose, onSelect, currentUrl, type }) => {
     formData.append('file', file);
     try {
       const res = await fetch(`${API_URL}/api/builder/upload-media`, { method: 'POST', body: formData });
-      if (res.ok) { const data = await res.json(); onSelect(data.url); }
+      if (res.ok) { const data = await res.json(); setUrl(data.url); }
     } catch (err) { console.error(err); }
     setUploading(false);
   };
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-[#1a1a1a] rounded-2xl p-6 max-w-lg w-full" onClick={e => e.stopPropagation()}>
+      <div className="bg-[#1a1a1a] rounded-2xl p-6 max-w-2xl w-full" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl text-white font-medium flex items-center gap-2"><Image className="w-5 h-5 text-[#d4a968]" />{type === 'background' ? 'Cambiar Fondo' : 'Cambiar Imagen'}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-6 h-6" /></button>
         </div>
-        {url && <div className="mb-6 rounded-lg overflow-hidden bg-black/50 border border-white/10"><img src={url} alt="Preview" className="w-full h-48 object-cover" /></div>}
+        
+        {/* Image Preview with Draggable Positioning */}
+        {url && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Vista previa</span>
+              {type !== 'background' && (
+                <span className="text-xs text-[#d4a968] flex items-center gap-1">
+                  <Move className="w-3 h-3" /> Arrastra para encuadrar
+                </span>
+              )}
+            </div>
+            <div 
+              ref={containerRef}
+              className={`relative rounded-lg overflow-hidden bg-black/50 border-2 ${isDragging ? 'border-[#d4a968]' : 'border-white/10'} ${type !== 'background' ? 'cursor-move' : ''}`}
+              style={{ height: '250px' }}
+              onMouseDown={handleMouseDown}
+            >
+              <img 
+                ref={imageRef}
+                src={url} 
+                alt="Preview" 
+                className="w-full h-full object-cover select-none"
+                style={{ objectPosition: position }}
+                draggable={false}
+              />
+              {type !== 'background' && (
+                <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                  Posición: {position}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
         <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+        
         <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full p-4 border-2 border-dashed border-white/20 rounded-xl text-gray-400 hover:border-[#d4a968] hover:text-[#d4a968] flex items-center justify-center gap-2 mb-4">
           {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}{uploading ? 'Subiendo...' : 'Subir imagen'}
         </button>
-        <div className="space-y-3">
+        
+        <div className="space-y-3 mb-6">
           <label className="text-sm text-gray-400">O pega URL:</label>
-          <div className="flex gap-2">
-            <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." className="flex-1 p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none" />
-            <button onClick={() => url && onSelect(url)} disabled={!url} className="px-6 py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] disabled:opacity-50"><Check className="w-5 h-5" /></button>
-          </div>
+          <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none" />
         </div>
-        <div className="mt-6"><label className="text-sm text-gray-400 mb-3 block">Sugerencias:</label>
-          <div className="grid grid-cols-4 gap-2">
-            {['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400','https://images.unsplash.com/photo-1676517243531-69e3b27276e9?w=400','https://images.unsplash.com/photo-1664277497095-424e085175e8?w=400','https://images.pexels.com/photos/35465931/pexels-photo-35465931.jpeg?w=400'].map((imgUrl, idx) => (
-              <button key={idx} onClick={() => onSelect(imgUrl.replace('w=400', 'w=1920'))} className="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-[#d4a968]"><img src={imgUrl} alt="" className="w-full h-full object-cover" /></button>
-            ))}
-          </div>
+        
+        <div className="flex gap-3">
+          <button onClick={onClose} className="flex-1 px-6 py-3 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10">Cancelar</button>
+          <button onClick={() => url && onSelect(url, position)} disabled={!url} className="flex-1 px-6 py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] disabled:opacity-50 flex items-center justify-center gap-2">
+            <Check className="w-5 h-5" /> Aplicar cambios
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
+// Carousel Modal
 const CarouselModal = ({ onClose, onSave, images }) => {
   const [edited, setEdited] = useState([...images]);
+  const [positions, setPositions] = useState(images.map(() => '50% 50%'));
   const [active, setActive] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const fileRef = useRef(null);
+  const dragStartRef = useRef({ x: 0, y: 0, posX: 50, posY: 50 });
+
+  const parsePosition = (pos) => {
+    const match = pos.match(/(\d+)%\s+(\d+)%/);
+    return match ? { x: parseInt(match[1]), y: parseInt(match[2]) } : { x: 50, y: 50 };
+  };
+
+  const updatePosition = (idx, newPos) => {
+    const p = [...positions];
+    p[idx] = newPos;
+    setPositions(p);
+  };
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    const pos = parsePosition(positions[active]);
+    dragStartRef.current = { x: e.clientX, y: e.clientY, posX: pos.x, posY: pos.y };
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    const sensitivity = 0.3;
+    let newX = Math.max(0, Math.min(100, dragStartRef.current.posX - dx * sensitivity));
+    let newY = Math.max(0, Math.min(100, dragStartRef.current.posY - dy * sensitivity));
+    updatePosition(active, `${Math.round(newX)}% ${Math.round(newY)}%`);
+  }, [isDragging, active]);
+
+  const handleMouseUp = useCallback(() => setIsDragging(false), []);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const update = (i, url) => { const u = [...edited]; u[i] = url; setEdited(u); };
 
@@ -541,30 +726,42 @@ const CarouselModal = ({ onClose, onSave, images }) => {
           <h3 className="text-xl text-white font-medium flex items-center gap-2"><Images className="w-5 h-5 text-[#d4a968]" />Editar {images.length} fotos del carrusel</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-6 h-6" /></button>
         </div>
+        
         <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
           {edited.map((img, idx) => (
             <button key={idx} onClick={() => setActive(idx)} className={`flex-shrink-0 w-32 h-20 rounded-lg overflow-hidden border-2 relative ${active === idx ? 'border-[#d4a968] ring-2 ring-[#d4a968]/30' : 'border-white/10 hover:border-white/30'}`}>
-              <img src={img} alt={`Slide ${idx + 1}`} className="w-full h-full object-cover" />
+              <img src={img} alt={`Slide ${idx + 1}`} className="w-full h-full object-cover" style={{ objectPosition: positions[idx] }} />
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white font-bold text-lg">{idx + 1}</div>
             </button>
           ))}
         </div>
+        
         <div className="bg-black/30 rounded-xl p-4 mb-6">
-          <div className="text-sm text-[#d4a968] mb-3 font-medium">Foto {active + 1} de {edited.length}</div>
-          <div className="aspect-video rounded-lg overflow-hidden bg-black/50 mb-4"><img src={edited[active]} alt="Preview" className="w-full h-full object-cover" /></div>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm text-[#d4a968] font-medium">Foto {active + 1} de {edited.length}</span>
+            <span className="text-xs text-gray-400 flex items-center gap-1"><Move className="w-3 h-3" /> Arrastra para encuadrar</span>
+          </div>
+          <div 
+            className={`aspect-video rounded-lg overflow-hidden bg-black/50 mb-4 cursor-move border-2 ${isDragging ? 'border-[#d4a968]' : 'border-transparent'}`}
+            onMouseDown={handleMouseDown}
+          >
+            <img src={edited[active]} alt="Preview" className="w-full h-full object-cover select-none" style={{ objectPosition: positions[active] }} draggable={false} />
+          </div>
           <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
           <div className="flex gap-3">
             <button onClick={() => fileRef.current?.click()} disabled={uploading} className="flex-1 p-3 border-2 border-dashed border-white/20 rounded-lg text-gray-400 hover:border-[#d4a968] hover:text-[#d4a968] flex items-center justify-center gap-2">
               {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}{uploading ? 'Subiendo...' : 'Subir nueva'}
             </button>
-            <input type="text" value={edited[active]} onChange={(e) => update(active, e.target.value)} className="flex-[2] p-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d4a968] focus:outline-none" />
+            <input type="text" value={edited[active]} onChange={(e) => update(active, e.target.value)} className="flex-[2] p-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d4a968] focus:outline-none" placeholder="URL de imagen..." />
           </div>
         </div>
+        
         <div className="flex items-center justify-between mb-6">
           <button onClick={() => setActive(Math.max(0, active - 1))} disabled={active === 0} className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg text-white disabled:opacity-30"><ChevronLeft className="w-4 h-4" /> Anterior</button>
           <div className="flex gap-2">{edited.map((_, idx) => <button key={idx} onClick={() => setActive(idx)} className={`w-3 h-3 rounded-full ${active === idx ? 'bg-[#d4a968]' : 'bg-white/20'}`} />)}</div>
           <button onClick={() => setActive(Math.min(edited.length - 1, active + 1))} disabled={active === edited.length - 1} className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg text-white disabled:opacity-30">Siguiente <ChevronRight className="w-4 h-4" /></button>
         </div>
+        
         <div className="flex gap-3">
           <button onClick={onClose} className="flex-1 px-6 py-3 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10">Cancelar</button>
           <button onClick={() => onSave(edited)} className="flex-1 px-6 py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958]">Guardar {images.length} fotos</button>
