@@ -2139,11 +2139,12 @@ async def upload_batch_temp(request: Request, files: List[UploadFile] = File(...
 @ecommerce_router.get("/temp-images/{batch_id}/{filename}")
 async def serve_temp_image(batch_id: str, filename: str):
     """Serve temporary batch images with correct MIME type"""
-    temp_dir = os.path.join(UPLOAD_DIR, "temp_batch", batch_id)
+    base_upload_dir = "/app/backend/uploads"
+    temp_dir = os.path.join(base_upload_dir, "temp_batch", batch_id)
     filepath = os.path.join(temp_dir, filename)
     
     if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="Image not found")
+        raise HTTPException(status_code=404, detail=f"Image not found: {filepath}")
     
     # Detect MIME type from extension
     ext = filename.split('.')[-1].lower() if '.' in filename else 'jpg'
