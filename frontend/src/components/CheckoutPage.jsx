@@ -170,6 +170,66 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
     return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
   };
 
+  // Validate inventory before checkout
+  const validateInventory = async () => {
+    setValidatingInventory(true);
+    try {
+      const response = await fetch(`${API_URL}/api/shop/validate-inventory`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map(item => ({
+            product_id: item.product_id || item.cart_item_id,
+            sku: item.sku || '',
+            quantity: item.quantity,
+            name: item.name,
+            size: item.size || null
+          }))
+        })
+      });
+
+      const data = await response.json();
+      
+      if (!data.valid && data.out_of_stock_items?.length > 0) {
+        setOutOfStockItems(data.out_of_stock_items);
+        setShowOutOfStockModal(true);
+        return false;
+      }
+      
+      return true;
+    } catch (err) {
+      console.error('Inventory validation error:', err);
+      // In case of error, allow checkout to proceed
+      return true;
+    } finally {
+      setValidatingInventory(false);
+    }
+  };
+
+  // Remove out of stock items from cart
+  const handleContinueWithoutItems = () => {
+    const outOfStockIds = outOfStockItems.map(item => item.product_id || item.sku);
+    const updatedCart = cart.filter(item => {
+      const itemId = item.product_id || item.cart_item_id || item.sku;
+      return !outOfStockIds.includes(itemId);
+    });
+    
+    setCart(updatedCart);
+    localStorage.setItem('avenue_cart', JSON.stringify(updatedCart));
+    setShowOutOfStockModal(false);
+    setOutOfStockItems([]);
+    
+    // If cart is now empty, redirect to shop
+    if (updatedCart.length === 0) {
+      navigate('/shop');
+    }
+  };
+
+  const handleGoToShop = () => {
+    setShowOutOfStockModal(false);
+    navigate('/shop');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -181,6 +241,12 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
     if (!formData.name || !formData.email || !formData.phone) {
       alert('Por favor completa todos los campos obligatorios');
       return;
+    }
+
+    // First validate inventory
+    const inventoryValid = await validateInventory();
+    if (!inventoryValid) {
+      return; // Modal will be shown
     }
 
     setLoading(true);
