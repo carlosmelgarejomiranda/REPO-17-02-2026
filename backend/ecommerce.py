@@ -633,13 +633,13 @@ async def validate_inventory_before_checkout(data: InventoryValidationRequest):
                         "quantity": item.quantity,
                         "available_stock": stock
                     })
-            
-            return {
-                "valid": all_available,
-                "available_items": available_items,
-                "out_of_stock_items": out_of_stock_items,
-                "message": "Todos los productos están disponibles" if all_available else "Algunos productos no tienen stock suficiente"
-            }
+        
+        return {
+            "valid": all_available,
+            "available_items": available_items,
+            "out_of_stock_items": out_of_stock_items,
+            "message": "Todos los productos están disponibles" if all_available else "Algunos productos no tienen stock suficiente"
+        }
             
     except Exception as e:
         logger.error(f"Error validating inventory: {str(e)}")
