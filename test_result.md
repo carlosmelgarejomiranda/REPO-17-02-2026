@@ -190,11 +190,14 @@ test_plan:
     file: "/app/frontend/src/components/WebsiteBuilder.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "testing"
         comment: "✅ PASSED: Website Builder fully functional in Admin Dashboard. 'Editar Web' button accessible, dark interface loads correctly, page selector shows 'Página Principal', sections panel displays 'hero' and 'features' sections. Section selection and editing works - can edit titles in center editor, right panel shows 'Contenido', 'Estilos', 'Media' tabs. Preview mode functional with desktop/mobile toggle and 'Cerrar Preview' button. Style editing works with color pickers and predefined colors. Media tab shows image/video upload buttons and URL input fields. Save functionality works - 'Guardar' button activates after changes and saves successfully. 'Volver al Admin' navigation returns to dashboard correctly."
+      - working: true
+        agent: "main"
+        comment: "✅ V2 WYSIWYG Builder - Bug fixes applied: 1) Background image loads correctly (was not broken), 2) Mobile/Desktop toggle now works correctly, 3) Scroll fixed by removing overflow-hidden and min-h-screen constraints. Features section now visible when scrolling down."
 
 agent_communication:
   - agent: "testing"
