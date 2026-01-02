@@ -1667,9 +1667,14 @@ async def get_products_for_images(
 @ecommerce_router.post("/admin/upload-product-image")
 async def upload_product_image(
     product_id: str = Form(...),
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    image_index: int = Form(0)  # 0, 1, or 2 for up to 3 images
 ):
-    """Upload a single product image"""
+    """Upload a single product image (up to 3 per product)"""
+    
+    # Validate image index (0-2 for 3 images max)
+    if image_index < 0 or image_index > 2:
+        raise HTTPException(status_code=400, detail="image_index must be 0, 1, or 2 (max 3 images per product)")
     
     # Validate file type
     allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff']
@@ -1683,16 +1688,123 @@ async def upload_product_image(
     if len(content) > 10 * 1024 * 1024:  # 10MB max upload, will be reduced
         raise HTTPException(status_code=400, detail="File too large. Maximum 10MB")
     
-    # Process and save image
-    image_url = await process_and_save_image(content, file.filename, product_id)
+    # Process and save image with unique name for each index
+    image_url = await process_and_save_image(content, file.filename, f"{product_id}_{image_index}")
+    
+    # Get current product
+    product = await db.shop_products_grouped.find_one({"grouped_id": product_id}, {"_id": 0})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Get or create images array
+    images = product.get("images", [None, None, None])
+    if not isinstance(images, list):
+        images = [product.get("custom_image"), None, None]
+    
+    # Ensure array has 3 elements
+    while len(images) < 3:
+        images.append(None)
+    
+    # Update the image at the specified index
+    images[image_index] = image_url
+    
+    # Filter out None values at the end but keep structure
+    clean_images = [img for img in images if img is not None]
     
     # Update product in database
+    update_data = {
+        "images": images,
+        "custom_image": images[0] if images[0] else product.get("custom_image"),  # Keep first as main
+        "image_updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
     await db.shop_products_grouped.update_one(
         {"grouped_id": product_id},
-        {"$set": {"custom_image": image_url, "image_updated_at": datetime.now(timezone.utc).isoformat()}}
+        {"$set": update_data}
     )
     
-    return {"message": "Image uploaded successfully", "image_url": image_url}
+    return {
+        "message": "Image uploaded successfully",
+        "image_url": image_url,
+        "image_index": image_index,
+        "all_images": images
+    }
+
+@ecommerce_router.delete("/admin/product-image/{product_id}/{image_index}")
+async def delete_product_image(product_id: str, image_index: int):
+    """Delete a specific product image"""
+    
+    if image_index < 0 or image_index > 2:
+        raise HTTPException(status_code=400, detail="image_index must be 0, 1, or 2")
+    
+    # Get current product
+    product = await db.shop_products_grouped.find_one({"grouped_id": product_id}, {"_id": 0})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Get images array
+    images = product.get("images", [None, None, None])
+    if not isinstance(images, list):
+        images = [product.get("custom_image"), None, None]
+    
+    # Ensure array has 3 elements
+    while len(images) < 3:
+        images.append(None)
+    
+    # Clear the image at the specified index
+    images[image_index] = None
+    
+    # Update database
+    update_data = {
+        "images": images,
+        "custom_image": images[0],  # First image is the main one
+        "image_updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.shop_products_grouped.update_one(
+        {"grouped_id": product_id},
+        {"$set": update_data}
+    )
+    
+    return {"message": "Image deleted", "all_images": images}
+
+@ecommerce_router.put("/admin/product/{product_id}")
+async def update_product_details(product_id: str, updates: dict):
+    """Update product details (name, description, price, images)"""
+    
+    allowed_fields = ["custom_name", "custom_description", "custom_price", "images", "is_featured"]
+    update_data = {}
+    
+    for key, value in updates.items():
+        if key in allowed_fields:
+            update_data[key] = value
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No valid fields to update")
+    
+    # Validate images array if provided
+    if "images" in update_data:
+        images = update_data["images"]
+        if not isinstance(images, list) or len(images) > 3:
+            raise HTTPException(status_code=400, detail="images must be an array of max 3 URLs")
+        # Ensure 3 elements
+        while len(images) < 3:
+            images.append(None)
+        update_data["images"] = images
+        update_data["custom_image"] = images[0] if images[0] else None
+    
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.shop_products_grouped.update_one(
+        {"grouped_id": product_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    updated_product = await db.shop_products_grouped.find_one({"grouped_id": product_id}, {"_id": 0})
+    return updated_product
 
 @ecommerce_router.post("/admin/bulk-upload-images")
 async def bulk_upload_images(files: List[UploadFile] = File(...)):
