@@ -203,6 +203,14 @@ export const BatchImageAssignment = ({ onClose }) => {
       if (response.ok) {
         const data = await response.json();
         
+        // Save to history for undo
+        setAssignmentHistory(prev => [{
+          product: selectedProduct,
+          images: selectedImages,
+          assignedImages: data.assigned_images,
+          timestamp: new Date()
+        }, ...prev].slice(0, 20)); // Keep last 20
+        
         // Remove assigned product and images from lists
         setProducts(prev => prev.filter(p => p.grouped_id !== selectedProduct.grouped_id));
         setBatchImages(prev => prev.filter(img => !selectedImages.some(sel => sel.id === img.id)));
@@ -226,6 +234,40 @@ export const BatchImageAssignment = ({ onClose }) => {
       setMessage({ type: 'error', text: 'Error al asignar imágenes' });
     } finally {
       setSaving(false);
+    }
+  };
+
+  // Undo last assignment
+  const handleUndoAssignment = async (historyItem, index) => {
+    setUndoing(true);
+    try {
+      const response = await fetch(`${API_URL}/api/shop/admin/unlink-images/${historyItem.product.grouped_id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      
+      if (response.ok) {
+        // Add product back to list
+        setProducts(prev => [historyItem.product, ...prev]);
+        
+        // Remove from history
+        setAssignmentHistory(prev => prev.filter((_, i) => i !== index));
+        setAssignedCount(prev => Math.max(0, prev - 1));
+        
+        setMessage({ 
+          type: 'success', 
+          text: `✓ Desvinculado: ${historyItem.product.base_model}` 
+        });
+        setTimeout(() => setMessage(null), 2000);
+      } else {
+        const error = await response.json();
+        setMessage({ type: 'error', text: error.detail || 'Error al desvincular' });
+      }
+    } catch (err) {
+      console.error('Error undoing assignment:', err);
+      setMessage({ type: 'error', text: 'Error al desvincular' });
+    } finally {
+      setUndoing(false);
     }
   };
 
