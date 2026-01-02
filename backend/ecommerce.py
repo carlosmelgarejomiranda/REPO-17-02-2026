@@ -2240,6 +2240,50 @@ async def assign_images_to_product(assignment: ImageAssignment):
         "product_name": product.get("base_model")
     }
 
+@ecommerce_router.delete("/admin/unlink-images/{product_id}")
+async def unlink_images_from_product(product_id: str):
+    """Remove all images from a product (for undo functionality)"""
+    
+    # Get product
+    product = await db.shop_products_grouped.find_one(
+        {"grouped_id": product_id}, 
+        {"_id": 0}
+    )
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    
+    # Get current images to delete from filesystem
+    current_images = product.get("images", [])
+    base_upload_dir = "/app/backend/uploads/products"
+    
+    for img_url in current_images:
+        if img_url:
+            # Extract filename from URL
+            filename = img_url.split("/")[-1] if "/" in img_url else img_url
+            filepath = os.path.join(base_upload_dir, filename)
+            if os.path.exists(filepath):
+                try:
+                    os.remove(filepath)
+                except Exception as e:
+                    logger.warning(f"Could not delete image file {filepath}: {e}")
+    
+    # Update product to remove images
+    await db.shop_products_grouped.update_one(
+        {"grouped_id": product_id},
+        {"$set": {
+            "images": [None, None, None],
+            "custom_image": None,
+            "image_updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    return {
+        "message": "Imágenes desvinculadas correctamente",
+        "product_id": product_id,
+        "product_name": product.get("base_model")
+    }
+
+
 @ecommerce_router.delete("/admin/temp-batch/{batch_id}")
 async def delete_temp_batch(batch_id: str):
     """Clean up a temporary batch (delete all unassigned images)"""
