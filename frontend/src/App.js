@@ -20,6 +20,7 @@ import { MainLanding } from "./components/MainLanding";
 import { StudioLanding } from "./components/StudioLanding";
 import { UGCCreators } from "./components/UGCCreators";
 import { UGCCampaignsList } from "./components/UGCCampaignsList";
+import { TuMarca } from "./components/TuMarca";
 import { TerminosCondiciones } from "./components/TerminosCondiciones";
 import { ShopPage } from "./components/ShopPage";
 import { CartPage } from "./components/CartPage";
