@@ -389,7 +389,7 @@ export const BatchImageAssignment = ({ onClose }) => {
                     <div
                       key={product.grouped_id}
                       onClick={() => !isBlocked && handleProductClick(product)}
-                      className={`p-3 rounded-lg cursor-pointer transition-all ${
+                      className={`p-2 rounded-lg cursor-pointer transition-all ${
                         isSelected 
                           ? 'bg-[#d4a968]/20 border-2 border-[#d4a968]' 
                           : isBlocked
@@ -397,14 +397,17 @@ export const BatchImageAssignment = ({ onClose }) => {
                             : 'bg-neutral-800/50 border-2 border-transparent hover:bg-neutral-800'
                       }`}
                     >
-                      <div className="font-medium text-white text-sm truncate">
+                      {/* Product name - 2 lines max, smaller font */}
+                      <div className="font-medium text-white text-xs leading-tight line-clamp-2 min-h-[2.5em]">
                         {product.base_model}
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {product.category || product.brand}
-                      </div>
-                      <div className="text-xs text-[#d4a968] mt-1">
-                        {product.price?.toLocaleString()} Gs
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-[10px] text-gray-500 truncate max-w-[60%]">
+                          {product.category || product.brand}
+                        </span>
+                        <span className="text-[10px] text-[#d4a968] font-medium">
+                          {product.price?.toLocaleString()} Gs
+                        </span>
                       </div>
                     </div>
                   );
