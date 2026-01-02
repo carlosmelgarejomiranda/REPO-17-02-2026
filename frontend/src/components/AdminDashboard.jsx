@@ -168,6 +168,7 @@ export const AdminDashboard = ({ user }) => {
   const stats = {
     total: reservations.length,
     confirmed: reservations.filter(r => r.status === 'confirmed').length,
+    pending: reservations.filter(r => r.status === 'pending').length,
     cancelled: reservations.filter(r => r.status === 'cancelled').length,
     totalRevenue: reservations.filter(r => r.status === 'confirmed').reduce((sum, r) => sum + r.price, 0),
     ugcTotal: ugcApplications.length,
@@ -175,13 +176,38 @@ export const AdminDashboard = ({ user }) => {
     ugcApproved: ugcApplications.filter(a => a.status === 'approved').length
   };
 
-  const tabs = [
-    { id: 'orders', label: 'Pedidos', icon: ShoppingBag },
-    { id: 'images', label: 'Imágenes', icon: Image },
-    { id: 'reservations', label: 'Reservas', icon: Calendar },
-    { id: 'ugc', label: 'UGC', icon: Instagram },
-    { id: 'users', label: 'Usuarios', icon: Users }
+  // Tabs filtered by user role permissions
+  const allTabs = [
+    { id: 'orders', label: 'Pedidos', icon: ShoppingBag, permission: 'orders' },
+    { id: 'images', label: 'Imágenes', icon: Image, permission: 'images' },
+    { id: 'reservations', label: 'Reservas', icon: Calendar, permission: 'reservations' },
+    { id: 'ugc', label: 'UGC', icon: Instagram, permission: 'ugc' },
+    { id: 'users', label: 'Usuarios', icon: Shield, permission: 'users' },
+    { id: 'settings', label: 'Configuración', icon: Settings, permission: 'settings' }
   ];
+
+  const tabs = allTabs.filter(tab => hasPermission(userRole, tab.permission));
+
+  // Role badge colors
+  const getRoleBadge = (role) => {
+    const badges = {
+      superadmin: 'bg-red-500/20 text-red-400 border-red-500/30',
+      admin: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+      staff: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+      designer: 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+    };
+    return badges[role] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+  };
+
+  const getRoleLabel = (role) => {
+    const labels = {
+      superadmin: 'Super Admin',
+      admin: 'Admin',
+      staff: 'Staff',
+      designer: 'Diseñador'
+    };
+    return labels[role] || 'Usuario';
+  };
 
   // Show Website Builder
   if (showBuilder) {
