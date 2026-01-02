@@ -552,6 +552,107 @@ class DeliveryCalculation(BaseModel):
     lat: float
     lng: float
 
+class InventoryValidationItem(BaseModel):
+    product_id: str
+    sku: Optional[str] = None
+    quantity: int
+    name: Optional[str] = None
+    size: Optional[str] = None
+
+class InventoryValidationRequest(BaseModel):
+    items: List[InventoryValidationItem]
+
+# ==================== INVENTORY VALIDATION ====================
+
+@ecommerce_router.post("/validate-inventory")
+async def validate_inventory_before_checkout(data: InventoryValidationRequest):
+    """
+    Validate inventory in real-time before checkout.
+    Syncs with ERP first to get latest stock, then validates each item.
+    Returns which items are available and which are out of stock.
+    """
+    logger.info(f"Validating inventory for {len(data.items)} items before checkout...")
+    
+    # First, sync products from ERP to get latest inventory
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            # Get fresh data from ERP for the specific products
+            all_available = True
+            out_of_stock_items = []
+            available_items = []
+            
+            for item in data.items:
+                # Try to find product in local DB first
+                product = None
+                
+                # Search by SKU if available
+                if item.sku:
+                    product = await db.shop_products.find_one(
+                        {"sku": item.sku},
+                        {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
+                    )
+                
+                # If not found by SKU, try by product_id
+                if not product and item.product_id:
+                    product = await db.shop_products.find_one(
+                        {"$or": [
+                            {"product_id": item.product_id},
+                            {"sku": item.product_id}
+                        ]},
+                        {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
+                    )
+                
+                # Get stock value
+                stock = 0
+                if product:
+                    stock = product.get('stock', product.get('existencia', 0))
+                    if isinstance(stock, str):
+                        try:
+                            stock = int(float(stock))
+                        except:
+                            stock = 0
+                
+                # Check if enough stock
+                if stock < item.quantity:
+                    all_available = False
+                    out_of_stock_items.append({
+                        "product_id": item.product_id,
+                        "sku": item.sku,
+                        "name": item.name or (product.get('name') if product else 'Producto'),
+                        "size": item.size,
+                        "requested_quantity": item.quantity,
+                        "available_stock": max(0, stock),
+                        "reason": "out_of_stock" if stock == 0 else "insufficient_stock"
+                    })
+                    logger.warning(f"Insufficient stock for {item.sku or item.product_id}: requested {item.quantity}, available {stock}")
+                else:
+                    available_items.append({
+                        "product_id": item.product_id,
+                        "sku": item.sku,
+                        "name": item.name,
+                        "size": item.size,
+                        "quantity": item.quantity,
+                        "available_stock": stock
+                    })
+            
+            return {
+                "valid": all_available,
+                "available_items": available_items,
+                "out_of_stock_items": out_of_stock_items,
+                "message": "Todos los productos están disponibles" if all_available else "Algunos productos no tienen stock suficiente"
+            }
+            
+    except Exception as e:
+        logger.error(f"Error validating inventory: {str(e)}")
+        # In case of error, allow checkout but log the issue
+        return {
+            "valid": True,
+            "available_items": [{"product_id": item.product_id, "sku": item.sku, "name": item.name, "quantity": item.quantity} for item in data.items],
+            "out_of_stock_items": [],
+            "message": "No se pudo validar el inventario, pero se permitirá continuar",
+            "warning": "inventory_validation_failed"
+        }
+
 # ==================== SYNC ENDPOINTS ====================
 
 @ecommerce_router.get("/sync-status")
