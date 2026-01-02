@@ -600,7 +600,7 @@ export const WebsiteBuilder = ({ onClose }) => {
       {isEditing && (
         <div className="bg-[#d4a968]/10 border-b border-[#d4a968]/30 px-4 py-2 text-center">
           <p className="text-[#d4a968] text-sm">
-            💡 <strong>Modo Edición:</strong> Haz clic en cualquier texto para editarlo • Pasa el cursor sobre imágenes o fondos para ver el botón "Cambiar"
+            💡 <strong>Modo Edición:</strong> Haz clic en cualquier texto para editarlo • Pasa el cursor sobre imágenes o fondos para ver el botón &quot;Cambiar&quot;
           </p>
         </div>
       )}
