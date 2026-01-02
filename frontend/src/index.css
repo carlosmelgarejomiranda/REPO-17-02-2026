@@ -82,10 +82,13 @@ code {
     }
 }
 
-/* Force black background for Studio navigation */
-.studio-nav-dark {
-    background-color: #000000 !important;
-    background: #000000 !important;
+/* Force dark nav styles */
+[data-dark-nav] {
+    background-color: #000 !important;
+    background: #000 !important;
+}
+[data-dark-nav] * {
+    background: transparent;
 }
 
 @layer base {
