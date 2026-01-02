@@ -338,14 +338,12 @@ const fetchProducts = useCallback(async () => {
               {/* Brands Menu Trigger - extends to bottom of header */}
               <div 
                 className="relative h-full flex items-center"
-                onMouseEnter={() => setShowBrandsMenu(true)}
-                onMouseLeave={() => setShowBrandsMenu(false)}
+                onMouseEnter={handleBrandsEnter}
+                onMouseLeave={handleBrandsLeave}
               >
                 <button className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors font-medium h-full px-2">
                   Brands
                 </button>
-                {/* Invisible extension below to connect to mega menu */}
-                <div className="absolute left-0 right-0 h-8 top-full" />
               </div>
             </div>
 
