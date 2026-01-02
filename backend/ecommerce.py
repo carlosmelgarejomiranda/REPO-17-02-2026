@@ -2138,9 +2138,6 @@ async def upload_batch_temp(files: List[UploadFile] = File(...)):
         "error_details": errors
     }
 
-# Get API URL base for image serving
-API_URL_BASE = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
-
 @ecommerce_router.get("/temp-images/{batch_id}/{filename}")
 async def serve_temp_image(batch_id: str, filename: str):
     """Serve temporary batch images with correct MIME type"""
