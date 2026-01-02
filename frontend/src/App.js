@@ -86,9 +86,10 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
     left: 0, 
     right: 0, 
     zIndex: 50,
-    backgroundColor: '#0a0a0a'
+    background: '#000000',
+    backgroundColor: '#000000'
   }}>
-    <div style={{ padding: '16px 24px' }}>
+    <div style={{ padding: '16px 24px', background: '#000000' }}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center">
