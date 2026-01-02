@@ -139,6 +139,35 @@ export const ShopPage = ({ cart, setCart, user, onLoginClick, onLogout, language
     otros: []
   });
   const navigate = useNavigate();
+  
+  // Refs for delayed menu closing
+  const brandsMenuTimeout = useRef(null);
+  const navMenuTimeout = useRef(null);
+  
+  // Handlers for Brands menu with delay
+  const handleBrandsEnter = () => {
+    if (brandsMenuTimeout.current) clearTimeout(brandsMenuTimeout.current);
+    setShowBrandsMenu(true);
+  };
+  
+  const handleBrandsLeave = () => {
+    brandsMenuTimeout.current = setTimeout(() => {
+      setShowBrandsMenu(false);
+    }, 150);
+  };
+  
+  // Handlers for Nav menu with delay
+  const handleNavEnter = () => {
+    if (navMenuTimeout.current) clearTimeout(navMenuTimeout.current);
+    setShowNavMenu(true);
+  };
+  
+  const handleNavLeave = () => {
+    navMenuTimeout.current = setTimeout(() => {
+      setShowNavMenu(false);
+      setShowStudioSubmenu(false);
+    }, 150);
+  };
 
   // Fetch and organize brands
   useEffect(() => {
