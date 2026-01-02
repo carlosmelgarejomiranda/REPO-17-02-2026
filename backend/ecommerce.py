@@ -575,49 +575,48 @@ async def validate_inventory_before_checkout(data: InventoryValidationRequest):
     
     # First, sync products from ERP to get latest inventory
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            # Get fresh data from ERP for the specific products
-            all_available = True
-            out_of_stock_items = []
-            available_items = []
+        # Get fresh data from ERP for the specific products
+        all_available = True
+        out_of_stock_items = []
+        available_items = []
+        
+        for item in data.items:
+            # Try to find product in local DB first
+            product = None
             
-            for item in data.items:
-                # Try to find product in local DB first
-                product = None
-                
-                # Search by SKU if available
-                if item.sku:
-                    product = await db.shop_products.find_one(
-                        {"sku": item.sku},
-                        {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
-                    )
-                
-                # If not found by SKU, try by product_id
-                if not product and item.product_id:
-                    product = await db.shop_products.find_one(
-                        {"$or": [
-                            {"product_id": item.product_id},
-                            {"sku": item.product_id}
-                        ]},
-                        {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
-                    )
-                
-                # Get stock value
-                stock = 0
-                if product:
-                    stock = product.get('stock', product.get('existencia', 0))
-                    if isinstance(stock, str):
-                        try:
-                            stock = int(float(stock))
-                        except:
-                            stock = 0
-                
-                # Check if enough stock
-                if stock < item.quantity:
-                    all_available = False
-                    out_of_stock_items.append({
-                        "product_id": item.product_id,
-                        "sku": item.sku,
+            # Search by SKU if available
+            if item.sku:
+                product = await db.shop_products.find_one(
+                    {"sku": item.sku},
+                    {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
+                )
+            
+            # If not found by SKU, try by product_id
+            if not product and item.product_id:
+                product = await db.shop_products.find_one(
+                    {"$or": [
+                        {"product_id": item.product_id},
+                        {"sku": item.product_id}
+                    ]},
+                    {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
+                )
+            
+            # Get stock value
+            stock = 0
+            if product:
+                stock = product.get('stock', product.get('existencia', 0))
+                if isinstance(stock, str):
+                    try:
+                        stock = int(float(stock))
+                    except (ValueError, TypeError):
+                        stock = 0
+            
+            # Check if enough stock
+            if stock < item.quantity:
+                all_available = False
+                out_of_stock_items.append({
+                    "product_id": item.product_id,
+                    "sku": item.sku,
                         "name": item.name or (product.get('name') if product else 'Producto'),
                         "size": item.size,
                         "requested_quantity": item.quantity,
