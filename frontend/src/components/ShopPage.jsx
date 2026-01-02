@@ -581,6 +581,7 @@ const fetchProducts = useCallback(async () => {
                   product={product}
                   onProductClick={() => setSelectedProduct(product)}
                   formatPrice={formatPrice}
+                  selectedBrand={selectedBrand}
                 />
               ))}
             </div>
