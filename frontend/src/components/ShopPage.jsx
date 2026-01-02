@@ -298,39 +298,52 @@ const fetchProducts = useCallback(async () => {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
-      {/* Minimal Header */}
+      {/* Unified Header - Single white navbar */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <div className="max-w-[1800px] mx-auto">
-          {/* Top bar */}
-          <div className="flex items-center justify-between px-8 py-5">
-            {/* Brands Menu Trigger */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setShowBrandsMenu(true)}
-              onMouseLeave={() => setShowBrandsMenu(false)}
-            >
-              <button className="text-xs tracking-[0.2em] uppercase text-gray-900 hover:text-gray-600 transition-colors font-medium py-2 pb-6">
-                Brands
-              </button>
-              {/* Invisible bridge to prevent hover gap */}
-              {showBrandsMenu && (
-                <div className="absolute left-0 w-32 h-8 top-full" />
-              )}
+          {/* Main navigation bar */}
+          <div className="flex items-center justify-between px-8 py-4">
+            {/* Left section - Navigation links */}
+            <div className="flex items-center gap-6">
+              <a href="/" className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors hidden md:block">
+                {t?.nav?.home || 'Inicio'}
+              </a>
+              <a href="/shop" className="text-xs tracking-[0.15em] uppercase text-gray-900 font-medium hidden md:block">
+                E-commerce
+              </a>
+              <a href="/studio" className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors hidden md:block">
+                Studio
+              </a>
+              <div className="h-4 w-px bg-gray-200 hidden md:block"></div>
+              {/* Brands Menu Trigger */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setShowBrandsMenu(true)}
+                onMouseLeave={() => setShowBrandsMenu(false)}
+              >
+                <button className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors py-2 pb-6">
+                  Brands
+                </button>
+                {/* Invisible bridge to prevent hover gap */}
+                {showBrandsMenu && (
+                  <div className="absolute left-0 w-32 h-8 top-full" />
+                )}
+              </div>
             </div>
 
-            {/* Logo */}
+            {/* Center - Logo */}
             <a href="/shop" className="absolute left-1/2 -translate-x-1/2">
               <h1 className="text-xl tracking-[0.3em] uppercase font-light text-gray-900">
                 Avenue
               </h1>
             </a>
 
-            {/* Actions */}
-            <div className="flex items-center gap-6">
+            {/* Right section - Actions */}
+            <div className="flex items-center gap-4">
               {/* Search */}
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-500 hover:text-gray-900 transition-colors"
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -338,7 +351,7 @@ const fetchProducts = useCallback(async () => {
               {/* Cart */}
               <button
                 onClick={() => navigate('/shop/cart')}
-                className="text-gray-600 hover:text-gray-900 transition-colors relative"
+                className="text-gray-500 hover:text-gray-900 transition-colors relative"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
@@ -347,6 +360,34 @@ const fetchProducts = useCallback(async () => {
                   </span>
                 )}
               </button>
+
+              <div className="h-4 w-px bg-gray-200"></div>
+
+              {/* User / Auth */}
+              {user ? (
+                <div className="flex items-center gap-3">
+                  {user.role === 'admin' && (
+                    <a href="/admin" className="text-xs tracking-[0.1em] uppercase text-gray-500 hover:text-gray-900 transition-colors hidden md:block">
+                      Admin
+                    </a>
+                  )}
+                  <span className="text-xs text-gray-600 hidden md:block">{user.name?.split(' ')[0]}</span>
+                  <button onClick={onLogout} className="text-gray-400 hover:text-gray-600 transition-colors">
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={onLoginClick}
+                  className="text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="text-xs tracking-[0.1em] uppercase hidden md:block">Login</span>
+                </button>
+              )}
+
+              {/* Language Switcher */}
+              <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} />
             </div>
           </div>
 
