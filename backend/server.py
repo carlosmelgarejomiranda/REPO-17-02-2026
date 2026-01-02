@@ -245,11 +245,44 @@ async def require_auth(request: Request) -> dict:
     return user
 
 async def require_admin(request: Request) -> dict:
-    """Require admin authentication"""
+    """Require admin authentication (admin or superadmin)"""
     user = await require_auth(request)
-    if user.get("role") != "admin":
+    if user.get("role") not in ["admin", "superadmin"]:
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
+
+async def require_superadmin(request: Request) -> dict:
+    """Require superadmin authentication"""
+    user = await require_auth(request)
+    if user.get("role") != "superadmin":
+        raise HTTPException(status_code=403, detail="Super admin access required")
+    return user
+
+async def require_staff_or_above(request: Request) -> dict:
+    """Require staff, admin, or superadmin authentication"""
+    user = await require_auth(request)
+    if user.get("role") not in ["staff", "admin", "superadmin"]:
+        raise HTTPException(status_code=403, detail="Staff access required")
+    return user
+
+async def require_designer_or_above(request: Request) -> dict:
+    """Require designer, staff, admin, or superadmin authentication"""
+    user = await require_auth(request)
+    if user.get("role") not in ["designer", "staff", "admin", "superadmin"]:
+        raise HTTPException(status_code=403, detail="Designer access required")
+    return user
+
+def can_edit_website(role: str) -> bool:
+    """Check if role can edit website"""
+    return role in ["superadmin", "admin", "designer"]
+
+def can_manage_orders(role: str) -> bool:
+    """Check if role can manage orders"""
+    return role in ["superadmin", "admin", "staff"]
+
+def can_manage_users(role: str) -> bool:
+    """Check if role can manage user roles"""
+    return role in ["superadmin"]
 
 async def send_confirmation_email(reservation: dict):
     """Send confirmation email for a reservation"""
