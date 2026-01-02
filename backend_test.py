@@ -3239,6 +3239,14 @@ def run_all_tests():
         ("Test Admin Orders Management", test_admin_orders_management),
         ("Test Admin Order Status Update to Facturado", test_admin_order_status_update_facturado),
         
+        # REVIEW REQUEST TESTS - Checkout Flow and Image Management
+        ("Test Admin Settings - Payment Gateway", test_admin_settings_payment_gateway),
+        ("Test Checkout Flow - Payment Disabled", test_checkout_flow_payment_disabled),
+        ("Test Order Retrieval", test_order_retrieval),
+        ("Test Delete Product Image", test_delete_product_image),
+        ("Test Unlink Images (Undo)", test_unlink_images),
+        ("Test WhatsApp Notifications Logs", test_whatsapp_notifications_logs),
+        
         # Studio booking tests
         ("Test Availability Endpoint", test_availability_endpoint),
         ("Test User Registration", test_user_registration),
