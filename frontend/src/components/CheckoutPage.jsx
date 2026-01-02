@@ -286,6 +286,9 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
       const data = await response.json();
 
       if (data.success) {
+        // Mark checkout as successful BEFORE clearing cart
+        setCheckoutSuccess(true);
+        
         // Clear cart
         setCart([]);
         localStorage.removeItem('avenue_cart');
