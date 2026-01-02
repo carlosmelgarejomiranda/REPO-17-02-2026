@@ -2014,6 +2014,12 @@ def run_all_tests():
         ("Test Shop Products", test_shop_products),
         ("Test Shop Products with Filters", test_shop_products_with_filters),
         
+        # NEW: Inventory Validation Tests
+        ("Test Inventory Validation - Valid Items", test_inventory_validation_valid_items),
+        ("Test Inventory Validation - Out of Stock Items", test_inventory_validation_out_of_stock),
+        ("Test Inventory Validation - Empty Items Array", test_inventory_validation_empty_items),
+        ("Test Inventory Validation - Response Structure", test_inventory_validation_response_structure),
+        
         # NEW: Admin Order Management Tests
         ("Test Admin Orders List", test_admin_orders_list),
         ("Test Admin Order Detail", test_admin_order_detail),
