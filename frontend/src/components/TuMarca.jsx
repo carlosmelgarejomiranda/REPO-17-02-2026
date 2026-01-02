@@ -33,6 +33,9 @@ const BRANDS_SHOWCASE = [
 ];
 
 export const TuMarca = ({ t }) => {
+  // Apply saved modifications from website builder
+  useBuilderModifications('tu-marca');
+  
   const [formData, setFormData] = useState({
     brand_name: '',
     contact_name: '',
