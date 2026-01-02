@@ -126,6 +126,22 @@ export const AdminDashboard = ({ user }) => {
     }
   };
 
+  // Confirm pending reservation (sends WhatsApp notification to client)
+  const confirmReservation = async (reservationId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/reservations/${reservationId}/confirm`, {
+        method: 'PUT',
+        headers: getAuthHeaders()
+      });
+      if (response.ok) {
+        fetchData();
+        alert('Reserva confirmada. Se envió notificación por WhatsApp al cliente.');
+      }
+    } catch (err) {
+      console.error('Error confirming reservation:', err);
+    }
+  };
+
   const deleteReservation = async (reservationId) => {
     if (!window.confirm('¿Estás seguro de eliminar esta reserva?')) return;
     try {
