@@ -525,24 +525,59 @@ export const BatchImageAssignment = ({ onClose }) => {
         </div>
       </div>
 
-      {/* Footer - Selection status */}
-      {selectedProduct && (
-        <footer className="flex-shrink-0 border-t border-white/10 px-6 py-4 bg-neutral-900/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="text-gray-400">Producto seleccionado:</span>
-              <span className="text-white font-medium">{selectedProduct.base_model}</span>
-              <span className="text-gray-500">|</span>
-              <span className="text-gray-400">Imágenes seleccionadas:</span>
-              <span className="text-[#d4a968] font-medium">{selectedImages.length}/3</span>
-            </div>
-            
-            <div className="text-sm text-gray-500">
-              Click en producto o imagen para deseleccionar
+      {/* Footer - Selection status and Undo history */}
+      <footer className="flex-shrink-0 border-t border-white/10 bg-neutral-900/50">
+        {/* Selection status bar */}
+        {selectedProduct && (
+          <div className="px-6 py-3 border-b border-white/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-gray-400 text-sm">Producto:</span>
+                <span className="text-white font-medium text-sm">{selectedProduct.base_model}</span>
+                <span className="text-gray-500">|</span>
+                <span className="text-gray-400 text-sm">Imágenes:</span>
+                <span className="text-[#d4a968] font-medium">{selectedImages.length}/3</span>
+              </div>
+              
+              <div className="text-xs text-gray-500">
+                Click en producto o imagen para deseleccionar
+              </div>
             </div>
           </div>
-        </footer>
-      )}
+        )}
+        
+        {/* Undo history bar */}
+        {assignmentHistory.length > 0 && (
+          <div className="px-6 py-3">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-gray-400">
+                <Undo2 className="w-4 h-4" />
+                <span className="text-xs font-medium uppercase tracking-wider">Deshacer:</span>
+              </div>
+              
+              <div className="flex-1 flex items-center gap-2 overflow-x-auto">
+                {assignmentHistory.slice(0, 5).map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleUndoAssignment(item, index)}
+                    disabled={undoing}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-colors text-xs whitespace-nowrap disabled:opacity-50"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    <span className="max-w-[150px] truncate">{item.product.base_model}</span>
+                  </button>
+                ))}
+              </div>
+              
+              {assignmentHistory.length > 5 && (
+                <span className="text-xs text-gray-500">
+                  +{assignmentHistory.length - 5} más
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </footer>
     </div>
   );
 };
