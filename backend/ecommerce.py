@@ -787,20 +787,24 @@ async def get_products(
             
             # Check if this brand has a unification mapping
             brand_upper = brand_filter.upper()
+            brand_or_conditions = []
             if brand_upper in BRAND_UNIFICATION:
                 # Build $or query for all variants
                 variants = BRAND_UNIFICATION[brand_upper]
-                or_conditions = []
                 for variant in variants:
-                    or_conditions.append({"category": {"$regex": f"^{variant}$", "$options": "i"}})
-                    or_conditions.append({"brand": {"$regex": f"^{variant}$", "$options": "i"}})
-                query["$or"] = or_conditions
+                    brand_or_conditions.append({"category": {"$regex": f"^{variant}$", "$options": "i"}})
+                    brand_or_conditions.append({"brand": {"$regex": f"^{variant}$", "$options": "i"}})
             else:
                 # Standard search in both category and brand fields
-                query["$or"] = [
+                brand_or_conditions = [
                     {"category": {"$regex": brand_filter, "$options": "i"}},
                     {"brand": {"$regex": brand_filter, "$options": "i"}}
                 ]
+            
+            # Add brand filter to $and conditions to combine with search
+            if "$and" not in query:
+                query["$and"] = []
+            query["$and"].append({"$or": brand_or_conditions})
         
         if gender:
             query["gender"] = gender
