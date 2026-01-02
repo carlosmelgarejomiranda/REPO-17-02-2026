@@ -87,9 +87,10 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
         {/* Logo */}
         <a href="/" className="flex items-center">
           <img 
-            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
+            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
             alt="Avenue"
-            className="h-5 md:h-6 cursor-pointer transition-opacity hover:opacity-80"
+            className="h-8 cursor-pointer transition-opacity hover:opacity-80"
+            style={{ filter: 'brightness(1.2)' }}
           />
         </a>
 
