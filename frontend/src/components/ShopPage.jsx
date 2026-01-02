@@ -472,39 +472,6 @@ export const ShopPage = ({ cart, setCart }) => {
       </header>
 
       {/* Main Content */}
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Search Bar - Expandable */}
-          {searchOpen && (
-            <div className="border-t border-gray-100 px-8 py-4">
-              <form onSubmit={handleSearch} className="max-w-xl mx-auto">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Buscar productos..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    autoFocus
-                    className="w-full py-3 px-4 bg-gray-50 border-0 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setSearchOpen(false)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-        </div>
-      </header>
-
-      {/* Main Content */}
       <main className="max-w-[1800px] mx-auto px-4 lg:px-8 py-8">
         {/* Results header */}
         <div className="flex items-center justify-between mb-8">
