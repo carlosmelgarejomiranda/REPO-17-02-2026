@@ -99,51 +99,48 @@ export const WebsiteBuilder = ({ onClose }) => {
         background: rgba(212, 169, 104, 0.15) !important;
       }
 
-      /* Image editing styles */
-      .img-edit-wrapper {
-        position: relative !important;
-        display: block !important;
-        width: 100% !important;
-        height: 100% !important;
-      }
-      .img-edit-wrapper > img {
-        display: block !important;
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: cover !important;
-      }
-      .img-edit-overlay {
+      /* Image editing styles - Fixed button approach */
+      .builder-img-btn {
         position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        background: rgba(0,0,0,0.75) !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        opacity: 0 !important;
-        transition: opacity 0.2s ease !important;
-        cursor: pointer !important;
-        z-index: 9999 !important;
-        pointer-events: auto !important;
-      }
-      .img-edit-wrapper:hover .img-edit-overlay,
-      .img-edit-overlay:hover {
-        opacity: 1 !important;
-      }
-      .img-edit-btn {
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
         background: #d4a968 !important;
         color: black !important;
-        padding: 12px 24px !important;
-        border-radius: 8px !important;
+        padding: 14px 28px !important;
+        border-radius: 10px !important;
         font-weight: 600 !important;
         font-size: 14px !important;
-        display: flex !important;
+        display: none !important;
         align-items: center !important;
-        gap: 8px !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-        pointer-events: auto !important;
+        gap: 10px !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+        z-index: 99999 !important;
+        cursor: pointer !important;
+        border: none !important;
+        white-space: nowrap !important;
+      }
+      .builder-img-btn:hover {
+        background: #c49958 !important;
+        transform: translate(-50%, -50%) scale(1.05) !important;
+      }
+      [data-builder-img]:hover .builder-img-btn {
+        display: flex !important;
+      }
+      [data-builder-img] {
+        position: relative !important;
+      }
+      [data-builder-img]::after {
+        content: '' !important;
+        position: absolute !important;
+        inset: 0 !important;
+        background: rgba(0,0,0,0) !important;
+        transition: background 0.2s ease !important;
+        pointer-events: none !important;
+        z-index: 99998 !important;
+      }
+      [data-builder-img]:hover::after {
+        background: rgba(0,0,0,0.5) !important;
       }
 
       /* Background image editing styles */
