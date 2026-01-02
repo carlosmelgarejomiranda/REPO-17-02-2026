@@ -2176,8 +2176,12 @@ async def assign_images_to_product(assignment: ImageAssignment):
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
     # Process each temp image and move to permanent storage
-    temp_dir = os.path.join(UPLOAD_DIR, "temp_batch", assignment.batch_id)
+    base_upload_dir = "/app/backend/uploads"
+    temp_dir = os.path.join(base_upload_dir, "temp_batch", assignment.batch_id)
     assigned_images = []
+    
+    if not os.path.exists(temp_dir):
+        raise HTTPException(status_code=400, detail=f"Batch no encontrado: {assignment.batch_id}")
     
     for idx, img_id in enumerate(assignment.image_ids):
         # Find the temp file
