@@ -107,6 +107,7 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [address, setAddress] = useState('');
   const [reference, setReference] = useState('');
+  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
