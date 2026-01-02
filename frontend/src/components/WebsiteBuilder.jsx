@@ -276,19 +276,40 @@ export const WebsiteBuilder = ({ onClose }) => {
       const images = iframeDoc.querySelectorAll('img');
       images.forEach((img, index) => {
         if (img.closest('.img-edit-wrapper')) return; // Already wrapped
+        if (img.closest('.img-edit-overlay')) return; // Part of overlay
         
         const editId = `img-${selectedPage.id}-${index}`;
         img.setAttribute('data-edit-id', editId);
         
+        // Get computed styles of the image
+        const imgStyle = window.getComputedStyle(img);
+        const parentStyle = window.getComputedStyle(img.parentElement);
+        
         const wrapper = iframeDoc.createElement('div');
         wrapper.className = 'img-edit-wrapper';
         
-        // Copy some styles from parent
-        const imgStyle = window.getComputedStyle(img);
-        if (imgStyle.display === 'block') {
-          wrapper.style.display = 'block';
+        // Preserve the image's positioning
+        if (imgStyle.position === 'absolute') {
+          wrapper.style.cssText = `
+            position: absolute !important;
+            top: ${imgStyle.top};
+            left: ${imgStyle.left};
+            right: ${imgStyle.right};
+            bottom: ${imgStyle.bottom};
+            width: ${imgStyle.width};
+            height: ${imgStyle.height};
+          `;
+          img.style.position = 'relative';
+          img.style.top = '0';
+          img.style.left = '0';
+        } else {
+          // For block/inline images
+          wrapper.style.cssText = `
+            display: ${imgStyle.display === 'inline' ? 'inline-block' : 'block'};
+            width: ${imgStyle.width};
+            height: ${imgStyle.height};
+          `;
         }
-        wrapper.style.width = 'fit-content';
         
         const overlay = iframeDoc.createElement('div');
         overlay.className = 'img-edit-overlay';
