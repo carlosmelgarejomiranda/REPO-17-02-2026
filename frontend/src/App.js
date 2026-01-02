@@ -194,7 +194,8 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
       </div>
     </div>
   </header>
-);
+  );
+};
 
 // Shop Navigation Component
 const ShopNav = ({ t, language, setLanguage, user, cart, onLoginClick, onLogout }) => {
