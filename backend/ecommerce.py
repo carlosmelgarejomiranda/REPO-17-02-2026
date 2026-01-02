@@ -916,20 +916,26 @@ async def get_product(product_id: str):
             
             # Use custom image if available
             display_image = product.get("custom_image") or product.get("image")
+            # Get all images (up to 3)
+            all_images = product.get("images", [])
+            if not all_images or not isinstance(all_images, list):
+                all_images = [display_image] if display_image else []
+            all_images = [img for img in all_images if img]
             
             return {
                 "id": product.get("grouped_id"),
-                "name": product.get("base_model"),
+                "name": product.get("custom_name") or product.get("base_model"),
                 "full_name": product.get("name"),
-                "price": product.get("price"),
+                "price": product.get("custom_price") or product.get("price"),
                 "max_price": product.get("max_price"),
                 "stock": product.get("total_stock"),
                 "image": display_image,
+                "images": all_images,  # All product images (up to 3)
                 "category": product.get("category"),
                 "brand": product.get("brand"),
                 "gender": product.get("gender"),
                 "discount": product.get("discount", 0),
-                "description": product.get("description"),
+                "description": product.get("custom_description") or product.get("description"),
                 "available_sizes": sizes_sorted,
                 "variants": product.get("variants", [])
             }
