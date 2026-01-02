@@ -27,11 +27,10 @@
 
 .App {
   min-height: 100vh;
-  background-color: var(--surface-light);
 }
 
-/* Dark theme for Studio pages */
-.App.dark-theme {
+/* Dark theme background for body when on studio routes */
+body.dark-theme {
   background-color: #0a0a0a;
 }
 
