@@ -725,11 +725,37 @@ async def get_products(
 ):
     """Get GROUPED products from local MongoDB - shows unique models with sizes"""
     try:
+        # Get admin settings for show_only_products_with_images
+        settings = await db.admin_settings.find_one({"_id": "global"})
+        show_only_with_images = settings.get("show_only_products_with_images", False) if settings else False
+        
         # Build query for grouped products
         query = {"total_stock": {"$gt": 0}}
         
+        # If setting is enabled, only show products with images
+        if show_only_with_images:
+            query["$and"] = query.get("$and", [])
+            query["$and"].append({
+                "$or": [
+                    {"image_url": {"$exists": True, "$ne": None, "$ne": ""}},
+                    {"images": {"$exists": True, "$ne": [], "$ne": None}}
+                ]
+            })
+        
         if search:
-            query["base_model"] = {"$regex": search, "$options": "i"}
+            # Search in multiple fields: base_model, category, brand, description
+            search_regex = {"$regex": search, "$options": "i"}
+            search_conditions = [
+                {"base_model": search_regex},
+                {"category": search_regex},
+                {"brand": search_regex},
+                {"description": search_regex}
+            ]
+            # Combine with existing $and or create new
+            if "$and" in query:
+                query["$and"].append({"$or": search_conditions})
+            else:
+                query["$or"] = search_conditions
         
         # Support both 'category' and 'brand' parameters - search in both fields
         brand_filter = brand or category
