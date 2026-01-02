@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, User, Phone, Mail, Building, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Calendar, Clock, User, Phone, Mail, Building, FileText, ChevronLeft, ChevronRight, ArrowRight, Check, Camera, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
 
 const PRICING = {
@@ -11,6 +10,9 @@ const PRICING = {
 };
 
 const DURATION_OPTIONS = [2, 4, 6, 8];
+
+// Hero image for the booking page
+const BOOKING_HERO = 'https://images.pexels.com/photos/35465931/pexels-photo-35465931.jpeg?auto=compress&cs=tinysrgb&w=1920';
 
 export const BookingCalendar = ({ t, user, onBookingComplete }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -192,64 +194,129 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
 
   if (success) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
-        <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
-          <CardContent className="p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center" style={{ backgroundColor: '#d4a968' }}>
-              <Calendar className="w-8 h-8" style={{ color: '#0d0d0d' }} />
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-6">
+        <div className="max-w-lg w-full">
+          {/* Success Card */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/10 p-10 text-center">
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-[#d4a968]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#d4a968]/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div className="relative z-10">
+              <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-[#d4a968] flex items-center justify-center">
+                <Check className="w-10 h-10 text-black" />
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-light text-white mb-2">
+                ¡Reserva <span className="italic text-[#d4a968]">Confirmada</span>!
+              </h2>
+              <p className="text-gray-400 mb-8">Tu sesión ha sido agendada exitosamente</p>
+              
+              {/* Reservation Details */}
+              <div className="space-y-4 mb-8 p-6 rounded-xl bg-white/5 border border-white/10 text-left">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Fecha</span>
+                  <span className="text-white font-medium">{success.date}</span>
+                </div>
+                <div className="w-full h-px bg-white/10"></div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Horario</span>
+                  <span className="text-white font-medium">{success.start_time} - {success.end_time}</span>
+                </div>
+                <div className="w-full h-px bg-white/10"></div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Duración</span>
+                  <span className="text-white font-medium">{success.duration_hours} horas</span>
+                </div>
+                <div className="w-full h-px bg-white/10"></div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Total</span>
+                  <span className="text-[#d4a968] text-xl font-medium">{success.price.toLocaleString()} Gs</span>
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-500 mb-8">
+                Confirmación enviada a <span className="text-[#d4a968]">{success.email}</span>
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={() => {
+                    setSuccess(null);
+                    setStep(1);
+                    setSelectedDate(null);
+                    setSelectedTime(null);
+                  }}
+                  className="flex-1 py-6 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium"
+                >
+                  Nueva Reserva
+                </Button>
+                <a 
+                  href="/studio"
+                  className="flex-1 py-4 px-6 border border-white/20 text-white font-medium rounded-md hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
+                >
+                  Volver al Studio
+                </a>
+              </div>
             </div>
-            <h2 className="text-2xl font-light italic mb-4" style={{ color: '#f5ede4' }}>
-              ¡Reserva Confirmada!
-            </h2>
-            <div className="space-y-2 mb-6" style={{ color: '#a8a8a8' }}>
-              <p><strong style={{ color: '#d4a968' }}>Fecha:</strong> {success.date}</p>
-              <p><strong style={{ color: '#d4a968' }}>Horario:</strong> {success.start_time} - {success.end_time}</p>
-              <p><strong style={{ color: '#d4a968' }}>Duración:</strong> {success.duration_hours} horas</p>
-              <p><strong style={{ color: '#d4a968' }}>Precio:</strong> {success.price.toLocaleString()} Gs</p>
-            </div>
-            <p className="text-sm mb-6" style={{ color: '#a8a8a8' }}>
-              Hemos enviado un email de confirmación a <strong style={{ color: '#d4a968' }}>{success.email}</strong>
-            </p>
-            <Button
-              onClick={() => {
-                setSuccess(null);
-                setStep(1);
-                setSelectedDate(null);
-                setSelectedTime(null);
-              }}
-              style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-            >
-              Nueva Reserva
-            </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
-      {/* Progress Steps */}
-      <div className="flex justify-center mb-8">
-        <div className="flex items-center gap-4">
-          {[1, 2, 3].map((s) => (
-            <React.Fragment key={s}>
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-medium transition-all ${
-                  step >= s ? 'text-black' : ''
-                }`}
-                style={{
-                  backgroundColor: step >= s ? '#d4a968' : '#333',
-                  color: step >= s ? '#0d0d0d' : '#666'
-                }}
-              >
-                {s}
-              </div>
-              {s < 3 && (
+    <div className="min-h-screen bg-[#0a0a0a]">
+      {/* Hero Section */}
+      <section className="relative h-[40vh] min-h-[300px] flex items-center">
+        <div className="absolute inset-0">
+          <img src={BOOKING_HERO} alt="Avenue Studio" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/50" />
+        </div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full">
+          <a href="/studio" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6">
+            <ChevronLeft className="w-4 h-4" />
+            <span className="text-sm">Volver a Studio</span>
+          </a>
+          
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-px bg-[#d4a968]"></div>
+            <span className="text-[#d4a968] text-sm tracking-[0.2em] uppercase">Reservar</span>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white leading-tight">
+            Agenda tu <span className="italic text-[#d4a968]">sesión</span>
+          </h1>
+        </div>
+      </section>
+
+      {/* Progress Steps - Editorial Style */}
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        <div className="flex items-center justify-center gap-4 md:gap-8">
+          {[
+            { num: 1, label: 'Fecha' },
+            { num: 2, label: 'Horario' },
+            { num: 3, label: 'Datos' }
+          ].map((s, index) => (
+            <React.Fragment key={s.num}>
+              <div className="flex flex-col items-center gap-2">
                 <div
-                  className="w-12 h-0.5"
-                  style={{ backgroundColor: step > s ? '#d4a968' : '#333' }}
-                />
+                  className={`w-12 h-12 rounded-full flex items-center justify-center font-medium transition-all duration-300 ${
+                    step >= s.num 
+                      ? 'bg-[#d4a968] text-black' 
+                      : 'bg-white/5 border border-white/20 text-gray-500'
+                  }`}
+                >
+                  {step > s.num ? <Check className="w-5 h-5" /> : s.num}
+                </div>
+                <span className={`text-xs tracking-wider uppercase ${step >= s.num ? 'text-[#d4a968]' : 'text-gray-600'}`}>
+                  {s.label}
+                </span>
+              </div>
+              {index < 2 && (
+                <div className={`flex-1 max-w-[60px] h-px transition-colors ${step > s.num ? 'bg-[#d4a968]' : 'bg-white/10'}`} />
               )}
             </React.Fragment>
           ))}
@@ -258,338 +325,375 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
 
       {/* Step 1: Select Date */}
       {step === 1 && (
-        <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
-          <CardHeader>
-            <CardTitle className="text-center italic" style={{ color: '#f5ede4' }}>
-              Selecciona una Fecha
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* Same-day notice */}
-            <div className="mb-4 p-3 rounded text-center text-sm" style={{ backgroundColor: 'rgba(212, 169, 104, 0.1)', border: '1px solid rgba(212, 169, 104, 0.3)' }}>
-              <p style={{ color: '#a8a8a8' }}>
-                📅 Reservas con al menos <strong style={{ color: '#d4a968' }}>1 día de anticipación</strong>. 
-                Para hoy, <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a968' }}>contactanos por WhatsApp</a>.
-              </p>
-            </div>
+        <div className="max-w-3xl mx-auto px-6 pb-20">
+          <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/10">
+            <div className="p-8 md:p-10">
+              <h2 className="text-2xl md:text-3xl font-light text-white mb-2 text-center">
+                Selecciona una <span className="italic text-[#d4a968]">fecha</span>
+              </h2>
+              <p className="text-gray-500 text-center mb-8">Elige el día para tu sesión en Avenue Studio</p>
+              
+              {/* Same-day notice */}
+              <div className="mb-8 p-4 rounded-xl bg-[#d4a968]/10 border border-[#d4a968]/30 text-center">
+                <p className="text-gray-300 text-sm">
+                  📅 Reservas con al menos <span className="text-[#d4a968] font-medium">1 día de anticipación</span>. 
+                  Para hoy, <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" className="text-[#d4a968] underline hover:no-underline">contactanos por WhatsApp</a>.
+                </p>
+              </div>
 
-            {/* Month Navigation */}
-            <div className="flex items-center justify-between mb-4">
-              <Button
-                variant="ghost"
-                onClick={prevMonth}
-                style={{ color: '#d4a968' }}
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </Button>
-              <h3 className="text-lg font-medium" style={{ color: '#f5ede4' }}>
-                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-              </h3>
-              <Button
-                variant="ghost"
-                onClick={nextMonth}
-                style={{ color: '#d4a968' }}
-              >
-                <ChevronRight className="w-5 h-5" />
-              </Button>
-            </div>
+              {/* Month Navigation */}
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  onClick={prevMonth}
+                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-gray-400 hover:text-[#d4a968] hover:border-[#d4a968] transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <h3 className="text-xl font-light text-white">
+                  {monthNames[currentMonth.getMonth()]} <span className="text-[#d4a968]">{currentMonth.getFullYear()}</span>
+                </h3>
+                <button
+                  onClick={nextMonth}
+                  className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-gray-400 hover:text-[#d4a968] hover:border-[#d4a968] transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
 
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-1">
-              {dayNames.map((day) => (
-                <div
-                  key={day}
-                  className="text-center py-2 text-sm font-medium"
-                  style={{ color: '#d4a968' }}
-                >
-                  {day}
-                </div>
-              ))}
-              {getDaysInMonth(currentMonth).map((date, index) => (
-                <div
-                  key={index}
-                  className={`text-center py-3 rounded cursor-pointer transition-all ${
-                    date && isDateSelectable(date) ? 'hover:scale-105' : ''
-                  }`}
-                  style={{
-                    backgroundColor: date && selectedDate === formatDate(date) ? '#d4a968' : 
-                                    date && isDateSelectable(date) ? '#2a2a2a' : 'transparent',
-                    color: date && selectedDate === formatDate(date) ? '#0d0d0d' :
-                           date && isDateSelectable(date) ? '#f5ede4' : '#444',
-                    cursor: date && isDateSelectable(date) ? 'pointer' : 'default'
-                  }}
-                  onClick={() => date && handleDateClick(date)}
-                >
-                  {date ? date.getDate() : ''}
-                </div>
-              ))}
+              {/* Calendar Grid */}
+              <div className="grid grid-cols-7 gap-2">
+                {dayNames.map((day) => (
+                  <div key={day} className="text-center py-3 text-xs font-medium text-[#d4a968] uppercase tracking-wider">
+                    {day}
+                  </div>
+                ))}
+                {getDaysInMonth(currentMonth).map((date, index) => (
+                  <div
+                    key={index}
+                    className={`text-center py-4 rounded-lg cursor-pointer transition-all duration-200 ${
+                      date && isDateSelectable(date) 
+                        ? 'hover:bg-[#d4a968] hover:text-black' 
+                        : ''
+                    } ${
+                      date && selectedDate === formatDate(date)
+                        ? 'bg-[#d4a968] text-black font-medium'
+                        : date && isDateSelectable(date)
+                          ? 'bg-white/5 text-white hover:scale-105'
+                          : 'text-gray-700'
+                    }`}
+                    style={{ cursor: date && isDateSelectable(date) ? 'pointer' : 'default' }}
+                    onClick={() => date && handleDateClick(date)}
+                  >
+                    {date ? date.getDate() : ''}
+                  </div>
+                ))}
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Step 2: Select Time & Duration */}
       {step === 2 && (
-        <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <Button
-                variant="ghost"
-                onClick={() => setStep(1)}
-                style={{ color: '#d4a968' }}
-              >
-                <ChevronLeft className="w-5 h-5 mr-1" /> Volver
-              </Button>
-              <CardTitle className="italic" style={{ color: '#f5ede4' }}>
-                {selectedDate}
-              </CardTitle>
-              <div style={{ width: '80px' }} />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {/* Duration Selection */}
-            <div className="mb-6">
-              <h4 className="text-sm font-medium mb-3" style={{ color: '#a8a8a8' }}>
-                Duración de la reserva:
-              </h4>
-              <div className="grid grid-cols-4 gap-2">
-                {DURATION_OPTIONS.map((hours) => (
-                  <button
-                    key={hours}
-                    className={`p-3 rounded border transition-all ${
-                      selectedDuration === hours ? 'border-2' : ''
-                    }`}
-                    style={{
-                      backgroundColor: selectedDuration === hours ? 'rgba(212, 169, 104, 0.2)' : '#2a2a2a',
-                      borderColor: selectedDuration === hours ? '#d4a968' : '#333',
-                      color: '#f5ede4'
-                    }}
-                    onClick={() => {
-                      setSelectedDuration(hours);
-                      setSelectedTime(null);
-                    }}
-                  >
-                    <div className="font-medium">{hours}h</div>
-                    <div className="text-xs mt-1" style={{ color: '#d4a968' }}>
-                      {PRICING[hours].toLocaleString()} Gs
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Time Slots */}
-            <h4 className="text-sm font-medium mb-3" style={{ color: '#a8a8a8' }}>
-              Horario de inicio:
-            </h4>
-            {loading ? (
-              <div className="text-center py-8" style={{ color: '#a8a8a8' }}>
-                Cargando disponibilidad...
-              </div>
-            ) : (
-              <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
-                {Array.from({ length: 22 - 9 }, (_, i) => i + 9).map((hour) => {
-                  const available = isTimeSlotAvailable(hour);
-                  const endHour = hour + selectedDuration;
-                  
-                  return (
-                    <button
-                      key={hour}
-                      disabled={!available || endHour > 22}
-                      className={`p-3 rounded border transition-all ${
-                        selectedTime === `${hour.toString().padStart(2, '0')}:00` ? 'border-2' : ''
-                      }`}
-                      style={{
-                        backgroundColor: selectedTime === `${hour.toString().padStart(2, '0')}:00` 
-                          ? '#d4a968' 
-                          : available && endHour <= 22 
-                            ? '#2a2a2a' 
-                            : '#1a1a1a',
-                        borderColor: selectedTime === `${hour.toString().padStart(2, '0')}:00` 
-                          ? '#d4a968' 
-                          : '#333',
-                        color: selectedTime === `${hour.toString().padStart(2, '0')}:00` 
-                          ? '#0d0d0d' 
-                          : available && endHour <= 22 
-                            ? '#f5ede4' 
-                            : '#444',
-                        cursor: available && endHour <= 22 ? 'pointer' : 'not-allowed'
-                      }}
-                      onClick={() => available && endHour <= 22 && handleTimeClick(hour)}
-                    >
-                      {hour.toString().padStart(2, '0')}:00
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            {selectedTime && (
-              <div className="mt-6 p-4 rounded" style={{ backgroundColor: '#2a2a2a' }}>
-                <p style={{ color: '#a8a8a8' }}>
-                  <strong style={{ color: '#d4a968' }}>Resumen:</strong> {selectedDate} de {selectedTime} a {
-                    `${(parseInt(selectedTime.split(':')[0]) + selectedDuration).toString().padStart(2, '0')}:00`
-                  } ({selectedDuration}h) - <strong style={{ color: '#d4a968' }}>{PRICING[selectedDuration].toLocaleString()} Gs</strong>
-                </p>
-                <Button
-                  className="mt-4 w-full"
-                  style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-                  onClick={() => setStep(3)}
+        <div className="max-w-3xl mx-auto px-6 pb-20">
+          <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/10">
+            <div className="p-8 md:p-10">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-8">
+                <button
+                  onClick={() => setStep(1)}
+                  className="flex items-center gap-2 text-gray-400 hover:text-[#d4a968] transition-colors"
                 >
-                  Continuar
-                </Button>
+                  <ChevronLeft className="w-4 h-4" />
+                  <span className="text-sm">Cambiar fecha</span>
+                </button>
+                <div className="px-4 py-2 rounded-full bg-[#d4a968]/20 border border-[#d4a968]/30">
+                  <span className="text-[#d4a968] text-sm font-medium">{selectedDate}</span>
+                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+              
+              <h2 className="text-2xl md:text-3xl font-light text-white mb-2 text-center">
+                Elige <span className="italic text-[#d4a968]">duración y horario</span>
+              </h2>
+              <p className="text-gray-500 text-center mb-10">Selecciona cuántas horas necesitas y el horario de inicio</p>
+
+              {/* Duration Selection */}
+              <div className="mb-10">
+                <h4 className="text-sm font-medium mb-4 text-gray-400 uppercase tracking-wider">
+                  Duración de la sesión
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {DURATION_OPTIONS.map((hours) => (
+                    <button
+                      key={hours}
+                      className={`relative p-5 rounded-xl border transition-all duration-300 group ${
+                        selectedDuration === hours 
+                          ? 'border-[#d4a968] bg-[#d4a968]/10' 
+                          : 'border-white/10 bg-white/5 hover:border-white/30'
+                      }`}
+                      onClick={() => {
+                        setSelectedDuration(hours);
+                        setSelectedTime(null);
+                      }}
+                    >
+                      {selectedDuration === hours && (
+                        <div className="absolute top-2 right-2">
+                          <Check className="w-4 h-4 text-[#d4a968]" />
+                        </div>
+                      )}
+                      <div className={`text-2xl font-light mb-1 ${selectedDuration === hours ? 'text-[#d4a968]' : 'text-white'}`}>
+                        {hours}h
+                      </div>
+                      <div className={`text-sm ${selectedDuration === hours ? 'text-[#d4a968]' : 'text-gray-500'}`}>
+                        {PRICING[hours].toLocaleString()} Gs
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Time Slots */}
+              <div>
+                <h4 className="text-sm font-medium mb-4 text-gray-400 uppercase tracking-wider">
+                  Horario de inicio
+                </h4>
+                {loading ? (
+                  <div className="text-center py-12">
+                    <div className="w-8 h-8 border-2 border-[#d4a968] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-500">Cargando disponibilidad...</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
+                    {Array.from({ length: 22 - 9 }, (_, i) => i + 9).map((hour) => {
+                      const available = isTimeSlotAvailable(hour);
+                      const endHour = hour + selectedDuration;
+                      const isSelected = selectedTime === `${hour.toString().padStart(2, '0')}:00`;
+                      
+                      return (
+                        <button
+                          key={hour}
+                          disabled={!available || endHour > 22}
+                          className={`py-3 px-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                            isSelected
+                              ? 'bg-[#d4a968] text-black'
+                              : available && endHour <= 22
+                                ? 'bg-white/5 text-white hover:bg-white/10 border border-white/10'
+                                : 'bg-transparent text-gray-700 cursor-not-allowed'
+                          }`}
+                          onClick={() => available && endHour <= 22 && handleTimeClick(hour)}
+                        >
+                          {hour.toString().padStart(2, '0')}:00
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Summary & Continue */}
+              {selectedTime && (
+                <div className="mt-10 p-6 rounded-xl bg-white/5 border border-white/10">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                    <div>
+                      <p className="text-gray-400 text-sm mb-1">Tu reserva</p>
+                      <p className="text-white text-lg">
+                        {selectedDate} · {selectedTime} - {`${(parseInt(selectedTime.split(':')[0]) + selectedDuration).toString().padStart(2, '0')}:00`}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gray-400 text-sm mb-1">Total</p>
+                      <p className="text-[#d4a968] text-2xl font-light">{PRICING[selectedDuration].toLocaleString()} Gs</p>
+                    </div>
+                  </div>
+                  <button
+                    className="w-full py-4 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                    onClick={() => setStep(3)}
+                  >
+                    <span>Continuar</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Step 3: Reservation Form */}
       {step === 3 && (
-        <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <Button
-                variant="ghost"
-                onClick={() => setStep(2)}
-                style={{ color: '#d4a968' }}
-              >
-                <ChevronLeft className="w-5 h-5 mr-1" /> Volver
-              </Button>
-              <CardTitle className="italic" style={{ color: '#f5ede4' }}>
-                Datos de Reserva
-              </CardTitle>
-              <div style={{ width: '80px' }} />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {/* Summary */}
-            <div className="mb-6 p-4 rounded" style={{ backgroundColor: '#2a2a2a', borderLeft: '3px solid #d4a968' }}>
-              <p style={{ color: '#f5ede4' }}>
-                <strong style={{ color: '#d4a968' }}>Fecha:</strong> {selectedDate}
-              </p>
-              <p style={{ color: '#f5ede4' }}>
-                <strong style={{ color: '#d4a968' }}>Horario:</strong> {selectedTime} - {
-                  `${(parseInt(selectedTime.split(':')[0]) + selectedDuration).toString().padStart(2, '0')}:00`
-                }
-              </p>
-              <p style={{ color: '#f5ede4' }}>
-                <strong style={{ color: '#d4a968' }}>Precio:</strong> {PRICING[selectedDuration].toLocaleString()} Gs
-              </p>
-            </div>
-
-            {error && (
-              <div className="mb-4 p-3 rounded" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#ef4444' }}>
-                {error}
+        <div className="max-w-3xl mx-auto px-6 pb-20">
+          <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/10">
+            <div className="p-8 md:p-10">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-8">
+                <button
+                  onClick={() => setStep(2)}
+                  className="flex items-center gap-2 text-gray-400 hover:text-[#d4a968] transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span className="text-sm">Cambiar horario</span>
+                </button>
               </div>
-            )}
+              
+              <h2 className="text-2xl md:text-3xl font-light text-white mb-2 text-center">
+                Completa tus <span className="italic text-[#d4a968]">datos</span>
+              </h2>
+              <p className="text-gray-500 text-center mb-8">Información para confirmar tu reserva</p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Reservation Summary */}
+              <div className="mb-8 p-6 rounded-xl bg-gradient-to-r from-[#d4a968]/10 to-transparent border-l-2 border-[#d4a968]">
+                <div className="flex flex-wrap items-center gap-6">
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Fecha</p>
+                    <p className="text-white font-medium">{selectedDate}</p>
+                  </div>
+                  <div className="w-px h-8 bg-white/10 hidden sm:block"></div>
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Horario</p>
+                    <p className="text-white font-medium">
+                      {selectedTime} - {`${(parseInt(selectedTime.split(':')[0]) + selectedDuration).toString().padStart(2, '0')}:00`}
+                    </p>
+                  </div>
+                  <div className="w-px h-8 bg-white/10 hidden sm:block"></div>
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Total</p>
+                    <p className="text-[#d4a968] text-xl font-medium">{PRICING[selectedDuration].toLocaleString()} Gs</p>
+                  </div>
+                </div>
+              </div>
+
+              {error && (
+                <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Personal Data */}
                 <div>
-                  <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                    <User className="w-4 h-4 inline mr-1" /> Nombre y Apellido *
-                  </label>
+                  <h4 className="text-sm font-medium mb-4 text-[#d4a968] uppercase tracking-wider flex items-center gap-2">
+                    <User className="w-4 h-4" /> Datos Personales
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm mb-2 text-gray-400">Nombre y Apellido *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                        placeholder="Tu nombre completo"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm mb-2 text-gray-400">Teléfono *</label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                        placeholder="+595 9XX XXX XXX"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-2 text-gray-400">Email *</label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                    placeholder="tu@email.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-2 text-gray-400">Empresa (opcional)</label>
                   <input
                     type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full p-3 rounded border"
-                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                    value={formData.company}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                    placeholder="Nombre de tu empresa"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                    <Phone className="w-4 h-4 inline mr-1" /> Teléfono *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full p-3 rounded border"
-                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                  />
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                  <Mail className="w-4 h-4 inline mr-1" /> Email *
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full p-3 rounded border"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                  <Building className="w-4 h-4 inline mr-1" /> Empresa (opcional)
-                </label>
-                <input
-                  type="text"
-                  value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  className="w-full p-3 rounded border"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                />
-              </div>
-
-              <div className="pt-4 border-t" style={{ borderColor: '#333' }}>
-                <h4 className="text-sm font-medium mb-3" style={{ color: '#d4a968' }}>
-                  <FileText className="w-4 h-4 inline mr-1" /> Datos de Facturación
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                      Razón Social
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.razon_social}
-                      onChange={(e) => setFormData({ ...formData, razon_social: e.target.value })}
-                      className="w-full p-3 rounded border"
-                      style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                      RUC
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.ruc}
-                      onChange={(e) => setFormData({ ...formData, ruc: e.target.value })}
-                      className="w-full p-3 rounded border"
-                      style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                    />
+                {/* Billing Section */}
+                <div className="pt-6 border-t border-white/10">
+                  <h4 className="text-sm font-medium mb-4 text-[#d4a968] uppercase tracking-wider flex items-center gap-2">
+                    <FileText className="w-4 h-4" /> Datos de Facturación
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm mb-2 text-gray-400">Razón Social</label>
+                      <input
+                        type="text"
+                        value={formData.razon_social}
+                        onChange={(e) => setFormData({ ...formData, razon_social: e.target.value })}
+                        className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                        placeholder="Razón social"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm mb-2 text-gray-400">RUC</label>
+                      <input
+                        type="text"
+                        value={formData.ruc}
+                        onChange={(e) => setFormData({ ...formData, ruc: e.target.value })}
+                        className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                        placeholder="Número de RUC"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="pt-4">
-                <p className="text-xs mb-4" style={{ color: '#666' }}>
-                  * El pago se realiza en Avenue antes de ingresar al estudio.
-                </p>
-                <Button
-                  type="submit"
-                  className="w-full py-6 text-lg"
-                  disabled={submitting}
-                  style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-                >
-                  {submitting ? 'Procesando...' : 'Confirmar Reserva'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                {/* Submit */}
+                <div className="pt-6">
+                  <p className="text-xs text-gray-600 mb-4 text-center">
+                    * El pago se realiza en Avenue antes de ingresar al estudio.
+                  </p>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full py-5 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium text-lg rounded-lg transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                        <span>Procesando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        <span>Confirmar Reserva</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       )}
+
+      {/* Footer Navigation */}
+      <div className="py-8 px-6 border-t border-white/10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <a href="/studio" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">
+            ← Volver a Avenue Studio
+          </a>
+          <div className="flex items-center gap-6">
+            <a href="/shop" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">E-commerce</a>
+            <a href="/studio/ugc" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">UGC Creators</a>
+            <a href="https://wa.me/595973666000" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">WhatsApp</a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
