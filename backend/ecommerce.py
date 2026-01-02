@@ -2143,14 +2143,18 @@ API_URL_BASE = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
 
 @ecommerce_router.get("/temp-images/{batch_id}/{filename}")
 async def serve_temp_image(batch_id: str, filename: str):
-    """Serve temporary batch images"""
+    """Serve temporary batch images with correct MIME type"""
     temp_dir = os.path.join(UPLOAD_DIR, "temp_batch", batch_id)
     filepath = os.path.join(temp_dir, filename)
     
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404, detail="Image not found")
     
-    return FileResponse(filepath, media_type="image/jpeg")
+    # Detect MIME type from extension
+    ext = filename.split('.')[-1].lower() if '.' in filename else 'jpg'
+    media_type = EXT_TO_MIME.get(ext, 'image/jpeg')
+    
+    return FileResponse(filepath, media_type=media_type)
 
 class ImageAssignment(BaseModel):
     product_id: str
