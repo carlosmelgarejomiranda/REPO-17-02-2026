@@ -1355,6 +1355,10 @@ from ecommerce import ecommerce_router, set_database, start_sync_on_startup
 set_database(db)
 app.include_router(ecommerce_router)
 
+# Include website builder router
+from website_builder import router as builder_router
+app.include_router(builder_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
