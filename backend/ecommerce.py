@@ -568,20 +568,17 @@ class InventoryValidationRequest(BaseModel):
 async def validate_inventory_before_checkout(data: InventoryValidationRequest):
     """
     Validate inventory in real-time before checkout.
-    Syncs with ERP first to get latest stock, then validates each item.
+    Checks local DB for latest stock, then validates each item.
     Returns which items are available and which are out of stock.
     """
     logger.info(f"Validating inventory for {len(data.items)} items before checkout...")
     
-    # First, sync products from ERP to get latest inventory
     try:
-        # Get fresh data from ERP for the specific products
         all_available = True
         out_of_stock_items = []
         available_items = []
         
         for item in data.items:
-            # Try to find product in local DB first
             product = None
             
             # Search by SKU if available
@@ -617,22 +614,22 @@ async def validate_inventory_before_checkout(data: InventoryValidationRequest):
                 out_of_stock_items.append({
                     "product_id": item.product_id,
                     "sku": item.sku,
-                        "name": item.name or (product.get('name') if product else 'Producto'),
-                        "size": item.size,
-                        "requested_quantity": item.quantity,
-                        "available_stock": max(0, stock),
-                        "reason": "out_of_stock" if stock == 0 else "insufficient_stock"
-                    })
-                    logger.warning(f"Insufficient stock for {item.sku or item.product_id}: requested {item.quantity}, available {stock}")
-                else:
-                    available_items.append({
-                        "product_id": item.product_id,
-                        "sku": item.sku,
-                        "name": item.name,
-                        "size": item.size,
-                        "quantity": item.quantity,
-                        "available_stock": stock
-                    })
+                    "name": item.name or (product.get('name') if product else 'Producto'),
+                    "size": item.size,
+                    "requested_quantity": item.quantity,
+                    "available_stock": max(0, stock),
+                    "reason": "out_of_stock" if stock == 0 else "insufficient_stock"
+                })
+                logger.warning(f"Insufficient stock for {item.sku or item.product_id}: requested {item.quantity}, available {stock}")
+            else:
+                available_items.append({
+                    "product_id": item.product_id,
+                    "sku": item.sku,
+                    "name": item.name,
+                    "size": item.size,
+                    "quantity": item.quantity,
+                    "available_stock": stock
+                })
         
         return {
             "valid": all_available,
@@ -643,7 +640,6 @@ async def validate_inventory_before_checkout(data: InventoryValidationRequest):
             
     except Exception as e:
         logger.error(f"Error validating inventory: {str(e)}")
-        # In case of error, allow checkout but log the issue
         return {
             "valid": True,
             "available_items": [{"product_id": item.product_id, "sku": item.sku, "name": item.name, "quantity": item.quantity} for item in data.items],
