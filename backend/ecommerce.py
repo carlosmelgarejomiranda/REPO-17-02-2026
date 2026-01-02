@@ -646,11 +646,47 @@ async def get_products(
         # Support both 'category' and 'brand' parameters - search in both fields
         brand_filter = brand or category
         if brand_filter:
-            # Search in both category and brand fields using $or
-            query["$or"] = [
-                {"category": {"$regex": brand_filter, "$options": "i"}},
-                {"brand": {"$regex": brand_filter, "$options": "i"}}
-            ]
+            # Brand unification mappings - maps display names to actual ERP category patterns
+            BRAND_UNIFICATION = {
+                # AVENUE OUTLET - all outlet brands
+                'AVENUE OUTLET': [
+                    'AVENUE', 'AVENUE AK', 'BDA FACTORY', 'FRAME', 'GOOD AMERICAN',
+                    'JAZMIN CHEBAR', 'JUICY', 'KOSIUKO', 'LACOSTE', 'MARIA CHER',
+                    'MERSEA', 'QUIKSILVER', 'RICARDO ALMEIDA', 'ROTUNDA', 'RUSTY',
+                    'TOP DESIGN', 'VOYAGEUR', 'VITAMINA', 'HOWICK', 'EST1985'
+                ],
+                # SUN68 - all SUN variants
+                'SUN68': ['SUN68', 'SUN69', 'SUN70', 'SUN71', 'SUN72'],
+                # BODY SCULPT - variations
+                'BODY SCULPT': ['BODY SCULPT', 'BODYCULPT'],
+                # UNDISTURBED - variations
+                'UNDISTURBED': ['UNDISTURB3D', 'UNDISTURBED'],
+                # MARIA E MAKE UP - variations
+                'MARIA E MAKE UP': ['MARIA E MAKEUP', 'MARIA E MAKE UP'],
+                # AGUARA
+                'AGUARA': ['AGUARA FITWEAR', 'AGUARA'],
+                # DAVID SANDOVAL
+                'DAVID SANDOVAL': ['DS'],
+                # KARLA
+                'KARLA': ['KARLA RUIZ', 'KARLA'],
+            }
+            
+            # Check if this brand has a unification mapping
+            brand_upper = brand_filter.upper()
+            if brand_upper in BRAND_UNIFICATION:
+                # Build $or query for all variants
+                variants = BRAND_UNIFICATION[brand_upper]
+                or_conditions = []
+                for variant in variants:
+                    or_conditions.append({"category": {"$regex": f"^{variant}$", "$options": "i"}})
+                    or_conditions.append({"brand": {"$regex": f"^{variant}$", "$options": "i"}})
+                query["$or"] = or_conditions
+            else:
+                # Standard search in both category and brand fields
+                query["$or"] = [
+                    {"category": {"$regex": brand_filter, "$options": "i"}},
+                    {"brand": {"$regex": brand_filter, "$options": "i"}}
+                ]
         
         if gender:
             query["gender"] = gender
