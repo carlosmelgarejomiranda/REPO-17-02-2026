@@ -102,7 +102,15 @@ export const WebsiteBuilder = ({ onClose }) => {
       /* Image editing styles */
       .img-edit-wrapper {
         position: relative !important;
-        display: inline-block;
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+      .img-edit-wrapper > img {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
       }
       .img-edit-overlay {
         position: absolute !important;
@@ -110,16 +118,18 @@ export const WebsiteBuilder = ({ onClose }) => {
         left: 0 !important;
         right: 0 !important;
         bottom: 0 !important;
-        background: rgba(0,0,0,0.7) !important;
+        background: rgba(0,0,0,0.75) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         opacity: 0 !important;
-        transition: opacity 0.3s ease !important;
+        transition: opacity 0.2s ease !important;
         cursor: pointer !important;
-        z-index: 100 !important;
+        z-index: 9999 !important;
+        pointer-events: auto !important;
       }
-      .img-edit-wrapper:hover .img-edit-overlay {
+      .img-edit-wrapper:hover .img-edit-overlay,
+      .img-edit-overlay:hover {
         opacity: 1 !important;
       }
       .img-edit-btn {
@@ -133,6 +143,7 @@ export const WebsiteBuilder = ({ onClose }) => {
         align-items: center !important;
         gap: 8px !important;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+        pointer-events: auto !important;
       }
 
       /* Background image editing styles */
