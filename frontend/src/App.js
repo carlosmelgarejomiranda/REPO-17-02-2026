@@ -81,7 +81,7 @@ const useAuth = () => {
 // Studio Navigation Component - Editorial Style
 const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => (
   <nav 
-    data-studio-nav="true"
+    className="studio-nav-dark"
     style={{ 
       position: 'fixed', 
       top: 0, 
