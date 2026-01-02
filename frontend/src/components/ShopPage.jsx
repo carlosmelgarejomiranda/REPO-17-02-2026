@@ -505,11 +505,9 @@ const fetchProducts = useCallback(async () => {
         <div 
           className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 z-40"
           style={{ top: '99px' }}
-          onMouseEnter={() => setShowBrandsMenu(true)}
-          onMouseLeave={() => setShowBrandsMenu(false)}
+          onMouseEnter={handleBrandsEnter}
+          onMouseLeave={handleBrandsLeave}
         >
-          {/* Invisible connector at top - spans from Brands button area */}
-          <div className="absolute -top-8 left-0 w-40 h-8" />
           <div className="max-w-[1400px] mx-auto px-8 py-8">
               <div className="grid grid-cols-5 gap-6">
                 {/* Indumentaria - 2 columns span */}
