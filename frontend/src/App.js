@@ -559,7 +559,7 @@ function AppRouter() {
 
           {/* Admin Dashboard */}
           <Route path="/admin" element={
-            user?.role === 'admin' ? (
+            ['admin', 'superadmin', 'staff', 'designer'].includes(user?.role) ? (
               <>
                 <StudioNav 
                   t={t} 
