@@ -308,16 +308,16 @@ const fetchProducts = useCallback(async () => {
             <div className="flex items-center">
               {/* Brands Menu Trigger */}
               <div 
-                className="relative"
+                className="relative group"
                 onMouseEnter={() => setShowBrandsMenu(true)}
                 onMouseLeave={() => setShowBrandsMenu(false)}
               >
-                <button className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors py-2 pb-6 font-medium">
+                <button className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors py-4 font-medium">
                   Brands
                 </button>
-                {/* Invisible bridge to prevent hover gap */}
+                {/* Invisible bridge connecting button to dropdown */}
                 {showBrandsMenu && (
-                  <div className="absolute left-0 w-32 h-8 top-full" />
+                  <div className="absolute left-0 right-0 h-4 top-full" />
                 )}
               </div>
             </div>
@@ -350,13 +350,20 @@ const fetchProducts = useCallback(async () => {
                 onMouseEnter={() => setShowNavMenu(true)}
                 onMouseLeave={() => { setShowNavMenu(false); setShowStudioSubmenu(false); }}
               >
-                <button className="text-gray-500 hover:text-gray-900 transition-colors p-1">
+                <button className="text-gray-500 hover:text-gray-900 transition-colors p-2">
                   <Menu className="w-5 h-5" />
                 </button>
+                
+                {/* Invisible bridge */}
+                {showNavMenu && (
+                  <div className="absolute right-0 w-full h-2 top-full" />
+                )}
                 
                 {/* Navigation Dropdown */}
                 {showNavMenu && (
                   <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg border border-gray-100 py-2 z-50">
+                    {/* Invisible area at top to maintain hover */}
+                    <div className="absolute -top-2 left-0 right-0 h-2" />
                     <a 
                       href="/" 
                       className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
