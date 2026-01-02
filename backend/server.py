@@ -1355,11 +1355,106 @@ async def admin_delete_reservation(reservation_id: str, request: Request):
 
 @api_router.get("/admin/users")
 async def admin_get_users(request: Request):
-    """Get all users (admin only)"""
-    await require_admin(request)
+    """Get all users (staff and above only)"""
+    await require_staff_or_above(request)
     
     users = await db.users.find({}, {"_id": 0, "password": 0}).to_list(1000)
     return users
+
+@api_router.put("/admin/users/{user_id}/role")
+async def admin_update_user_role(user_id: str, role_data: RoleUpdate, request: Request):
+    """Update user role (superadmin only)"""
+    current_user = await require_superadmin(request)
+    
+    # Check if user exists
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Validate role
+    valid_roles = ["user", "designer", "staff", "admin"]
+    if role_data.role not in valid_roles:
+        raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {valid_roles}")
+    
+    # Cannot change superadmin's role (avenuepy@gmail.com)
+    if user.get("email") == ADMIN_EMAIL:
+        raise HTTPException(status_code=403, detail="Cannot change superadmin role")
+    
+    # Update role
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$set": {"role": role_data.role}}
+    )
+    
+    updated_user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password": 0})
+    return updated_user
+
+# ==================== ADMIN SETTINGS ====================
+
+class AdminSettings(BaseModel):
+    payment_gateway_enabled: Optional[bool] = None
+    show_only_products_with_images: Optional[bool] = None
+    whatsapp_commercial: Optional[str] = None
+
+@api_router.get("/admin/settings")
+async def get_admin_settings(request: Request):
+    """Get admin settings"""
+    await require_staff_or_above(request)
+    
+    settings = await db.admin_settings.find_one({"_id": "global"})
+    if not settings:
+        # Create default settings
+        default_settings = {
+            "_id": "global",
+            "payment_gateway_enabled": False,  # Start with gateway disabled
+            "show_only_products_with_images": False,
+            "whatsapp_commercial": "+595973666000"
+        }
+        await db.admin_settings.insert_one(default_settings)
+        settings = default_settings
+    
+    # Remove MongoDB _id for response
+    return {
+        "payment_gateway_enabled": settings.get("payment_gateway_enabled", False),
+        "show_only_products_with_images": settings.get("show_only_products_with_images", False),
+        "whatsapp_commercial": settings.get("whatsapp_commercial", "+595973666000")
+    }
+
+@api_router.put("/admin/settings")
+async def update_admin_settings(settings_update: AdminSettings, request: Request):
+    """Update admin settings (admin only)"""
+    await require_admin(request)
+    
+    update_data = {k: v for k, v in settings_update.model_dump().items() if v is not None}
+    
+    if update_data:
+        await db.admin_settings.update_one(
+            {"_id": "global"},
+            {"$set": update_data},
+            upsert=True
+        )
+    
+    return await get_admin_settings(request)
+
+@api_router.get("/admin/permissions")
+async def get_user_permissions(request: Request):
+    """Get current user's permissions based on role"""
+    user = await require_auth(request)
+    role = user.get("role", "user")
+    
+    return {
+        "role": role,
+        "permissions": {
+            "can_manage_users": role == "superadmin",
+            "can_edit_website": role in ["superadmin", "admin", "designer"],
+            "can_manage_orders": role in ["superadmin", "admin", "staff"],
+            "can_manage_reservations": role in ["superadmin", "admin", "staff"],
+            "can_manage_ugc": role in ["superadmin", "admin", "staff"],
+            "can_manage_images": role in ["superadmin", "admin", "designer"],
+            "can_change_settings": role in ["superadmin", "admin"],
+            "can_view_analytics": role in ["superadmin", "admin", "staff"]
+        }
+    }
 
 # ==================== ADMIN ORDERS ====================
 
