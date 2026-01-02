@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-import { ArrowLeft, MapPin, Store, Truck, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Store, Truck, Loader2, AlertTriangle, ShoppingBag, X } from 'lucide-react';
 import { ShopHeader } from './ShopHeader';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
@@ -29,9 +29,77 @@ const resolveImageUrl = (imageUrl) => {
   return imageUrl;
 };
 
+// Out of Stock Modal Component
+const OutOfStockModal = ({ items, onContinueWithout, onGoToShop, onClose }) => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
+      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+            <AlertTriangle className="w-6 h-6 text-red-600" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Producto sin stock</h3>
+            <p className="text-sm text-gray-500">Algunos productos ya no están disponibles</p>
+          </div>
+        </div>
+        
+        <div className="bg-gray-50 rounded-xl p-4 mb-6 max-h-60 overflow-y-auto">
+          {items.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-3 py-3 border-b border-gray-200 last:border-0">
+              <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                <ShoppingBag className="w-5 h-5 text-gray-400" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-gray-900 text-sm">{item.name}</p>
+                {item.size && <p className="text-xs text-gray-500">Talle: {item.size}</p>}
+                <p className="text-xs text-red-600 font-medium mt-1">
+                  {item.reason === 'out_of_stock' 
+                    ? 'Sin stock disponible' 
+                    : `Solo ${item.available_stock} disponible(s)`}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <p className="text-sm text-gray-600 mb-6">
+          Lo sentimos, {items.length === 1 ? 'este producto se ha agotado' : 'estos productos se han agotado'} mientras revisabas tu compra. 
+          Puedes continuar sin {items.length === 1 ? 'él' : 'ellos'} o explorar más opciones en nuestra tienda.
+        </p>
+        
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={onContinueWithout}
+            className="w-full py-3 px-4 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition-colors"
+          >
+            Continuar sin {items.length === 1 ? 'este artículo' : 'estos artículos'}
+          </button>
+          <button
+            onClick={onGoToShop}
+            className="w-full py-3 px-4 bg-gray-100 text-gray-900 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+          >
+            Ir a la tienda
+          </button>
+        </div>
+        
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [validatingInventory, setValidatingInventory] = useState(false);
+  const [outOfStockItems, setOutOfStockItems] = useState([]);
+  const [showOutOfStockModal, setShowOutOfStockModal] = useState(false);
   const [deliveryType, setDeliveryType] = useState('delivery');
   const [deliveryCost, setDeliveryCost] = useState(0);
   const [deliveryDistance, setDeliveryDistance] = useState(0);
