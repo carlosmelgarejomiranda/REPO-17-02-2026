@@ -350,6 +350,7 @@ export const AdminDashboard = ({ user }) => {
                     className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none"
                   >
                     <option value="" className="bg-[#1a1a1a]">Todos</option>
+                    <option value="pending" className="bg-[#1a1a1a]">Solicitudes</option>
                     <option value="confirmed" className="bg-[#1a1a1a]">Confirmadas</option>
                     <option value="cancelled" className="bg-[#1a1a1a]">Canceladas</option>
                   </select>
@@ -362,6 +363,17 @@ export const AdminDashboard = ({ user }) => {
                 </div>
               </div>
             </div>
+            
+            {/* Pending Reservations Alert */}
+            {stats.pending > 0 && (
+              <div className="mx-6 mb-4 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-500" />
+                <span className="text-amber-400">
+                  <strong>{stats.pending}</strong> solicitud(es) de reserva pendiente(s) de aprobación
+                </span>
+              </div>
+            )}
+            
             <div className="p-6">
               {loading ? (
                 <div className="text-center py-12">
@@ -388,8 +400,20 @@ export const AdminDashboard = ({ user }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {reservations.map((res) => (
-                        <tr key={res.reservation_id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      {reservations.map((res) => {
+                        const statusColors = {
+                          pending: 'bg-amber-500/20 text-amber-400',
+                          confirmed: 'bg-green-500/20 text-green-400',
+                          cancelled: 'bg-red-500/20 text-red-400'
+                        };
+                        const statusLabels = {
+                          pending: 'Solicitud',
+                          confirmed: 'Confirmada',
+                          cancelled: 'Cancelada'
+                        };
+                        
+                        return (
+                        <tr key={res.reservation_id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${res.status === 'pending' ? 'bg-amber-500/5' : ''}`}>
                           <td className="p-4 text-white">{res.date}</td>
                           <td className="p-4 text-white">{res.start_time} - {res.end_time}</td>
                           <td className="p-4">
@@ -400,19 +424,24 @@ export const AdminDashboard = ({ user }) => {
                             <div className="text-white">{res.phone}</div>
                             <div className="text-gray-500 text-sm">{res.email}</div>
                           </td>
-                          <td className="p-4 text-[#d4a968] font-medium">{res.price.toLocaleString()} Gs</td>
+                          <td className="p-4 text-[#d4a968] font-medium">{res.price?.toLocaleString() || 0} Gs</td>
                           <td className="p-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              res.status === 'confirmed' 
-                                ? 'bg-green-500/20 text-green-400'
-                                : 'bg-red-500/20 text-red-400'
-                            }`}>
-                              {res.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[res.status] || statusColors.pending}`}>
+                              {statusLabels[res.status] || res.status}
                             </span>
                           </td>
                           <td className="p-4">
                             <div className="flex gap-2">
-                              {res.status === 'confirmed' ? (
+                              {res.status === 'pending' && (
+                                <button
+                                  onClick={() => confirmReservation(res.reservation_id)}
+                                  className="p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
+                                  title="Aprobar solicitud"
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                </button>
+                              )}
+                              {res.status === 'confirmed' && (
                                 <button
                                   onClick={() => updateReservationStatus(res.reservation_id, 'cancelled')}
                                   className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
@@ -420,7 +449,8 @@ export const AdminDashboard = ({ user }) => {
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
-                              ) : (
+                              )}
+                              {res.status === 'cancelled' && (
                                 <button
                                   onClick={() => updateReservationStatus(res.reservation_id, 'confirmed')}
                                   className="p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
