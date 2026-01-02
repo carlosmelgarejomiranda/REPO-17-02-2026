@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, Package, MapPin, Phone, Mail, Loader2, AlertCircle } from 'lucide-react';
+import { ShopHeader } from './ShopHeader';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
-export const OrderSuccessPage = ({ setCart }) => {
+export const OrderSuccessPage = ({ setCart, user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
