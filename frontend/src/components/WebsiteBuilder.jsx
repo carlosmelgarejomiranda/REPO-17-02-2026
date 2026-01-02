@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   X, Save, Eye, Smartphone, Monitor, ChevronLeft, Upload, Check,
-  Undo, Redo, Image, Video, Edit3, Loader2
+  Edit3, Loader2, Image
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
@@ -19,7 +19,6 @@ export const WebsiteBuilder = ({ onClose }) => {
   const [selectedPage, setSelectedPage] = useState(EDITABLE_PAGES[0]);
   const [previewDevice, setPreviewDevice] = useState('desktop');
   const [isEditing, setIsEditing] = useState(true);
-  const [editingElement, setEditingElement] = useState(null);
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [mediaTarget, setMediaTarget] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
@@ -45,34 +44,34 @@ export const WebsiteBuilder = ({ onClose }) => {
     }
   };
 
-  // Apply modifications to iframe content
-  const applyModifications = useCallback(() => {
-    if (!iframeRef.current) return;
-    
-    const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
-    if (!iframeDoc) return;
-
-    // Apply text modifications
-    Object.entries(pageModifications).forEach(([selector, value]) => {
-      try {
-        if (selector.startsWith('text:')) {
-          const elementId = selector.replace('text:', '');
-          const element = iframeDoc.querySelector(`[data-edit-id="${elementId}"]`);
-          if (element) {
-            element.textContent = value;
-          }
-        } else if (selector.startsWith('img:')) {
-          const elementId = selector.replace('img:', '');
-          const element = iframeDoc.querySelector(`[data-edit-id="${elementId}"]`);
-          if (element) {
-            element.src = value;
-          }
+  // Handle image change from modal
+  const handleImageChange = useCallback((newUrl) => {
+    if (mediaTarget && iframeRef.current) {
+      const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
+      
+      if (mediaTarget.type === 'img') {
+        // Regular image tag
+        const img = iframeDoc.querySelector(`[data-edit-id="${mediaTarget.editId}"]`);
+        if (img) {
+          img.src = newUrl;
         }
-      } catch (err) {
-        console.error('Error applying modification:', err);
+      } else if (mediaTarget.type === 'background') {
+        // Background image
+        const element = iframeDoc.querySelector(`[data-bg-edit-id="${mediaTarget.editId}"]`);
+        if (element) {
+          element.style.backgroundImage = `url('${newUrl}')`;
+        }
       }
-    });
-  }, [pageModifications]);
+      
+      setPageModifications(prev => ({
+        ...prev,
+        [`${mediaTarget.type}:${mediaTarget.editId}`]: newUrl
+      }));
+      setHasChanges(true);
+    }
+    setShowMediaModal(false);
+    setMediaTarget(null);
+  }, [mediaTarget]);
 
   // Setup editing capabilities on iframe load
   const setupIframeEditing = useCallback(() => {
@@ -83,155 +82,276 @@ export const WebsiteBuilder = ({ onClose }) => {
 
     // Add editing styles
     const style = iframeDoc.createElement('style');
+    style.id = 'builder-styles';
     style.textContent = `
+      /* Text editing styles */
       [data-editable="true"] {
-        cursor: pointer;
-        transition: outline 0.2s ease;
+        cursor: pointer !important;
+        transition: outline 0.2s ease, background 0.2s ease;
       }
       [data-editable="true"]:hover {
         outline: 2px dashed #d4a968 !important;
-        outline-offset: 4px;
+        outline-offset: 2px;
       }
       [data-editable="true"].editing {
         outline: 2px solid #d4a968 !important;
-        outline-offset: 4px;
-        background: rgba(212, 169, 104, 0.1);
+        outline-offset: 2px;
+        background: rgba(212, 169, 104, 0.15) !important;
       }
-      .edit-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 9998;
-      }
-      .edit-popup {
-        position: fixed;
-        z-index: 9999;
-        background: #1a1a1a;
-        border: 1px solid #d4a968;
-        border-radius: 8px;
-        padding: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      }
-      .edit-input {
-        width: 300px;
-        padding: 8px 12px;
-        background: #0a0a0a;
-        border: 1px solid #333;
-        border-radius: 6px;
-        color: white;
-        font-size: 14px;
-      }
-      .edit-input:focus {
-        outline: none;
-        border-color: #d4a968;
-      }
-      .edit-btn {
-        padding: 8px 16px;
-        background: #d4a968;
-        border: none;
-        border-radius: 6px;
-        color: black;
-        font-weight: 500;
-        cursor: pointer;
-        margin-top: 8px;
-      }
-      .edit-btn:hover {
-        background: #c49958;
-      }
-      .edit-btn-cancel {
-        background: transparent;
-        border: 1px solid #666;
-        color: white;
-        margin-left: 8px;
-      }
-      .edit-btn-cancel:hover {
-        background: #333;
+
+      /* Image editing styles */
+      .img-edit-wrapper {
+        position: relative !important;
+        display: inline-block;
       }
       .img-edit-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s;
-        cursor: pointer;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0,0,0,0.7) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+        cursor: pointer !important;
+        z-index: 100 !important;
       }
-      [data-editable-img="true"]:hover .img-edit-overlay {
-        opacity: 1;
+      .img-edit-wrapper:hover .img-edit-overlay {
+        opacity: 1 !important;
       }
       .img-edit-btn {
-        background: #d4a968;
-        color: black;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        background: #d4a968 !important;
+        color: black !important;
+        padding: 12px 24px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
       }
-      body.builder-editing {
-        cursor: default;
+
+      /* Background image editing styles */
+      .bg-edit-btn {
+        position: absolute !important;
+        top: 16px !important;
+        right: 16px !important;
+        background: #d4a968 !important;
+        color: black !important;
+        padding: 10px 18px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        cursor: pointer !important;
+        z-index: 1000 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+        border: none !important;
+      }
+      [data-has-bg="true"]:hover .bg-edit-btn {
+        opacity: 1 !important;
+      }
+      .bg-edit-btn:hover {
+        background: #c49958 !important;
+      }
+
+      /* Edit popup styles */
+      .edit-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0,0,0,0.6) !important;
+        z-index: 9998 !important;
+      }
+      .edit-popup {
+        position: fixed !important;
+        z-index: 9999 !important;
+        background: #1a1a1a !important;
+        border: 2px solid #d4a968 !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6) !important;
+        max-width: 90vw !important;
+      }
+      .edit-input {
+        width: 320px !important;
+        max-width: 100% !important;
+        padding: 10px 14px !important;
+        background: #0a0a0a !important;
+        border: 1px solid #333 !important;
+        border-radius: 8px !important;
+        color: white !important;
+        font-size: 14px !important;
+      }
+      .edit-input:focus {
+        outline: none !important;
+        border-color: #d4a968 !important;
+      }
+      .edit-btn {
+        padding: 10px 20px !important;
+        background: #d4a968 !important;
+        border: none !important;
+        border-radius: 8px !important;
+        color: black !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        font-size: 14px !important;
+      }
+      .edit-btn:hover {
+        background: #c49958 !important;
+      }
+      .edit-btn-cancel {
+        background: transparent !important;
+        border: 1px solid #555 !important;
+        color: white !important;
+        margin-left: 8px !important;
+      }
+      .edit-btn-cancel:hover {
+        background: #333 !important;
       }
     `;
+    
+    // Remove existing styles if any
+    const existingStyle = iframeDoc.getElementById('builder-styles');
+    if (existingStyle) existingStyle.remove();
+    
     iframeDoc.head.appendChild(style);
+
+    // Function to check if element has background image
+    const hasBackgroundImage = (el) => {
+      const style = window.getComputedStyle(el);
+      const bgImage = style.backgroundImage;
+      return bgImage && bgImage !== 'none' && bgImage.includes('url');
+    };
+
+    // Function to get background image URL
+    const getBackgroundImageUrl = (el) => {
+      const style = window.getComputedStyle(el);
+      const bgImage = style.backgroundImage;
+      const match = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
+      return match ? match[1] : '';
+    };
 
     // Mark editable elements
     const markEditableElements = () => {
       // Mark all text elements that can be edited
-      const textElements = iframeDoc.querySelectorAll('h1, h2, h3, h4, h5, p, span, a, button, label');
-      textElements.forEach((el, index) => {
-        if (el.children.length === 0 || el.childNodes.length === 1) {
-          const editId = `text-${selectedPage.id}-${index}`;
+      const textElements = iframeDoc.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, a, button, label, li');
+      let textIndex = 0;
+      textElements.forEach((el) => {
+        // Only mark leaf text nodes (elements with mostly text content)
+        const hasOnlyTextOrSmallChildren = Array.from(el.childNodes).every(
+          node => node.nodeType === Node.TEXT_NODE || 
+                  (node.nodeType === Node.ELEMENT_NODE && ['SPAN', 'STRONG', 'EM', 'B', 'I', 'BR'].includes(node.tagName))
+        );
+        
+        if (hasOnlyTextOrSmallChildren && el.textContent.trim().length > 0) {
+          const editId = `text-${selectedPage.id}-${textIndex++}`;
           el.setAttribute('data-editable', 'true');
           el.setAttribute('data-edit-id', editId);
-          el.setAttribute('data-edit-type', 'text');
         }
       });
 
-      // Mark all images
+      // Mark all <img> elements
       const images = iframeDoc.querySelectorAll('img');
       images.forEach((img, index) => {
+        if (img.closest('.img-edit-wrapper')) return; // Already wrapped
+        
         const editId = `img-${selectedPage.id}-${index}`;
         img.setAttribute('data-edit-id', editId);
-        img.setAttribute('data-edit-type', 'image');
         
-        // Wrap image if not already wrapped
-        if (!img.parentElement.classList.contains('img-edit-wrapper')) {
-          const wrapper = iframeDoc.createElement('div');
-          wrapper.className = 'img-edit-wrapper';
-          wrapper.style.position = 'relative';
-          wrapper.style.display = 'inline-block';
-          wrapper.setAttribute('data-editable-img', 'true');
+        const wrapper = iframeDoc.createElement('div');
+        wrapper.className = 'img-edit-wrapper';
+        
+        // Copy some styles from parent
+        const imgStyle = window.getComputedStyle(img);
+        if (imgStyle.display === 'block') {
+          wrapper.style.display = 'block';
+        }
+        wrapper.style.width = 'fit-content';
+        
+        const overlay = iframeDoc.createElement('div');
+        overlay.className = 'img-edit-overlay';
+        overlay.innerHTML = `
+          <div class="img-edit-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="m21 15-5-5L5 21"/>
+            </svg>
+            Cambiar imagen
+          </div>
+        `;
+        
+        img.parentNode.insertBefore(wrapper, img);
+        wrapper.appendChild(img);
+        wrapper.appendChild(overlay);
+        
+        overlay.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openImageModal(img.src, editId, 'img');
+        };
+      });
+
+      // Mark all elements with background images
+      const allElements = iframeDoc.querySelectorAll('*');
+      let bgIndex = 0;
+      allElements.forEach((el) => {
+        if (hasBackgroundImage(el) && !el.querySelector('.bg-edit-btn')) {
+          const editId = `bg-${selectedPage.id}-${bgIndex++}`;
+          el.setAttribute('data-has-bg', 'true');
+          el.setAttribute('data-bg-edit-id', editId);
           
-          const overlay = iframeDoc.createElement('div');
-          overlay.className = 'img-edit-overlay';
-          overlay.innerHTML = '<div class="img-edit-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg> Cambiar imagen</div>';
+          // Make sure element has position for absolute button
+          const style = window.getComputedStyle(el);
+          if (style.position === 'static') {
+            el.style.position = 'relative';
+          }
           
-          img.parentNode.insertBefore(wrapper, img);
-          wrapper.appendChild(img);
-          wrapper.appendChild(overlay);
+          const editBtn = iframeDoc.createElement('button');
+          editBtn.className = 'bg-edit-btn';
+          editBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="m21 15-5-5L5 21"/>
+            </svg>
+            Cambiar fondo
+          `;
           
-          overlay.addEventListener('click', (e) => {
+          editBtn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleImageClick(img, editId);
-          });
+            const currentUrl = getBackgroundImageUrl(el);
+            openImageModal(currentUrl, editId, 'background');
+          };
+          
+          el.appendChild(editBtn);
         }
       });
     };
 
+    // Open image modal (communicate with parent)
+    const openImageModal = (currentUrl, editId, type) => {
+      // Use postMessage to communicate with parent
+      window.parent.postMessage({
+        type: 'openImageModal',
+        data: { currentUrl, editId, imageType: type }
+      }, '*');
+    };
+
     // Handle text element clicks
     const handleTextClick = (e) => {
-      if (!isEditing) return;
-      
       const target = e.target;
       if (target.getAttribute('data-editable') !== 'true') return;
       
@@ -256,20 +376,31 @@ export const WebsiteBuilder = ({ onClose }) => {
       
       const popup = iframeDoc.createElement('div');
       popup.className = 'edit-popup';
-      popup.style.top = `${Math.min(rect.bottom + 10, window.innerHeight - 150)}px`;
-      popup.style.left = `${Math.max(10, rect.left)}px`;
       
-      const isMultiline = target.tagName === 'P' || currentText.length > 50;
+      // Position popup
+      const iframeRect = iframeRef.current.getBoundingClientRect();
+      let top = rect.bottom + 10;
+      let left = Math.max(10, rect.left);
+      
+      // Make sure popup is visible
+      if (top + 150 > iframeDoc.documentElement.clientHeight) {
+        top = Math.max(10, rect.top - 150);
+      }
+      
+      popup.style.top = `${top}px`;
+      popup.style.left = `${left}px`;
+      
+      const isMultiline = target.tagName === 'P' || currentText.length > 60;
       
       popup.innerHTML = `
-        <div style="color: #d4a968; font-size: 12px; margin-bottom: 8px; font-weight: 500;">
+        <div style="color: #d4a968; font-size: 12px; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
           Editar texto
         </div>
         ${isMultiline 
-          ? `<textarea class="edit-input" style="height: 100px; resize: vertical;">${currentText}</textarea>`
-          : `<input type="text" class="edit-input" value="${currentText}" />`
+          ? `<textarea class="edit-input" style="height: 120px; resize: vertical;">${currentText}</textarea>`
+          : `<input type="text" class="edit-input" value="${currentText.replace(/"/g, '&quot;')}" />`
         }
-        <div style="display: flex; gap: 8px; margin-top: 12px;">
+        <div style="display: flex; gap: 10px; margin-top: 14px;">
           <button class="edit-btn save-btn">Guardar</button>
           <button class="edit-btn edit-btn-cancel cancel-btn">Cancelar</button>
         </div>
@@ -280,7 +411,7 @@ export const WebsiteBuilder = ({ onClose }) => {
       
       const input = popup.querySelector('.edit-input');
       input.focus();
-      input.select();
+      if (!isMultiline) input.select();
       
       // Save handler
       const saveEdit = () => {
@@ -288,12 +419,11 @@ export const WebsiteBuilder = ({ onClose }) => {
         target.textContent = newValue;
         target.classList.remove('editing');
         
-        // Save modification
-        setPageModifications(prev => ({
-          ...prev,
-          [`text:${editId}`]: newValue
-        }));
-        setHasChanges(true);
+        // Save modification via postMessage
+        window.parent.postMessage({
+          type: 'saveTextEdit',
+          data: { editId, value: newValue }
+        }, '*');
         
         popup.remove();
         overlay.remove();
@@ -306,43 +436,60 @@ export const WebsiteBuilder = ({ onClose }) => {
         overlay.remove();
       };
       
-      popup.querySelector('.save-btn').addEventListener('click', saveEdit);
-      popup.querySelector('.cancel-btn').addEventListener('click', cancelEdit);
-      overlay.addEventListener('click', cancelEdit);
+      popup.querySelector('.save-btn').onclick = saveEdit;
+      popup.querySelector('.cancel-btn').onclick = cancelEdit;
+      overlay.onclick = cancelEdit;
       
-      input.addEventListener('keydown', (e) => {
+      input.onkeydown = (e) => {
         if (e.key === 'Enter' && !isMultiline) {
+          e.preventDefault();
           saveEdit();
         } else if (e.key === 'Escape') {
           cancelEdit();
         }
-      });
+      };
     };
 
-    // Handle image click
-    const handleImageClick = (img, editId) => {
-      setMediaTarget({ element: img, editId });
-      setShowMediaModal(true);
-    };
-
-    // Add click listeners
+    // Add click listener for text editing
     iframeDoc.addEventListener('click', handleTextClick, true);
     
-    // Mark elements
-    markEditableElements();
-    
-    // Apply any saved modifications
-    applyModifications();
-    
-    // Add body class
-    iframeDoc.body.classList.add('builder-editing');
+    // Mark all editable elements
+    setTimeout(() => {
+      markEditableElements();
+    }, 500);
 
-  }, [isEditing, selectedPage, applyModifications]);
+  }, [selectedPage]);
+
+  // Listen for messages from iframe
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data.type === 'openImageModal') {
+        setMediaTarget({
+          currentUrl: event.data.data.currentUrl,
+          editId: event.data.data.editId,
+          type: event.data.data.imageType
+        });
+        setShowMediaModal(true);
+      } else if (event.data.type === 'saveTextEdit') {
+        setPageModifications(prev => ({
+          ...prev,
+          [`text:${event.data.data.editId}`]: event.data.data.value
+        }));
+        setHasChanges(true);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   // Handle iframe load
   const handleIframeLoad = () => {
     if (isEditing) {
-      setupIframeEditing();
+      // Small delay to ensure page is fully loaded
+      setTimeout(() => {
+        setupIframeEditing();
+      }, 1000);
     }
   };
 
@@ -365,28 +512,10 @@ export const WebsiteBuilder = ({ onClose }) => {
     }
   };
 
-  // Handle image change from modal
-  const handleImageChange = (newUrl) => {
-    if (mediaTarget && iframeRef.current) {
-      const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
-      const img = iframeDoc.querySelector(`[data-edit-id="${mediaTarget.editId}"]`);
-      if (img) {
-        img.src = newUrl;
-        setPageModifications(prev => ({
-          ...prev,
-          [`img:${mediaTarget.editId}`]: newUrl
-        }));
-        setHasChanges(true);
-      }
-    }
-    setShowMediaModal(false);
-    setMediaTarget(null);
-  };
-
   // Get iframe URL
   const getIframeUrl = () => {
     const baseUrl = window.location.origin;
-    return `${baseUrl}${selectedPage.path}?builder=true`;
+    return `${baseUrl}${selectedPage.path}?builder=true&t=${Date.now()}`;
   };
 
   return (
@@ -471,7 +600,7 @@ export const WebsiteBuilder = ({ onClose }) => {
       {isEditing && (
         <div className="bg-[#d4a968]/10 border-b border-[#d4a968]/30 px-4 py-2 text-center">
           <p className="text-[#d4a968] text-sm">
-            💡 <strong>Modo Edición:</strong> Haz clic en cualquier texto para editarlo • Pasa el cursor sobre las imágenes para cambiarlas
+            💡 <strong>Modo Edición:</strong> Haz clic en cualquier texto para editarlo • Pasa el cursor sobre imágenes o fondos para ver el botón "Cambiar"
           </p>
         </div>
       )}
@@ -504,7 +633,8 @@ export const WebsiteBuilder = ({ onClose }) => {
             setMediaTarget(null);
           }}
           onSelect={handleImageChange}
-          currentUrl={mediaTarget?.element?.src}
+          currentUrl={mediaTarget?.currentUrl}
+          type={mediaTarget?.type}
         />
       )}
     </div>
@@ -512,7 +642,7 @@ export const WebsiteBuilder = ({ onClose }) => {
 };
 
 // Media Modal Component
-const MediaModal = ({ onClose, onSelect, currentUrl }) => {
+const MediaModal = ({ onClose, onSelect, currentUrl, type }) => {
   const [url, setUrl] = useState(currentUrl || '');
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
@@ -545,7 +675,9 @@ const MediaModal = ({ onClose, onSelect, currentUrl }) => {
     <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-[#1a1a1a] rounded-2xl p-6 max-w-lg w-full" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl text-white font-medium">Cambiar Imagen</h3>
+          <h3 className="text-xl text-white font-medium">
+            {type === 'background' ? 'Cambiar Imagen de Fondo' : 'Cambiar Imagen'}
+          </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="w-6 h-6" />
           </button>
@@ -553,8 +685,8 @@ const MediaModal = ({ onClose, onSelect, currentUrl }) => {
 
         {/* Preview */}
         {url && (
-          <div className="mb-6 rounded-lg overflow-hidden bg-black/50">
-            <img src={url} alt="Preview" className="w-full h-48 object-cover" />
+          <div className="mb-6 rounded-lg overflow-hidden bg-black/50 border border-white/10">
+            <img src={url} alt="Preview" className="w-full h-48 object-cover" onError={(e) => e.target.style.display = 'none'} />
           </div>
         )}
 
@@ -576,24 +708,50 @@ const MediaModal = ({ onClose, onSelect, currentUrl }) => {
           ) : (
             <Upload className="w-5 h-5" />
           )}
-          {uploading ? 'Subiendo...' : 'Subir desde tu dispositivo'}
+          {uploading ? 'Subiendo...' : 'Subir imagen desde tu dispositivo'}
         </button>
 
         {/* URL Input */}
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="O pega una URL de imagen..."
-            className="flex-1 p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
-          />
-          <button
-            onClick={() => url && onSelect(url)}
-            className="px-4 py-2 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] transition-colors"
-          >
-            <Check className="w-5 h-5" />
-          </button>
+        <div className="space-y-3">
+          <label className="text-sm text-gray-400">O pega una URL de imagen:</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://ejemplo.com/imagen.jpg"
+              className="flex-1 p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
+            />
+            <button
+              onClick={() => url && onSelect(url)}
+              disabled={!url}
+              className="px-6 py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <Check className="w-5 h-5" />
+              Aplicar
+            </button>
+          </div>
+        </div>
+
+        {/* Suggested images */}
+        <div className="mt-6">
+          <label className="text-sm text-gray-400 mb-3 block">Imágenes sugeridas:</label>
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
+              'https://images.unsplash.com/photo-1676517243531-69e3b27276e9?w=400',
+              'https://images.unsplash.com/photo-1664277497095-424e085175e8?w=400',
+              'https://images.pexels.com/photos/35465931/pexels-photo-35465931.jpeg?w=400',
+            ].map((imgUrl, idx) => (
+              <button
+                key={idx}
+                onClick={() => onSelect(imgUrl.replace('w=400', 'w=1920'))}
+                className="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-[#d4a968] transition-colors"
+              >
+                <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
