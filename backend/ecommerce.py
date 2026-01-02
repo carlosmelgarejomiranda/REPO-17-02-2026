@@ -2060,8 +2060,9 @@ async def upload_batch_temp(request: Request, files: List[UploadFile] = File(...
     """Upload batch of images to temporary storage for visual assignment"""
     import shutil
     
-    # Create temp directory if not exists
-    temp_dir = os.path.join(UPLOAD_DIR, "temp_batch")
+    # Use base uploads directory for temp batch (not products subfolder)
+    base_upload_dir = "/app/backend/uploads"
+    temp_dir = os.path.join(base_upload_dir, "temp_batch")
     os.makedirs(temp_dir, exist_ok=True)
     
     # Generate batch ID
