@@ -788,7 +788,7 @@ const PageRenderer = ({ pageId, sections, onUpdateContent, onMoveUp, onMoveDown 
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
 
   return (
-    <div className="min-h-screen">
+    <div>
       {sortedSections.map((section, index) => (
         <EditableSection
           key={section.id}
