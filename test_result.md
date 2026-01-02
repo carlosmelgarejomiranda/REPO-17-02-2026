@@ -190,7 +190,7 @@ test_plan:
     file: "/app/frontend/src/components/WebsiteBuilder.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
@@ -198,6 +198,9 @@ test_plan:
       - working: true
         agent: "main"
         comment: "✅ V2 WYSIWYG Builder - Bug fixes applied: 1) Background image loads correctly (was not broken), 2) Mobile/Desktop toggle now works correctly, 3) Scroll fixed by removing overflow-hidden and min-h-screen constraints. Features section now visible when scrolling down."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE RETEST PASSED: All 13 test cases verified successfully. 1) Builder interface loads with dark theme ✅ 2) 'Página Principal' selected in dropdown ✅ 3) Mode banner shows 'Modo Edición' ✅ 4) Background image (man working on crafts) displays correctly ✅ 5) 'Cambiar fondo' button appears ✅ 6) Mobile/Desktop toggle works (375px mobile, full desktop) ✅ 7) Scrolling works, 'Nuestros Servicios' section visible ✅ 8) Section hover controls show gold dashed border, 'Hero Principal' label, up/down arrows ✅ 9) Text editing with gold borders functional ✅ 10) Preview mode toggle works ✅ 11) Save functionality operational ✅ 12) Back navigation returns to admin dashboard ✅ 13) All WYSIWYG features working perfectly. Website Builder ready for production use."
 
 agent_communication:
   - agent: "testing"
