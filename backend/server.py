@@ -115,8 +115,26 @@ class User(BaseModel):
     razon_social: Optional[str] = None
     ruc: Optional[str] = None
     picture: Optional[str] = None
-    role: str = "user"  # user or admin
+    role: str = "user"  # user, staff, designer, admin, superadmin
     created_at: datetime
+
+# Role hierarchy: superadmin > admin > staff > designer > user
+# Permissions:
+# - superadmin: Everything (only avenuepy@gmail.com)
+# - admin: Everything except managing admins
+# - staff: Everything except web editor
+# - designer: Only web editor and image management
+# - user: Basic user access
+ROLE_HIERARCHY = {
+    "superadmin": 5,
+    "admin": 4,
+    "staff": 3,
+    "designer": 2,
+    "user": 1
+}
+
+class RoleUpdate(BaseModel):
+    role: str
 
 class ReservationCreate(BaseModel):
     date: str  # YYYY-MM-DD
