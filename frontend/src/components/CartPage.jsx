@@ -99,7 +99,7 @@ export const CartPage = ({ cart, setCart, user, onLoginClick, onLogout, language
             Carrito ({cart.length} {cart.length === 1 ? 'artículo' : 'artículos'})
           </h1>
         </div>
-      </header>
+      </div>
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-6 py-12">
