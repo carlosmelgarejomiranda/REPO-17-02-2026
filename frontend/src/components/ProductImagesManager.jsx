@@ -144,11 +144,25 @@ export const ProductImagesManager = () => {
   const [bulkUploading, setBulkUploading] = useState(false);
   const [filterHasImage, setFilterHasImage] = useState('all'); // all, with, without
   const [stats, setStats] = useState({ total: 0, with_image: 0, without_image: 0 });
+  const [showBatchAssignment, setShowBatchAssignment] = useState(false);
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token');
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   };
+
+  // Show batch assignment panel
+  if (showBatchAssignment) {
+    return (
+      <BatchImageAssignment 
+        onClose={() => {
+          setShowBatchAssignment(false);
+          // Refresh products after batch assignment
+          fetchProducts();
+        }} 
+      />
+    );
+  }
 
   // Fetch products for image management
   const fetchProducts = useCallback(async () => {
