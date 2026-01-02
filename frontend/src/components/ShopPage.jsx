@@ -626,11 +626,22 @@ const fetchProducts = useCallback(async () => {
 };
 
 // Minimal Product Card
-const ProductCard = ({ product, onProductClick, formatPrice }) => {
+const ProductCard = ({ product, onProductClick, formatPrice, selectedBrand }) => {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   
   const imageUrl = resolveImageUrl(product.image);
+  
+  // Check if we should show the original brand (for unified brands like AVENUE OUTLET)
+  const shouldShowOriginalBrand = selectedBrand && (
+    selectedBrand === 'AVENUE OUTLET' || 
+    selectedBrand === 'SUN68' ||
+    selectedBrand === 'BODY SCULPT' ||
+    selectedBrand === 'UNDISTURBED'
+  );
+  
+  // Get the original brand/category to display
+  const originalBrand = product.category || product.brand;
   
   return (
     <div
@@ -670,6 +681,12 @@ const ProductCard = ({ product, onProductClick, formatPrice }) => {
 
       {/* Product Info */}
       <div className="space-y-1">
+        {/* Show original brand for unified brands */}
+        {shouldShowOriginalBrand && originalBrand && (
+          <p className="text-[10px] tracking-[0.1em] uppercase text-gray-400 font-medium">
+            {originalBrand}
+          </p>
+        )}
         <h3 className="text-sm text-gray-900 font-normal leading-tight line-clamp-2">
           {product.name}
         </h3>
