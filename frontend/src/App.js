@@ -80,8 +80,16 @@ const useAuth = () => {
 
 // Studio Navigation Component - Editorial Style
 const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => (
-  <div className="studio-nav-wrapper fixed top-0 left-0 right-0 z-50">
-    <nav style={{ padding: '16px 24px' }}>
+  <header style={{ 
+    position: 'fixed', 
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    zIndex: 50,
+    background: '#000000',
+    backgroundColor: '#000000'
+  }}>
+    <div style={{ padding: '16px 24px', background: '#000000' }}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center">
