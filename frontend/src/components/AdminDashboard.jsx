@@ -228,35 +228,48 @@ export const AdminDashboard = ({ user }) => {
                 <h1 className="text-2xl font-light text-white">
                   Panel de <span className="italic text-[#d4a968]">Administración</span>
                 </h1>
-                <p className="text-gray-500 text-sm">Bienvenido, {user?.name}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-gray-500 text-sm">{user?.name}</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full border ${getRoleBadge(userRole)}`}>
+                    {getRoleLabel(userRole)}
+                  </span>
+                </div>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
-              {/* Website Builder Button */}
-              <button
-                onClick={() => setShowBuilder(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#d4a968] to-[#c49958] text-black font-medium hover:opacity-90 transition-opacity text-sm"
-              >
-                <Palette className="w-4 h-4" />
-                <span className="hidden md:inline">Editar Web</span>
-              </button>
+              {/* Website Builder Button - Only for designers, admins, superadmin */}
+              {hasPermission(userRole, 'website') && (
+                <button
+                  onClick={() => setShowBuilder(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#d4a968] to-[#c49958] text-black font-medium hover:opacity-90 transition-opacity text-sm"
+                >
+                  <Palette className="w-4 h-4" />
+                  <span className="hidden md:inline">Editar Web</span>
+                </button>
+              )}
               
-              <button
-                onClick={sendTestEmail}
-                disabled={sendingTestEmail}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors text-sm disabled:opacity-50"
-              >
-                <Mail className="w-4 h-4" />
-                <span className="hidden md:inline">{sendingTestEmail ? 'Enviando...' : 'Test Email'}</span>
-              </button>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors text-sm"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="hidden md:inline">Nueva Reserva</span>
-              </button>
+              {/* Admin-only buttons */}
+              {hasPermission(userRole, 'settings') && (
+                <button
+                  onClick={sendTestEmail}
+                  disabled={sendingTestEmail}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors text-sm disabled:opacity-50"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span className="hidden md:inline">{sendingTestEmail ? 'Enviando...' : 'Test Email'}</span>
+                </button>
+              )}
+              
+              {hasPermission(userRole, 'reservations') && (
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="hidden md:inline">Nueva Reserva</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
