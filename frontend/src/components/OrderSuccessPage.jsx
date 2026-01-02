@@ -167,6 +167,37 @@ export const OrderSuccessPage = ({ setCart, user, onLoginClick, onLogout, langua
                 Por favor espera mientras confirmamos tu pago
               </p>
             </>
+          ) : paymentStatus === 'request' ? (
+            <>
+              <div className="w-16 h-16 mx-auto bg-amber-100 rounded-full flex items-center justify-center mb-6">
+                <MessageCircle className="w-8 h-8 text-amber-600" />
+              </div>
+              <h1 className="text-2xl font-normal text-gray-900 mb-2">
+                ¡Solicitud Enviada!
+              </h1>
+              <p className="text-gray-500 max-w-md mx-auto">
+                Hemos recibido tu pedido. Te contactaremos por WhatsApp para confirmar los detalles y coordinar el pago.
+              </p>
+              <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                <div className="flex items-center justify-center gap-2 text-amber-700">
+                  <Clock className="w-5 h-5" />
+                  <span className="font-medium">Respuesta en menos de 24 horas</span>
+                </div>
+              </div>
+            </>
+          ) : paymentStatus === 'pending_payment' ? (
+            <>
+              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                <Clock className="w-8 h-8 text-blue-600" />
+              </div>
+              <h1 className="text-2xl font-normal text-gray-900 mb-2">
+                Pedido Registrado
+              </h1>
+              <p className="text-gray-500 max-w-md mx-auto">
+                Tu pedido ha sido registrado. La pasarela de pago está temporalmente no disponible. 
+                Te contactaremos por WhatsApp para coordinar el pago.
+              </p>
+            </>
           ) : paymentStatus === 'paid' ? (
             <>
               <CheckCircle className="w-16 h-16 mx-auto text-green-600 mb-6" />
