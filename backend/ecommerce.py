@@ -1970,3 +1970,249 @@ async def export_products_for_images(
         "instructions": "Para subir imágenes: 1) Copia el nombre de la columna 'nombre_para_imagen', 2) Renombra tu imagen con ese nombre exacto (ej: CAMISA DAVID SANDOVAL.jpg), 3) Sube las imágenes en 'Carga Masiva'"
     }
 
+
+# ==================== VISUAL BATCH IMAGE ASSIGNMENT ====================
+
+@ecommerce_router.get("/admin/brands-categories")
+async def get_brands_categories():
+    """Get list of all unique brands/categories for dropdown selection"""
+    # Get distinct categories from grouped products
+    categories = await db.shop_products_grouped.distinct("category")
+    
+    # Filter out None and empty values, sort alphabetically
+    brands = sorted([c for c in categories if c and c.strip()])
+    
+    return {
+        "brands": brands,
+        "total": len(brands)
+    }
+
+@ecommerce_router.get("/admin/products-without-images")
+async def get_products_without_images(
+    brand: Optional[str] = None,
+    limit: int = 100
+):
+    """Get products without images, optionally filtered by brand/category"""
+    query = {
+        "$and": [
+            {"total_stock": {"$gt": 0}},
+            {
+                "$or": [
+                    {"custom_image": {"$exists": False}},
+                    {"custom_image": None},
+                    {"custom_image": ""},
+                    {"images": {"$exists": False}},
+                    {"images": None},
+                    {"images": []},
+                    {"images": [None, None, None]}
+                ]
+            }
+        ]
+    }
+    
+    if brand:
+        query["$and"].append({
+            "$or": [
+                {"category": {"$regex": f"^{brand}$", "$options": "i"}},
+                {"brand": {"$regex": f"^{brand}$", "$options": "i"}}
+            ]
+        })
+    
+    products = await db.shop_products_grouped.find(
+        query,
+        {"_id": 0, "grouped_id": 1, "base_model": 1, "category": 1, "brand": 1, 
+         "price": 1, "total_stock": 1}
+    ).sort("base_model", 1).limit(limit).to_list(limit)
+    
+    # Get total count without images for this brand
+    total_without_images = await db.shop_products_grouped.count_documents(query)
+    
+    return {
+        "products": products,
+        "total": total_without_images,
+        "brand_filter": brand
+    }
+
+@ecommerce_router.post("/admin/upload-batch-temp")
+async def upload_batch_temp(files: List[UploadFile] = File(...)):
+    """Upload batch of images to temporary storage for visual assignment"""
+    import shutil
+    
+    # Create temp directory if not exists
+    temp_dir = os.path.join(UPLOAD_DIR, "temp_batch")
+    os.makedirs(temp_dir, exist_ok=True)
+    
+    # Generate batch ID
+    batch_id = f"batch_{uuid.uuid4().hex[:12]}"
+    batch_dir = os.path.join(temp_dir, batch_id)
+    os.makedirs(batch_dir, exist_ok=True)
+    
+    uploaded_images = []
+    errors = []
+    
+    for file in files:
+        try:
+            # Validate file type
+            if not file.content_type or not file.content_type.startswith('image/'):
+                errors.append(f"{file.filename}: Tipo de archivo inválido")
+                continue
+            
+            # Read content
+            content = await file.read()
+            
+            if len(content) > 10 * 1024 * 1024:  # 10MB max
+                errors.append(f"{file.filename}: Archivo muy grande (máx 10MB)")
+                continue
+            
+            # Generate unique filename
+            ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+            temp_filename = f"{uuid.uuid4().hex[:8]}.{ext}"
+            temp_filepath = os.path.join(batch_dir, temp_filename)
+            
+            # Save file
+            with open(temp_filepath, "wb") as f:
+                f.write(content)
+            
+            # Generate URL for preview
+            image_url = f"{API_URL_BASE}/api/shop/temp-images/{batch_id}/{temp_filename}"
+            
+            uploaded_images.append({
+                "id": temp_filename.replace(f".{ext}", ""),
+                "filename": file.filename,
+                "temp_filename": temp_filename,
+                "url": image_url,
+                "batch_id": batch_id,
+                "size": len(content)
+            })
+            
+        except Exception as e:
+            errors.append(f"{file.filename}: Error - {str(e)}")
+    
+    # Store batch info in database for cleanup later
+    await db.temp_image_batches.insert_one({
+        "batch_id": batch_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "image_count": len(uploaded_images),
+        "images": [img["temp_filename"] for img in uploaded_images]
+    })
+    
+    return {
+        "batch_id": batch_id,
+        "uploaded": len(uploaded_images),
+        "errors": len(errors),
+        "images": uploaded_images,
+        "error_details": errors
+    }
+
+# Get API URL base for image serving
+API_URL_BASE = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+
+@ecommerce_router.get("/temp-images/{batch_id}/{filename}")
+async def serve_temp_image(batch_id: str, filename: str):
+    """Serve temporary batch images"""
+    temp_dir = os.path.join(UPLOAD_DIR, "temp_batch", batch_id)
+    filepath = os.path.join(temp_dir, filename)
+    
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    return FileResponse(filepath, media_type="image/jpeg")
+
+class ImageAssignment(BaseModel):
+    product_id: str
+    image_ids: List[str]  # List of temp image IDs to assign
+    batch_id: str
+
+@ecommerce_router.post("/admin/assign-images")
+async def assign_images_to_product(assignment: ImageAssignment):
+    """Assign temporary images to a product (max 3)"""
+    
+    if len(assignment.image_ids) > 3:
+        raise HTTPException(status_code=400, detail="Máximo 3 imágenes por producto")
+    
+    if len(assignment.image_ids) < 1:
+        raise HTTPException(status_code=400, detail="Debe asignar al menos 1 imagen")
+    
+    # Get product
+    product = await db.shop_products_grouped.find_one(
+        {"grouped_id": assignment.product_id}, 
+        {"_id": 0}
+    )
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    
+    # Process each temp image and move to permanent storage
+    temp_dir = os.path.join(UPLOAD_DIR, "temp_batch", assignment.batch_id)
+    assigned_images = []
+    
+    for idx, img_id in enumerate(assignment.image_ids):
+        # Find the temp file
+        temp_files = [f for f in os.listdir(temp_dir) if f.startswith(img_id)]
+        if not temp_files:
+            continue
+        
+        temp_filename = temp_files[0]
+        temp_filepath = os.path.join(temp_dir, temp_filename)
+        
+        if os.path.exists(temp_filepath):
+            # Read and process image
+            with open(temp_filepath, "rb") as f:
+                content = f.read()
+            
+            # Save to permanent storage with product ID
+            image_url = await process_and_save_image(
+                content, 
+                temp_filename, 
+                f"{assignment.product_id}_{idx}"
+            )
+            assigned_images.append(image_url)
+            
+            # Delete temp file
+            os.remove(temp_filepath)
+    
+    if not assigned_images:
+        raise HTTPException(status_code=400, detail="No se pudieron procesar las imágenes")
+    
+    # Prepare images array (pad to 3 elements)
+    images = assigned_images + [None] * (3 - len(assigned_images))
+    
+    # Update product with new images
+    await db.shop_products_grouped.update_one(
+        {"grouped_id": assignment.product_id},
+        {"$set": {
+            "images": images,
+            "custom_image": images[0],
+            "image_updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Update batch info - remove assigned images
+    await db.temp_image_batches.update_one(
+        {"batch_id": assignment.batch_id},
+        {"$pull": {"images": {"$in": [f"{img_id}.jpg" for img_id in assignment.image_ids] + 
+                              [f"{img_id}.png" for img_id in assignment.image_ids] +
+                              [f"{img_id}.jpeg" for img_id in assignment.image_ids] +
+                              [f"{img_id}.webp" for img_id in assignment.image_ids]}}}
+    )
+    
+    return {
+        "message": "Imágenes asignadas correctamente",
+        "product_id": assignment.product_id,
+        "assigned_images": assigned_images,
+        "product_name": product.get("base_model")
+    }
+
+@ecommerce_router.delete("/admin/temp-batch/{batch_id}")
+async def delete_temp_batch(batch_id: str):
+    """Clean up a temporary batch (delete all unassigned images)"""
+    import shutil
+    
+    temp_dir = os.path.join(UPLOAD_DIR, "temp_batch", batch_id)
+    
+    if os.path.exists(temp_dir):
+        shutil.rmtree(temp_dir)
+    
+    await db.temp_image_batches.delete_one({"batch_id": batch_id})
+    
+    return {"message": "Batch eliminado correctamente"}
+
