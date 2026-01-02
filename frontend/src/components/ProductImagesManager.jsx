@@ -383,7 +383,16 @@ export const ProductImagesManager = () => {
             color: bulkUploadMode ? '#0d0d0d' : '#a8a8a8'
           }}
         >
-          <Upload className="w-4 h-4 mr-2" /> Carga Masiva
+          <Upload className="w-4 h-4 mr-2" /> Carga Masiva (Auto-match)
+        </Button>
+        <Button
+          onClick={() => setShowBatchAssignment(true)}
+          style={{ 
+            backgroundColor: '#059669',
+            color: '#ffffff'
+          }}
+        >
+          <Layers className="w-4 h-4 mr-2" /> Asignación Visual por Lote
         </Button>
         
         {/* Download Reports */}
