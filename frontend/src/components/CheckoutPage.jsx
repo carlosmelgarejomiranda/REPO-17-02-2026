@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { ArrowLeft, MapPin, Store, Truck, Loader2 } from 'lucide-react';
+import { ShopHeader } from './ShopHeader';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 const GOOGLE_MAPS_KEY = process.env.REACT_APP_GOOGLE_MAPS_KEY || '';
@@ -28,7 +29,7 @@ const resolveImageUrl = (imageUrl) => {
   return imageUrl;
 };
 
-export const CheckoutPage = ({ cart, setCart, user }) => {
+export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [deliveryType, setDeliveryType] = useState('delivery');
