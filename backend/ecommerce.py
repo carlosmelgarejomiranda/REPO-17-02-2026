@@ -537,7 +537,7 @@ class CheckoutData(BaseModel):
     customer_phone: str
     delivery_type: str
     delivery_address: Optional[DeliveryAddress] = None
-    payment_method: str
+    payment_method: str = "bancard"
     notes: Optional[str] = None
 
 class DeliveryCalculation(BaseModel):
