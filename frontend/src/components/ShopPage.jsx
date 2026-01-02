@@ -130,6 +130,8 @@ export const ShopPage = ({ cart, setCart, user, onLoginClick, onLogout, language
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedBrand, setSelectedBrand] = useState('');
   const [showBrandsMenu, setShowBrandsMenu] = useState(false);
+  const [showNavMenu, setShowNavMenu] = useState(false);
+  const [showStudioSubmenu, setShowStudioSubmenu] = useState(false);
   const [organizedBrands, setOrganizedBrands] = useState({
     indumentaria: [],
     calzados: [],
