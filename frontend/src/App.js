@@ -80,9 +80,12 @@ const useAuth = () => {
 
 // Studio Navigation Component - Editorial Style
 const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => (
-  <nav className="fixed top-0 left-0 right-0 z-50">
+  <nav 
+    className="fixed top-0 left-0 right-0 z-50"
+    style={{ backgroundColor: '#0a0a0a' }}
+  >
     {/* Main Nav */}
-    <div className="px-6 py-4 bg-[#0a0a0a]">
+    <div className="px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center">
@@ -115,18 +118,23 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
               {user.role === 'admin' && (
                 <a 
                   href="/admin" 
-                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#d4a968]/10 border border-[#d4a968]/30 text-[#d4a968] text-sm hover:bg-[#d4a968]/20 transition-colors"
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[#d4a968] text-sm transition-colors"
+                  style={{ backgroundColor: 'rgba(212, 169, 104, 0.1)', border: '1px solid rgba(212, 169, 104, 0.3)' }}
                 >
                   Admin
                 </a>
               )}
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+              <div 
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+              >
                 <User className="w-4 h-4 text-[#d4a968]" />
                 <span className="text-sm text-white hidden md:inline">{user.name?.split(' ')[0]}</span>
               </div>
               <button 
                 onClick={onLogout} 
-                className="p-2 rounded-full hover:bg-white/5 transition-colors text-gray-500 hover:text-white"
+                className="p-2 rounded-full transition-colors text-gray-500 hover:text-white"
+                style={{ backgroundColor: 'transparent' }}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -134,14 +142,15 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
           ) : (
             <button 
               onClick={onLoginClick}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm hover:bg-white/10 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-sm transition-colors"
+              style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}
             >
               <User className="w-4 h-4" />
               <span className="hidden md:inline">Iniciar Sesión</span>
             </button>
           )}
           
-          <div className="h-5 w-px bg-white/10 hidden md:block"></div>
+          <div className="h-5 w-px hidden md:block" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}></div>
           <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
         </div>
       </div>
