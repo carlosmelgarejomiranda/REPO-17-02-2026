@@ -276,24 +276,102 @@ export const WebsiteBuilder = ({ onClose }) => {
     };
 
     const markEditableElements = () => {
-      // Text elements
-      const textSelectors = 'h1, h2, h3, h4, h5, h6, p, span, a, button, label, li';
       let textIndex = 0;
+      
+      // Helper: Check if element should be skipped
+      const shouldSkipElement = (el) => {
+        if (!el || !el.tagName) return true;
+        const tag = el.tagName.toLowerCase();
+        if (['script', 'style', 'noscript', 'svg', 'path', 'iframe', 'head', 'meta', 'link'].includes(tag)) return true;
+        if (el.classList && (el.classList.contains('builder-img-btn') || 
+            el.classList.contains('builder-carousel-btn') || 
+            el.classList.contains('builder-bg-btn') ||
+            el.classList.contains('edit-popup') ||
+            el.classList.contains('edit-overlay'))) return true;
+        if (el.closest && el.closest('.edit-popup, .edit-overlay, script, style, svg')) return true;
+        return false;
+      };
+
+      // Helper: Find all text nodes in the document using TreeWalker
+      const findAllTextNodes = () => {
+        const textNodes = [];
+        const walker = iframeDoc.createTreeWalker(
+          iframeDoc.body,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: (node) => {
+              const text = node.textContent.trim();
+              if (!text || text.length === 0) return NodeFilter.FILTER_REJECT;
+              if (text.length > 500) return NodeFilter.FILTER_REJECT;
+              const parent = node.parentElement;
+              if (!parent) return NodeFilter.FILTER_REJECT;
+              if (shouldSkipElement(parent)) return NodeFilter.FILTER_REJECT;
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+        );
+        
+        while (walker.nextNode()) {
+          textNodes.push(walker.currentNode);
+        }
+        return textNodes;
+      };
+
+      // Process all text nodes
+      const textNodes = findAllTextNodes();
+      const processedParents = new Set();
+      
+      textNodes.forEach((textNode) => {
+        const parent = textNode.parentElement;
+        if (!parent || processedParents.has(parent)) return;
+        if (parent.hasAttribute('data-editable')) return;
+        
+        // Check if parent has mostly text content (not complex nested elements)
+        const parentText = parent.textContent.trim();
+        const directTextContent = Array.from(parent.childNodes)
+          .filter(n => n.nodeType === Node.TEXT_NODE)
+          .map(n => n.textContent.trim())
+          .join('');
+        
+        // If the parent is a leaf node or has significant direct text
+        const isLeafOrTextNode = parent.children.length === 0 || 
+          (directTextContent.length > 0 && directTextContent.length >= parentText.length * 0.3);
+        
+        if (isLeafOrTextNode && parentText.length > 0 && parentText.length < 500) {
+          parent.setAttribute('data-editable', 'true');
+          parent.setAttribute('data-edit-id', `text-${selectedPage.id}-${textIndex++}`);
+          processedParents.add(parent);
+        }
+      });
+
+      // Also process common text containers (backup for styled elements)
+      const textSelectors = 'h1, h2, h3, h4, h5, h6, p, span, a, button, label, li, td, th, dt, dd, figcaption, blockquote, cite, em, strong, b, i, mark, small, sub, sup, time, address';
       iframeDoc.querySelectorAll(textSelectors).forEach((el) => {
         if (el.hasAttribute('data-editable')) return;
-        if (el.classList.contains('builder-img-btn') || el.classList.contains('builder-carousel-btn')) return;
-        if (el.closest('.edit-popup')) return;
+        if (shouldSkipElement(el)) return;
         
-        let hasText = false;
-        for (const node of el.childNodes) {
-          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-            hasText = true;
-            break;
+        const text = el.textContent.trim();
+        if (text.length > 0 && text.length < 500) {
+          // Check if it has direct text or is a leaf node
+          const hasDirectText = Array.from(el.childNodes).some(n => 
+            n.nodeType === Node.TEXT_NODE && n.textContent.trim().length > 0
+          );
+          
+          if (hasDirectText || el.children.length === 0) {
+            el.setAttribute('data-editable', 'true');
+            el.setAttribute('data-edit-id', `text-${selectedPage.id}-${textIndex++}`);
           }
         }
-        if (!hasText && el.textContent.trim() && el.children.length === 0) hasText = true;
+      });
+
+      // Find text in divs that act as text containers (no child elements, just text)
+      iframeDoc.querySelectorAll('div').forEach((el) => {
+        if (el.hasAttribute('data-editable')) return;
+        if (shouldSkipElement(el)) return;
+        if (el.children.length > 0) return; // Skip divs with child elements
         
-        if (hasText && el.textContent.trim().length > 0 && el.textContent.trim().length < 500) {
+        const text = el.textContent.trim();
+        if (text.length > 0 && text.length < 500) {
           el.setAttribute('data-editable', 'true');
           el.setAttribute('data-edit-id', `text-${selectedPage.id}-${textIndex++}`);
         }
