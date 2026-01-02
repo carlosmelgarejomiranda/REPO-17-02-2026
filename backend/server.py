@@ -772,8 +772,8 @@ async def register(user_data: UserCreate, response: Response):
     user_id = f"user_{uuid.uuid4().hex[:12]}"
     hashed_password = hash_password(user_data.password)
     
-    # Check if this is the admin email
-    role = "admin" if user_data.email == ADMIN_EMAIL else "user"
+    # Check if this is the superadmin email
+    role = "superadmin" if user_data.email == ADMIN_EMAIL else "user"
     
     user_doc = {
         "user_id": user_id,
