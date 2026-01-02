@@ -619,60 +619,17 @@ export const AdminDashboard = ({ user }) => {
           </div>
         )}
 
-        {/* Users Tab */}
+        {/* Users Tab - Role Management */}
         {activeTab === 'users' && (
-          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
-            <div className="p-6 border-b border-white/10">
-              <h2 className="text-xl font-light text-white">Usuarios <span className="italic text-[#d4a968]">Registrados</span></h2>
-            </div>
-            <div className="p-6">
-              {loading ? (
-                <div className="text-center py-12">
-                  <div className="w-8 h-8 border-2 border-[#d4a968] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-gray-500">Cargando...</p>
-                </div>
-              ) : users.length === 0 ? (
-                <div className="text-center py-12">
-                  <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-500">No hay usuarios</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-white/10">
-                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Nombre</th>
-                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Email</th>
-                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Teléfono</th>
-                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Rol</th>
-                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Registro</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.map((u) => (
-                        <tr key={u.user_id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                          <td className="p-4 text-white">{u.name}</td>
-                          <td className="p-4 text-gray-400">{u.email}</td>
-                          <td className="p-4 text-gray-400">{u.phone || '-'}</td>
-                          <td className="p-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              u.role === 'admin' 
-                                ? 'bg-[#d4a968]/20 text-[#d4a968]'
-                                : 'bg-white/10 text-gray-400'
-                            }`}>
-                              {u.role}
-                            </span>
-                          </td>
-                          <td className="p-4 text-gray-500 text-sm">
-                            {new Date(u.created_at).toLocaleDateString('es')}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden p-6">
+            <UserRolesManager currentUser={user} />
+          </div>
+        )}
+
+        {/* Settings Tab */}
+        {activeTab === 'settings' && (
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden p-6">
+            <AdminSettings currentUser={user} />
           </div>
         )}
       </div>
