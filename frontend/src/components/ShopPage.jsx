@@ -386,10 +386,13 @@ const fetchProducts = useCallback(async () => {
               <div className="grid grid-cols-5 gap-6">
                 {/* Indumentaria - 2 columns span */}
                 <div className="col-span-2">
-                  {/* Title centered across both columns */}
-                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 text-center">
-                    {BRAND_CATEGORIES.indumentaria.title}
-                  </h3>
+                  {/* Title and divider centered across both columns */}
+                  <div className="flex flex-col items-center mb-4">
+                    <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 pb-2">
+                      {BRAND_CATEGORIES.indumentaria.title}
+                    </h3>
+                    <div className="w-full border-b border-gray-200"></div>
+                  </div>
                   {/* Two column grid for brands */}
                   <div className="grid grid-cols-2 gap-x-6">
                     <ul className="space-y-2">
