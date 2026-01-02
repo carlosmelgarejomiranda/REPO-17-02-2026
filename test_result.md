@@ -223,7 +223,7 @@ frontend:
     file: "/app/frontend/src/components/WebsiteBuilder.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "testing"
@@ -249,6 +249,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "🔥 PERSISTENCE & IMAGE POSITIONING CRITICAL TESTS VERIFIED: Comprehensive testing of all critical test cases from review request completed successfully. VERIFIED FEATURES: 1) ADMIN ACCESS ✅ - Login with avenuepy@gmail.com/admin123 working, 'Editar Web' button accessible 2) IFRAME LOADING ✅ - Website Builder iframe loads correctly showing 'Donde las marcas brillan' title, found 66 editable texts and 16 editable images 3) TEXT EDITING MODAL ✅ - Click-to-edit functionality working with popup containing input field and save/cancel buttons 4) IMAGE EDITING MODAL ✅ - All required modal elements present: 'Cambiar Imagen' title, preview area, 'Arrastra para encuadrar' instruction, upload button, URL input, 'Aplicar cambios' button 5) IMAGE POSITIONING ✅ - Drag-to-frame functionality working with position indicator showing coordinates (e.g., 'Posición: 50% 50%') 6) CAROUSEL EDITING ✅ - 'Editar 3 fotos' button appears on hover, carousel modal opens with thumbnails, large preview, and save functionality 7) SAVE FUNCTIONALITY ✅ - Main 'Guardar' button working, backend API endpoints responding correctly (/api/builder/modifications/main-landing) 8) PERSISTENCE ARCHITECTURE ✅ - MongoDB storage for page modifications implemented, API endpoints for saving/loading modifications functional. All critical test cases from review request working as specified. Website Builder with PERSISTENCE and IMAGE POSITIONING features ready for production use."
+      - working: "pending"
+        agent: "main"
+        comment: "🔄 UNIVERSAL TEXT EDITING UPGRADE: Implemented TreeWalker-based DOM traversal to detect ALL text nodes including: stylized text like 'visión.', statistics like '50m²', 'MARCAS', 'PRODUCTOS', 'ESTUDIO'. Now uses findAllTextNodes() function that traverses entire DOM tree to find text nodes, not just common HTML elements. Preliminary screenshots show: 'marcas' text shows gold dashed border ✅, '50m²' stat shows gold dashed border ✅, 'visión.' on Studio page shows gold dashed border ✅. Needs full testing agent verification."
 
 agent_communication:
   - agent: "testing"
