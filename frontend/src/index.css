@@ -82,13 +82,15 @@ code {
     }
 }
 
-/* Force dark nav styles */
-[data-dark-nav] {
-    background-color: #000 !important;
-    background: #000 !important;
+/* Studio Nav Dark Override */
+.studio-nav-wrapper {
+    background-color: #000000 !important;
 }
-[data-dark-nav] * {
-    background: transparent;
+.studio-nav-wrapper nav {
+    background-color: #000000 !important;
+}
+.studio-nav-wrapper * {
+    background-color: transparent;
 }
 
 @layer base {
