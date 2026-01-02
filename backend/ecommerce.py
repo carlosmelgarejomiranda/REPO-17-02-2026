@@ -989,10 +989,23 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
 # ==================== CHECKOUT & ORDERS ====================
 
-@ecommerce_router.post("/checkout/stripe")
-async def create_stripe_checkout(data: CheckoutData, request: Request):
-    """Create Stripe checkout session"""
-    from server import notify_new_order
+async def get_admin_settings_for_checkout():
+    """Get admin settings for checkout process"""
+    settings = await db.admin_settings.find_one({"_id": "global"})
+    return {
+        "payment_gateway_enabled": settings.get("payment_gateway_enabled", False) if settings else False,
+        "whatsapp_commercial": settings.get("whatsapp_commercial", WHATSAPP_COMMERCIAL) if settings else WHATSAPP_COMMERCIAL
+    }
+
+@ecommerce_router.post("/checkout")
+async def create_checkout(data: CheckoutData, request: Request):
+    """Create order - handles both payment gateway and request mode"""
+    from server import notify_new_order, send_whatsapp_notification
+    
+    # Get admin settings to check if payment gateway is enabled
+    settings = await get_admin_settings_for_checkout()
+    payment_enabled = settings.get("payment_gateway_enabled", False)
+    whatsapp_commercial = settings.get("whatsapp_commercial", WHATSAPP_COMMERCIAL)
     
     subtotal = sum(item.price * item.quantity for item in data.items if item.price)
     delivery_cost = 0
@@ -1007,6 +1020,12 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
     total = subtotal + delivery_cost
     
     order_id = f"ORD-{uuid.uuid4().hex[:8].upper()}"
+    
+    # Determine initial status based on payment gateway setting
+    # If gateway disabled: status = "solicitud" (request)
+    # If gateway enabled: status = "pending" (will be "pagado" after payment)
+    initial_status = "solicitud" if not payment_enabled else "pending"
+    
     order_doc = {
         "order_id": order_id,
         "items": [item.model_dump() for item in data.items],
@@ -1018,181 +1037,168 @@ async def create_stripe_checkout(data: CheckoutData, request: Request):
         "delivery_cost": delivery_cost,
         "subtotal": subtotal,
         "total": total,
-        "payment_method": "stripe",
+        "payment_method": data.payment_method,
         "payment_status": "pending",
-        "order_status": "pending",
+        "order_status": initial_status,
         "notes": data.notes,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.orders.insert_one(order_doc)
     
-    try:
-        # Build dynamic URLs from request origin
-        base_url = str(request.base_url).rstrip('/')
-        if 'localhost' not in base_url:
-            base_url = os.environ.get('REACT_APP_BACKEND_URL', base_url)
+    # Build items list for notification
+    items_text = "\n".join([
+        f"• {item.name or 'Producto'}" + 
+        (f" - Talle: {item.size}" if item.size else "") + 
+        f" x{item.quantity} - {(item.price or 0):,.0f} Gs" 
+        for item in data.items
+    ])
+    
+    # Build delivery info
+    delivery_info = ""
+    location_link = ""
+    if data.delivery_type == 'delivery' and data.delivery_address:
+        addr = data.delivery_address
+        delivery_info = f"📍 *Dirección de entrega:*\n{addr.address}\n{addr.reference or ''}"
+        location_link = f"\n🗺️ *Link ubicación:* https://maps.google.com/?q={addr.lat},{addr.lng}"
+    else:
+        delivery_info = "🏪 *Retiro en tienda*"
+    
+    if not payment_enabled:
+        # CASE 1: Payment gateway disabled - send as purchase request
+        order_doc.pop("_id", None)
         
-        frontend_url = base_url.replace('/api', '').replace(':8001', ':3000')
-        
-        # Create webhook URL for Stripe
-        webhook_url = f"{base_url}api/shop/webhook/stripe"
-        
-        # Initialize Stripe checkout with emergentintegrations
-        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-        
-        # Build items description for metadata
-        items_desc = ", ".join([
-            f"{item.name or 'Producto'}" + (f" ({item.size})" if item.size else "") + f" x{item.quantity}"
-            for item in data.items
-        ])[:500]  # Stripe metadata limit
-        
-        # Create checkout session with total amount in USD (Stripe requires)
-        # Convert PYG to USD approximately (1 USD = ~7300 PYG)
-        amount_usd = round(total / 7300, 2)
-        
-        checkout_request = CheckoutSessionRequest(
-            amount=amount_usd,
-            currency="usd",
-            success_url=f"{frontend_url}/shop/order-success?order_id={order_id}&session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=f"{frontend_url}/shop/cart",
-            metadata={
-                "order_id": order_id,
-                "customer_email": data.customer_email,
-                "items": items_desc,
-                "total_pyg": str(int(total))
-            }
-        )
-        
-        session: CheckoutSessionResponse = await stripe_checkout.create_checkout_session(checkout_request)
-        
-        # Update order with session ID
-        await db.orders.update_one(
-            {"order_id": order_id},
-            {"$set": {"stripe_session_id": session.session_id}}
-        )
-        
-        # Create payment transaction record
-        await db.payment_transactions.insert_one({
-            "transaction_id": f"TXN-{uuid.uuid4().hex[:8].upper()}",
-            "order_id": order_id,
-            "session_id": session.session_id,
-            "amount_usd": amount_usd,
-            "amount_pyg": total,
-            "currency": "usd",
-            "customer_email": data.customer_email,
-            "payment_status": "pending",
-            "metadata": checkout_request.metadata,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        })
+        # Send WhatsApp to commercial with order details
+        whatsapp_message = f"""🛒 *SOLICITUD DE COMPRA - Avenue Online*
+
+📦 *Pedido:* {order_id}
+⏰ *Fecha:* {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')}
+
+👤 *Cliente:* {data.customer_name}
+📧 *Email:* {data.customer_email}
+📱 *Teléfono:* {data.customer_phone}
+
+🛍️ *Productos:*
+{items_text}
+
+{delivery_info}{location_link}
+
+💰 *Subtotal:* {subtotal:,.0f} Gs
+🚚 *Envío:* {delivery_cost:,.0f} Gs
+💰 *TOTAL:* {total:,.0f} Gs
+
+📝 *Notas:* {data.notes or 'Sin notas'}
+
+⚠️ *Estado:* SOLICITUD - Pendiente de confirmación"""
+
+        await send_whatsapp_notification(whatsapp_commercial, whatsapp_message)
         
         return {
-            "checkout_url": session.url,
+            "success": True,
             "order_id": order_id,
-            "session_id": session.session_id
+            "status": "solicitud",
+            "message": "Tu solicitud de compra fue enviada. Te contactaremos por WhatsApp para confirmar la recepción.",
+            "total": total
         }
-        
-    except Exception as e:
-        await db.orders.update_one(
-            {"order_id": order_id},
-            {"$set": {"payment_status": "failed", "error": str(e)}}
-        )
-        raise HTTPException(status_code=400, detail=f"Stripe error: {str(e)}")
-
-@ecommerce_router.post("/webhook/stripe")
-async def stripe_webhook(request: Request):
-    """Handle Stripe webhooks"""
-    from server import notify_new_order
-    
-    payload = await request.body()
-    sig_header = request.headers.get("Stripe-Signature")
-    
-    try:
-        # Initialize Stripe checkout
-        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url="")
-        
-        # Handle webhook
-        webhook_response = await stripe_checkout.handle_webhook(payload, sig_header)
-        
-        if webhook_response.event_type == "checkout.session.completed":
-            session_id = webhook_response.session_id
-            order_id = webhook_response.metadata.get("order_id") if webhook_response.metadata else None
-            
-            if order_id:
-                # Update order status
-                await db.orders.update_one(
-                    {"order_id": order_id},
-                    {"$set": {
-                        "payment_status": "paid",
-                        "order_status": "confirmed",
-                        "paid_at": datetime.now(timezone.utc).isoformat()
-                    }}
-                )
-                
-                # Update payment transaction
-                await db.payment_transactions.update_one(
-                    {"session_id": session_id},
-                    {"$set": {
-                        "payment_status": "paid",
-                        "updated_at": datetime.now(timezone.utc).isoformat()
-                    }}
-                )
-                
-                # Send notifications
-                order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
-                if order:
-                    await notify_new_order(order)
-        
-        return {"status": "success"}
-    except Exception as e:
-        logger.error(f"Webhook error: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
-
-@ecommerce_router.get("/checkout/status/{session_id}")
-async def get_checkout_status(session_id: str):
-    """Get checkout session status (for polling from frontend)"""
-    try:
-        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url="")
-        status: CheckoutStatusResponse = await stripe_checkout.get_checkout_status(session_id)
-        
-        # If payment is successful, update order
-        if status.payment_status == "paid":
-            order_id = status.metadata.get("order_id") if status.metadata else None
-            if order_id:
-                # Check if already processed
-                order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
-                if order and order.get("payment_status") != "paid":
-                    from server import notify_new_order
-                    
-                    await db.orders.update_one(
-                        {"order_id": order_id},
-                        {"$set": {
-                            "payment_status": "paid",
-                            "order_status": "confirmed",
-                            "paid_at": datetime.now(timezone.utc).isoformat()
-                        }}
-                    )
-                    
-                    await db.payment_transactions.update_one(
-                        {"session_id": session_id},
-                        {"$set": {"payment_status": "paid", "updated_at": datetime.now(timezone.utc).isoformat()}}
-                    )
-                    
-                    # Send notifications
-                    order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
-                    if order:
-                        await notify_new_order(order)
+    else:
+        # CASE 2: Payment gateway enabled - redirect to Bancard (placeholder for now)
+        # TODO: Integrate Bancard when credentials are available
+        order_doc.pop("_id", None)
         
         return {
-            "status": status.status,
-            "payment_status": status.payment_status,
-            "amount_total": status.amount_total,
-            "currency": status.currency,
-            "metadata": status.metadata
+            "success": True,
+            "order_id": order_id,
+            "status": "pending",
+            "message": "Redirigiendo a pasarela de pago...",
+            "total": total,
+            "payment_url": None,  # Will be Bancard URL when integrated
+            "payment_gateway": "bancard"
         }
-    except Exception as e:
-        logger.error(f"Checkout status error: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+
+@ecommerce_router.post("/checkout/confirm-payment/{order_id}")
+async def confirm_order_payment(order_id: str, request: Request):
+    """Confirm payment for an order (called after successful Bancard payment)"""
+    from server import send_whatsapp_notification
+    
+    order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Get admin settings
+    settings = await get_admin_settings_for_checkout()
+    whatsapp_commercial = settings.get("whatsapp_commercial", WHATSAPP_COMMERCIAL)
+    
+    # Update order status to paid
+    await db.orders.update_one(
+        {"order_id": order_id},
+        {"$set": {
+            "payment_status": "paid",
+            "order_status": "pagado",
+            "paid_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Build items text
+    items_text = "\n".join([
+        f"• {item.get('name', 'Producto')}" + 
+        (f" - Talle: {item.get('size')}" if item.get('size') else "") + 
+        f" x{item.get('quantity', 1)}" 
+        for item in order.get('items', [])
+    ])
+    
+    # Build delivery info
+    delivery_info = ""
+    location_link = ""
+    if order.get('delivery_type') == 'delivery' and order.get('delivery_address'):
+        addr = order['delivery_address']
+        delivery_info = f"📍 *Dirección de entrega:*\n{addr.get('address', '')}\n{addr.get('reference', '')}"
+        location_link = f"\n🗺️ *Link ubicación:* https://maps.google.com/?q={addr.get('lat')},{addr.get('lng')}"
+    else:
+        delivery_info = "🏪 *Retiro en tienda*"
+    
+    # Send WhatsApp confirmation to commercial
+    commercial_message = f"""✅ *PAGO CONFIRMADO - Avenue Online*
+
+📦 *Pedido:* {order_id}
+💳 *Estado:* PAGADO
+
+👤 *Cliente:* {order.get('customer_name', '')}
+📧 *Email:* {order.get('customer_email', '')}
+📱 *Teléfono:* {order.get('customer_phone', '')}
+
+🛍️ *Productos:*
+{items_text}
+
+{delivery_info}{location_link}
+
+💰 *TOTAL PAGADO:* {order.get('total', 0):,.0f} Gs"""
+
+    await send_whatsapp_notification(whatsapp_commercial, commercial_message)
+    
+    # Send WhatsApp confirmation to customer
+    customer_phone = order.get('customer_phone', '')
+    if customer_phone:
+        customer_message = f"""✅ *PAGO CONFIRMADO - Avenue Online*
+
+¡Hola {order.get('customer_name', '')}!
+
+Tu pago ha sido procesado correctamente.
+
+📦 *Pedido:* {order_id}
+💰 *Total:* {order.get('total', 0):,.0f} Gs
+
+{delivery_info}
+
+Te avisaremos cuando tu pedido esté listo para {('entregar' if order.get('delivery_type') == 'delivery' else 'retirar')}.
+
+¡Gracias por tu compra!
+
+_Avenue - Donde las marcas brillan_"""
+
+        await send_whatsapp_notification(customer_phone, customer_message)
+    
+    updated_order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+    return updated_order
 
 @ecommerce_router.get("/orders/{order_id}")
 async def get_order(order_id: str):
