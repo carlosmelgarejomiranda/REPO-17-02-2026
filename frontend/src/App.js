@@ -541,54 +541,41 @@ function AppRouter() {
           } />
 
           <Route path="/shop/cart" element={
-            <>
-              <ShopNav 
-                t={t} 
-                language={language} 
-                setLanguage={setLanguage}
-                user={user}
-                cart={cart}
-                onLoginClick={() => setShowAuthModal(true)}
-                onLogout={logout}
-              />
-              <div style={{ paddingTop: '80px' }}>
-                <CartPage cart={cart} setCart={setCart} />
-              </div>
-            </>
+            <CartPage 
+              cart={cart} 
+              setCart={setCart}
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
           } />
 
           <Route path="/shop/checkout" element={
-            <>
-              <ShopNav 
-                t={t} 
-                language={language} 
-                setLanguage={setLanguage}
-                user={user}
-                cart={cart}
-                onLoginClick={() => setShowAuthModal(true)}
-                onLogout={logout}
-              />
-              <div style={{ paddingTop: '80px' }}>
-                <CheckoutPage cart={cart} setCart={setCart} user={user} />
-              </div>
-            </>
+            <CheckoutPage 
+              cart={cart} 
+              setCart={setCart} 
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
           } />
 
           <Route path="/shop/order-success" element={
-            <>
-              <ShopNav 
-                t={t} 
-                language={language} 
-                setLanguage={setLanguage}
-                user={user}
-                cart={cart}
-                onLoginClick={() => setShowAuthModal(true)}
-                onLogout={logout}
-              />
-              <div style={{ paddingTop: '80px' }}>
-                <OrderSuccessPage setCart={setCart} />
-              </div>
-            </>
+            <OrderSuccessPage 
+              setCart={setCart}
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
           } />
         </Routes>
       </div>
