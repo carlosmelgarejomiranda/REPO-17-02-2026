@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
+import { ShopHeader } from './ShopHeader';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -16,7 +17,7 @@ const resolveImageUrl = (imageUrl) => {
   return imageUrl;
 };
 
-export const CartPage = ({ cart, setCart }) => {
+export const CartPage = ({ cart, setCart, user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const navigate = useNavigate();
 
   const updateQuantity = (cartItemId, delta) => {
@@ -42,20 +43,31 @@ export const CartPage = ({ cart, setCart }) => {
   // Empty Cart State
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center px-4">
-        <ShoppingBag className="w-16 h-16 mb-6 text-gray-300" />
-        <h2 className="text-2xl font-normal text-gray-900 mb-2">
-          Tu carrito está vacío
-        </h2>
-        <p className="text-gray-500 mb-8">
-          Explora nuestra tienda y encuentra productos increíbles
-        </p>
-        <button
-          onClick={() => navigate('/shop')}
-          className="px-8 py-4 bg-gray-900 text-white text-sm tracking-[0.15em] uppercase hover:bg-gray-800 transition-colors"
-        >
-          Continuar comprando
-        </button>
+      <div className="min-h-screen bg-[#FAFAFA]">
+        <ShopHeader 
+          cart={cart} 
+          user={user} 
+          onLoginClick={onLoginClick} 
+          onLogout={onLogout}
+          language={language}
+          setLanguage={setLanguage}
+          t={t}
+        />
+        <div className="flex flex-col items-center justify-center px-4 py-24">
+          <ShoppingBag className="w-16 h-16 mb-6 text-gray-300" />
+          <h2 className="text-2xl font-normal text-gray-900 mb-2">
+            Tu carrito está vacío
+          </h2>
+          <p className="text-gray-500 mb-8">
+            Explora nuestra tienda y encuentra productos increíbles
+          </p>
+          <button
+            onClick={() => navigate('/shop')}
+            className="px-8 py-4 bg-gray-900 text-white text-sm tracking-[0.15em] uppercase hover:bg-gray-800 transition-colors"
+          >
+            Continuar comprando
+          </button>
+        </div>
       </div>
     );
   }
