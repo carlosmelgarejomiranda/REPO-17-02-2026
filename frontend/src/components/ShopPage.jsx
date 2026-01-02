@@ -119,7 +119,7 @@ const normalizeBrand = (brand) => {
   return upper;
 };
 
-export const ShopPage = ({ cart, setCart }) => {
+export const ShopPage = ({ cart, setCart, user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
