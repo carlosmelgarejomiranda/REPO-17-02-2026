@@ -150,12 +150,6 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
     </div>
   </nav>
 );
-        <div className="h-4 w-px" style={{ backgroundColor: '#d4a968' }}></div>
-        <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
-      </div>
-    </div>
-  </nav>
-);
 
 // Shop Navigation Component
 const ShopNav = ({ t, language, setLanguage, user, cart, onLoginClick, onLogout }) => {
