@@ -195,7 +195,7 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
           </button>
           <h1 className="text-2xl font-normal text-gray-900">Checkout</h1>
         </div>
-      </header>
+      </div>
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-6 py-12">
