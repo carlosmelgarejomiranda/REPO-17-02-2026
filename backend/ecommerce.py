@@ -562,6 +562,10 @@ async def validate_inventory_before_checkout(data: InventoryValidationRequest):
     Validate inventory in real-time before checkout.
     Checks local DB for latest stock, then validates each item.
     Returns which items are available and which are out of stock.
+    
+    Supports both:
+    - Individual products (shop_products) with SKU
+    - Grouped products (shop_products_grouped) with grouped_id (e.g., grp_96)
     """
     logger.info(f"Validating inventory for {len(data.items)} items before checkout...")
     
@@ -572,41 +576,62 @@ async def validate_inventory_before_checkout(data: InventoryValidationRequest):
         
         for item in data.items:
             product = None
-            
-            # Search by SKU if available
-            if item.sku:
-                product = await db.shop_products.find_one(
-                    {"sku": item.sku},
-                    {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
-                )
-            
-            # If not found by SKU, try by product_id
-            if not product and item.product_id:
-                product = await db.shop_products.find_one(
-                    {"$or": [
-                        {"product_id": item.product_id},
-                        {"sku": item.product_id}
-                    ]},
-                    {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
-                )
-            
-            # Get stock value
             stock = 0
-            if product:
-                stock = product.get('stock', product.get('existencia', 0))
-                if isinstance(stock, str):
-                    try:
-                        stock = int(float(stock))
-                    except (ValueError, TypeError):
-                        stock = 0
+            is_grouped = False
+            
+            # Check if it's a grouped product ID (starts with 'grp_')
+            if item.product_id and item.product_id.startswith('grp_'):
+                is_grouped = True
+                # Search in grouped products collection
+                product = await db.shop_products_grouped.find_one(
+                    {"grouped_id": item.product_id},
+                    {"_id": 0, "grouped_id": 1, "base_model": 1, "total_stock": 1, "price": 1}
+                )
+                if product:
+                    stock = product.get('total_stock', 0)
+                    if isinstance(stock, str):
+                        try:
+                            stock = int(float(stock))
+                        except (ValueError, TypeError):
+                            stock = 0
+            else:
+                # Search by SKU if available (individual product)
+                if item.sku:
+                    product = await db.shop_products.find_one(
+                        {"sku": item.sku},
+                        {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
+                    )
+                
+                # If not found by SKU, try by product_id in individual products
+                if not product and item.product_id:
+                    product = await db.shop_products.find_one(
+                        {"$or": [
+                            {"product_id": item.product_id},
+                            {"sku": item.product_id}
+                        ]},
+                        {"_id": 0, "sku": 1, "name": 1, "stock": 1, "existencia": 1, "price": 1}
+                    )
+                
+                # Get stock value for individual products
+                if product:
+                    stock = product.get('stock', product.get('existencia', 0))
+                    if isinstance(stock, str):
+                        try:
+                            stock = int(float(stock))
+                        except (ValueError, TypeError):
+                            stock = 0
             
             # Check if enough stock
             if stock < item.quantity:
                 all_available = False
+                product_name = item.name
+                if product and not product_name:
+                    product_name = product.get('base_model') if is_grouped else product.get('name', 'Producto')
+                
                 out_of_stock_items.append({
                     "product_id": item.product_id,
                     "sku": item.sku,
-                    "name": item.name or (product.get('name') if product else 'Producto'),
+                    "name": product_name or 'Producto',
                     "size": item.size,
                     "requested_quantity": item.quantity,
                     "available_stock": max(0, stock),
