@@ -1162,6 +1162,30 @@ async def create_checkout(data: CheckoutData, request: Request):
 
         await send_whatsapp_notification(whatsapp_commercial, whatsapp_message)
         
+        # Send confirmation WhatsApp to customer
+        customer_message = f"""✨ *¡Hola {data.customer_name}!*
+
+Hemos recibido tu solicitud de compra en *Avenue Online*.
+
+📦 *Pedido:* {order_id}
+💰 *Total:* {total:,.0f} Gs
+
+🛍️ *Productos:*
+{items_text}
+
+Te contactaremos en breve para confirmar tu pedido y coordinar el pago.
+
+¡Gracias por elegir Avenue! 🙏
+
+_Avenue - Donde las marcas brillan_"""
+
+        # Try to send to customer (may fail if they haven't messaged us first)
+        try:
+            await send_whatsapp_notification(data.customer_phone, customer_message)
+            logger.info(f"Customer notification sent to {data.customer_phone}")
+        except Exception as e:
+            logger.warning(f"Could not send WhatsApp to customer {data.customer_phone}: {e}")
+        
         return {
             "success": True,
             "order_id": order_id,
