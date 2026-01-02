@@ -757,23 +757,25 @@ export const WebsiteBuilder = ({ onClose }) => {
         )}
 
         {/* Canvas Area */}
-        <div className="flex-1 overflow-auto p-4 md:p-8 flex justify-center" style={{ backgroundColor: '#0d0d0d' }}>
-          <div 
-            className="bg-[#0a0a0a] rounded-xl overflow-hidden shadow-2xl transition-all duration-300"
-            style={{ 
-              width: previewDevice === 'mobile' ? '375px' : previewDevice === 'tablet' ? '768px' : '100%',
-              maxWidth: previewDevice === 'desktop' ? '1400px' : undefined
-            }}
-          >
-            {pageContent && (
-              <PageRenderer 
-                pageId={selectedPageId}
-                sections={pageContent.sections}
-                onUpdateContent={updateSectionContent}
-                onMoveUp={moveSectionUp}
-                onMoveDown={moveSectionDown}
-              />
-            )}
+        <div className="flex-1 overflow-y-auto p-4 md:p-8" style={{ backgroundColor: '#0d0d0d' }}>
+          <div className="flex justify-center">
+            <div 
+              className="bg-[#0a0a0a] rounded-xl shadow-2xl transition-all duration-300"
+              style={{ 
+                width: previewDevice === 'mobile' ? '375px' : previewDevice === 'tablet' ? '768px' : '100%',
+                maxWidth: previewDevice === 'desktop' ? '1400px' : undefined
+              }}
+            >
+              {pageContent && (
+                <PageRenderer 
+                  pageId={selectedPageId}
+                  sections={pageContent.sections}
+                  onUpdateContent={updateSectionContent}
+                  onMoveUp={moveSectionUp}
+                  onMoveDown={moveSectionDown}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
