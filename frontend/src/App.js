@@ -82,7 +82,7 @@ const useAuth = () => {
 const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => (
   <nav className="fixed top-0 left-0 right-0 z-50">
     {/* Main Nav */}
-    <div className="px-6 py-4 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/10">
+    <div className="px-6 py-4 bg-[#0a0a0a]">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center">
