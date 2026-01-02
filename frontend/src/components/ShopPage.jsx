@@ -273,15 +273,19 @@ export const ShopPage = ({ cart, setCart }) => {
         <div className="max-w-[1800px] mx-auto">
           {/* Top bar */}
           <div className="flex items-center justify-between px-8 py-5">
-            {/* Brands Menu */}
+            {/* Brands Menu Trigger */}
             <div 
               className="relative"
               onMouseEnter={() => setShowBrandsMenu(true)}
               onMouseLeave={() => setShowBrandsMenu(false)}
             >
-              <button className="text-xs tracking-[0.2em] uppercase text-gray-900 hover:text-gray-600 transition-colors font-medium py-2">
+              <button className="text-xs tracking-[0.2em] uppercase text-gray-900 hover:text-gray-600 transition-colors font-medium py-2 pb-6">
                 Brands
               </button>
+              {/* Invisible bridge to prevent hover gap */}
+              {showBrandsMenu && (
+                <div className="absolute left-0 w-32 h-8 top-full" />
+              )}
             </div>
 
             {/* Logo */}
@@ -349,19 +353,40 @@ export const ShopPage = ({ cart, setCart }) => {
             onMouseEnter={() => setShowBrandsMenu(true)}
             onMouseLeave={() => setShowBrandsMenu(false)}
           >
-            <div className="max-w-[1400px] mx-auto px-8 py-10">
-              <div className="grid grid-cols-5 gap-8">
-                {/* Indumentaria */}
+            <div className="max-w-[1400px] mx-auto px-8 py-8">
+              <div className="grid grid-cols-6 gap-6">
+                {/* Indumentaria - Column 1 */}
                 <div>
-                  <h3 className="text-xs tracking-[0.2em] uppercase font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-200">
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     {BRAND_CATEGORIES.indumentaria.title}
                   </h3>
-                  <ul className="space-y-3">
-                    {organizedBrands.indumentaria.map(brand => (
+                  <ul className="space-y-2">
+                    {organizedBrands.indumentaria.slice(0, 8).map(brand => (
                       <li key={brand}>
                         <button
                           onClick={() => handleBrandSelect(brand)}
-                          className={`text-sm transition-colors hover:text-gray-900 ${
+                          className={`text-[11px] transition-colors hover:text-gray-900 ${
+                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                          }`}
+                        >
+                          {brand}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Indumentaria - Column 2 */}
+                <div>
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 opacity-0">
+                    .
+                  </h3>
+                  <ul className="space-y-2">
+                    {organizedBrands.indumentaria.slice(8).map(brand => (
+                      <li key={brand}>
+                        <button
+                          onClick={() => handleBrandSelect(brand)}
+                          className={`text-[11px] transition-colors hover:text-gray-900 ${
                             selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
                           }`}
                         >
@@ -374,15 +399,15 @@ export const ShopPage = ({ cart, setCart }) => {
 
                 {/* Calzados */}
                 <div>
-                  <h3 className="text-xs tracking-[0.2em] uppercase font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-200">
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     {BRAND_CATEGORIES.calzados.title}
                   </h3>
-                  <ul className="space-y-3">
+                  <ul className="space-y-2">
                     {organizedBrands.calzados.map(brand => (
                       <li key={brand}>
                         <button
                           onClick={() => handleBrandSelect(brand)}
-                          className={`text-sm transition-colors hover:text-gray-900 ${
+                          className={`text-[11px] transition-colors hover:text-gray-900 ${
                             selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
                           }`}
                         >
@@ -395,15 +420,15 @@ export const ShopPage = ({ cart, setCart }) => {
 
                 {/* Joyas & Accesorios */}
                 <div>
-                  <h3 className="text-xs tracking-[0.2em] uppercase font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-200">
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     {BRAND_CATEGORIES.joyas.title}
                   </h3>
-                  <ul className="space-y-3">
+                  <ul className="space-y-2">
                     {organizedBrands.joyas.map(brand => (
                       <li key={brand}>
                         <button
                           onClick={() => handleBrandSelect(brand)}
-                          className={`text-sm transition-colors hover:text-gray-900 ${
+                          className={`text-[11px] transition-colors hover:text-gray-900 ${
                             selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
                           }`}
                         >
@@ -416,8 +441,60 @@ export const ShopPage = ({ cart, setCart }) => {
 
                 {/* Cosmética */}
                 <div>
-                  <h3 className="text-xs tracking-[0.2em] uppercase font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-200">
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     {BRAND_CATEGORIES.cosmetica.title}
+                  </h3>
+                  <ul className="space-y-2">
+                    {organizedBrands.cosmetica.map(brand => (
+                      <li key={brand}>
+                        <button
+                          onClick={() => handleBrandSelect(brand)}
+                          className={`text-[11px] transition-colors hover:text-gray-900 ${
+                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                          }`}
+                        >
+                          {brand}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Otros */}
+                <div>
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                    {BRAND_CATEGORIES.otros.title}
+                  </h3>
+                  <ul className="space-y-2">
+                    {organizedBrands.otros.slice(0, 10).map(brand => (
+                      <li key={brand}>
+                        <button
+                          onClick={() => handleBrandSelect(brand)}
+                          className={`text-[11px] transition-colors hover:text-gray-900 ${
+                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                          }`}
+                        >
+                          {brand}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              
+              {/* View All */}
+              <div className="mt-6 pt-4 border-t border-gray-100">
+                <button
+                  onClick={() => { setSelectedBrand(''); setShowBrandsMenu(false); }}
+                  className="text-[10px] tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  Ver todas las marcas →
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
                   </h3>
                   <ul className="space-y-3">
                     {organizedBrands.cosmetica.map(brand => (
