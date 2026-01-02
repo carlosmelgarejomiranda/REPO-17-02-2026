@@ -250,6 +250,11 @@ export const BatchImageAssignment = ({ onClose }) => {
         // Add product back to list
         setProducts(prev => [historyItem.product, ...prev]);
         
+        // Add images back to batch images list (if they were stored)
+        if (historyItem.images && historyItem.images.length > 0) {
+          setBatchImages(prev => [...historyItem.images, ...prev]);
+        }
+        
         // Remove from history
         setAssignmentHistory(prev => prev.filter((_, i) => i !== index));
         setAssignedCount(prev => Math.max(0, prev - 1));
