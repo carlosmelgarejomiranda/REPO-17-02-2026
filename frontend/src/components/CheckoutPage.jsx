@@ -597,10 +597,15 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={loading || (deliveryType === 'delivery' && !selectedLocation)}
+                  disabled={loading || validatingInventory || (deliveryType === 'delivery' && !selectedLocation)}
                   className="w-full py-4 bg-gray-900 text-white text-sm tracking-[0.15em] uppercase hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {loading ? (
+                  {validatingInventory ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Verificando stock...
+                    </>
+                  ) : loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Procesando...
@@ -618,6 +623,16 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
           </div>
         </form>
       </div>
+      
+      {/* Out of Stock Modal */}
+      {showOutOfStockModal && (
+        <OutOfStockModal
+          items={outOfStockItems}
+          onContinueWithout={handleContinueWithoutItems}
+          onGoToShop={handleGoToShop}
+          onClose={() => setShowOutOfStockModal(false)}
+        />
+      )}
     </div>
   );
 };
