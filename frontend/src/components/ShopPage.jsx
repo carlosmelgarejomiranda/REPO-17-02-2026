@@ -219,9 +219,8 @@ const fetchProducts = useCallback(async () => {
       let url = `${API_URL}/api/shop/products?page=${currentPage}&limit=16`;
       if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
       if (selectedBrand) {
-        // Map display name to actual ERP category name
-        const brandQuery = BRAND_TO_CATEGORY_MAP[selectedBrand] || selectedBrand;
-        url += `&brand=${encodeURIComponent(brandQuery)}`;
+        // Send the display brand name directly - backend handles unification
+        url += `&brand=${encodeURIComponent(selectedBrand)}`;
       }
       
       const response = await fetch(url);
