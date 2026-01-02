@@ -461,6 +461,24 @@ function AppRouter() {
           {/* Terms and Conditions */}
           <Route path="/studio/ugc/terms" element={<TerminosCondiciones />} />
 
+          {/* Tu Marca en Avenue - For Brands */}
+          <Route path="/tu-marca" element={
+            <>
+              <StudioNav 
+                t={t} 
+                language={language} 
+                setLanguage={setLanguage}
+                user={user}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+              />
+              <div style={{ paddingTop: '80px' }}>
+                <TuMarca t={t} />
+              </div>
+              <Footer t={t} />
+            </>
+          } />
+
           {/* Booking Page */}
           <Route path="/studio/reservar" element={
             <>
