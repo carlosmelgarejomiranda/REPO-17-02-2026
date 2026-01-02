@@ -668,11 +668,13 @@ const CarouselModal = ({ onClose, onSave, images }) => {
     return match ? { x: parseInt(match[1]), y: parseInt(match[2]) } : { x: 50, y: 50 };
   };
 
-  const updatePosition = (idx, newPos) => {
-    const p = [...positions];
-    p[idx] = newPos;
-    setPositions(p);
-  };
+  const updatePosition = useCallback((idx, newPos) => {
+    setPositions(p => {
+      const updated = [...p];
+      updated[idx] = newPos;
+      return updated;
+    });
+  }, []);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -689,7 +691,7 @@ const CarouselModal = ({ onClose, onSave, images }) => {
     let newX = Math.max(0, Math.min(100, dragStartRef.current.posX - dx * sensitivity));
     let newY = Math.max(0, Math.min(100, dragStartRef.current.posY - dy * sensitivity));
     updatePosition(active, `${Math.round(newX)}% ${Math.round(newY)}%`);
-  }, [isDragging, active]);
+  }, [isDragging, active, updatePosition]);
 
   const handleMouseUp = useCallback(() => setIsDragging(false), []);
 
