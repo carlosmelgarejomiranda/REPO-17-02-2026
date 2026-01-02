@@ -106,7 +106,14 @@ export const BatchImageAssignment = ({ onClose }) => {
       if (response.ok) {
         const data = await response.json();
         setBatchId(data.batch_id);
-        setBatchImages(data.images || []);
+        
+        // Transform relative URLs to absolute URLs using API_URL
+        const imagesWithFullUrls = (data.images || []).map(img => ({
+          ...img,
+          url: img.url.startsWith('/') ? `${API_URL}${img.url}` : img.url
+        }));
+        
+        setBatchImages(imagesWithFullUrls);
         
         if (data.errors > 0) {
           setMessage({
@@ -119,6 +126,9 @@ export const BatchImageAssignment = ({ onClose }) => {
             text: `${data.uploaded} imágenes subidas correctamente`
           });
         }
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setMessage({ type: 'error', text: errorData.detail || 'Error al subir las imágenes' });
       }
     } catch (err) {
       console.error('Error uploading batch:', err);
