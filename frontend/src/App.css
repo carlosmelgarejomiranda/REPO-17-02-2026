@@ -30,6 +30,11 @@
   background-color: var(--surface-light);
 }
 
+/* Dark theme for Studio pages */
+.App.dark-theme {
+  background-color: #0a0a0a;
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
