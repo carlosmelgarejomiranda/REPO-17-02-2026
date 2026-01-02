@@ -2309,6 +2309,60 @@ async def unlink_images_from_product(product_id: str):
     }
 
 
+@ecommerce_router.delete("/admin/delete-product-image/{product_id}")
+async def delete_product_custom_image(product_id: str):
+    """Delete custom image from a product (used by ProductImagesManager)"""
+    
+    # Get product
+    product = await db.shop_products_grouped.find_one(
+        {"grouped_id": product_id}, 
+        {"_id": 0}
+    )
+    if not product:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
+    
+    # Get current custom image to delete from filesystem
+    custom_image = product.get("custom_image")
+    if custom_image:
+        base_upload_dir = "/app/backend/uploads/products"
+        filename = custom_image.split("/")[-1] if "/" in custom_image else custom_image
+        filepath = os.path.join(base_upload_dir, filename)
+        if os.path.exists(filepath):
+            try:
+                os.remove(filepath)
+            except Exception as e:
+                logger.warning(f"Could not delete image file {filepath}: {e}")
+    
+    # Also delete images array
+    current_images = product.get("images", [])
+    base_upload_dir = "/app/backend/uploads/products"
+    for img_url in current_images:
+        if img_url:
+            filename = img_url.split("/")[-1] if "/" in img_url else img_url
+            filepath = os.path.join(base_upload_dir, filename)
+            if os.path.exists(filepath):
+                try:
+                    os.remove(filepath)
+                except Exception as e:
+                    logger.warning(f"Could not delete image file {filepath}: {e}")
+    
+    # Update product to remove images
+    await db.shop_products_grouped.update_one(
+        {"grouped_id": product_id},
+        {"$set": {
+            "images": [None, None, None],
+            "custom_image": None,
+            "image_updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    return {
+        "message": "Imagen eliminada correctamente",
+        "product_id": product_id,
+        "product_name": product.get("base_model")
+    }
+
+
 @ecommerce_router.delete("/admin/temp-batch/{batch_id}")
 async def delete_temp_batch(batch_id: str):
     """Clean up a temporary batch (delete all unassigned images)"""
