@@ -173,7 +173,18 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100">
+      <ShopHeader 
+        cart={cart} 
+        user={user} 
+        onLoginClick={onLoginClick} 
+        onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
+      />
+      
+      {/* Page Title */}
+      <div className="bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 py-6">
           <button
             onClick={() => navigate('/shop/cart')}
