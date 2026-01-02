@@ -999,7 +999,7 @@ async def get_availability(date: str):
 
 @api_router.post("/reservations")
 async def create_reservation(reservation_data: ReservationCreate, request: Request):
-    """Create a new reservation (guest or authenticated)"""
+    """Create a new reservation request (guest or authenticated)"""
     # Validate duration
     if reservation_data.duration_hours not in PRICING:
         raise HTTPException(status_code=400, detail="Invalid duration. Choose 2, 4, 6, or 8 hours")
@@ -1014,7 +1014,7 @@ async def create_reservation(reservation_data: ReservationCreate, request: Reque
     # Get current user if authenticated
     user = await get_current_user(request)
     user_id = user["user_id"] if user else None
-    is_admin = user and user.get("role") == "admin"
+    is_admin = user and user.get("role") in ["admin", "superadmin", "staff"]
     
     # Validate date - must be at least 1 day in advance (except for admin)
     reservation_date = datetime.strptime(reservation_data.date, "%Y-%m-%d").date()
@@ -1027,17 +1027,30 @@ async def create_reservation(reservation_data: ReservationCreate, request: Reque
                 detail="Las reservas deben hacerse con al menos 1 día de anticipación. Para reservas del mismo día, contacta por WhatsApp: +595 976 691 520"
             )
     
-    # Check availability
-    availability = await get_availability(reservation_data.date)
-    for slot in availability["slots"]:
-        if slot["hour"] >= start_hour and slot["hour"] < end_hour:
-            if not slot["available"]:
-                raise HTTPException(status_code=400, detail=f"Time slot {slot['time']} is not available")
+    # Check availability (only check confirmed reservations)
+    existing_confirmed = await db.reservations.find(
+        {"date": reservation_data.date, "status": "confirmed"},
+        {"_id": 0}
+    ).to_list(100)
     
-    # Create reservation
+    booked_slots = []
+    for res in existing_confirmed:
+        res_start = int(res["start_time"].split(":")[0])
+        res_end = int(res["end_time"].split(":")[0])
+        for hour in range(res_start, res_end):
+            booked_slots.append(hour)
+    
+    for hour in range(start_hour, end_hour):
+        if hour in booked_slots:
+            raise HTTPException(status_code=400, detail=f"El horario de las {hour}:00 no está disponible")
+    
+    # Create reservation with "pending" status (solicitud)
+    # Admin-created reservations are auto-confirmed
     reservation_id = f"res_{uuid.uuid4().hex[:12]}"
     end_time = calculate_end_time(reservation_data.start_time, reservation_data.duration_hours)
     price = PRICING[reservation_data.duration_hours]
+    
+    initial_status = "confirmed" if is_admin else "pending"  # pending = solicitud
     
     reservation_doc = {
         "reservation_id": reservation_id,
@@ -1053,22 +1066,105 @@ async def create_reservation(reservation_data: ReservationCreate, request: Reque
         "company": reservation_data.company,
         "razon_social": reservation_data.razon_social,
         "ruc": reservation_data.ruc,
-        "status": "confirmed",
+        "status": initial_status,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.reservations.insert_one(reservation_doc)
     
-    # Send confirmation email
-    await send_confirmation_email(reservation_doc)
-    
-    # Send admin notification (WhatsApp + Email)
-    await notify_new_reservation(reservation_doc)
+    if is_admin:
+        # Admin creates confirmed reservation - send confirmation
+        await send_confirmation_email(reservation_doc)
+        await notify_new_reservation(reservation_doc)
+    else:
+        # Regular user creates request - send notification to admin
+        await notify_reservation_request(reservation_doc)
     
     # Remove MongoDB _id before returning
     reservation_doc.pop("_id", None)
     
-    return reservation_doc
+    return {
+        **reservation_doc,
+        "message": "Reserva confirmada" if is_admin else "Solicitud de reserva enviada. Te contactaremos para confirmar."
+    }
+
+async def notify_reservation_request(reservation: dict):
+    """Send WhatsApp notification for new reservation REQUEST to admin"""
+    whatsapp_message = f"""🔔 *SOLICITUD DE RESERVA - Avenue Studio*
+
+👤 *Cliente:* {reservation['name']}
+📧 *Email:* {reservation['email']}
+📱 *Teléfono:* {reservation.get('phone', 'N/A')}
+🏢 *Empresa:* {reservation.get('company', 'N/A')}
+
+📅 *Fecha solicitada:* {reservation['date']}
+⏰ *Horario:* {reservation['start_time']} - {reservation['end_time']}
+⏱️ *Duración:* {reservation['duration_hours']} horas
+💰 *Precio:* {reservation['price']:,} Gs
+
+⚠️ *Estado:* PENDIENTE DE APROBACIÓN
+
+🔗 Ingresa al panel de admin para aprobar o rechazar esta solicitud.
+
+ID: {reservation['reservation_id']}"""
+
+    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_STUDIO, whatsapp_message)
+
+@api_router.put("/admin/reservations/{reservation_id}/confirm")
+async def admin_confirm_reservation(reservation_id: str, request: Request):
+    """Confirm a pending reservation (staff and above)"""
+    await require_staff_or_above(request)
+    
+    reservation = await db.reservations.find_one({"reservation_id": reservation_id}, {"_id": 0})
+    if not reservation:
+        raise HTTPException(status_code=404, detail="Reservation not found")
+    
+    if reservation.get("status") != "pending":
+        raise HTTPException(status_code=400, detail="Solo se pueden confirmar reservas pendientes")
+    
+    # Update status to confirmed
+    await db.reservations.update_one(
+        {"reservation_id": reservation_id},
+        {"$set": {"status": "confirmed", "confirmed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    updated = await db.reservations.find_one({"reservation_id": reservation_id}, {"_id": 0})
+    
+    # Send confirmation email to customer
+    await send_confirmation_email(updated)
+    
+    # Send WhatsApp confirmation to customer
+    await send_reservation_confirmed_notification(updated)
+    
+    return updated
+
+async def send_reservation_confirmed_notification(reservation: dict):
+    """Send WhatsApp notification to customer when reservation is confirmed"""
+    customer_phone = reservation.get('phone', '')
+    if not customer_phone:
+        logger.warning(f"No customer phone for reservation {reservation.get('reservation_id')}")
+        return
+    
+    message = f"""✅ *RESERVA CONFIRMADA - Avenue Studio*
+
+¡Hola {reservation['name']}! 
+
+Tu reserva ha sido confirmada.
+
+📅 *Fecha:* {reservation['date']}
+⏰ *Horario:* {reservation['start_time']} - {reservation['end_time']}
+⏱️ *Duración:* {reservation['duration_hours']} horas
+💰 *Precio:* {reservation['price']:,} Gs
+
+📍 *Dirección:* Paseo Los Árboles, Av. San Martín, Asunción
+
+⚠️ *Importante:* El pago se realiza en Avenue antes de ingresar al estudio.
+
+¡Te esperamos! 🎬
+
+_Avenue Studio_"""
+
+    await send_whatsapp_notification(customer_phone, message)
 
 @api_router.get("/reservations/my")
 async def get_my_reservations(request: Request):
