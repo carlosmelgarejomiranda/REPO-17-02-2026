@@ -87,7 +87,7 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
   }, []);
 
   return (
-    <header id="studio-main-nav" style={{ 
+    <header id="studio-main-nav" style={{
       position: 'fixed', 
       top: 0, 
       left: 0, 
