@@ -2634,6 +2634,20 @@ def run_all_tests():
     print("=" * 60)
     
     tests = [
+        # NEW FEATURES TESTS (Priority)
+        ("Test Superadmin Login", test_superadmin_login),
+        ("Test Admin Permissions", test_admin_permissions),
+        ("Test Admin Users List", test_admin_users_list),
+        ("Test Admin Settings Get", test_admin_settings_get),
+        ("Test Admin Settings Update", test_admin_settings_update),
+        ("Test E-commerce Search Fix", test_ecommerce_search_fix),
+        ("Test E-commerce Checkout (Payment Gateway Disabled)", test_ecommerce_checkout_disabled_gateway),
+        ("Test Reservation System - Solicitud Flow", test_reservation_system_solicitud_flow),
+        ("Test Admin Reservations List", test_admin_reservations_list),
+        ("Test Admin Reservation Confirm", test_admin_reservation_confirm),
+        ("Test Admin Orders Management", test_admin_orders_management),
+        ("Test Admin Order Status Update to Facturado", test_admin_order_status_update_facturado),
+        
         # Studio booking tests
         ("Test Availability Endpoint", test_availability_endpoint),
         ("Test User Registration", test_user_registration),
