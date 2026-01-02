@@ -186,8 +186,8 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
           <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
         </div>
       </div>
-    </nav>
-  </div>
+    </div>
+  </header>
 );
 
 // Shop Navigation Component
