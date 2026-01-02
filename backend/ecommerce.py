@@ -1875,11 +1875,11 @@ async def bulk_upload_images(files: List[UploadFile] = File(...)):
         "error_details": errors
     }
 
-@ecommerce_router.delete("/admin/delete-product-image/{product_id}")
-async def delete_product_image(product_id: str):
-    """Delete custom image for a product"""
-    # Get product to find image path
-    product = await db.shop_products_grouped.find_one({"grouped_id": product_id}, {"_id": 0, "custom_image": 1})
+@ecommerce_router.delete("/admin/delete-product-all-images/{product_id}")
+async def delete_all_product_images(product_id: str):
+    """Delete all custom images for a product"""
+    # Get product to find image paths
+    product = await db.shop_products_grouped.find_one({"grouped_id": product_id}, {"_id": 0, "custom_image": 1, "images": 1})
     
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
