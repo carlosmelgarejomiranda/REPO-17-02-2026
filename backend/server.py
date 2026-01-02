@@ -1609,7 +1609,19 @@ async def send_order_invoiced_notification(order: dict):
         for item in order.get('items', [])
     ])
     
-    message = f"""✅ *PEDIDO CONFIRMADO - Avenue Online*
+    delivery_type = order.get('delivery_type', '')
+    delivery_address = order.get('delivery_address', {})
+    
+    if delivery_type == 'delivery':
+        delivery_info = f"📍 *Envío a:* {delivery_address.get('address', 'Dirección no especificada')}"
+        if delivery_address.get('lat') and delivery_address.get('lng'):
+            delivery_info += f"\n🗺️ *Ubicación:* https://maps.google.com/?q={delivery_address['lat']},{delivery_address['lng']}"
+        action_text = "Tu pedido está siendo preparado para envío. ¡Pronto estará en camino! 🚚"
+    else:
+        delivery_info = "🏪 *Retiro en tienda*\n📍 Avda. Gral Santos esq. Concordia - Asunción"
+        action_text = "Tu pedido está listo para retirar en nuestra tienda. 🛍️"
+    
+    message = f"""🎉 *¡PEDIDO CONFIRMADO! - Avenue Online*
 
 ¡Hola {order.get('customer_name', '')}! 
 
@@ -1622,13 +1634,20 @@ Tu pedido ha sido facturado y confirmado.
 
 💰 *Total:* {order.get('total', 0):,.0f} Gs
 
-{"📍 *Envío a:* " + order.get('delivery_address', {}).get('address', '') if order.get('delivery_type') == 'delivery' else "🏪 *Retiro en tienda*"}
+{delivery_info}
 
-¡Gracias por tu compra! Te avisaremos cuando esté listo para {("entregar" if order.get('delivery_type') == 'delivery' else "retirar")}.
+{action_text}
 
-_Avenue - Donde las marcas brillan_"""
+¡Gracias por elegir Avenue! 🙏
 
-    await send_whatsapp_notification(customer_phone, message)
+_Avenue - Donde las marcas brillan_
+WhatsApp: +595 973 666 000"""
+
+    try:
+        await send_whatsapp_notification(customer_phone, message)
+        logger.info(f"Invoiced notification sent to {customer_phone} for order {order.get('order_id')}")
+    except Exception as e:
+        logger.error(f"Failed to send invoiced notification to {customer_phone}: {e}")
 
 # ==================== BASIC ROUTES ====================
 
