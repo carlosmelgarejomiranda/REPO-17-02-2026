@@ -485,7 +485,8 @@ export const AdminDashboard = ({ user }) => {
                             </div>
                           </td>
                         </tr>
-                      ))}
+                      );
+                    })}
                     </tbody>
                   </table>
                 </div>
