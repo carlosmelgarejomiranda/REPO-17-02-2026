@@ -1992,6 +1992,641 @@ def test_api_endpoints_verification():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+# ==================== NEW FEATURES TESTS ====================
+
+def test_superadmin_login():
+    """Test Superadmin Login with test credentials"""
+    print_test_header("Test Superadmin Login")
+    
+    global admin_token
+    
+    try:
+        url = f"{BACKEND_URL}/auth/login"
+        payload = {
+            "email": "avenuepy@gmail.com",
+            "password": "admin123"
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate superadmin role
+            if data.get("role") == "superadmin":
+                admin_token = data["token"]
+                print_success("✅ Superadmin login successful")
+                print_success(f"Role: {data['role']}")
+                print_success(f"Email: {data['email']}")
+                return True
+            else:
+                print_error(f"Expected role 'superadmin', got '{data.get('role')}'")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_permissions():
+    """Test GET /api/admin/permissions - should return all permissions for superadmin"""
+    print_test_header("Test Admin Permissions")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/permissions"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["role", "permissions"]
+            if all(field in data for field in required_fields):
+                role = data.get("role")
+                permissions = data.get("permissions", {})
+                
+                print_success("✅ Admin permissions endpoint working correctly")
+                print_success(f"Role: {role}")
+                print_success(f"Permissions count: {len(permissions)}")
+                
+                # Check specific permissions for superadmin
+                expected_permissions = [
+                    "can_manage_users", "can_edit_website", "can_manage_orders",
+                    "can_manage_reservations", "can_manage_ugc", "can_manage_images",
+                    "can_change_settings", "can_view_analytics"
+                ]
+                
+                all_permissions_granted = True
+                for perm in expected_permissions:
+                    if permissions.get(perm) == True:
+                        print_success(f"✅ {perm}: True")
+                    else:
+                        print_error(f"❌ {perm}: {permissions.get(perm)}")
+                        all_permissions_granted = False
+                
+                if all_permissions_granted:
+                    print_success("✅ All expected permissions granted for superadmin")
+                    return True
+                else:
+                    print_error("❌ Some permissions missing for superadmin")
+                    return False
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_users_list():
+    """Test GET /api/admin/users - should list all users"""
+    print_test_header("Test Admin Users List")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/users"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response type: {type(data)}")
+            
+            if isinstance(data, list):
+                print_success("✅ Admin users list endpoint working correctly")
+                print_success(f"Total users: {len(data)}")
+                
+                # Check if superadmin user exists
+                superadmin_user = next((u for u in data if u.get("email") == "avenuepy@gmail.com"), None)
+                if superadmin_user:
+                    print_success(f"✅ Superadmin user found: {superadmin_user.get('name')}")
+                    print_success(f"✅ Role: {superadmin_user.get('role')}")
+                else:
+                    print_warning("⚠️ Superadmin user not found in list")
+                
+                # Show sample user structure
+                if data:
+                    sample_user = data[0]
+                    user_fields = ["user_id", "email", "name", "role", "created_at"]
+                    print_info(f"Sample user fields: {[f for f in user_fields if f in sample_user]}")
+                
+                return True
+            else:
+                print_error("Expected array response")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_settings_get():
+    """Test GET /api/admin/settings - should return admin settings"""
+    print_test_header("Test Admin Settings Get")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/settings"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            expected_fields = ["payment_gateway_enabled", "show_only_products_with_images", "whatsapp_commercial"]
+            if all(field in data for field in expected_fields):
+                print_success("✅ Admin settings endpoint working correctly")
+                print_success(f"Payment gateway enabled: {data.get('payment_gateway_enabled')}")
+                print_success(f"Show only products with images: {data.get('show_only_products_with_images')}")
+                print_success(f"WhatsApp commercial: {data.get('whatsapp_commercial')}")
+                
+                # Check expected values from review request
+                if data.get('payment_gateway_enabled') == False:
+                    print_success("✅ Payment gateway correctly disabled")
+                if data.get('show_only_products_with_images') == False:
+                    print_success("✅ Show only products with images correctly disabled")
+                if data.get('whatsapp_commercial') == "+595973666000":
+                    print_success("✅ WhatsApp commercial number correct")
+                
+                return True
+            else:
+                missing = [f for f in expected_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_settings_update():
+    """Test PUT /api/admin/settings - update toggle values"""
+    print_test_header("Test Admin Settings Update")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/settings"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        # Test updating settings
+        payload = {
+            "payment_gateway_enabled": True,
+            "show_only_products_with_images": True
+        }
+        
+        print_info(f"PUT {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.put(url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate updated values
+            if (data.get('payment_gateway_enabled') == True and 
+                data.get('show_only_products_with_images') == True):
+                print_success("✅ Admin settings update working correctly")
+                print_success(f"Payment gateway enabled: {data.get('payment_gateway_enabled')}")
+                print_success(f"Show only products with images: {data.get('show_only_products_with_images')}")
+                
+                # Revert back to original values
+                revert_payload = {
+                    "payment_gateway_enabled": False,
+                    "show_only_products_with_images": False
+                }
+                
+                revert_response = requests.put(url, json=revert_payload, headers=headers)
+                if revert_response.status_code == 200:
+                    print_success("✅ Settings reverted to original values")
+                
+                return True
+            else:
+                print_error("Settings not updated correctly")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_ecommerce_search_fix():
+    """Test E-commerce Search Fix - search by brand and category"""
+    print_test_header("Test E-commerce Search Fix")
+    
+    try:
+        # Test search by brand: SUN68
+        search_tests = [
+            ("SUN68", "brand"),
+            ("AGUARA", "brand"),
+            ("BODY", "category")
+        ]
+        
+        all_passed = True
+        
+        for search_term, search_type in search_tests:
+            url = f"{BACKEND_URL}/shop/products?search={search_term}"
+            
+            print_info(f"GET {url}")
+            
+            response = requests.get(url)
+            print_info(f"Status Code: {response.status_code}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                products = data.get("products", [])
+                total = data.get("total", 0)
+                
+                print_success(f"✅ Search for '{search_term}' ({search_type}) working")
+                print_success(f"Found {total} products")
+                
+                if products:
+                    # Show sample results
+                    sample_product = products[0]
+                    print_info(f"Sample result: {sample_product.get('name', 'Unknown')}")
+                    if search_type == "brand":
+                        print_info(f"Brand: {sample_product.get('brand', 'Unknown')}")
+                    elif search_type == "category":
+                        print_info(f"Category: {sample_product.get('category', 'Unknown')}")
+                else:
+                    print_warning(f"⚠️ No products found for '{search_term}'")
+            else:
+                print_error(f"Search for '{search_term}' failed: {response.status_code}")
+                all_passed = False
+        
+        return all_passed
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_ecommerce_checkout_disabled_gateway():
+    """Test E-commerce Checkout with Payment Gateway Disabled"""
+    print_test_header("Test E-commerce Checkout (Payment Gateway Disabled)")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/checkout"
+        payload = {
+            "items": [
+                {
+                    "product_id": "test-product-1",
+                    "sku": "TEST-SKU-001",
+                    "quantity": 1,
+                    "name": "Test Product",
+                    "price": 150000,
+                    "size": "M"
+                }
+            ],
+            "customer_name": "Juan Perez",
+            "customer_email": "juan.perez@test.com",
+            "customer_phone": "+595971234567",
+            "delivery_type": "pickup",
+            "notes": "Test order for checkout system"
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response for disabled payment gateway
+            if data.get("status") == "solicitud":
+                print_success("✅ Order created with 'solicitud' status (payment gateway disabled)")
+                print_success(f"Order ID: {data.get('order_id')}")
+                
+                # Check for WhatsApp notification message
+                message = data.get("message", "")
+                if "WhatsApp" in message:
+                    print_success("✅ WhatsApp notification message included")
+                
+                return True
+            else:
+                print_error(f"Expected status 'solicitud', got '{data.get('status')}'")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_reservation_system_solicitud_flow():
+    """Test Reservation System - Solicitud/Confirmation Flow"""
+    print_test_header("Test Reservation System - Solicitud Flow")
+    
+    global reservation_id
+    
+    try:
+        # Step 1: Create a new reservation as regular user (should be "pending")
+        url = f"{BACKEND_URL}/reservations"
+        payload = {
+            "date": "2025-02-15",
+            "start_time": "14:00",
+            "duration_hours": 2,
+            "name": "Maria Rodriguez",
+            "phone": "+595981234567",
+            "email": "maria@test.com",
+            "company": "Test Company SRL"
+        }
+        
+        print_info(f"POST {url} (as regular user)")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Should be "pending" status for regular user
+            if data.get("status") == "pending":
+                print_success("✅ Regular user reservation created with 'pending' status")
+                reservation_id = data.get("reservation_id")
+                print_success(f"Reservation ID: {reservation_id}")
+                
+                # Check message
+                message = data.get("message", "")
+                if "contactaremos" in message.lower():
+                    print_success("✅ Correct message for pending reservation")
+                
+                return True
+            else:
+                print_error(f"Expected status 'pending', got '{data.get('status')}'")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_reservations_list():
+    """Test GET /api/admin/reservations - check pending reservations"""
+    print_test_header("Test Admin Reservations List")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/reservations"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            if isinstance(data, list):
+                print_success("✅ Admin reservations list endpoint working correctly")
+                print_success(f"Total reservations: {len(data)}")
+                
+                # Check for pending reservations
+                pending_reservations = [r for r in data if r.get("status") == "pending"]
+                confirmed_reservations = [r for r in data if r.get("status") == "confirmed"]
+                
+                print_success(f"Pending reservations: {len(pending_reservations)}")
+                print_success(f"Confirmed reservations: {len(confirmed_reservations)}")
+                
+                # Check if our test reservation is in the list
+                if reservation_id:
+                    test_reservation = next((r for r in data if r.get("reservation_id") == reservation_id), None)
+                    if test_reservation:
+                        print_success(f"✅ Test reservation found with status: {test_reservation.get('status')}")
+                    else:
+                        print_warning("⚠️ Test reservation not found in admin list")
+                
+                return True
+            else:
+                print_error("Expected array response")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_reservation_confirm():
+    """Test PUT /api/admin/reservations/{id}/confirm - confirm a pending reservation"""
+    print_test_header("Test Admin Reservation Confirm")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    if not reservation_id:
+        print_error("No reservation ID available from previous test")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/reservations/{reservation_id}/confirm"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"PUT {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.put(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Should now be "confirmed" status
+            if data.get("status") == "confirmed":
+                print_success("✅ Reservation confirmed successfully")
+                print_success(f"Status changed to: {data.get('status')}")
+                
+                # Check if confirmed_at timestamp was added
+                if data.get("confirmed_at"):
+                    print_success("✅ Confirmed timestamp added")
+                
+                return True
+            else:
+                print_error(f"Expected status 'confirmed', got '{data.get('status')}'")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_orders_management():
+    """Test GET /api/admin/orders - should list all orders"""
+    print_test_header("Test Admin Orders Management")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/orders"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            
+            if isinstance(data, list):
+                print_success("✅ Admin orders management endpoint working correctly")
+                print_success(f"Total orders: {len(data)}")
+                
+                # Show order statuses
+                if data:
+                    statuses = {}
+                    for order in data:
+                        status = order.get("order_status", "unknown")
+                        statuses[status] = statuses.get(status, 0) + 1
+                    
+                    print_info(f"Order statuses: {statuses}")
+                    
+                    # Show sample order
+                    sample_order = data[0]
+                    print_info(f"Sample order: {sample_order.get('order_id')} - {sample_order.get('customer_name')} - Status: {sample_order.get('order_status')}")
+                
+                return True
+            else:
+                print_error("Expected array response")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_admin_order_status_update_facturado():
+    """Test PUT /api/admin/orders/{order_id} - update order status to 'facturado'"""
+    print_test_header("Test Admin Order Status Update to Facturado")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        # First get list of orders to find an order ID
+        list_url = f"{BACKEND_URL}/admin/orders"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        list_response = requests.get(list_url, headers=headers)
+        
+        if list_response.status_code != 200:
+            print_warning("No orders available to test status update")
+            return True
+        
+        list_data = list_response.json()
+        
+        if not isinstance(list_data, list) or not list_data:
+            print_warning("No orders available to test status update")
+            return True
+        
+        order_id = list_data[0].get("order_id")
+        current_status = list_data[0].get("order_status", "unknown")
+        
+        # Test updating to "facturado" status
+        update_url = f"{BACKEND_URL}/admin/orders/{order_id}"
+        payload = {"order_status": "facturado"}
+        
+        print_info(f"PUT {update_url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.put(update_url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response
+            if data.get("order_status") == "facturado":
+                print_success(f"✅ Order status updated to 'facturado'")
+                print_success(f"Order {order_id} updated from '{current_status}' to 'facturado'")
+                return True
+            else:
+                print_error(f"Status not updated correctly: {data.get('order_status')}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
 def run_all_tests():
     """Run all tests in sequence"""
     print(f"{Colors.BOLD}{Colors.BLUE}Avenue Studio & E-commerce API Tests{Colors.ENDC}")
