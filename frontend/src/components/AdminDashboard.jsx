@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail } from 'lucide-react';
 import { Button } from './ui/button';
 import { OrdersManagement } from './OrdersManagement';
 import { ProductImagesManager } from './ProductImagesManager';
@@ -35,42 +34,20 @@ export const AdminDashboard = ({ user }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Build query params
       let query = '';
       if (filterDate) query += `?date=${filterDate}`;
       if (filterStatus) query += `${query ? '&' : '?'}status=${filterStatus}`;
-
       let ugcQuery = ugcFilterStatus ? `?status=${ugcFilterStatus}` : '';
 
       const [resResponse, usersResponse, ugcResponse] = await Promise.all([
-        fetch(`${API_URL}/api/admin/reservations${query}`, {
-          headers: getAuthHeaders(),
-          
-        }),
-        fetch(`${API_URL}/api/admin/users`, {
-          headers: getAuthHeaders(),
-          
-        }),
-        fetch(`${API_URL}/api/admin/ugc${ugcQuery}`, {
-          headers: getAuthHeaders(),
-          
-        })
+        fetch(`${API_URL}/api/admin/reservations${query}`, { headers: getAuthHeaders() }),
+        fetch(`${API_URL}/api/admin/users`, { headers: getAuthHeaders() }),
+        fetch(`${API_URL}/api/admin/ugc${ugcQuery}`, { headers: getAuthHeaders() })
       ]);
 
-      if (resResponse.ok) {
-        const resData = await resResponse.json();
-        setReservations(resData);
-      }
-
-      if (usersResponse.ok) {
-        const usersData = await usersResponse.json();
-        setUsers(usersData);
-      }
-
-      if (ugcResponse.ok) {
-        const ugcData = await ugcResponse.json();
-        setUgcApplications(ugcData);
-      }
+      if (resResponse.ok) setReservations(await resResponse.json());
+      if (usersResponse.ok) setUsers(await usersResponse.json());
+      if (ugcResponse.ok) setUgcApplications(await ugcResponse.json());
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -85,16 +62,12 @@ export const AdminDashboard = ({ user }) => {
       const response = await fetch(`${API_URL}/api/admin/test-email`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        
       });
-      
       const data = await response.json();
-      
-      if (response.ok) {
-        setTestEmailStatus({ type: 'success', message: data.message });
-      } else {
-        setTestEmailStatus({ type: 'error', message: data.detail || 'Error al enviar email' });
-      }
+      setTestEmailStatus(response.ok 
+        ? { type: 'success', message: data.message }
+        : { type: 'error', message: data.detail || 'Error al enviar email' }
+      );
     } catch (err) {
       setTestEmailStatus({ type: 'error', message: 'Error de conexión' });
     } finally {
@@ -107,13 +80,9 @@ export const AdminDashboard = ({ user }) => {
       const response = await fetch(`${API_URL}/api/admin/reservations/${reservationId}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        
         body: JSON.stringify({ status: newStatus })
       });
-
-      if (response.ok) {
-        fetchData();
-      }
+      if (response.ok) fetchData();
     } catch (err) {
       console.error('Error updating reservation:', err);
     }
@@ -121,17 +90,12 @@ export const AdminDashboard = ({ user }) => {
 
   const deleteReservation = async (reservationId) => {
     if (!window.confirm('¿Estás seguro de eliminar esta reserva?')) return;
-
     try {
       const response = await fetch(`${API_URL}/api/admin/reservations/${reservationId}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
-        
       });
-
-      if (response.ok) {
-        fetchData();
-      }
+      if (response.ok) fetchData();
     } catch (err) {
       console.error('Error deleting reservation:', err);
     }
@@ -142,13 +106,9 @@ export const AdminDashboard = ({ user }) => {
       const response = await fetch(`${API_URL}/api/admin/ugc/${applicationId}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        
         body: JSON.stringify({ status: newStatus })
       });
-
-      if (response.ok) {
-        fetchData();
-      }
+      if (response.ok) fetchData();
     } catch (err) {
       console.error('Error updating UGC application:', err);
     }
@@ -156,17 +116,12 @@ export const AdminDashboard = ({ user }) => {
 
   const deleteUgcApplication = async (applicationId) => {
     if (!window.confirm('¿Estás seguro de eliminar esta aplicación?')) return;
-
     try {
       const response = await fetch(`${API_URL}/api/admin/ugc/${applicationId}`, {
         method: 'DELETE',
         headers: getAuthHeaders(),
-        
       });
-
-      if (response.ok) {
-        fetchData();
-      }
+      if (response.ok) fetchData();
     } catch (err) {
       console.error('Error deleting UGC application:', err);
     }
@@ -176,265 +131,208 @@ export const AdminDashboard = ({ user }) => {
     total: reservations.length,
     confirmed: reservations.filter(r => r.status === 'confirmed').length,
     cancelled: reservations.filter(r => r.status === 'cancelled').length,
-    totalRevenue: reservations
-      .filter(r => r.status === 'confirmed')
-      .reduce((sum, r) => sum + r.price, 0),
+    totalRevenue: reservations.filter(r => r.status === 'confirmed').reduce((sum, r) => sum + r.price, 0),
     ugcTotal: ugcApplications.length,
     ugcPending: ugcApplications.filter(a => a.status === 'pending').length,
     ugcApproved: ugcApplications.filter(a => a.status === 'approved').length
   };
 
+  const tabs = [
+    { id: 'orders', label: 'Pedidos', icon: ShoppingBag },
+    { id: 'images', label: 'Imágenes', icon: Image },
+    { id: 'reservations', label: 'Reservas', icon: Calendar },
+    { id: 'ugc', label: 'UGC', icon: Instagram },
+    { id: 'users', label: 'Usuarios', icon: Users }
+  ];
+
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: '#0d0d0d' }}>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-light italic" style={{ color: '#f5ede4' }}>
-              Panel de Administración
-            </h1>
-            <p style={{ color: '#a8a8a8' }}>Bienvenido, {user?.name}</p>
-          </div>
-          <div className="flex gap-3 mt-4 md:mt-0">
-            <Button
-              onClick={sendTestEmail}
-              disabled={sendingTestEmail}
-              className="flex items-center gap-2"
-              style={{ backgroundColor: '#2a2a2a', color: '#d4a968', border: '1px solid #d4a968' }}
-            >
-              {sendingTestEmail ? 'Enviando...' : '📧 Probar Email'}
-            </Button>
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2"
-              style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-            >
-              <Plus className="w-4 h-4" /> Nueva Reserva
-            </Button>
+    <div className="min-h-screen bg-[#0a0a0a]">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <a href="/" className="text-gray-500 hover:text-white transition-colors">
+                <ChevronLeft className="w-5 h-5" />
+              </a>
+              <div>
+                <h1 className="text-2xl font-light text-white">
+                  Panel de <span className="italic text-[#d4a968]">Administración</span>
+                </h1>
+                <p className="text-gray-500 text-sm">Bienvenido, {user?.name}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={sendTestEmail}
+                disabled={sendingTestEmail}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors text-sm disabled:opacity-50"
+              >
+                <Mail className="w-4 h-4" />
+                <span className="hidden md:inline">{sendingTestEmail ? 'Enviando...' : 'Test Email'}</span>
+              </button>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#d4a968] text-black font-medium hover:bg-[#c49958] transition-colors text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                <span className="hidden md:inline">Nueva Reserva</span>
+              </button>
+            </div>
           </div>
         </div>
+      </header>
 
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Test Email Status */}
         {testEmailStatus && (
-          <div 
-            className="mb-6 p-4 rounded"
-            style={{ 
-              backgroundColor: testEmailStatus.type === 'success' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-              color: testEmailStatus.type === 'success' ? '#22c55e' : '#ef4444',
-              border: `1px solid ${testEmailStatus.type === 'success' ? '#22c55e' : '#ef4444'}`
-            }}
-          >
-            {testEmailStatus.message}
-            <button 
-              onClick={() => setTestEmailStatus(null)} 
-              className="ml-4 opacity-70 hover:opacity-100"
-            >
-              ✕
-            </button>
+          <div className={`mb-6 p-4 rounded-xl flex items-center justify-between ${
+            testEmailStatus.type === 'success' 
+              ? 'bg-green-500/10 border border-green-500/30 text-green-400'
+              : 'bg-red-500/10 border border-red-500/30 text-red-400'
+          }`}>
+            <span>{testEmailStatus.message}</span>
+            <button onClick={() => setTestEmailStatus(null)} className="opacity-70 hover:opacity-100">✕</button>
           </div>
         )}
 
-        {/* Stats */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardContent className="p-4">
-              <p className="text-sm" style={{ color: '#a8a8a8' }}>Reservas</p>
-              <p className="text-2xl font-light" style={{ color: '#d4a968' }}>{stats.total}</p>
-            </CardContent>
-          </Card>
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardContent className="p-4">
-              <p className="text-sm" style={{ color: '#a8a8a8' }}>Confirmadas</p>
-              <p className="text-2xl font-light" style={{ color: '#22c55e' }}>{stats.confirmed}</p>
-            </CardContent>
-          </Card>
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardContent className="p-4">
-              <p className="text-sm" style={{ color: '#a8a8a8' }}>Ingresos</p>
-              <p className="text-2xl font-light" style={{ color: '#d4a968' }}>
-                {stats.totalRevenue.toLocaleString()} Gs
-              </p>
-            </CardContent>
-          </Card>
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardContent className="p-4">
-              <p className="text-sm" style={{ color: '#a8a8a8' }}>UGC Aplicaciones</p>
-              <p className="text-2xl font-light" style={{ color: '#d4a968' }}>{stats.ugcTotal}</p>
-            </CardContent>
-          </Card>
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardContent className="p-4">
-              <p className="text-sm" style={{ color: '#a8a8a8' }}>UGC Pendientes</p>
-              <p className="text-2xl font-light" style={{ color: '#f59e0b' }}>{stats.ugcPending}</p>
-            </CardContent>
-          </Card>
+          {[
+            { label: 'Reservas', value: stats.total, color: 'text-[#d4a968]' },
+            { label: 'Confirmadas', value: stats.confirmed, color: 'text-green-400' },
+            { label: 'Ingresos', value: `${stats.totalRevenue.toLocaleString()} Gs`, color: 'text-[#d4a968]' },
+            { label: 'UGC Total', value: stats.ugcTotal, color: 'text-[#d4a968]' },
+            { label: 'UGC Pendientes', value: stats.ugcPending, color: 'text-yellow-400' },
+          ].map((stat, i) => (
+            <div key={i} className="p-5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors">
+              <p className="text-gray-500 text-sm mb-1">{stat.label}</p>
+              <p className={`text-2xl font-light ${stat.color}`}>{stat.value}</p>
+            </div>
+          ))}
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-6 flex-wrap">
-          <button
-            onClick={() => setActiveTab('orders')}
-            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
-            style={{
-              backgroundColor: activeTab === 'orders' ? '#d4a968' : '#2a2a2a',
-              color: activeTab === 'orders' ? '#0d0d0d' : '#a8a8a8'
-            }}
-          >
-            <ShoppingBag className="w-4 h-4" /> Pedidos E-commerce
-          </button>
-          <button
-            onClick={() => setActiveTab('images')}
-            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
-            style={{
-              backgroundColor: activeTab === 'images' ? '#d4a968' : '#2a2a2a',
-              color: activeTab === 'images' ? '#0d0d0d' : '#a8a8a8'
-            }}
-          >
-            <Image className="w-4 h-4" /> Imágenes Productos
-          </button>
-          <button
-            onClick={() => setActiveTab('reservations')}
-            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
-            style={{
-              backgroundColor: activeTab === 'reservations' ? '#d4a968' : '#2a2a2a',
-              color: activeTab === 'reservations' ? '#0d0d0d' : '#a8a8a8'
-            }}
-          >
-            <Calendar className="w-4 h-4" /> Reservas Studio
-          </button>
-          <button
-            onClick={() => setActiveTab('ugc')}
-            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
-            style={{
-              backgroundColor: activeTab === 'ugc' ? '#d4a968' : '#2a2a2a',
-              color: activeTab === 'ugc' ? '#0d0d0d' : '#a8a8a8'
-            }}
-          >
-            <Instagram className="w-4 h-4" /> UGC Creators
-          </button>
-          <button
-            onClick={() => setActiveTab('users')}
-            className={`px-4 py-2 rounded transition-all flex items-center gap-2`}
-            style={{
-              backgroundColor: activeTab === 'users' ? '#d4a968' : '#2a2a2a',
-              color: activeTab === 'users' ? '#0d0d0d' : '#a8a8a8'
-            }}
-          >
-            <Users className="w-4 h-4" /> Usuarios
-          </button>
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'bg-[#d4a968] text-black'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Orders Management Tab */}
-        {activeTab === 'orders' && (
-          <OrdersManagement />
-        )}
+        {/* Orders Tab */}
+        {activeTab === 'orders' && <OrdersManagement />}
 
-        {/* Product Images Management Tab */}
-        {activeTab === 'images' && (
-          <ProductImagesManager />
-        )}
+        {/* Images Tab */}
+        {activeTab === 'images' && <ProductImagesManager />}
 
         {/* Reservations Tab */}
         {activeTab === 'reservations' && (
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardHeader>
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
+            <div className="p-6 border-b border-white/10">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <CardTitle style={{ color: '#f5ede4' }}>Reservas</CardTitle>
-                <div className="flex gap-2 flex-wrap">
+                <h2 className="text-xl font-light text-white">Reservas <span className="italic text-[#d4a968]">Studio</span></h2>
+                <div className="flex gap-3 flex-wrap">
                   <input
                     type="date"
                     value={filterDate}
                     onChange={(e) => setFilterDate(e.target.value)}
-                    className="p-2 rounded"
-                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none"
                   />
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="p-2 rounded"
-                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none"
                   >
-                    <option value="">Todos los estados</option>
-                    <option value="confirmed">Confirmadas</option>
-                    <option value="cancelled">Canceladas</option>
+                    <option value="" className="bg-[#1a1a1a]">Todos</option>
+                    <option value="confirmed" className="bg-[#1a1a1a]">Confirmadas</option>
+                    <option value="cancelled" className="bg-[#1a1a1a]">Canceladas</option>
                   </select>
-                  <Button
+                  <button
                     onClick={() => { setFilterDate(''); setFilterStatus(''); }}
-                    variant="ghost"
-                    style={{ color: '#a8a8a8' }}
+                    className="px-4 py-2 rounded-lg text-gray-500 hover:text-white transition-colors text-sm"
                   >
                     Limpiar
-                  </Button>
+                  </button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div className="p-6">
               {loading ? (
-                <p style={{ color: '#a8a8a8' }}>Cargando...</p>
+                <div className="text-center py-12">
+                  <div className="w-8 h-8 border-2 border-[#d4a968] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-500">Cargando...</p>
+                </div>
               ) : reservations.length === 0 ? (
-                <p style={{ color: '#a8a8a8' }}>No hay reservas</p>
+                <div className="text-center py-12">
+                  <Calendar className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-500">No hay reservas</p>
+                </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #333' }}>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Fecha</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Horario</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Cliente</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Contacto</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Precio</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Estado</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Acciones</th>
+                      <tr className="border-b border-white/10">
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Fecha</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Horario</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Cliente</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Contacto</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Precio</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Estado</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       {reservations.map((res) => (
-                        <tr key={res.reservation_id} style={{ borderBottom: '1px solid #2a2a2a' }}>
-                          <td className="p-3" style={{ color: '#f5ede4' }}>{res.date}</td>
-                          <td className="p-3" style={{ color: '#f5ede4' }}>
-                            {res.start_time} - {res.end_time}
+                        <tr key={res.reservation_id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="p-4 text-white">{res.date}</td>
+                          <td className="p-4 text-white">{res.start_time} - {res.end_time}</td>
+                          <td className="p-4">
+                            <div className="text-white">{res.name}</div>
+                            {res.company && <div className="text-gray-500 text-sm">{res.company}</div>}
                           </td>
-                          <td className="p-3">
-                            <div style={{ color: '#f5ede4' }}>{res.name}</div>
-                            {res.company && (
-                              <div className="text-sm" style={{ color: '#a8a8a8' }}>{res.company}</div>
-                            )}
+                          <td className="p-4">
+                            <div className="text-white">{res.phone}</div>
+                            <div className="text-gray-500 text-sm">{res.email}</div>
                           </td>
-                          <td className="p-3">
-                            <div style={{ color: '#f5ede4' }}>{res.phone}</div>
-                            <div className="text-sm" style={{ color: '#a8a8a8' }}>{res.email}</div>
-                          </td>
-                          <td className="p-3" style={{ color: '#d4a968' }}>
-                            {res.price.toLocaleString()} Gs
-                          </td>
-                          <td className="p-3">
-                            <span
-                              className="px-2 py-1 rounded text-sm"
-                              style={{
-                                backgroundColor: res.status === 'confirmed' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                                color: res.status === 'confirmed' ? '#22c55e' : '#ef4444'
-                              }}
-                            >
+                          <td className="p-4 text-[#d4a968] font-medium">{res.price.toLocaleString()} Gs</td>
+                          <td className="p-4">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              res.status === 'confirmed' 
+                                ? 'bg-green-500/20 text-green-400'
+                                : 'bg-red-500/20 text-red-400'
+                            }`}>
                               {res.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
                             </span>
                           </td>
-                          <td className="p-3">
+                          <td className="p-4">
                             <div className="flex gap-2">
-                              {res.status === 'confirmed' && (
+                              {res.status === 'confirmed' ? (
                                 <button
                                   onClick={() => updateReservationStatus(res.reservation_id, 'cancelled')}
-                                  className="p-1 rounded"
-                                  style={{ color: '#ef4444' }}
+                                  className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
                                   title="Cancelar"
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
-                              )}
-                              {res.status === 'cancelled' && (
+                              ) : (
                                 <button
                                   onClick={() => updateReservationStatus(res.reservation_id, 'confirmed')}
-                                  className="p-1 rounded"
-                                  style={{ color: '#22c55e' }}
+                                  className="p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
                                   title="Confirmar"
                                 >
                                   <Check className="w-4 h-4" />
@@ -442,8 +340,7 @@ export const AdminDashboard = ({ user }) => {
                               )}
                               <button
                                 onClick={() => deleteReservation(res.reservation_id)}
-                                className="p-1 rounded"
-                                style={{ color: '#666' }}
+                                className="p-2 rounded-lg bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white transition-colors"
                                 title="Eliminar"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -456,216 +353,164 @@ export const AdminDashboard = ({ user }) => {
                   </table>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* UGC Tab */}
         {activeTab === 'ugc' && (
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardHeader>
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
+            <div className="p-6 border-b border-white/10">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <CardTitle style={{ color: '#f5ede4' }}>UGC Creator Applications</CardTitle>
-                <div className="flex gap-2 flex-wrap">
+                <h2 className="text-xl font-light text-white">UGC <span className="italic text-[#d4a968]">Creators</span></h2>
+                <div className="flex gap-3 flex-wrap">
                   <select
                     value={ugcFilterStatus}
                     onChange={(e) => setUgcFilterStatus(e.target.value)}
-                    className="p-2 rounded"
-                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none"
                   >
-                    <option value="">Todos los estados</option>
-                    <option value="pending">Pendientes</option>
-                    <option value="approved">Aprobadas</option>
-                    <option value="rejected">Rechazadas</option>
+                    <option value="" className="bg-[#1a1a1a]">Todos</option>
+                    <option value="pending" className="bg-[#1a1a1a]">Pendientes</option>
+                    <option value="approved" className="bg-[#1a1a1a]">Aprobadas</option>
+                    <option value="rejected" className="bg-[#1a1a1a]">Rechazadas</option>
                   </select>
-                  <Button
+                  <button
                     onClick={() => setUgcFilterStatus('')}
-                    variant="ghost"
-                    style={{ color: '#a8a8a8' }}
+                    className="px-4 py-2 rounded-lg text-gray-500 hover:text-white transition-colors text-sm"
                   >
                     Limpiar
-                  </Button>
+                  </button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div className="p-6">
               {loading ? (
-                <p style={{ color: '#a8a8a8' }}>Cargando...</p>
+                <div className="text-center py-12">
+                  <div className="w-8 h-8 border-2 border-[#d4a968] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-500">Cargando...</p>
+                </div>
               ) : ugcApplications.length === 0 ? (
-                <p style={{ color: '#a8a8a8' }}>No hay aplicaciones UGC</p>
+                <div className="text-center py-12">
+                  <Instagram className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-500">No hay aplicaciones UGC</p>
+                </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #333' }}>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Nombre</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Contacto</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Instagram</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>TikTok</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Videos</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Estado</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Fecha</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Acciones</th>
+                      <tr className="border-b border-white/10">
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Nombre</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Contacto</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Instagram</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">TikTok</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Videos</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Estado</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       {ugcApplications.map((app) => {
-                        const instagramHandle = app.instagram_url?.startsWith('@') 
-                          ? app.instagram_url.slice(1) 
-                          : app.instagram_url;
-                        const tiktokHandle = app.tiktok_url?.startsWith('@') 
-                          ? app.tiktok_url.slice(1) 
-                          : app.tiktok_url;
+                        const instagramHandle = app.instagram_url?.startsWith('@') ? app.instagram_url.slice(1) : app.instagram_url;
+                        const tiktokHandle = app.tiktok_url?.startsWith('@') ? app.tiktok_url.slice(1) : app.tiktok_url;
                         
                         const getStatusInfo = (status) => {
                           switch(status) {
-                            case 'approved':
-                              return { bg: 'rgba(34, 197, 94, 0.2)', color: '#22c55e', label: 'Aprobada' };
-                            case 'rejected':
-                              return { bg: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', label: 'Rechazada' };
-                            case 'pending':
-                              return { bg: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', label: 'Pendiente' };
-                            case 'no_elegible':
-                              return { bg: 'rgba(156, 163, 175, 0.2)', color: '#9ca3af', label: 'No elegible' };
-                            default:
-                              return { bg: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', label: status };
+                            case 'approved': return { bg: 'bg-green-500/20', text: 'text-green-400', label: 'Aprobada' };
+                            case 'rejected': return { bg: 'bg-red-500/20', text: 'text-red-400', label: 'Rechazada' };
+                            case 'pending': return { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Pendiente' };
+                            case 'no_elegible': return { bg: 'bg-gray-500/20', text: 'text-gray-400', label: 'No elegible' };
+                            default: return { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: status };
                           }
                         };
                         const statusInfo = getStatusInfo(app.status);
-                        
+
                         return (
-                          <tr key={app.application_id} style={{ borderBottom: '1px solid #2a2a2a' }}>
-                            <td className="p-3">
-                              <div style={{ color: '#f5ede4' }}>{app.nombre} {app.apellido}</div>
-                              <div className="text-sm" style={{ color: '#a8a8a8' }}>{app.ciudad}</div>
+                          <tr key={app.application_id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td className="p-4">
+                              <div className="text-white">{app.nombre} {app.apellido}</div>
+                              <div className="text-gray-500 text-sm">{app.ciudad}</div>
                             </td>
-                            <td className="p-3">
-                              <div style={{ color: '#f5ede4' }}>{app.email}</div>
+                            <td className="p-4">
+                              <div className="text-white text-sm">{app.email}</div>
                               <a 
                                 href={`https://wa.me/${app.whatsapp?.replace(/[^0-9]/g, '')}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm flex items-center gap-1"
-                                style={{ color: '#25D366' }}
+                                className="text-green-400 text-sm flex items-center gap-1 hover:underline"
                               >
                                 <MessageCircle className="w-3 h-3" />
-                                {app.whatsapp}
+                                WhatsApp
                               </a>
                             </td>
-                            <td className="p-3">
-                              {app.instagram_url ? (
-                                <a 
+                            <td className="p-4">
+                              {instagramHandle ? (
+                                <a
                                   href={`https://instagram.com/${instagramHandle}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center gap-1"
-                                  style={{ color: '#d4a968' }}
+                                  className="text-pink-400 hover:underline flex items-center gap-1"
                                 >
-                                  <Instagram className="w-4 h-4" />
-                                  {app.instagram_url}
+                                  <Instagram className="w-3 h-3" />
+                                  @{instagramHandle}
                                 </a>
-                              ) : '-'}
-                              <div className="text-sm" style={{ color: '#a8a8a8' }}>
-                                {app.instagram_seguidores ? `${parseInt(app.instagram_seguidores).toLocaleString()} seg.` : ''}
-                              </div>
+                              ) : <span className="text-gray-600">-</span>}
                             </td>
-                            <td className="p-3">
-                              {app.tiktok_url ? (
-                                <a 
+                            <td className="p-4">
+                              {tiktokHandle ? (
+                                <a
                                   href={`https://tiktok.com/@${tiktokHandle}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center gap-1"
-                                  style={{ color: '#d4a968' }}
+                                  className="text-cyan-400 hover:underline"
                                 >
-                                  {app.tiktok_url}
+                                  @{tiktokHandle}
                                 </a>
-                              ) : '-'}
-                              <div className="text-sm" style={{ color: '#a8a8a8' }}>
-                                {app.tiktok_seguidores ? `${parseInt(app.tiktok_seguidores).toLocaleString()} seg.` : ''}
-                              </div>
+                              ) : <span className="text-gray-600">-</span>}
                             </td>
-                            <td className="p-3">
-                              <div className="flex flex-col gap-1">
+                            <td className="p-4">
+                              <div className="flex gap-2">
                                 {app.video_link_1 && (
-                                  <a 
-                                    href={app.video_link_1}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm"
-                                    style={{ color: '#d4a968' }}
-                                  >
-                                    📹 Video 1
+                                  <a href={app.video_link_1} target="_blank" rel="noopener noreferrer" 
+                                    className="px-2 py-1 rounded bg-white/10 text-white text-xs hover:bg-white/20 transition-colors">
+                                    Video 1
                                   </a>
                                 )}
                                 {app.video_link_2 && (
-                                  <a 
-                                    href={app.video_link_2}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm"
-                                    style={{ color: '#d4a968' }}
-                                  >
-                                    📹 Video 2
+                                  <a href={app.video_link_2} target="_blank" rel="noopener noreferrer"
+                                    className="px-2 py-1 rounded bg-white/10 text-white text-xs hover:bg-white/20 transition-colors">
+                                    Video 2
                                   </a>
                                 )}
                               </div>
                             </td>
-                            <td className="p-3">
-                              <span
-                                className="px-2 py-1 rounded text-sm"
-                                style={{
-                                  backgroundColor: statusInfo.bg,
-                                  color: statusInfo.color
-                                }}
-                              >
+                            <td className="p-4">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.text}`}>
                                 {statusInfo.label}
                               </span>
-                              {app.motivo_no_elegible && app.motivo_no_elegible.length > 0 && (
-                                <div className="text-xs mt-1" style={{ color: '#9ca3af' }}>
-                                  {app.motivo_no_elegible.map(m => m.replace(/_/g, ' ')).join(', ')}
-                                </div>
-                              )}
                             </td>
-                            <td className="p-3" style={{ color: '#a8a8a8' }}>
-                              {new Date(app.created_at).toLocaleDateString()}
-                            </td>
-                            <td className="p-3">
+                            <td className="p-4">
                               <div className="flex gap-2">
-                                {(app.status === 'pending' || app.status === 'no_elegible') && (
+                                {app.status === 'pending' && (
                                   <>
                                     <button
                                       onClick={() => updateUgcStatus(app.application_id, 'approved')}
-                                      className="p-1 rounded hover:bg-green-900/30"
-                                      style={{ color: '#22c55e' }}
+                                      className="p-2 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
                                       title="Aprobar"
                                     >
                                       <Check className="w-4 h-4" />
                                     </button>
                                     <button
                                       onClick={() => updateUgcStatus(app.application_id, 'rejected')}
-                                      className="p-1 rounded hover:bg-red-900/30"
-                                      style={{ color: '#ef4444' }}
+                                      className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
                                       title="Rechazar"
                                     >
                                       <X className="w-4 h-4" />
                                     </button>
                                   </>
                                 )}
-                                {(app.status === 'approved' || app.status === 'rejected') && (
-                                  <button
-                                    onClick={() => updateUgcStatus(app.application_id, 'pending')}
-                                    className="p-1 rounded hover:bg-yellow-900/30"
-                                    style={{ color: '#f59e0b' }}
-                                    title="Marcar como pendiente"
-                                  >
-                                    <MessageCircle className="w-4 h-4" />
-                                  </button>
-                                )}
                                 <button
                                   onClick={() => deleteUgcApplication(app.application_id)}
-                                  className="p-1 rounded hover:bg-gray-900/30"
-                                  style={{ color: '#666' }}
+                                  className="p-2 rounded-lg bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white transition-colors"
                                   title="Eliminar"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -679,52 +524,56 @@ export const AdminDashboard = ({ user }) => {
                   </table>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Users Tab */}
         {activeTab === 'users' && (
-          <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#333' }}>
-            <CardHeader>
-              <CardTitle style={{ color: '#f5ede4' }}>Usuarios Registrados</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
+            <div className="p-6 border-b border-white/10">
+              <h2 className="text-xl font-light text-white">Usuarios <span className="italic text-[#d4a968]">Registrados</span></h2>
+            </div>
+            <div className="p-6">
               {loading ? (
-                <p style={{ color: '#a8a8a8' }}>Cargando...</p>
+                <div className="text-center py-12">
+                  <div className="w-8 h-8 border-2 border-[#d4a968] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-500">Cargando...</p>
+                </div>
               ) : users.length === 0 ? (
-                <p style={{ color: '#a8a8a8' }}>No hay usuarios</p>
+                <div className="text-center py-12">
+                  <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-500">No hay usuarios</p>
+                </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid #333' }}>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Nombre</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Email</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Teléfono</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Rol</th>
-                        <th className="text-left p-3" style={{ color: '#d4a968' }}>Registro</th>
+                      <tr className="border-b border-white/10">
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Nombre</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Email</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Teléfono</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Rol</th>
+                        <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Registro</th>
                       </tr>
                     </thead>
                     <tbody>
                       {users.map((u) => (
-                        <tr key={u.user_id} style={{ borderBottom: '1px solid #2a2a2a' }}>
-                          <td className="p-3" style={{ color: '#f5ede4' }}>{u.name}</td>
-                          <td className="p-3" style={{ color: '#f5ede4' }}>{u.email}</td>
-                          <td className="p-3" style={{ color: '#a8a8a8' }}>{u.phone || '-'}</td>
-                          <td className="p-3">
-                            <span
-                              className="px-2 py-1 rounded text-sm"
-                              style={{
-                                backgroundColor: u.role === 'admin' ? 'rgba(212, 169, 104, 0.2)' : 'rgba(100, 100, 100, 0.2)',
-                                color: u.role === 'admin' ? '#d4a968' : '#a8a8a8'
-                              }}
-                            >
-                              {u.role === 'admin' ? 'Admin' : 'Usuario'}
+                        <tr key={u.user_id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="p-4 text-white">{u.name}</td>
+                          <td className="p-4 text-gray-400">{u.email}</td>
+                          <td className="p-4 text-gray-400">{u.phone || '-'}</td>
+                          <td className="p-4">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              u.role === 'admin' 
+                                ? 'bg-[#d4a968]/20 text-[#d4a968]'
+                                : 'bg-white/10 text-gray-400'
+                            }`}>
+                              {u.role}
                             </span>
                           </td>
-                          <td className="p-3" style={{ color: '#a8a8a8' }}>
-                            {new Date(u.created_at).toLocaleDateString()}
+                          <td className="p-4 text-gray-500 text-sm">
+                            {new Date(u.created_at).toLocaleDateString('es')}
                           </td>
                         </tr>
                       ))}
@@ -732,225 +581,10 @@ export const AdminDashboard = ({ user }) => {
                   </table>
                 </div>
               )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Create Reservation Modal */}
-        {showCreateModal && (
-          <CreateReservationModal
-            onClose={() => setShowCreateModal(false)}
-            onSuccess={() => {
-              setShowCreateModal(false);
-              fetchData();
-            }}
-          />
+            </div>
+          </div>
         )}
       </div>
-    </div>
-  );
-};
-
-const CreateReservationModal = ({ onClose, onSuccess }) => {
-  const [formData, setFormData] = useState({
-    date: '',
-    start_time: '09:00',
-    duration_hours: 2,
-    name: '',
-    phone: '',
-    email: '',
-    company: '',
-    razon_social: '',
-    ruc: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${API_URL}/api/admin/reservations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.detail || 'Error al crear reserva');
-      }
-
-      onSuccess();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
-      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto" style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle style={{ color: '#f5ede4' }}>Nueva Reserva Manual</CardTitle>
-            <button onClick={onClose} style={{ color: '#666' }} className="text-2xl">×</button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {error && (
-            <div className="mb-4 p-3 rounded" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#ef4444' }}>
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Fecha</label>
-                <input
-                  type="date"
-                  required
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full p-2 rounded border"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Hora Inicio</label>
-                <select
-                  value={formData.start_time}
-                  onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                  className="w-full p-2 rounded border"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                >
-                  {Array.from({ length: 13 }, (_, i) => i + 9).map(hour => (
-                    <option key={hour} value={`${hour.toString().padStart(2, '0')}:00`}>
-                      {hour.toString().padStart(2, '0')}:00
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Duración</label>
-              <select
-                value={formData.duration_hours}
-                onChange={(e) => setFormData({ ...formData, duration_hours: parseInt(e.target.value) })}
-                className="w-full p-2 rounded border"
-                style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-              >
-                <option value={2}>2 horas - 250.000 Gs</option>
-                <option value={4}>4 horas - 450.000 Gs</option>
-                <option value={6}>6 horas - 650.000 Gs</option>
-                <option value={8}>8 horas - 800.000 Gs</option>
-              </select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Nombre *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full p-2 rounded border"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Teléfono *</label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full p-2 rounded border"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Email *</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full p-2 rounded border"
-                style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Empresa</label>
-              <input
-                type="text"
-                value={formData.company}
-                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                className="w-full p-2 rounded border"
-                style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>Razón Social</label>
-                <input
-                  type="text"
-                  value={formData.razon_social}
-                  onChange={(e) => setFormData({ ...formData, razon_social: e.target.value })}
-                  className="w-full p-2 rounded border"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                />
-              </div>
-              <div>
-                <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>RUC</label>
-                <input
-                  type="text"
-                  value={formData.ruc}
-                  onChange={(e) => setFormData({ ...formData, ruc: e.target.value })}
-                  className="w-full p-2 rounded border"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                type="button"
-                onClick={onClose}
-                className="flex-1"
-                style={{ backgroundColor: '#2a2a2a', color: '#a8a8a8' }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="flex-1"
-                style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-              >
-                {loading ? 'Creando...' : 'Crear Reserva'}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
     </div>
   );
 };
