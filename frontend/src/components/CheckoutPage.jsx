@@ -272,11 +272,11 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
           address: address,
           reference: reference
         } : null,
-        payment_method: 'stripe',
+        payment_method: 'bancard',
         notes: formData.notes
       };
 
-      const response = await fetch(`${API_URL}/api/shop/checkout/stripe`, {
+      const response = await fetch(`${API_URL}/api/shop/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(checkoutData)
@@ -284,10 +284,22 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
 
       const data = await response.json();
 
-      if (data.checkout_url) {
+      if (data.success) {
+        // Clear cart
         setCart([]);
         localStorage.removeItem('avenue_cart');
-        window.location.href = data.checkout_url;
+        
+        if (data.status === 'solicitud') {
+          // Payment gateway disabled - request mode
+          // Show success message and redirect
+          navigate(`/shop/order-success?order_id=${data.order_id}&type=request`);
+        } else if (data.payment_url) {
+          // Payment gateway enabled - redirect to Bancard
+          window.location.href = data.payment_url;
+        } else {
+          // Bancard not yet integrated - show pending message
+          navigate(`/shop/order-success?order_id=${data.order_id}&type=pending`);
+        }
       } else {
         throw new Error(data.detail || 'Error al procesar el pago');
       }
