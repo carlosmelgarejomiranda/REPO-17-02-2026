@@ -151,19 +151,6 @@ export const ProductImagesManager = () => {
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   };
 
-  // Show batch assignment panel
-  if (showBatchAssignment) {
-    return (
-      <BatchImageAssignment 
-        onClose={() => {
-          setShowBatchAssignment(false);
-          // Refresh products after batch assignment
-          fetchProducts();
-        }} 
-      />
-    );
-  }
-
   // Fetch products for image management
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -193,6 +180,19 @@ export const ProductImagesManager = () => {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  // Show batch assignment panel
+  if (showBatchAssignment) {
+    return (
+      <BatchImageAssignment 
+        onClose={() => {
+          setShowBatchAssignment(false);
+          // Refresh products after batch assignment
+          setTimeout(() => fetchProducts(), 100);
+        }} 
+      />
+    );
+  }
 
   // Handle single image upload
   const handleImageUpload = async (productId, file) => {
