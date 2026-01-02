@@ -78,66 +78,78 @@ const useAuth = () => {
   return { user, loading, login, logout, checkAuth };
 };
 
-// Studio Navigation Component
+// Studio Navigation Component - Editorial Style
 const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => (
-  <nav 
-    className="fixed top-0 left-0 right-0 z-50 px-6 py-4"
-    style={{ backgroundColor: '#0d0d0d', borderBottom: '1px solid #d4a968' }}
-  >
-    <div className="max-w-7xl mx-auto flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <a href="/">
+  <nav className="fixed top-0 left-0 right-0 z-50">
+    {/* Main Nav */}
+    <div className="px-6 py-4 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/10">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Logo */}
+        <a href="/" className="flex items-center">
           <img 
-            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
+            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
             alt="Avenue"
-            className="h-12 cursor-pointer"
-            style={{
-              transform: 'scale(2.5)',
-              transformOrigin: 'left center',
-              filter: 'brightness(1.2) drop-shadow(0 2px 8px rgba(212, 169, 104, 0.3))'
-            }}
+            className="h-5 md:h-6 cursor-pointer transition-opacity hover:opacity-80"
           />
         </a>
-      </div>
-      <div className="flex items-center gap-4 md:gap-6">
-        <a href="/" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 hidden md:block" style={{ color: '#d4a968' }}>
-          {t.nav.home}
-        </a>
-        <a href="/shop" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 hidden md:block" style={{ color: '#d4a968' }}>
-          E-commerce
-        </a>
-        <a href="/studio/reservar" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 flex items-center gap-1" style={{ color: '#d4a968' }}>
-          <Calendar className="w-4 h-4" />
-          <span className="hidden md:inline">Reservar</span>
-        </a>
-        <div className="h-4 w-px hidden md:block" style={{ backgroundColor: '#d4a968' }}></div>
+
+        {/* Center Navigation */}
+        <div className="hidden md:flex items-center gap-8">
+          <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
+            {t.nav.home}
+          </a>
+          <a href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">
+            E-commerce
+          </a>
+          <a href="/studio" className="text-sm text-gray-400 hover:text-white transition-colors">
+            Studio
+          </a>
+          <a href="/studio/reservar" className="text-sm text-[#d4a968] hover:text-[#c49958] transition-colors flex items-center gap-1.5">
+            <Calendar className="w-4 h-4" />
+            <span>Reservar</span>
+          </a>
+        </div>
         
-        {user ? (
-          <div className="flex items-center gap-3">
-            {user.role === 'admin' && (
-              <a href="/admin" className="text-sm font-medium tracking-wide transition-colors hover:opacity-70" style={{ color: '#d4a968' }}>
-                Admin
-              </a>
-            )}
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" style={{ color: '#d4a968' }} />
-              <span className="text-sm hidden md:inline" style={{ color: '#f5ede4' }}>{user.name?.split(' ')[0]}</span>
+        {/* Right Side */}
+        <div className="flex items-center gap-4">
+          {user ? (
+            <div className="flex items-center gap-3">
+              {user.role === 'admin' && (
+                <a 
+                  href="/admin" 
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#d4a968]/10 border border-[#d4a968]/30 text-[#d4a968] text-sm hover:bg-[#d4a968]/20 transition-colors"
+                >
+                  Admin
+                </a>
+              )}
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <User className="w-4 h-4 text-[#d4a968]" />
+                <span className="text-sm text-white hidden md:inline">{user.name?.split(' ')[0]}</span>
+              </div>
+              <button 
+                onClick={onLogout} 
+                className="p-2 rounded-full hover:bg-white/5 transition-colors text-gray-500 hover:text-white"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
-            <button onClick={onLogout} className="p-1" style={{ color: '#666' }}>
-              <LogOut className="w-4 h-4" />
+          ) : (
+            <button 
+              onClick={onLoginClick}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm hover:bg-white/10 transition-colors"
+            >
+              <User className="w-4 h-4" />
+              <span className="hidden md:inline">Iniciar Sesión</span>
             </button>
-          </div>
-        ) : (
-          <button 
-            onClick={onLoginClick}
-            className="text-sm font-medium tracking-wide transition-colors hover:opacity-70 flex items-center gap-1"
-            style={{ color: '#d4a968' }}
-          >
-            <User className="w-4 h-4" />
-            <span className="hidden md:inline">Iniciar Sesión</span>
-          </button>
-        )}
-        
+          )}
+          
+          <div className="h-5 w-px bg-white/10 hidden md:block"></div>
+          <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
+        </div>
+      </div>
+    </div>
+  </nav>
+);
         <div className="h-4 w-px" style={{ backgroundColor: '#d4a968' }}></div>
         <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
       </div>
