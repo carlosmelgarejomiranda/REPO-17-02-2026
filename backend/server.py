@@ -1460,8 +1460,8 @@ async def get_user_permissions(request: Request):
 
 @api_router.get("/admin/orders")
 async def admin_get_orders(request: Request, status: Optional[str] = None):
-    """Get all orders (admin only)"""
-    await require_admin(request)
+    """Get all orders (staff and above)"""
+    await require_staff_or_above(request)
     
     query = {}
     if status:
@@ -1472,8 +1472,8 @@ async def admin_get_orders(request: Request, status: Optional[str] = None):
 
 @api_router.put("/admin/orders/{order_id}")
 async def admin_update_order(order_id: str, updates: dict, request: Request):
-    """Update order status (admin only)"""
-    await require_admin(request)
+    """Update order status (staff and above)"""
+    await require_staff_or_above(request)
     
     order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
     if not order:
@@ -1482,6 +1482,9 @@ async def admin_update_order(order_id: str, updates: dict, request: Request):
     allowed_fields = ["order_status", "notes"]
     update_data = {k: v for k, v in updates.items() if k in allowed_fields}
     
+    old_status = order.get("order_status")
+    new_status = update_data.get("order_status")
+    
     if update_data:
         await db.orders.update_one(
             {"order_id": order_id},
@@ -1489,7 +1492,47 @@ async def admin_update_order(order_id: str, updates: dict, request: Request):
         )
     
     updated = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+    
+    # Send WhatsApp notification to customer when order is marked as "facturado"
+    if new_status == "facturado" and old_status != "facturado":
+        await send_order_invoiced_notification(updated)
+    
     return updated
+
+async def send_order_invoiced_notification(order: dict):
+    """Send WhatsApp notification to customer when order is invoiced"""
+    customer_phone = order.get('customer_phone', '')
+    if not customer_phone:
+        logger.warning(f"No customer phone for order {order.get('order_id')}")
+        return
+    
+    items_text = "\n".join([
+        f"• {item.get('name', 'Producto')}" + 
+        (f" - Talle: {item.get('size')}" if item.get('size') else "") + 
+        f" x{item.get('quantity', 1)}" 
+        for item in order.get('items', [])
+    ])
+    
+    message = f"""✅ *PEDIDO CONFIRMADO - Avenue Online*
+
+¡Hola {order.get('customer_name', '')}! 
+
+Tu pedido ha sido facturado y confirmado.
+
+📦 *Pedido:* {order.get('order_id', '')}
+
+🛍️ *Productos:*
+{items_text}
+
+💰 *Total:* {order.get('total', 0):,.0f} Gs
+
+{"📍 *Envío a:* " + order.get('delivery_address', {}).get('address', '') if order.get('delivery_type') == 'delivery' else "🏪 *Retiro en tienda*"}
+
+¡Gracias por tu compra! Te avisaremos cuando esté listo para {("entregar" if order.get('delivery_type') == 'delivery' else "retirar")}.
+
+_Avenue - Donde las marcas brillan_"""
+
+    await send_whatsapp_notification(customer_phone, message)
 
 # ==================== BASIC ROUTES ====================
 
