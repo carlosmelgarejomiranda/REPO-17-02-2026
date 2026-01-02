@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Search, X, User, LogOut, Menu, ChevronRight } from 'lucide-react';
 import { ProductDetailModal } from './ProductDetailModal';
