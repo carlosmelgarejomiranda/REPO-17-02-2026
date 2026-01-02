@@ -484,3 +484,24 @@ agent_communication:
   - agent: "testing"
     message: "🎯 BATCH IMAGE ASSIGNMENT PANEL TESTING COMPLETED: Comprehensive testing of new Batch Image Assignment Panel feature completed successfully. ALL 5 CRITICAL TEST CASES PASSED: 1) Access Batch Assignment Panel ✅ - Login with avenuepy@gmail.com/admin123 working, 'Imágenes' tab accessible, green 'Asignación Visual por Lote' button found and functional, panel opens fullscreen correctly, left side shows 'PRODUCTOS SIN IMAGEN', right side shows 'IMÁGENES DEL LOTE' with 'Subir Imágenes' button, header with Brand/Category dropdown working with 58 available brands 2) Brand/Category Selection ✅ - SUN68 selection working perfectly, left side loads 20 products without images, 'Sin imagen: 20' counter displays correctly, products show code, name, brand, and price (e.g., 'Z34101-19 Sun_68 Calzados Lifestyle Masculino Moda Tom_Solid Militare SUN68 830.000 Gs') 3) Product Selection ✅ - Product selection functional, golden border highlighting working, footer appears showing 'Producto seleccionado: [product name]', image selection counter shows 'Imágenes seleccionadas: 0/3' 4) Back Navigation ✅ - Back arrow (←) in top left working, returns to Images management section correctly 5) UI Elements Verification ✅ - Left panel has scrollable container (.overflow-y-auto), product information display correct with price and category/brand info, 'Asignados: 0' counter in header working, dark theme properly implemented, all UI elements functioning as expected. NEW BATCH IMAGE ASSIGNMENT PANEL READY FOR PRODUCTION USE."
 
+
+## New Testing Session - Batch Image Assignment Improvements
+
+### Tasks Implemented:
+1. **Unlink Images Endpoint** - `DELETE /api/shop/admin/unlink-images/{product_id}`
+   - Removes all images from a product
+   - Enables "Undo" functionality in the Batch Image Assignment tool
+   - Deletes image files from filesystem
+   - Resets product images array to [null, null, null]
+
+### Test Cases to Verify:
+1. **Product Name Display (Issue 1)** - Verify long product names show correctly with `line-clamp-2` (up to 2 lines)
+2. **Undo Button (Issue 2)** - Test that clicking undo button on recent assignment reverts the product
+3. **Unlink Endpoint (Issue 3)** - Test `DELETE /api/shop/admin/unlink-images/{product_id}` returns correct response
+
+### Files Changed:
+- `/app/backend/ecommerce.py` - Added unlink-images endpoint
+- `/app/frontend/src/components/BatchImageAssignment.jsx` - UI already had undo functionality, now connected to backend
+
+### Test Credentials:
+- **Admin**: avenuepy@gmail.com / admin123
