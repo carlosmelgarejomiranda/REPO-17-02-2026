@@ -2077,20 +2077,28 @@ async def upload_batch_temp(files: List[UploadFile] = File(...)):
     
     for file in files:
         try:
-            # Validate file type
-            if not file.content_type or not file.content_type.startswith('image/'):
-                errors.append(f"{file.filename}: Tipo de archivo inválido")
+            # Get file extension
+            ext = file.filename.split('.')[-1].lower() if '.' in file.filename else 'jpg'
+            
+            # Validate file type - check both content_type and extension
+            is_valid = False
+            if file.content_type and file.content_type.lower() in SUPPORTED_IMAGE_FORMATS:
+                is_valid = True
+            elif ext in EXT_TO_MIME:
+                is_valid = True
+            
+            if not is_valid:
+                errors.append(f"{file.filename}: Formato no soportado ({file.content_type or ext})")
                 continue
             
             # Read content
             content = await file.read()
             
-            if len(content) > 10 * 1024 * 1024:  # 10MB max
-                errors.append(f"{file.filename}: Archivo muy grande (máx 10MB)")
+            if len(content) > 15 * 1024 * 1024:  # 15MB max
+                errors.append(f"{file.filename}: Archivo muy grande (máx 15MB)")
                 continue
             
-            # Generate unique filename
-            ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+            # Generate unique filename preserving extension
             temp_filename = f"{uuid.uuid4().hex[:8]}.{ext}"
             temp_filepath = os.path.join(batch_dir, temp_filename)
             
@@ -2107,7 +2115,8 @@ async def upload_batch_temp(files: List[UploadFile] = File(...)):
                 "temp_filename": temp_filename,
                 "url": image_url,
                 "batch_id": batch_id,
-                "size": len(content)
+                "size": len(content),
+                "extension": ext
             })
             
         except Exception as e:
