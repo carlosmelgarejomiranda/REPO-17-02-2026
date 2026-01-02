@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail } from 'lucide-react';
+import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail, Palette } from 'lucide-react';
 import { Button } from './ui/button';
 import { OrdersManagement } from './OrdersManagement';
 import { ProductImagesManager } from './ProductImagesManager';
+import { WebsiteBuilder } from './WebsiteBuilder';
 
 export const AdminDashboard = ({ user }) => {
   const [reservations, setReservations] = useState([]);
@@ -16,6 +17,7 @@ export const AdminDashboard = ({ user }) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [sendingTestEmail, setSendingTestEmail] = useState(false);
   const [testEmailStatus, setTestEmailStatus] = useState(null);
+  const [showBuilder, setShowBuilder] = useState(false);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
