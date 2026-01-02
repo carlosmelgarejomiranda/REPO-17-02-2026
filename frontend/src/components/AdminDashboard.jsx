@@ -171,6 +171,15 @@ export const AdminDashboard = ({ user }) => {
             </div>
             
             <div className="flex items-center gap-3">
+              {/* Website Builder Button */}
+              <button
+                onClick={() => setShowBuilder(true)}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#d4a968] to-[#c49958] text-black font-medium hover:opacity-90 transition-opacity text-sm"
+              >
+                <Palette className="w-4 h-4" />
+                <span className="hidden md:inline">Editar Web</span>
+              </button>
+              
               <button
                 onClick={sendTestEmail}
                 disabled={sendingTestEmail}
@@ -181,7 +190,7 @@ export const AdminDashboard = ({ user }) => {
               </button>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#d4a968] text-black font-medium hover:bg-[#c49958] transition-colors text-sm"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors text-sm"
               >
                 <Plus className="w-4 h-4" />
                 <span className="hidden md:inline">Nueva Reserva</span>
