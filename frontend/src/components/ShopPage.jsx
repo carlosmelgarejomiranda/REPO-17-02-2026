@@ -175,23 +175,24 @@ export const ShopPage = ({ cart, setCart }) => {
     fetchFilters();
   }, []);
 
-  const fetchProducts = useCallback(async () => {
+  // Mapping from display names to actual ERP category names
+const BRAND_TO_CATEGORY_MAP = {
+  'DAVID SANDOVAL': 'DS',
+  'AVENUE OUTLET': 'AVENUE',
+  'SUN68': 'SUN68',
+  'AGUARA': 'AGUARA FITWEAR',
+  'MARIA E MAKE UP': 'MARIA E MAKE UP',
+};
+
+const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       let url = `${API_URL}/api/shop/products?page=${currentPage}&limit=16`;
       if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
       if (selectedBrand) {
-        // Handle special brand mappings for API
-        let brandQuery = selectedBrand;
-        if (selectedBrand === 'DAVID SANDOVAL') {
-          brandQuery = 'DS';
-        } else if (selectedBrand === 'AVENUE OUTLET') {
-          // Search for any outlet brand
-          brandQuery = 'avenue';
-        } else if (selectedBrand === 'SUN68') {
-          brandQuery = 'SUN';
-        }
-        url += `&category=${encodeURIComponent(brandQuery)}`;
+        // Map display name to actual ERP category name
+        const brandQuery = BRAND_TO_CATEGORY_MAP[selectedBrand] || selectedBrand;
+        url += `&brand=${encodeURIComponent(brandQuery)}`;
       }
       
       const response = await fetch(url);
