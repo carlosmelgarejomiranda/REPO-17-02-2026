@@ -269,67 +269,48 @@ export const WebsiteBuilder = ({ onClose }) => {
         }
       });
 
-      // Mark all <img> elements
+      // Mark all <img> elements with button overlay (no DOM wrapping)
       const images = iframeDoc.querySelectorAll('img');
       images.forEach((img, index) => {
-        if (img.closest('.img-edit-wrapper')) return; // Already wrapped
-        if (img.closest('.img-edit-overlay')) return; // Part of overlay
+        if (img.hasAttribute('data-builder-img')) return; // Already processed
+        if (img.closest('.builder-img-btn')) return; // Part of button
         
         const editId = `img-${selectedPage.id}-${index}`;
         img.setAttribute('data-edit-id', editId);
+        img.setAttribute('data-builder-img', 'true');
         
-        // Get computed styles of the image
-        const imgStyle = window.getComputedStyle(img);
-        const parentStyle = window.getComputedStyle(img.parentElement);
+        // Get or create container
+        const parent = img.parentElement;
+        const parentStyle = window.getComputedStyle(parent);
         
-        const wrapper = iframeDoc.createElement('div');
-        wrapper.className = 'img-edit-wrapper';
-        
-        // Preserve the image's positioning
-        if (imgStyle.position === 'absolute') {
-          wrapper.style.cssText = `
-            position: absolute !important;
-            top: ${imgStyle.top};
-            left: ${imgStyle.left};
-            right: ${imgStyle.right};
-            bottom: ${imgStyle.bottom};
-            width: ${imgStyle.width};
-            height: ${imgStyle.height};
-          `;
-          img.style.position = 'relative';
-          img.style.top = '0';
-          img.style.left = '0';
-        } else {
-          // For block/inline images
-          wrapper.style.cssText = `
-            display: ${imgStyle.display === 'inline' ? 'inline-block' : 'block'};
-            width: ${imgStyle.width};
-            height: ${imgStyle.height};
-          `;
+        // Ensure parent can contain absolutely positioned button
+        if (parentStyle.position === 'static') {
+          parent.style.position = 'relative';
         }
         
-        const overlay = iframeDoc.createElement('div');
-        overlay.className = 'img-edit-overlay';
-        overlay.innerHTML = `
-          <div class="img-edit-btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <path d="m21 15-5-5L5 21"/>
-            </svg>
-            Cambiar imagen
-          </div>
+        // Create edit button
+        const editBtn = iframeDoc.createElement('button');
+        editBtn.className = 'builder-img-btn';
+        editBtn.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <path d="m21 15-5-5L5 21"/>
+          </svg>
+          Cambiar imagen
         `;
         
-        img.parentNode.insertBefore(wrapper, img);
-        wrapper.appendChild(img);
-        wrapper.appendChild(overlay);
-        
-        overlay.onclick = (e) => {
+        editBtn.onclick = (e) => {
           e.preventDefault();
           e.stopPropagation();
           openImageModal(img.src, editId, 'img');
         };
+        
+        // Add button as sibling to image (inside same container)
+        parent.appendChild(editBtn);
+        
+        // Mark parent for hover effects
+        parent.setAttribute('data-builder-img', 'true');
       });
 
       // Mark all elements with background images
