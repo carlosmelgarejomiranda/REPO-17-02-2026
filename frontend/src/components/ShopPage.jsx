@@ -355,7 +355,7 @@ const fetchProducts = useCallback(async () => {
             onMouseLeave={() => setShowBrandsMenu(false)}
           >
             <div className="max-w-[1400px] mx-auto px-8 py-8">
-              <div className="grid grid-cols-6 gap-6">
+              <div className="grid grid-cols-5 gap-6">
                 {/* Indumentaria - 2 columns span */}
                 <div className="col-span-2">
                   {/* Title centered across both columns */}
