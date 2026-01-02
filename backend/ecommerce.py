@@ -628,6 +628,7 @@ async def get_products(
     page: int = 1,
     limit: int = 20,
     category: Optional[str] = None,
+    brand: Optional[str] = None,
     gender: Optional[str] = None,
     size: Optional[str] = None,
     search: Optional[str] = None,
@@ -642,8 +643,14 @@ async def get_products(
         if search:
             query["base_model"] = {"$regex": search, "$options": "i"}
         
-        if category:
-            query["category"] = {"$regex": f"^{category}$", "$options": "i"}
+        # Support both 'category' and 'brand' parameters - search in both fields
+        brand_filter = brand or category
+        if brand_filter:
+            # Search in both category and brand fields using $or
+            query["$or"] = [
+                {"category": {"$regex": brand_filter, "$options": "i"}},
+                {"brand": {"$regex": brand_filter, "$options": "i"}}
+            ]
         
         if gender:
             query["gender"] = gender
