@@ -235,9 +235,15 @@ export const OrderSuccessPage = ({ setCart, user, onLoginClick, onLogout, langua
               <span className={`inline-block px-3 py-1 text-xs rounded-full ${
                 paymentStatus === 'paid' 
                   ? 'bg-green-50 text-green-700' 
-                  : 'bg-yellow-50 text-yellow-700'
+                  : paymentStatus === 'request'
+                    ? 'bg-amber-50 text-amber-700'
+                    : 'bg-yellow-50 text-yellow-700'
               }`}>
-                {paymentStatus === 'paid' ? 'Confirmado' : 'Pendiente'}
+                {paymentStatus === 'paid' 
+                  ? 'Confirmado' 
+                  : paymentStatus === 'request'
+                    ? 'Solicitud'
+                    : 'Pendiente'}
               </span>
             </div>
           </div>
