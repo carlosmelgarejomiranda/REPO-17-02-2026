@@ -495,39 +495,8 @@ export const ShopPage = ({ cart, setCart }) => {
           </div>
         )}
       </header>
-                  </h3>
-                  <ul className="space-y-3">
-                    {organizedBrands.cosmetica.map(brand => (
-                      <li key={brand}>
-                        <button
-                          onClick={() => handleBrandSelect(brand)}
-                          className={`text-sm transition-colors hover:text-gray-900 ${
-                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
-                          }`}
-                        >
-                          {brand}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
 
-                {/* Otros */}
-                <div>
-                  <h3 className="text-xs tracking-[0.2em] uppercase font-semibold text-gray-900 mb-5 pb-3 border-b border-gray-200">
-                    {BRAND_CATEGORIES.otros.title}
-                  </h3>
-                  <ul className="space-y-3">
-                    {organizedBrands.otros.slice(0, 12).map(brand => (
-                      <li key={brand}>
-                        <button
-                          onClick={() => handleBrandSelect(brand)}
-                          className={`text-sm transition-colors hover:text-gray-900 ${
-                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
-                          }`}
-                        >
-                          {brand}
-                        </button>
+      {/* Main Content */}
                       </li>
                     ))}
                   </ul>
