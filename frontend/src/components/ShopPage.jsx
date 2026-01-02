@@ -303,22 +303,20 @@ const fetchProducts = useCallback(async () => {
       <header className="sticky top-0 z-50 bg-white">
         <div className="max-w-[1800px] mx-auto">
           {/* Main navigation bar */}
-          <div className="flex items-center justify-between px-8 py-4">
+          <div className="flex items-center justify-between px-8 h-14">
             {/* Left section - Only Brands */}
-            <div className="flex items-center">
-              {/* Brands Menu Trigger */}
+            <div className="flex items-center h-full">
+              {/* Brands Menu Trigger - extends to bottom of header */}
               <div 
-                className="relative group"
+                className="relative h-full flex items-center"
                 onMouseEnter={() => setShowBrandsMenu(true)}
                 onMouseLeave={() => setShowBrandsMenu(false)}
               >
-                <button className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors py-4 font-medium">
+                <button className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors font-medium h-full px-2">
                   Brands
                 </button>
-                {/* Invisible bridge connecting button to dropdown */}
-                {showBrandsMenu && (
-                  <div className="absolute left-0 right-0 h-4 top-full" />
-                )}
+                {/* Invisible extension below to connect to mega menu */}
+                <div className="absolute left-0 right-0 h-8 top-full" />
               </div>
             </div>
 
@@ -330,11 +328,11 @@ const fetchProducts = useCallback(async () => {
             </a>
 
             {/* Right section - Cart, Menu, Login, Language */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 h-full">
               {/* Cart */}
               <button
                 onClick={() => navigate('/shop/cart')}
-                className="text-gray-500 hover:text-gray-900 transition-colors relative"
+                className="text-gray-500 hover:text-gray-900 transition-colors relative flex items-center h-full"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {cartCount > 0 && (
