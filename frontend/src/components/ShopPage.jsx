@@ -301,29 +301,19 @@ const fetchProducts = useCallback(async () => {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       {/* Unified Header - Single white navbar */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+      <header className="sticky top-0 z-50 bg-white">
         <div className="max-w-[1800px] mx-auto">
           {/* Main navigation bar */}
           <div className="flex items-center justify-between px-8 py-4">
-            {/* Left section - Navigation links */}
-            <div className="flex items-center gap-6">
-              <a href="/" className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors hidden md:block">
-                {t?.nav?.home || 'Inicio'}
-              </a>
-              <a href="/shop" className="text-xs tracking-[0.15em] uppercase text-gray-900 font-medium hidden md:block">
-                E-commerce
-              </a>
-              <a href="/studio" className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors hidden md:block">
-                Studio
-              </a>
-              <div className="h-4 w-px bg-gray-200 hidden md:block"></div>
+            {/* Left section - Only Brands */}
+            <div className="flex items-center">
               {/* Brands Menu Trigger */}
               <div 
                 className="relative"
                 onMouseEnter={() => setShowBrandsMenu(true)}
                 onMouseLeave={() => setShowBrandsMenu(false)}
               >
-                <button className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors py-2 pb-6">
+                <button className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors py-2 pb-6 font-medium">
                   Brands
                 </button>
                 {/* Invisible bridge to prevent hover gap */}
@@ -340,16 +330,8 @@ const fetchProducts = useCallback(async () => {
               </h1>
             </a>
 
-            {/* Right section - Actions */}
+            {/* Right section - Cart, Menu, Login, Language */}
             <div className="flex items-center gap-4">
-              {/* Search */}
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="text-gray-500 hover:text-gray-900 transition-colors"
-              >
-                <Search className="w-5 h-5" />
-              </button>
-
               {/* Cart */}
               <button
                 onClick={() => navigate('/shop/cart')}
@@ -363,16 +345,90 @@ const fetchProducts = useCallback(async () => {
                 )}
               </button>
 
+              {/* Hamburger Menu */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setShowNavMenu(true)}
+                onMouseLeave={() => { setShowNavMenu(false); setShowStudioSubmenu(false); }}
+              >
+                <button className="text-gray-500 hover:text-gray-900 transition-colors p-1">
+                  <Menu className="w-5 h-5" />
+                </button>
+                
+                {/* Navigation Dropdown */}
+                {showNavMenu && (
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg border border-gray-100 py-2 z-50">
+                    <a 
+                      href="/" 
+                      className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                      Inicio
+                    </a>
+                    <a 
+                      href="/shop" 
+                      className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-900 font-medium bg-gray-50"
+                    >
+                      E-commerce
+                    </a>
+                    
+                    {/* Studio with submenu */}
+                    <div 
+                      className="relative"
+                      onMouseEnter={() => setShowStudioSubmenu(true)}
+                      onMouseLeave={() => setShowStudioSubmenu(false)}
+                    >
+                      <button className="w-full px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors flex items-center justify-between">
+                        <span>Studio</span>
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                      
+                      {/* Studio Submenu */}
+                      {showStudioSubmenu && (
+                        <div className="absolute left-full top-0 w-52 bg-white shadow-lg border border-gray-100 py-2 -ml-1">
+                          <a 
+                            href="/studio" 
+                            className="block px-5 py-3 text-xs tracking-[0.12em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                          >
+                            Reserva el Estudio
+                          </a>
+                          <a 
+                            href="/ugc" 
+                            className="block px-5 py-3 text-xs tracking-[0.12em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                          >
+                            UGC Creators
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <a 
+                      href="/tu-marca" 
+                      className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                      Tu Marca en Avenue
+                    </a>
+                    
+                    {/* Admin link for admin users */}
+                    {user?.role === 'admin' && (
+                      <>
+                        <div className="border-t border-gray-100 my-2"></div>
+                        <a 
+                          href="/admin" 
+                          className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                        >
+                          Admin
+                        </a>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="h-4 w-px bg-gray-200"></div>
 
               {/* User / Auth */}
               {user ? (
                 <div className="flex items-center gap-3">
-                  {user.role === 'admin' && (
-                    <a href="/admin" className="text-xs tracking-[0.1em] uppercase text-gray-500 hover:text-gray-900 transition-colors hidden md:block">
-                      Admin
-                    </a>
-                  )}
                   <span className="text-xs text-gray-600 hidden md:block">{user.name?.split(' ')[0]}</span>
                   <button onClick={onLogout} className="text-gray-400 hover:text-gray-600 transition-colors">
                     <LogOut className="w-4 h-4" />
@@ -393,30 +449,30 @@ const fetchProducts = useCallback(async () => {
             </div>
           </div>
 
-          {/* Search Bar - Expandable */}
-          {searchOpen && (
-            <div className="border-t border-gray-100 px-8 py-4">
-              <form onSubmit={handleSearch} className="max-w-xl mx-auto">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Buscar productos..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    autoFocus
-                    className="w-full py-3 px-4 bg-gray-50 border-0 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200"
-                  />
+          {/* Search Bar - Always visible below logo, centered */}
+          <div className="border-t border-gray-100 px-8 py-3">
+            <form onSubmit={handleSearch} className="max-w-md mx-auto">
+              <div className="relative flex items-center">
+                <Search className="w-4 h-4 text-gray-400 absolute left-3" />
+                <input
+                  type="text"
+                  placeholder="Buscar productos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full py-2 pl-10 pr-4 bg-gray-50 border-0 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200 rounded-sm"
+                />
+                {searchTerm && (
                   <button
                     type="button"
-                    onClick={() => setSearchOpen(false)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    onClick={() => { setSearchTerm(''); setCurrentPage(1); }}
+                    className="absolute right-3 text-gray-400 hover:text-gray-600"
                   >
                     <X className="w-4 h-4" />
                   </button>
-                </div>
-              </form>
-            </div>
-          )}
+                )}
+              </div>
+            </form>
+          </div>
         </div>
         
         {/* Mega Menu Dropdown - Full Width */}
