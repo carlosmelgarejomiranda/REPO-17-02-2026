@@ -339,3 +339,38 @@ async def reorder_sections(page_id: str, section_orders: List[Dict[str, Any]]):
     )
     
     return {"success": True, "sections": sections}
+
+
+# New endpoints for WYSIWYG modifications
+
+class PageModifications(BaseModel):
+    modifications: Dict[str, str]  # selector -> value mappings
+
+@router.get("/modifications/{page_id}")
+async def get_page_modifications(page_id: str):
+    """Get saved modifications for a page"""
+    db = get_db()
+    
+    result = await db.page_modifications.find_one({"page_id": page_id}, {"_id": 0})
+    if result:
+        return result
+    
+    return {"page_id": page_id, "modifications": {}}
+
+@router.put("/modifications/{page_id}")
+async def save_page_modifications(page_id: str, data: PageModifications):
+    """Save modifications for a page"""
+    db = get_db()
+    
+    await db.page_modifications.update_one(
+        {"page_id": page_id},
+        {"$set": {
+            "page_id": page_id,
+            "modifications": data.modifications,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Modifications saved"}
+
