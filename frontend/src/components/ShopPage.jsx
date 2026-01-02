@@ -173,26 +173,30 @@ export const ShopPage = ({ cart, setCart }) => {
           otros: []
         };
         
-        // Add remaining brands to "otros"
-        const allCategorizedBrands = [
+        // Add remaining brands to "otros" - exclude known unified brands
+        const allUnifiedBrands = [
           ...DISPLAY_BRANDS.indumentaria,
           ...DISPLAY_BRANDS.calzados,
           ...DISPLAY_BRANDS.joyas,
           ...DISPLAY_BRANDS.cosmetica,
           ...OUTLET_PATTERNS,
           ...SUN_PATTERNS,
-          'DS'
+          ...BODY_SCULPT_PATTERNS,
+          ...UNDISTURBED_PATTERNS,
+          ...MARIA_MAKEUP_PATTERNS,
+          'DS', 'AGUARA FITWEAR', 'KARLA RUIZ'
         ];
         
         rawBrands.forEach(brand => {
           const normalized = normalizeBrand(brand);
-          // Check if this brand is not in any category
-          if (!allCategorizedBrands.some(cb => 
-            normalized === cb || brand.includes(cb) || cb.includes(brand) || normalized.includes(cb)
-          )) {
-            if (!organized.otros.includes(brand)) {
-              organized.otros.push(brand);
-            }
+          // Check if this brand is not already categorized
+          const isAlreadyCategorized = allUnifiedBrands.some(cb => {
+            const cbUpper = cb.toUpperCase();
+            return normalized === cbUpper || brand.toUpperCase() === cbUpper;
+          });
+          
+          if (!isAlreadyCategorized && !organized.otros.includes(normalized)) {
+            organized.otros.push(normalized);
           }
         });
         
@@ -208,15 +212,6 @@ export const ShopPage = ({ cart, setCart }) => {
     };
     fetchFilters();
   }, []);
-
-  // Mapping from display names to actual ERP category names
-const BRAND_TO_CATEGORY_MAP = {
-  'DAVID SANDOVAL': 'DS',
-  'AVENUE OUTLET': 'AVENUE',
-  'SUN68': 'SUN68',
-  'AGUARA': 'AGUARA FITWEAR',
-  'MARIA E MAKE UP': 'MARIA E MAKE UP',
-};
 
 const fetchProducts = useCallback(async () => {
     setLoading(true);
