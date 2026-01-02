@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingBag, Search, X, User, LogOut } from 'lucide-react';
+import { ShoppingBag, Search, X, User, LogOut, Menu, ChevronRight } from 'lucide-react';
 import { ProductDetailModal } from './ProductDetailModal';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
