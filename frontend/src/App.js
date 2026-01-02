@@ -131,7 +131,7 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
         <div className="flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-3">
-              {user.role === 'admin' && (
+              {['admin', 'superadmin', 'staff', 'designer'].includes(user.role) && (
                 <a 
                   href="/admin" 
                   className="hidden md:flex items-center gap-1.5"
