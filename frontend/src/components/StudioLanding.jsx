@@ -43,6 +43,9 @@ export const StudioLanding = ({ t }) => {
   const sl = t?.studioLanding || {};
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState({});
+  
+  // Apply saved modifications from website builder
+  useBuilderModifications('studio-landing');
 
   // Auto-rotate gallery
   useEffect(() => {
