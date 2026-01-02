@@ -147,6 +147,11 @@ export const AdminDashboard = ({ user }) => {
     { id: 'users', label: 'Usuarios', icon: Users }
   ];
 
+  // Show Website Builder
+  if (showBuilder) {
+    return <WebsiteBuilder onClose={() => setShowBuilder(false)} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
