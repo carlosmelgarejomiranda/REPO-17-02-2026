@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Upload, Image, Check, X, AlertCircle, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Upload, Image, Check, X, AlertCircle, Loader2, ChevronLeft, Undo2, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
@@ -28,6 +28,10 @@ export const BatchImageAssignment = ({ onClose }) => {
   const [assignedCount, setAssignedCount] = useState(0);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
+  
+  // State for undo history (recent assignments in this session)
+  const [assignmentHistory, setAssignmentHistory] = useState([]);
+  const [undoing, setUndoing] = useState(false);
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token');
