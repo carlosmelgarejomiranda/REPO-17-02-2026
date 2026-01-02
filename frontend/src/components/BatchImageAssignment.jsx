@@ -411,7 +411,7 @@ export const BatchImageAssignment = ({ onClose }) => {
                 <p className="text-sm mt-2">Arrastra o haz clic en &quot;Subir Imágenes&quot;</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
                 {batchImages.map(image => {
                   const isSelected = selectedImages.some(img => img.id === image.id);
                   const isBlocked = selectedImages.length >= 3 && !isSelected;
@@ -420,40 +420,40 @@ export const BatchImageAssignment = ({ onClose }) => {
                     <div
                       key={image.id}
                       onClick={() => !isBlocked && handleImageClick(image)}
-                      className={`relative rounded-xl overflow-hidden cursor-pointer transition-all ${
+                      className={`relative rounded-lg overflow-hidden cursor-pointer transition-all ${
                         isSelected 
-                          ? 'ring-4 ring-[#d4a968] ring-offset-2 ring-offset-[#0a0a0a]' 
+                          ? 'ring-3 ring-[#d4a968] ring-offset-1 ring-offset-[#0a0a0a]' 
                           : isBlocked
                             ? 'opacity-30 cursor-not-allowed'
                             : 'hover:ring-2 hover:ring-white/30'
                       }`}
                     >
-                      {/* Image */}
-                      <div className="aspect-[4/3] bg-neutral-900">
+                      {/* Image - smaller aspect ratio */}
+                      <div className="aspect-square bg-neutral-900">
                         <img
                           src={image.url}
                           alt={image.filename}
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                       
                       {/* Selected overlay */}
                       {isSelected && (
                         <div className="absolute inset-0 bg-[#d4a968]/20 flex items-center justify-center">
-                          <div className="w-12 h-12 rounded-full bg-[#d4a968] flex items-center justify-center">
-                            <Check className="w-6 h-6 text-black" />
+                          <div className="w-8 h-8 rounded-full bg-[#d4a968] flex items-center justify-center">
+                            <Check className="w-4 h-4 text-black" />
                           </div>
                         </div>
                       )}
                       
                       {/* Filename */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-3 py-2">
-                        <p className="text-white text-sm truncate">{image.filename}</p>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-2 py-1">
+                        <p className="text-white text-xs truncate">{image.filename}</p>
                       </div>
                       
                       {/* Selection number */}
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-8 h-8 rounded-full bg-[#d4a968] text-black font-bold flex items-center justify-center">
+                        <div className="absolute top-1 right-1 w-6 h-6 rounded-full bg-[#d4a968] text-black text-sm font-bold flex items-center justify-center">
                           {selectedImages.findIndex(img => img.id === image.id) + 1}
                         </div>
                       )}
