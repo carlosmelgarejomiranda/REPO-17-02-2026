@@ -879,10 +879,14 @@ async def google_callback(request: Request, response: Response):
         )
         user_id = existing_user["user_id"]
         role = existing_user.get("role", "user")
+        # Ensure superadmin email always has superadmin role
+        if email == ADMIN_EMAIL and role != "superadmin":
+            role = "superadmin"
+            await db.users.update_one({"email": email}, {"$set": {"role": "superadmin"}})
     else:
         # Create new user
         user_id = f"user_{uuid.uuid4().hex[:12]}"
-        role = "admin" if email == ADMIN_EMAIL else "user"
+        role = "superadmin" if email == ADMIN_EMAIL else "user"
         
         user_doc = {
             "user_id": user_id,
