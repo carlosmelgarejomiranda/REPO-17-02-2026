@@ -2691,6 +2691,13 @@ def run_all_tests():
         ("Test Checkout Status Endpoint", test_checkout_status_endpoint),
         ("Test Notifications System", test_notifications_system),
         ("Test Admin Orders Endpoint", test_admin_orders_endpoint),
+        
+        # NEW: Batch Image Assignment Tests
+        ("Test Unlink Images - Invalid Product ID", test_unlink_images_endpoint_invalid_product),
+        ("Test Unlink Images - Valid Product ID", test_unlink_images_endpoint_valid_product),
+        ("Test Assign Images Endpoint", test_assign_images_endpoint),
+        ("Test Batch Assignment Admin Access", test_batch_image_assignment_admin_access),
+        ("Test Batch Assignment Brand Filtering", test_batch_image_assignment_brand_filtering),
     ]
     
     results = []
