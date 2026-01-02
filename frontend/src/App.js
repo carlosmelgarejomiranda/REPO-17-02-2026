@@ -80,16 +80,17 @@ const useAuth = () => {
 
 // Studio Navigation Component - Editorial Style
 const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => (
-  <nav style={{ 
-    position: 'fixed', 
-    top: 0, 
-    left: 0, 
-    right: 0, 
-    zIndex: 50,
-    background: '#000000',
-    backgroundColor: '#000000'
-  }}>
-    <div style={{ padding: '16px 24px', background: '#000000' }}>
+  <nav 
+    data-studio-nav="true"
+    style={{ 
+      position: 'fixed', 
+      top: 0, 
+      left: 0, 
+      right: 0, 
+      zIndex: 50
+    }}
+  >
+    <div style={{ padding: '16px 24px' }}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center">
