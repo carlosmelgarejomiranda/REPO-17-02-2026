@@ -480,15 +480,19 @@ const fetchProducts = useCallback(async () => {
             </form>
           </div>
         </div>
+      </header>
         
-        {/* Mega Menu Dropdown - Full Width */}
-        {showBrandsMenu && (
-          <div 
-            className="absolute left-0 right-0 bg-white shadow-lg border-t border-gray-100 z-50"
-            onMouseEnter={() => setShowBrandsMenu(true)}
-            onMouseLeave={() => setShowBrandsMenu(false)}
-          >
-            <div className="max-w-[1400px] mx-auto px-8 py-8">
+      {/* Mega Menu Dropdown - Full Width - Outside header but connected via state */}
+      {showBrandsMenu && (
+        <div 
+          className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 z-40"
+          style={{ top: '57px' }}
+          onMouseEnter={() => setShowBrandsMenu(true)}
+          onMouseLeave={() => setShowBrandsMenu(false)}
+        >
+          {/* Invisible connector at top */}
+          <div className="absolute -top-4 left-0 w-32 h-4" />
+          <div className="max-w-[1400px] mx-auto px-8 py-8">
               <div className="grid grid-cols-5 gap-6">
                 {/* Indumentaria - 2 columns span */}
                 <div className="col-span-2">
