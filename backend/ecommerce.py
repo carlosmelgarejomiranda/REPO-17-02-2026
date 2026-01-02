@@ -2245,7 +2245,8 @@ async def delete_temp_batch(batch_id: str):
     """Clean up a temporary batch (delete all unassigned images)"""
     import shutil
     
-    temp_dir = os.path.join(UPLOAD_DIR, "temp_batch", batch_id)
+    base_upload_dir = "/app/backend/uploads"
+    temp_dir = os.path.join(base_upload_dir, "temp_batch", batch_id)
     
     if os.path.exists(temp_dir):
         shutil.rmtree(temp_dir)
