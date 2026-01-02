@@ -184,6 +184,18 @@ test_plan:
   test_all: false
   test_priority: "completed"
 
+  - task: "Website Builder Feature"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/WebsiteBuilder.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Website Builder fully functional in Admin Dashboard. 'Editar Web' button accessible, dark interface loads correctly, page selector shows 'Página Principal', sections panel displays 'hero' and 'features' sections. Section selection and editing works - can edit titles in center editor, right panel shows 'Contenido', 'Estilos', 'Media' tabs. Preview mode functional with desktop/mobile toggle and 'Cerrar Preview' button. Style editing works with color pickers and predefined colors. Media tab shows image/video upload buttons and URL input fields. Save functionality works - 'Guardar' button activates after changes and saves successfully. 'Volver al Admin' navigation returns to dashboard correctly."
+
 agent_communication:
   - agent: "testing"
     message: "Starting comprehensive testing of redesigned pages: BookingCalendar (/studio/reservar), UGC Creators (/studio/ugc/avenue), and Footer component. Will test hero sections, form functionality, validation, and visual elements."
@@ -191,3 +203,5 @@ agent_communication:
     message: "✅ TESTING COMPLETED SUCCESSFULLY: All redesigned pages tested and working properly. BookingCalendar flow (date→time→form) functional, UGC Creators application form working, Footer component displays correctly with all sections. Dark theme (#0a0a0a) and gold accents (#d4a968) implemented correctly throughout. Editorial typography with italic emphasis working. All major functionality verified."
   - agent: "testing"
     message: "✅ NAVIGATION AND ADMIN DASHBOARD TESTING COMPLETED: StudioNav component working perfectly across all pages with AVENUE logo, navigation links, and 'Iniciar Sesión' button. Admin Dashboard fully functional with editorial styling - login works, header with italic text, stats cards, tab navigation, and 'Nueva Reserva' button all working. Dark theme and gold accents properly implemented throughout."
+  - agent: "testing"
+    message: "✅ WEBSITE BUILDER TESTING COMPLETED: Website Builder feature fully functional in Admin Dashboard. All test cases passed - 'Editar Web' button access, dark interface, page selector with 'Página Principal', sections panel with 'hero' and 'features', section editing with real-time updates, preview mode with mobile/desktop toggle, style editing with color pickers, media tab with upload buttons and URL inputs, save functionality, and back navigation. Feature ready for production use."
