@@ -83,14 +83,9 @@ code {
 }
 
 /* Studio Nav Dark Override */
-.studio-nav-wrapper {
+#studio-main-nav {
+    background: #000000 !important;
     background-color: #000000 !important;
-}
-.studio-nav-wrapper nav {
-    background-color: #000000 !important;
-}
-.studio-nav-wrapper * {
-    background-color: transparent;
 }
 
 @layer base {
