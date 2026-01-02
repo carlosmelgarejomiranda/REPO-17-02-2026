@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { CheckCircle, Package, MapPin, Phone, Mail, Loader2, AlertCircle } from 'lucide-react';
+import { CheckCircle, Package, MapPin, Phone, Mail, Loader2, AlertCircle, MessageCircle, Clock } from 'lucide-react';
 import { ShopHeader } from './ShopHeader';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
@@ -15,6 +15,7 @@ export const OrderSuccessPage = ({ setCart, user, onLoginClick, onLogout, langua
 
   const orderId = searchParams.get('order_id');
   const sessionId = searchParams.get('session_id');
+  const orderType = searchParams.get('type'); // 'request', 'pending', or null for paid
 
   const pollPaymentStatus = useCallback(async (attempts = 0) => {
     const maxAttempts = 10;
@@ -61,24 +62,34 @@ export const OrderSuccessPage = ({ setCart, user, onLoginClick, onLogout, langua
       return;
     }
 
+    // Handle request type (payment gateway disabled)
+    if (orderType === 'request') {
+      setPaymentStatus('request');
+    } else if (orderType === 'pending') {
+      setPaymentStatus('pending_payment');
+    }
+
     fetch(`${API_URL}/api/shop/orders/${orderId}`)
       .then(res => res.json())
       .then(data => {
         setOrder(data);
         setLoading(false);
         
-        if (sessionId && data.payment_status !== 'paid') {
+        // If we have a sessionId and no orderType, poll for payment status
+        if (sessionId && !orderType && data.payment_status !== 'paid') {
           setPaymentStatus('checking');
           pollPaymentStatus(0);
-        } else if (data.payment_status === 'paid') {
+        } else if (data.payment_status === 'paid' || data.order_status === 'pagado') {
           setPaymentStatus('paid');
+        } else if (data.order_status === 'solicitud') {
+          setPaymentStatus('request');
         }
       })
       .catch(err => {
         console.error('Error fetching order:', err);
         setLoading(false);
       });
-  }, [orderId, sessionId, setCart, pollPaymentStatus]);
+  }, [orderId, sessionId, orderType, setCart, pollPaymentStatus]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
