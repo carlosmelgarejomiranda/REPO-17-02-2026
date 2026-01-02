@@ -350,20 +350,13 @@ const fetchProducts = useCallback(async () => {
                 onMouseEnter={() => setShowNavMenu(true)}
                 onMouseLeave={() => { setShowNavMenu(false); setShowStudioSubmenu(false); }}
               >
-                <button className="text-gray-500 hover:text-gray-900 transition-colors p-2">
+                <button className="text-gray-500 hover:text-gray-900 transition-colors p-2 pb-4">
                   <Menu className="w-5 h-5" />
                 </button>
                 
-                {/* Invisible bridge */}
+                {/* Navigation Dropdown - connected to button */}
                 {showNavMenu && (
-                  <div className="absolute right-0 w-full h-2 top-full" />
-                )}
-                
-                {/* Navigation Dropdown */}
-                {showNavMenu && (
-                  <div className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg border border-gray-100 py-2 z-50">
-                    {/* Invisible area at top to maintain hover */}
-                    <div className="absolute -top-2 left-0 right-0 h-2" />
+                  <div className="absolute right-0 top-full w-56 bg-white shadow-lg border border-gray-100 py-2 z-50">
                     <a 
                       href="/" 
                       className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
@@ -390,7 +383,7 @@ const fetchProducts = useCallback(async () => {
                       
                       {/* Studio Submenu */}
                       {showStudioSubmenu && (
-                        <div className="absolute left-full top-0 w-52 bg-white shadow-lg border border-gray-100 py-2 -ml-1">
+                        <div className="absolute right-full top-0 w-52 bg-white shadow-lg border border-gray-100 py-2 mr-0">
                           <a 
                             href="/studio" 
                             className="block px-5 py-3 text-xs tracking-[0.12em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
