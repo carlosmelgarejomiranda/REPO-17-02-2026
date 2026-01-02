@@ -21,19 +21,19 @@ const resolveImageUrl = (imageUrl) => {
 const BRAND_CATEGORIES = {
   indumentaria: {
     title: 'Indumentaria',
-    brands: ['SEROTONINA', 'EFIMERA', 'CORALTHEIA', 'KARLA', 'BRAVISIMA', 'SANTAL', 'BODY SCULPT', 'BRO FITWEAR', 'WUARANI', 'AGUARA', 'FILA', 'UNDISTURBED', 'DAVID SANDOVAL', 'SKYLINE', 'OKI', 'AVENUE OUTLET']
+    brands: ['AGUARA', 'AVENUE OUTLET', 'BODY SCULPT', 'BRAVISIMA', 'BRO FITWEAR', 'CORALTHEIA', 'DAVID SANDOVAL', 'EFIMERA', 'FILA', 'KARLA', 'OKI', 'SANTAL', 'SEROTONINA', 'SKYLINE', 'UNDISTURBED', 'WUARANI']
   },
   calzados: {
     title: 'Calzados',
-    brands: ['PREMIATA', 'SUN68', 'HUNTER', 'UGG', 'SPERRY', 'CRISTALINE']
+    brands: ['CRISTALINE', 'HUNTER', 'PREMIATA', 'SPERRY', 'SUN68', 'UGG']
   },
   joyas: {
     title: 'Joyas & Accesorios',
-    brands: ['SARELLY', 'THULA', 'OLIVIA', 'KAESE']
+    brands: ['KAESE', 'OLIVIA', 'SARELLY', 'THULA']
   },
   cosmetica: {
     title: 'Cosmética',
-    brands: ['MALVA', 'IMMORTAL', 'MARIA E MAKE UP']
+    brands: ['IMMORTAL', 'MALVA', 'MARIA E MAKE UP']
   },
   otros: {
     title: 'Otros',
@@ -43,14 +43,23 @@ const BRAND_CATEGORIES = {
 
 // Brands to merge into AVENUE OUTLET (case insensitive patterns)
 const OUTLET_PATTERNS = [
-  'GOOD AMERICAN', 'FRAME', 'BDA FACTORY', 'RUSTY', 'LACOSTE', 'SANTAL/US', 
-  'AVENUE AK', 'JAZMIN CHEBAR', 'MARIA CHER', 'TOP DESIGN', 'RICARDO ALMEIDA',
-  'HOWICK', 'ROTUNDA', 'JUICY', 'KOSIUKO', 'VOYAGEUR', 'MERSEA', 
-  'EST1985', 'QUICKSILVER', 'EST 1985', 'QUIKSILVER'
+  'AVENUE', 'AVENUE AK', 'BDA FACTORY', 'FRAME', 'GOOD AMERICAN',
+  'JAZMIN CHEBAR', 'JUICY', 'KOSIUKO', 'LACOSTE', 'MARIA CHER',
+  'MERSEA', 'QUIKSILVER', 'QUICKSILVER', 'RICARDO ALMEIDA', 'ROTUNDA', 'RUSTY',
+  'TOP DESIGN', 'VOYAGEUR', 'VITAMINA', 'HOWICK', 'EST1985', 'EST 1985', 'SANTAL/US'
 ];
 
 // Brands to merge into SUN68
 const SUN_PATTERNS = ['SUN68', 'SUN69', 'SUN70', 'SUN71', 'SUN72'];
+
+// Brands to merge into BODY SCULPT
+const BODY_SCULPT_PATTERNS = ['BODY SCULPT', 'BODYCULPT'];
+
+// Brands to merge into UNDISTURBED
+const UNDISTURBED_PATTERNS = ['UNDISTURB3D', 'UNDISTURBED'];
+
+// Brands to merge into MARIA E MAKE UP
+const MARIA_MAKEUP_PATTERNS = ['MARIA E MAKEUP', 'MARIA E MAKE UP'];
 
 // All known brands organized by category for display
 const DISPLAY_BRANDS = {
@@ -67,7 +76,7 @@ const normalizeBrand = (brand) => {
   const upper = brand.toUpperCase().trim();
   
   // Check if it's an outlet brand
-  if (OUTLET_PATTERNS.some(ob => upper.includes(ob) || (upper === 'AVENUE' && !upper.includes('OUTLET')))) {
+  if (OUTLET_PATTERNS.some(ob => upper === ob || upper.includes(ob))) {
     return 'AVENUE OUTLET';
   }
   
@@ -76,9 +85,34 @@ const normalizeBrand = (brand) => {
     return 'SUN68';
   }
   
-  // Check if it's DS
+  // Check if it's BODY SCULPT
+  if (BODY_SCULPT_PATTERNS.some(bs => upper === bs)) {
+    return 'BODY SCULPT';
+  }
+  
+  // Check if it's UNDISTURBED
+  if (UNDISTURBED_PATTERNS.some(ud => upper === ud)) {
+    return 'UNDISTURBED';
+  }
+  
+  // Check if it's MARIA E MAKE UP
+  if (MARIA_MAKEUP_PATTERNS.some(mm => upper === mm)) {
+    return 'MARIA E MAKE UP';
+  }
+  
+  // Check if it's DS (David Sandoval)
   if (upper === 'DS') {
     return 'DAVID SANDOVAL';
+  }
+  
+  // Check if it's AGUARA FITWEAR
+  if (upper === 'AGUARA FITWEAR') {
+    return 'AGUARA';
+  }
+  
+  // Check if it's KARLA RUIZ
+  if (upper === 'KARLA RUIZ') {
+    return 'KARLA';
   }
   
   return upper;
