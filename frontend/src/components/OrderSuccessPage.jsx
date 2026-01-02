@@ -87,8 +87,19 @@ export const OrderSuccessPage = ({ setCart, user, onLoginClick, onLogout, langua
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      <div className="min-h-screen bg-[#FAFAFA]">
+        <ShopHeader 
+          cart={[]} 
+          user={user} 
+          onLoginClick={onLoginClick} 
+          onLogout={onLogout}
+          language={language}
+          setLanguage={setLanguage}
+          t={t}
+        />
+        <div className="flex items-center justify-center py-32">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        </div>
       </div>
     );
   }
@@ -96,22 +107,42 @@ export const OrderSuccessPage = ({ setCart, user, onLoginClick, onLogout, langua
   // No order found
   if (!order) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center px-6">
-        <AlertCircle className="w-12 h-12 text-gray-300 mb-4" />
-        <h1 className="text-xl text-gray-900 mb-2">Pedido no encontrado</h1>
-        <p className="text-gray-500 mb-6">No pudimos encontrar los detalles de tu pedido.</p>
-        <button
-          onClick={() => navigate('/shop')}
-          className="px-8 py-3 bg-gray-900 text-white text-sm tracking-[0.15em] uppercase hover:bg-gray-800 transition-colors"
-        >
-          Ir a la tienda
-        </button>
+      <div className="min-h-screen bg-[#FAFAFA]">
+        <ShopHeader 
+          cart={[]} 
+          user={user} 
+          onLoginClick={onLoginClick} 
+          onLogout={onLogout}
+          language={language}
+          setLanguage={setLanguage}
+          t={t}
+        />
+        <div className="flex flex-col items-center justify-center px-6 py-24">
+          <AlertCircle className="w-12 h-12 text-gray-300 mb-4" />
+          <h1 className="text-xl text-gray-900 mb-2">Pedido no encontrado</h1>
+          <p className="text-gray-500 mb-6">No pudimos encontrar los detalles de tu pedido.</p>
+          <button
+            onClick={() => navigate('/shop')}
+            className="px-8 py-3 bg-gray-900 text-white text-sm tracking-[0.15em] uppercase hover:bg-gray-800 transition-colors"
+          >
+            Ir a la tienda
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
+      <ShopHeader 
+        cart={[]} 
+        user={user} 
+        onLoginClick={onLoginClick} 
+        onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
+      />
       <div className="max-w-2xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-12">
