@@ -41,6 +41,7 @@ admin_token = None
 reservation_id = None
 stripe_session_id = None
 test_order_id = None
+test_order_id_review = None
 
 def test_availability_endpoint():
     """Test 1: Test Availability Endpoint"""
