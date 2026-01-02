@@ -455,27 +455,26 @@ const fetchProducts = useCallback(async () => {
                         </button>
                       </li>
                     ))}
-                  </ul>
-                </div>
-
-                {/* Otros */}
-                <div>
-                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                    {BRAND_CATEGORIES.otros.title}
-                  </h3>
-                  <ul className="space-y-2">
-                    {organizedBrands.otros.slice(0, 10).map(brand => (
-                      <li key={brand}>
-                        <button
-                          onClick={() => handleBrandSelect(brand)}
-                          className={`text-[11px] transition-colors hover:text-gray-900 ${
-                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
-                          }`}
-                        >
-                          {brand}
-                        </button>
-                      </li>
-                    ))}
+                    {/* Include "Otros" brands at the end of Cosmética */}
+                    {organizedBrands.otros.length > 0 && (
+                      <>
+                        <li className="pt-3 mt-3 border-t border-gray-100">
+                          <span className="text-[9px] tracking-[0.15em] uppercase text-gray-400">Otros</span>
+                        </li>
+                        {organizedBrands.otros.slice(0, 5).map(brand => (
+                          <li key={brand}>
+                            <button
+                              onClick={() => handleBrandSelect(brand)}
+                              className={`text-[11px] transition-colors hover:text-gray-900 ${
+                                selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}
+                            >
+                              {brand}
+                            </button>
+                          </li>
+                        ))}
+                      </>
+                    )}
                   </ul>
                 </div>
               </div>
