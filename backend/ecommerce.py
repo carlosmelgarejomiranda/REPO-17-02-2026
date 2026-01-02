@@ -1722,9 +1722,6 @@ async def upload_product_image(
     # Update the image at the specified index
     images[image_index] = image_url
     
-    # Filter out None values at the end but keep structure
-    clean_images = [img for img in images if img is not None]
-    
     # Update product in database
     update_data = {
         "images": images,
