@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Store, Camera, ShoppingBag, Sparkles, Play } from 'lucide-react';
+import useBuilderModifications from '../hooks/useBuilderModifications';
 
 // Hero images for rotation
 const HERO_IMAGES = [
@@ -20,6 +21,9 @@ const BRANDS_LOGOS = [
 export const MainLanding = ({ t }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Apply saved modifications from website builder
+  useBuilderModifications('main-landing');
 
   useEffect(() => {
     setIsLoaded(true);
