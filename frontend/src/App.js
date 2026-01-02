@@ -528,20 +528,16 @@ function AppRouter() {
 
           {/* E-commerce Routes */}
           <Route path="/shop" element={
-            <>
-              <ShopNav 
-                t={t} 
-                language={language} 
-                setLanguage={setLanguage}
-                user={user}
-                cart={cart}
-                onLoginClick={() => setShowAuthModal(true)}
-                onLogout={logout}
-              />
-              <div style={{ paddingTop: '80px' }}>
-                <ShopPage cart={cart} setCart={setCart} />
-              </div>
-            </>
+            <ShopPage 
+              cart={cart} 
+              setCart={setCart} 
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
           } />
 
           <Route path="/shop/cart" element={
