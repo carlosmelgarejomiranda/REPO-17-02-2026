@@ -497,27 +497,6 @@ export const ShopPage = ({ cart, setCart }) => {
       </header>
 
       {/* Main Content */}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              
-              {/* View All */}
-              <div className="mt-8 pt-6 border-t border-gray-100">
-                <button
-                  onClick={() => { setSelectedBrand(''); setShowBrandsMenu(false); }}
-                  className="text-xs tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors"
-                >
-                  Ver todas las marcas →
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* Main Content */}
       <main className="max-w-[1800px] mx-auto px-4 lg:px-8 py-8">
         {/* Results header */}
         <div className="flex items-center justify-between mb-8">
