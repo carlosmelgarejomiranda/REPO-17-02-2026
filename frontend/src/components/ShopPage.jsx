@@ -470,84 +470,8 @@ export const ShopPage = ({ cart, setCart }) => {
           </div>
         )}
       </header>
-                      <ul className="space-y-2">
-                        {organizedBrands.cosmetica.map(brand => (
-                          <li key={brand}>
-                            <button
-                              onClick={() => handleBrandSelect(brand)}
-                              className={`text-sm transition-colors hover:text-gray-900 hover:underline ${
-                                selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
-                              }`}
-                            >
-                              {brand}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
 
-                    {/* Otros */}
-                    <div>
-                      <h3 className="text-xs tracking-[0.15em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                        {BRAND_CATEGORIES.otros.title}
-                      </h3>
-                      <ul className="space-y-2">
-                        {organizedBrands.otros.slice(0, 10).map(brand => (
-                          <li key={brand}>
-                            <button
-                              onClick={() => handleBrandSelect(brand)}
-                              className={`text-sm transition-colors hover:text-gray-900 hover:underline ${
-                                selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
-                              }`}
-                            >
-                              {brand}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  
-                  {/* View All */}
-                  <div className="px-8 py-4 border-t border-gray-100 bg-gray-50">
-                    <button
-                      onClick={() => { setSelectedBrand(''); setShowBrandsMenu(false); }}
-                      className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      Ver todas las marcas
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Logo */}
-            <a href="/shop" className="absolute left-1/2 -translate-x-1/2">
-              <h1 className="text-xl tracking-[0.3em] uppercase font-light text-gray-900">
-                Avenue
-              </h1>
-            </a>
-
-            {/* Actions */}
-            <div className="flex items-center gap-6">
-              {/* Search */}
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <Search className="w-5 h-5" />
-              </button>
-
-              {/* Cart */}
-              <button
-                onClick={() => navigate('/shop/cart')}
-                className="text-gray-600 hover:text-gray-900 transition-colors relative"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-gray-900 text-white text-[10px] rounded-full flex items-center justify-center">
-                    {cartCount}
-                  </span>
+      {/* Main Content */}
                 )}
               </button>
             </div>
