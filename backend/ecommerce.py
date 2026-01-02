@@ -22,14 +22,6 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Import Stripe checkout from emergentintegrations
-from emergentintegrations.payments.stripe.checkout import (
-    StripeCheckout, 
-    CheckoutSessionResponse, 
-    CheckoutStatusResponse, 
-    CheckoutSessionRequest
-)
-
 logger = logging.getLogger(__name__)
 
 # Initialize router
@@ -39,12 +31,12 @@ ecommerce_router = APIRouter(prefix="/api/shop")
 ENCOM_API_URL = os.environ.get('ENCOM_API_URL', 'https://api.cloud.encom.com.py')
 ENCOM_API_TOKEN = os.environ.get('ENCOM_API_TOKEN', '')
 GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', '')
-STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY', '')
 STORE_LAT = float(os.environ.get('STORE_LAT', '-25.2867'))
 STORE_LNG = float(os.environ.get('STORE_LNG', '-57.6474'))
 DELIVERY_PRICE_PER_KM = float(os.environ.get('DELIVERY_PRICE_PER_KM', '2500'))
 DELIVERY_MIN_PRICE = float(os.environ.get('DELIVERY_MIN_PRICE', '15000'))
 SYNC_INTERVAL_SECONDS = 300  # 5 minutes
+WHATSAPP_COMMERCIAL = os.environ.get('NOTIFICATION_WHATSAPP_ECOMMERCE', '+595973666000')
 
 # Initialize Google Maps client
 gmaps = None
