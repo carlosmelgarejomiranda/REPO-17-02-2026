@@ -1973,6 +1973,31 @@ async def export_products_for_images(
 
 # ==================== VISUAL BATCH IMAGE ASSIGNMENT ====================
 
+# Get API URL base for image serving - must be defined before use
+API_URL_BASE = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+
+# Supported image formats
+SUPPORTED_IMAGE_FORMATS = [
+    'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 
+    'image/avif', 'image/bmp', 'image/tiff', 'image/svg+xml', 'image/heic', 'image/heif'
+]
+
+# Extension to MIME type mapping
+EXT_TO_MIME = {
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif',
+    'webp': 'image/webp',
+    'avif': 'image/avif',
+    'bmp': 'image/bmp',
+    'tiff': 'image/tiff',
+    'tif': 'image/tiff',
+    'svg': 'image/svg+xml',
+    'heic': 'image/heic',
+    'heif': 'image/heif'
+}
+
 @ecommerce_router.get("/admin/brands-categories")
 async def get_brands_categories():
     """Get list of all unique brands/categories for dropdown selection"""
