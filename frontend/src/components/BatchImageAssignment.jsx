@@ -408,7 +408,7 @@ export const BatchImageAssignment = ({ onClose }) => {
               <div className="text-center py-12 text-gray-500">
                 <Upload className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p>Sube las imágenes del lote para {selectedBrand}</p>
-                <p className="text-sm mt-2">Arrastra o haz clic en "Subir Imágenes"</p>
+                <p className="text-sm mt-2">Arrastra o haz clic en &quot;Subir Imágenes&quot;</p>
               </div>
             ) : (
               <div className="space-y-4">
