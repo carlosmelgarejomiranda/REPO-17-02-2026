@@ -312,7 +312,6 @@ const fetchProducts = useCallback(async () => {
     e.preventDefault();
     setCurrentPage(1);
     fetchProducts();
-    setSearchOpen(false);
   };
 
   const handleBrandSelect = (brand) => {
