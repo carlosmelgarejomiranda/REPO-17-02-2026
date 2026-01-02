@@ -199,6 +199,7 @@ test_plan:
   stuck_tasks: []
   test_all: false
   test_priority: "completed"
+  inventory_validation_tested: true
 
   - task: "Website Builder Feature"
     implemented: true
