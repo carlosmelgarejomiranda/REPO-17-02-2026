@@ -79,15 +79,23 @@ const useAuth = () => {
 };
 
 // Studio Navigation Component - Editorial Style
-const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => (
-  <header id="studio-main-nav" style={{ 
-    position: 'fixed', 
-    top: 0, 
-    left: 0, 
-    right: 0, 
-    zIndex: 50
-  }}>
-    <div style={{ padding: '16px 24px' }}>
+const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => {
+  // Apply dark theme to body
+  React.useEffect(() => {
+    document.body.classList.add('dark-theme');
+    return () => document.body.classList.remove('dark-theme');
+  }, []);
+
+  return (
+    <header id="studio-main-nav" style={{ 
+      position: 'fixed', 
+      top: 0, 
+      left: 0, 
+      right: 0, 
+      zIndex: 50,
+      backgroundColor: '#0a0a0a'
+    }}>
+      <div style={{ padding: '16px 24px' }}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center">
