@@ -632,7 +632,6 @@ const fetchProducts = useCallback(async () => {
             </div>
           </div>
         )}
-      </header>
 
       {/* Main Content */}
       <main className="max-w-[1800px] mx-auto px-4 lg:px-8 py-8">
