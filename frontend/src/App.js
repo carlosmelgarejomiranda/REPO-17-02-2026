@@ -80,32 +80,41 @@ const useAuth = () => {
 
 // Studio Navigation Component - Editorial Style
 const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) => (
-  <nav 
-    className="fixed top-0 left-0 right-0 z-50"
-    style={{ backgroundColor: '#0a0a0a' }}
-  >
-    {/* Main Nav */}
-    <div className="px-6 py-4">
+  <nav style={{ 
+    position: 'fixed', 
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    zIndex: 50,
+    backgroundColor: '#0a0a0a'
+  }}>
+    <div style={{ padding: '16px 24px' }}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center">
-          <span className="text-xl font-light tracking-wider text-white">
+          <span style={{ fontSize: '20px', fontWeight: 300, letterSpacing: '0.1em', color: 'white' }}>
             AVENUE
           </span>
         </a>
 
         {/* Center Navigation */}
         <div className="hidden md:flex items-center gap-8">
-          <a href="/" className="text-sm text-gray-400 hover:text-white transition-colors">
+          <a href="/" style={{ fontSize: '14px', color: '#9ca3af', textDecoration: 'none' }} 
+             onMouseOver={(e) => e.target.style.color = 'white'} 
+             onMouseOut={(e) => e.target.style.color = '#9ca3af'}>
             {t.nav.home}
           </a>
-          <a href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">
+          <a href="/shop" style={{ fontSize: '14px', color: '#9ca3af', textDecoration: 'none' }}
+             onMouseOver={(e) => e.target.style.color = 'white'} 
+             onMouseOut={(e) => e.target.style.color = '#9ca3af'}>
             E-commerce
           </a>
-          <a href="/studio" className="text-sm text-gray-400 hover:text-white transition-colors">
+          <a href="/studio" style={{ fontSize: '14px', color: '#9ca3af', textDecoration: 'none' }}
+             onMouseOver={(e) => e.target.style.color = 'white'} 
+             onMouseOut={(e) => e.target.style.color = '#9ca3af'}>
             Studio
           </a>
-          <a href="/studio/reservar" className="text-sm text-[#d4a968] hover:text-[#c49958] transition-colors flex items-center gap-1.5">
+          <a href="/studio/reservar" style={{ fontSize: '14px', color: '#d4a968', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Calendar className="w-4 h-4" />
             <span>Reservar</span>
           </a>
@@ -118,23 +127,35 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
               {user.role === 'admin' && (
                 <a 
                   href="/admin" 
-                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[#d4a968] text-sm transition-colors"
-                  style={{ backgroundColor: 'rgba(212, 169, 104, 0.1)', border: '1px solid rgba(212, 169, 104, 0.3)' }}
+                  className="hidden md:flex items-center gap-1.5"
+                  style={{ 
+                    padding: '6px 12px', 
+                    borderRadius: '9999px', 
+                    backgroundColor: 'rgba(212, 169, 104, 0.1)', 
+                    border: '1px solid rgba(212, 169, 104, 0.3)',
+                    color: '#d4a968',
+                    fontSize: '14px',
+                    textDecoration: 'none'
+                  }}
                 >
                   Admin
                 </a>
               )}
-              <div 
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}
-              >
-                <User className="w-4 h-4 text-[#d4a968]" />
-                <span className="text-sm text-white hidden md:inline">{user.name?.split(' ')[0]}</span>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                padding: '6px 12px', 
+                borderRadius: '9999px', 
+                backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <User className="w-4 h-4" style={{ color: '#d4a968' }} />
+                <span className="hidden md:inline" style={{ fontSize: '14px', color: 'white' }}>{user.name?.split(' ')[0]}</span>
               </div>
               <button 
                 onClick={onLogout} 
-                className="p-2 rounded-full transition-colors text-gray-500 hover:text-white"
-                style={{ backgroundColor: 'transparent' }}
+                style={{ padding: '8px', borderRadius: '9999px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#6b7280' }}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -142,15 +163,25 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
           ) : (
             <button 
               onClick={onLoginClick}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-sm transition-colors"
-              style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                padding: '8px 16px', 
+                borderRadius: '9999px', 
+                backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px',
+                cursor: 'pointer'
+              }}
             >
               <User className="w-4 h-4" />
               <span className="hidden md:inline">Iniciar Sesión</span>
             </button>
           )}
           
-          <div className="h-5 w-px hidden md:block" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}></div>
+          <div className="hidden md:block" style={{ height: '20px', width: '1px', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}></div>
           <LanguageSwitcher currentLang={language} onLanguageChange={setLanguage} isDark={true} />
         </div>
       </div>
