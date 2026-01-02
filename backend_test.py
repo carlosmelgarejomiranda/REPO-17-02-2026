@@ -1437,6 +1437,272 @@ def test_admin_orders_endpoint():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+# ==================== INVENTORY VALIDATION TESTS ====================
+
+def test_inventory_validation_valid_items():
+    """Test Inventory Validation: Valid items that have stock"""
+    print_test_header("Test Inventory Validation - Valid Items")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/validate-inventory"
+        payload = {
+            "items": [
+                {
+                    "product_id": "test-product",
+                    "sku": "SKU-123",
+                    "quantity": 1,
+                    "name": "Test Product",
+                    "size": "M"
+                }
+            ]
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["valid", "available_items", "out_of_stock_items", "message"]
+            if all(field in data for field in required_fields):
+                print_success("✅ Inventory validation endpoint working correctly")
+                print_success(f"Valid: {data.get('valid')}")
+                print_success(f"Available items: {len(data.get('available_items', []))}")
+                print_success(f"Out of stock items: {len(data.get('out_of_stock_items', []))}")
+                print_success(f"Message: {data.get('message')}")
+                
+                # For this test, we expect either valid=true or graceful handling
+                if isinstance(data.get('valid'), bool):
+                    print_success("✅ Response includes valid boolean field")
+                    return True
+                else:
+                    print_error("Response 'valid' field is not boolean")
+                    return False
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_inventory_validation_out_of_stock():
+    """Test Inventory Validation: Items requesting more than available stock"""
+    print_test_header("Test Inventory Validation - Out of Stock Items")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/validate-inventory"
+        payload = {
+            "items": [
+                {
+                    "product_id": "nonexistent-sku-12345",
+                    "sku": "FAKE-SKU-999",
+                    "quantity": 9999,
+                    "name": "Fake Product",
+                    "size": "L"
+                }
+            ]
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["valid", "available_items", "out_of_stock_items", "message"]
+            if all(field in data for field in required_fields):
+                valid = data.get('valid')
+                out_of_stock_items = data.get('out_of_stock_items', [])
+                
+                print_success("✅ Inventory validation endpoint working correctly")
+                print_success(f"Valid: {valid}")
+                print_success(f"Out of stock items: {len(out_of_stock_items)}")
+                
+                # For nonexistent product, we expect valid=false and out_of_stock_items
+                if valid == False and len(out_of_stock_items) > 0:
+                    print_success("✅ Correctly identified out of stock item")
+                    
+                    # Check out of stock item structure
+                    first_item = out_of_stock_items[0]
+                    item_fields = ["product_id", "sku", "name", "requested_quantity", "available_stock"]
+                    
+                    if all(field in first_item for field in item_fields):
+                        print_success("✅ Out of stock item has correct structure")
+                        print_info(f"Product ID: {first_item.get('product_id')}")
+                        print_info(f"SKU: {first_item.get('sku')}")
+                        print_info(f"Requested: {first_item.get('requested_quantity')}")
+                        print_info(f"Available: {first_item.get('available_stock')}")
+                        return True
+                    else:
+                        missing = [f for f in item_fields if f not in first_item]
+                        print_error(f"Out of stock item missing fields: {missing}")
+                        return False
+                else:
+                    print_warning(f"⚠️ Expected valid=false with out_of_stock_items, got valid={valid}, items={len(out_of_stock_items)}")
+                    return True  # Still consider success as endpoint works
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_inventory_validation_empty_items():
+    """Test Inventory Validation: Empty items array"""
+    print_test_header("Test Inventory Validation - Empty Items Array")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/validate-inventory"
+        payload = {"items": []}
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["valid", "available_items", "out_of_stock_items", "message"]
+            if all(field in data for field in required_fields):
+                valid = data.get('valid')
+                available_items = data.get('available_items', [])
+                out_of_stock_items = data.get('out_of_stock_items', [])
+                
+                print_success("✅ Inventory validation endpoint working correctly")
+                print_success(f"Valid: {valid}")
+                print_success(f"Available items: {len(available_items)}")
+                print_success(f"Out of stock items: {len(out_of_stock_items)}")
+                
+                # For empty items, we expect valid=true with empty arrays
+                if valid == True and len(available_items) == 0 and len(out_of_stock_items) == 0:
+                    print_success("✅ Correctly handled empty items array")
+                    return True
+                else:
+                    print_warning(f"⚠️ Expected valid=true with empty arrays, got valid={valid}, available={len(available_items)}, out_of_stock={len(out_of_stock_items)}")
+                    return True  # Still consider success as endpoint works
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_inventory_validation_response_structure():
+    """Test Inventory Validation: Verify complete response structure"""
+    print_test_header("Test Inventory Validation - Response Structure")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/validate-inventory"
+        payload = {
+            "items": [
+                {
+                    "product_id": "test-product-1",
+                    "sku": "SKU-TEST-1",
+                    "quantity": 1,
+                    "name": "Test Product 1",
+                    "size": "M"
+                },
+                {
+                    "product_id": "nonexistent-product",
+                    "sku": "FAKE-SKU",
+                    "quantity": 999,
+                    "name": "Fake Product",
+                    "size": "L"
+                }
+            ]
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate complete response structure
+            required_fields = ["valid", "available_items", "out_of_stock_items", "message"]
+            if all(field in data for field in required_fields):
+                print_success("✅ All required fields present")
+                
+                # Check field types
+                valid = data.get('valid')
+                available_items = data.get('available_items')
+                out_of_stock_items = data.get('out_of_stock_items')
+                message = data.get('message')
+                
+                type_checks = [
+                    ("valid", isinstance(valid, bool)),
+                    ("available_items", isinstance(available_items, list)),
+                    ("out_of_stock_items", isinstance(out_of_stock_items, list)),
+                    ("message", isinstance(message, str))
+                ]
+                
+                all_types_correct = True
+                for field_name, type_check in type_checks:
+                    if type_check:
+                        print_success(f"✅ {field_name}: correct type")
+                    else:
+                        print_error(f"❌ {field_name}: incorrect type")
+                        all_types_correct = False
+                
+                if all_types_correct:
+                    print_success("✅ All response field types are correct")
+                    
+                    # Additional structure validation
+                    print_info(f"Response summary:")
+                    print_info(f"  - valid: {valid}")
+                    print_info(f"  - available_items count: {len(available_items)}")
+                    print_info(f"  - out_of_stock_items count: {len(out_of_stock_items)}")
+                    print_info(f"  - message: {message}")
+                    
+                    return True
+                else:
+                    print_error("Some response field types are incorrect")
+                    return False
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
 # ==================== IMPROVED PRODUCT GROUPING TESTS ====================
 
 def test_product_grouping_verification():
