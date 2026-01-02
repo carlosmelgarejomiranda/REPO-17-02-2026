@@ -373,7 +373,7 @@ export const BatchImageAssignment = ({ onClose }) => {
                 <input
                   type="file"
                   multiple
-                  accept="image/*"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/avif,image/bmp,image/tiff,.jpg,.jpeg,.png,.gif,.webp,.avif,.bmp,.tiff,.heic,.heif"
                   className="hidden"
                   onChange={handleBatchUpload}
                   disabled={uploadingBatch || !selectedBrand}
