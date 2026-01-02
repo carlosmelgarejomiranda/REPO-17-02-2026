@@ -80,11 +80,12 @@ code {
     body {
         @apply bg-background text-foreground;
     }
-    /* Force black background for fixed navs */
-    nav[style*="position: fixed"] {
-        background-color: #000000 !important;
-        background: #000000 !important;
-    }
+}
+
+/* Force black background for Studio navigation */
+.studio-nav-dark {
+    background-color: #000000 !important;
+    background: #000000 !important;
 }
 
 @layer base {
