@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail, Palette } from 'lucide-react';
+import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail, Palette, Shield, UserCog, AlertCircle, Phone, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { OrdersManagement } from './OrdersManagement';
 import { ProductImagesManager } from './ProductImagesManager';
 import { WebsiteBuilder } from './WebsiteBuilder';
+import { UserRolesManager } from './UserRolesManager';
+import { AdminSettings } from './AdminSettings';
+
+// Permission helper based on role
+const hasPermission = (role, permission) => {
+  const permissions = {
+    superadmin: ['all', 'users', 'settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics'],
+    admin: ['settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics'],
+    staff: ['orders', 'reservations', 'ugc', 'analytics'],
+    designer: ['website', 'images'],
+    user: []
+  };
+  return permissions[role]?.includes('all') || permissions[role]?.includes(permission);
+};
 
 export const AdminDashboard = ({ user }) => {
   const [reservations, setReservations] = useState([]);
   const [users, setUsers] = useState([]);
   const [ugcApplications, setUgcApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('orders');
+  const [activeTab, setActiveTab] = useState(() => {
+    // Set default tab based on user role
+    if (user?.role === 'designer') return 'builder';
+    return 'orders';
+  });
   const [filterDate, setFilterDate] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [ugcFilterStatus, setUgcFilterStatus] = useState('');
@@ -18,8 +36,10 @@ export const AdminDashboard = ({ user }) => {
   const [sendingTestEmail, setSendingTestEmail] = useState(false);
   const [testEmailStatus, setTestEmailStatus] = useState(null);
   const [showBuilder, setShowBuilder] = useState(false);
+  const [userPermissions, setUserPermissions] = useState(null);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const userRole = user?.role || 'user';
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token');
@@ -28,6 +48,22 @@ export const AdminDashboard = ({ user }) => {
       ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     };
   };
+
+  // Fetch user permissions on load
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/admin/permissions`, { headers: getAuthHeaders() });
+        if (response.ok) {
+          const data = await response.json();
+          setUserPermissions(data.permissions);
+        }
+      } catch (err) {
+        console.error('Error fetching permissions:', err);
+      }
+    };
+    fetchPermissions();
+  }, []);
 
   useEffect(() => {
     fetchData();
