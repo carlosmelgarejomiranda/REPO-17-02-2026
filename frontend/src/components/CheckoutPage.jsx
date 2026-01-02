@@ -623,7 +623,7 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
                       Procesando...
                     </>
                   ) : (
-                    'Pagar con Stripe'
+                    'Finalizar Compra'
                   )}
                 </button>
 
