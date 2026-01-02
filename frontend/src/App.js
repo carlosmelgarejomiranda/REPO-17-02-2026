@@ -86,12 +86,9 @@ const StudioNav = ({ t, language, setLanguage, user, onLoginClick, onLogout }) =
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center">
-          <img 
-            src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zxjfbeqj_IMG_9648.PNG"
-            alt="Avenue"
-            className="h-8 cursor-pointer transition-opacity hover:opacity-80"
-            style={{ filter: 'brightness(1.2)' }}
-          />
+          <span className="text-xl font-light tracking-wider text-white">
+            AVENUE
+          </span>
         </a>
 
         {/* Center Navigation */}
