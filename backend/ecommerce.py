@@ -2056,7 +2056,7 @@ async def get_products_without_images(
     }
 
 @ecommerce_router.post("/admin/upload-batch-temp")
-async def upload_batch_temp(files: List[UploadFile] = File(...)):
+async def upload_batch_temp(request: Request, files: List[UploadFile] = File(...)):
     """Upload batch of images to temporary storage for visual assignment"""
     import shutil
     
@@ -2103,8 +2103,8 @@ async def upload_batch_temp(files: List[UploadFile] = File(...)):
             with open(temp_filepath, "wb") as f:
                 f.write(content)
             
-            # Generate URL for preview
-            image_url = f"{API_URL_BASE}/api/shop/temp-images/{batch_id}/{temp_filename}"
+            # Generate relative URL for preview (works in any environment)
+            image_url = f"/api/shop/temp-images/{batch_id}/{temp_filename}"
             
             uploaded_images.append({
                 "id": temp_filename.replace(f".{ext}", ""),
