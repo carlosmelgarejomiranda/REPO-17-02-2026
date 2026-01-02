@@ -315,7 +315,8 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
     }
   };
 
-  if (cart.length === 0) {
+  // Redirect to cart if empty, but only if checkout wasn't successful
+  if (cart.length === 0 && !checkoutSuccess) {
     navigate('/shop/cart');
     return null;
   }
