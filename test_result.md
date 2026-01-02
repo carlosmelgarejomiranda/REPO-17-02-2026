@@ -1,3 +1,29 @@
+# Test Results - Avenue E-commerce
+
+## Latest Fix: Brand Filter & Mega-Menu (Jan 2, 2026)
+
+### Issues Fixed:
+1. **Brand Filter Bug** - Fixed: Clicking brands in mega-menu now filters products correctly
+2. **Mega-Menu Layout** - Fixed: "Indumentaria" title centered over 2 columns with proper border
+
+### Changes Made:
+- Backend: Added `brand` parameter to `/api/shop/products` endpoint, searches in both `category` and `brand` fields
+- Frontend: Added `BRAND_TO_CATEGORY_MAP` to map display names to ERP category names
+- Frontend: Restructured mega-menu to use 5-column grid with Indumentaria spanning 2 columns
+
+### Test Scenarios:
+- [ ] Hover "Brands" button → mega-menu opens
+- [ ] Click "SEROTONINA" → shows 40 products
+- [ ] Click "AGUARA" → shows 45 products (maps to AGUARA FITWEAR)
+- [ ] Click "DAVID SANDOVAL" → shows 30 products (maps to DS)
+- [ ] Click "FILA" → shows 31 products
+- [ ] Click "Ver todas las marcas" → clears filter
+- [ ] Click X next to brand name → clears filter
+- [ ] Verify "Indumentaria" title centered with border line
+- [ ] Verify "Otros" section appears under "Cosmética"
+
+---
+
 # Test Results - Product Image Management
 
 ## Features to Test
