@@ -281,3 +281,46 @@ agent_communication:
     message: "🛒 INVENTORY VALIDATION AND OUT OF STOCK MODAL TESTING COMPLETED: Comprehensive verification of checkout flow inventory validation and Out of Stock modal functionality as requested in review. ALL CRITICAL TEST CASES PASSED: 1) CHECKOUT PAGE STRUCTURE ✅ - All main sections present (Información de contacto, Método de entrega, Resumen del pedido), form fields working correctly, delivery/pickup selection functional 2) REQUIRED IMPORTS ✅ - AlertTriangle, ShoppingBag, X icons properly imported and available in CheckoutPage component 3) FORM VALIDATION ✅ - Contact form fields (name, email, phone) can be filled successfully, HTML5 validation working with 'Please fill out this field' messages, delivery method selection working 4) INVENTORY VALIDATION PROCESS ✅ - Submit button triggers validation process, 'Verificando stock...' loading state implemented with spinner, loading functionality present in button text 5) OUTOFSTOCKMODAL COMPONENT ✅ - Modal structure exists with proper backdrop, title 'Producto sin stock', subtitle 'Algunos productos ya no están disponibles', product details display (name, size, stock status), action buttons ('Continuar sin este artículo', 'Ir a la tienda'), close button (X) functionality 6) VISUAL VERIFICATION ✅ - Checkout page loads correctly with cart items, Google Maps integration working for delivery location selection, pickup method bypasses map requirement, complete checkout flow functional from cart to checkout. All test cases from review request successfully verified. Inventory validation and Out of Stock modal ready for production use."
   - agent: "testing"
     message: "🎯 UNIVERSAL TEXT EDITING FEATURE TESTING COMPLETED: Comprehensive verification of TreeWalker-based UNIVERSAL TEXT EDITING upgrade as requested in review. ALL CRITICAL TEST CASES PASSED: 1) LOGIN & ACCESS ✅ - Login with avenuepy@gmail.com/admin123 working, 'Editar Web' button accessible, Website Builder opens correctly 2) IFRAME LOADING ✅ - Iframe loads showing 'Donde las marcas brillan' title, builder interface functional 3) MAIN LANDING PAGE TEXT EDITING ✅ - ALL target texts now editable with gold dashed borders on hover: 'marcas' text ✅, 'brillan' text ✅, '30+' stat ✅, '50m²' stat ✅, 'MARCAS' label ✅, 'PRODUCTOS' label ✅, 'ESTUDIO' label ✅ 4) STUDIO PAGE TEXT EDITING ✅ - Page selector switches correctly, ALL target texts editable: 'visión' text ✅, 'espacio' text ✅, '50m²' stat ✅, 'ESPACIO' label ✅, 'LUCES GODOX' label ✅ 5) EDIT FUNCTIONALITY ✅ - Click-to-edit popup appears with input field and save/cancel buttons, edit popup closes correctly 6) COUNT VERIFICATION ✅ - Found 80 editable text elements (significant increase from previous 66), 16 editable images. TreeWalker implementation successfully detects ALL text types including stylized text, statistics, and labels. UNIVERSAL TEXT EDITING feature working perfectly - ALL text is now editable as requested."
+# Latest Testing Session
+
+## New Features Implemented (Pending Testing)
+
+### A) Role-based Admin System
+- **4 Roles**: superadmin, admin, staff, designer
+- **Superadmin** (avenuepy@gmail.com): Full access
+- **Admin**: Everything except managing user roles
+- **Staff**: Orders, reservations, UGC (no web editor)
+- **Designer**: Only web editor and images
+- New endpoints: `/api/admin/users`, `/api/admin/users/{id}/role`, `/api/admin/permissions`
+
+### B) Admin Settings
+- Toggle: Payment gateway enabled/disabled
+- Toggle: Show only products with images
+- WhatsApp commercial number setting
+- Endpoint: `/api/admin/settings`
+
+### C) E-commerce Updates
+- Removed Stripe, preparing for Bancard
+- New checkout endpoint: `/api/shop/checkout`
+- When payment gateway OFF: Creates "solicitud" order, sends WhatsApp
+- When payment gateway ON: Will redirect to Bancard (placeholder)
+- Order statuses: solicitud, pagado, facturado, entregado
+
+### D) Search Fix
+- Search now includes: base_model, category, brand, description
+
+### E) Multiple Product Images
+- Up to 3 images per product
+- Endpoints: 
+  - `POST /api/shop/admin/upload-product-image` with `image_index` (0-2)
+  - `DELETE /api/shop/admin/product-image/{product_id}/{image_index}`
+  - `PUT /api/shop/admin/product/{product_id}` for custom name/description/price
+
+### F) Reservation System Update
+- New reservations are now "pending" (solicitud)
+- Admin can confirm via: `PUT /api/admin/reservations/{id}/confirm`
+- WhatsApp sent on reservation request and confirmation
+
+## Test Credentials
+- **Superadmin**: avenuepy@gmail.com / admin123
+
