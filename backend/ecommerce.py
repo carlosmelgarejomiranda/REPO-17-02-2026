@@ -737,8 +737,9 @@ async def get_products(
             query["$and"] = query.get("$and", [])
             query["$and"].append({
                 "$or": [
-                    {"image_url": {"$exists": True, "$ne": None, "$ne": ""}},
-                    {"images": {"$exists": True, "$ne": [], "$ne": None}}
+                    {"image_url": {"$exists": True, "$nin": [None, ""]}},
+                    {"images": {"$exists": True, "$nin": [[], None]}},
+                    {"custom_image": {"$exists": True, "$nin": [None, ""]}}
                 ]
             })
         
