@@ -356,46 +356,43 @@ const fetchProducts = useCallback(async () => {
           >
             <div className="max-w-[1400px] mx-auto px-8 py-8">
               <div className="grid grid-cols-6 gap-6">
-                {/* Indumentaria - Column 1 */}
-                <div>
-                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                {/* Indumentaria - 2 columns span */}
+                <div className="col-span-2">
+                  {/* Title centered across both columns */}
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 text-center">
                     {BRAND_CATEGORIES.indumentaria.title}
                   </h3>
-                  <ul className="space-y-2">
-                    {organizedBrands.indumentaria.slice(0, 8).map(brand => (
-                      <li key={brand}>
-                        <button
-                          onClick={() => handleBrandSelect(brand)}
-                          className={`text-[11px] transition-colors hover:text-gray-900 ${
-                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
-                          }`}
-                        >
-                          {brand}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Indumentaria - Column 2 */}
-                <div>
-                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200 opacity-0">
-                    .
-                  </h3>
-                  <ul className="space-y-2">
-                    {organizedBrands.indumentaria.slice(8).map(brand => (
-                      <li key={brand}>
-                        <button
-                          onClick={() => handleBrandSelect(brand)}
-                          className={`text-[11px] transition-colors hover:text-gray-900 ${
-                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
-                          }`}
-                        >
-                          {brand}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+                  {/* Two column grid for brands */}
+                  <div className="grid grid-cols-2 gap-x-6">
+                    <ul className="space-y-2">
+                      {organizedBrands.indumentaria.slice(0, 8).map(brand => (
+                        <li key={brand}>
+                          <button
+                            onClick={() => handleBrandSelect(brand)}
+                            className={`text-[11px] transition-colors hover:text-gray-900 ${
+                              selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                            }`}
+                          >
+                            {brand}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className="space-y-2">
+                      {organizedBrands.indumentaria.slice(8).map(brand => (
+                        <li key={brand}>
+                          <button
+                            onClick={() => handleBrandSelect(brand)}
+                            className={`text-[11px] transition-colors hover:text-gray-900 ${
+                              selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                            }`}
+                          >
+                            {brand}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
                 {/* Calzados */}
