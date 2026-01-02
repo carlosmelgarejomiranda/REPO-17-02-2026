@@ -854,20 +854,27 @@ async def get_products(
             
             # Use custom image if available, otherwise use ERP image
             display_image = p.get("custom_image") or p.get("image")
+            # Get all images (up to 3)
+            all_images = p.get("images", [])
+            if not all_images or not isinstance(all_images, list):
+                all_images = [display_image] if display_image else []
+            # Filter None values
+            all_images = [img for img in all_images if img]
             
             result.append({
                 "id": p.get("grouped_id"),
-                "name": p.get("base_model"),  # Use base model as display name
+                "name": p.get("custom_name") or p.get("base_model"),  # Use custom name if available
                 "full_name": p.get("name"),
-                "price": p.get("price"),
+                "price": p.get("custom_price") or p.get("price"),
                 "max_price": p.get("max_price"),
                 "stock": p.get("total_stock"),
                 "image": display_image,
+                "images": all_images,  # All product images (up to 3)
                 "category": p.get("category"),
                 "brand": p.get("brand"),
                 "gender": p.get("gender"),
                 "discount": p.get("discount", 0),
-                "description": p.get("description"),
+                "description": p.get("custom_description") or p.get("description"),
                 "available_sizes": sizes_sorted,
                 "sizes_list": sizes_list,
                 "variant_count": p.get("variant_count", 1)
