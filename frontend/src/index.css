@@ -113,3 +113,9 @@ code {
         border-bottom-color: inherit;
     }
 }
+
+/* Studio Nav - Force black background */
+nav[data-studio-nav="true"] {
+    background-color: #000000 !important;
+}
+
