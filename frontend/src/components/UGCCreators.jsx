@@ -652,7 +652,19 @@ export const UGCCreators = ({ t, campaignId }) => {
                     />
                     <div>
                       <span className="text-white">Acepto las condiciones de participación *</span>
-                      <p className="text-gray-500 text-sm mt-1">He leído y acepto los términos del programa UGC Creators</p>
+                      <p className="text-gray-500 text-sm mt-1">
+                        He leído y acepto los{' '}
+                        <a 
+                          href="/studio/ugc/terms" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-[#d4a968] hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          términos y condiciones
+                        </a>
+                        {' '}del programa UGC Creators
+                      </p>
                     </div>
                   </label>
                   {errors.acepta_condiciones && <p className="text-sm text-red-400">{errors.acepta_condiciones}</p>}
