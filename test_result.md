@@ -1,37 +1,63 @@
 # Test Results - Video Upload Debug
 
-## Current Issue
-User reports that after video upload shows "successful", clicking "Aplicar cambios" redirects them back to Admin Panel without saving changes.
+## ISSUE CONFIRMED ✅
+**Problem:** After video upload shows "successful", clicking "Aplicar cambios" redirects users back to Admin Panel without staying in Website Builder.
 
-## Recent Changes Made
-1. Improved error handling in `handleImageChange` with detailed logging
-2. Added Error Boundary to catch React errors
-3. Videos always saved to disk (not base64)
-4. Removed autoplay from iframe videos
-5. Added preload="metadata" to videos
+## Test Results (Completed)
+**Date:** January 3, 2025  
+**Tester:** Testing Agent  
+**Status:** ❌ ISSUE REPRODUCED AND CONFIRMED
 
-## Debug Steps Needed
-1. Login as admin: avenuepy@gmail.com / admin123
-2. Go to Admin Panel → "Editar Web" 
-3. Hover over the carousel/hero image area (scroll down if needed to find static images)
-4. Click "Cambiar" on an image
-5. Upload the video at /tmp/user_video.mov (90MB)
-6. Check console for any errors
-7. Click "Aplicar cambios"
-8. Verify if modal closes and we stay in Website Builder (not redirected to Admin)
-9. If issue occurs, check for: "APPLYING MEDIA CHANGE" logs, any error messages
+### Test Execution Summary:
+1. ✅ Login successful (avenuepy@gmail.com / admin123)
+2. ✅ Admin Panel access confirmed
+3. ✅ Website Builder loaded successfully
+4. ✅ Found 13 builder images in iframe
+5. ✅ Successfully hovered over image and clicked "Cambiar" button
+6. ✅ Media modal opened correctly
+7. ✅ Video upload completed successfully (90MB .mov file)
+8. ✅ Console logs captured all expected output
+9. ❌ **CRITICAL ISSUE:** After clicking "Aplicar cambios", redirected to Admin Panel
 
-## Expected Console Output
-- "=== APPLYING MEDIA CHANGE START ==="
-- "newUrl: /uploads/..."
-- "Iframe document accessed successfully"
-- "Is video: true"
-- "Found element: IMG"
-- "Replacing element type..."
-- "=== MEDIA CHANGE APPLIED SUCCESSFULLY ==="
+### Console Logs Captured:
+```
+=== UPLOAD START ===
+File name: user_video.mov
+File size: 93708023 bytes (89.37 MB)
+Upload SUCCESS: {success: true, url: /uploads/ef346966dc6649a79f82b55c5a37dc05.mov}
 
-## Files Modified
+=== APPLYING MEDIA CHANGE START ===
+newUrl: /uploads/ef346966dc6649a79f82b55c5a37dc05.mov
+mediaTarget: {"currentUrl":"...","editId":"img-main-landing-0","type":"img","currentPosition":"50% 50%"}
+Iframe document accessed successfully
+Is video: true
+Found element: VIDEO editId: img-main-landing-0
+Updating src of existing element
+Saving modifications: 2 items
+=== MEDIA CHANGE APPLIED SUCCESSFULLY ===
+```
+
+### Key Findings:
+1. **Upload Process:** ✅ Working perfectly - video uploads to `/uploads/` directory
+2. **Media Change Logic:** ✅ Working correctly - properly detects video and updates element
+3. **Console Logging:** ✅ All expected logs present, no errors in media change process
+4. **Modal Behavior:** ✅ Modal closes successfully after "Aplicar cambios"
+5. **Critical Issue:** ❌ **Page redirects to Admin Panel instead of staying in Website Builder**
+
+### URL Behavior:
+- **Before click:** `http://localhost:3000/admin` (in Website Builder)
+- **After click:** `http://localhost:3000/admin` (redirected back to Admin Panel)
+- **Expected:** Should stay in Website Builder interface
+
+### Root Cause Analysis:
+The video upload and media change functionality is working correctly. The issue appears to be in the **navigation/routing logic** after the "Aplicar cambios" action. The system successfully:
+- Uploads the video
+- Applies the media change to the iframe
+- Saves modifications
+- But then incorrectly redirects to Admin Panel instead of staying in Website Builder
+
+### Files Modified
 - /app/frontend/src/components/WebsiteBuilder.jsx
 
-## Test Video
-- /tmp/user_video.mov (90MB MOV file)
+### Test Video
+- /tmp/user_video.mov (90MB MOV file) ✅ Successfully uploaded
