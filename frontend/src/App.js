@@ -522,24 +522,14 @@ function AppRouter() {
           {/* Tu Marca en Avenue - For Brands */}
           <Route path="/tu-marca" element={
             <>
-              <StudioNav 
+              <TuMarca 
                 t={t} 
-                language={language} 
-                setLanguage={setLanguage}
                 user={user}
-                onLoginClick={() => setShowAuthModal(true)}
+                onLoginClick={() => setShowLoginModal(true)}
                 onLogout={logout}
+                language={language}
+                setLanguage={setLanguage}
               />
-              <div style={{ paddingTop: '80px' }}>
-                <TuMarca 
-                  t={t} 
-                  user={user}
-                  onLoginClick={() => setShowLoginModal(true)}
-                  onLogout={logout}
-                  language={language}
-                  setLanguage={setLanguage}
-                />
-              </div>
               <Footer t={t} />
             </>
           } />
