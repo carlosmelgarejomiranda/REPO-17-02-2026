@@ -287,23 +287,44 @@ async def reset_page_content(page_id: str):
 async def upload_media(file: UploadFile = File(...)):
     """Upload image or video file"""
     # Validate file type
-    allowed_types = ["image/jpeg", "image/png", "image/webp", "image/gif", "video/mp4", "video/webm"]
-    if file.content_type not in allowed_types:
-        raise HTTPException(status_code=400, detail="File type not allowed")
+    allowed_types = [
+        "image/jpeg", "image/png", "image/webp", "image/gif",
+        "video/mp4", "video/webm", "video/quicktime", "video/x-msvideo", "video/x-m4v"
+    ]
+    
+    # Also check by file extension for .mov files that might have wrong mime type
+    allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.mp4', '.webm', '.mov', '.avi', '.m4v']
+    file_ext = os.path.splitext(file.filename.lower())[1] if file.filename else ''
+    
+    if file.content_type not in allowed_types and file_ext not in allowed_extensions:
+        raise HTTPException(status_code=400, detail=f"File type not allowed. Allowed: images and videos (.mov, .mp4, .webm)")
     
     # Read file content
     content = await file.read()
     
-    # Convert to base64 data URL for simplicity
-    # In production, you'd upload to S3 or similar
+    # For videos larger than 5MB, we should use a different approach
+    # but for now we'll use base64 (works for smaller files)
+    max_size = 50 * 1024 * 1024  # 50MB limit
+    if len(content) > max_size:
+        raise HTTPException(status_code=400, detail="File too large. Maximum size is 50MB")
+    
+    # Determine content type
+    content_type = file.content_type
+    if file_ext == '.mov' and content_type == 'application/octet-stream':
+        content_type = 'video/quicktime'
+    elif file_ext == '.mp4' and content_type == 'application/octet-stream':
+        content_type = 'video/mp4'
+    
+    # Convert to base64 data URL
     base64_content = base64.b64encode(content).decode('utf-8')
-    data_url = f"data:{file.content_type};base64,{base64_content}"
+    data_url = f"data:{content_type};base64,{base64_content}"
     
     return {
         "success": True,
         "url": data_url,
         "filename": file.filename,
-        "content_type": file.content_type
+        "content_type": content_type,
+        "size": len(content)
     }
 
 @router.post("/sections/{page_id}/reorder")
