@@ -419,6 +419,24 @@ export const AdminDashboard = ({ user }) => {
                   >
                     Limpiar
                   </button>
+                  <Button
+                    onClick={() => exportToExcel(reservations, 'reservas_studio', [
+                      { key: 'reservation_id', label: 'ID' },
+                      { key: 'date', label: 'Fecha' },
+                      { key: 'time', label: 'Hora' },
+                      { key: 'duration', label: 'Duración (h)' },
+                      { key: 'name', label: 'Cliente' },
+                      { key: 'email', label: 'Email' },
+                      { key: 'phone', label: 'Teléfono' },
+                      { key: 'purpose', label: 'Propósito' },
+                      { key: 'price', label: 'Precio (Gs)' },
+                      { key: 'status', label: 'Estado' }
+                    ])}
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                    Exportar
+                  </Button>
                 </div>
               </div>
             </div>
