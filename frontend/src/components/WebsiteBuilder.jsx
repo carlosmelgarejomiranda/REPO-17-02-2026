@@ -742,36 +742,59 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      console.log('No file selected');
+      return;
+    }
     
-    console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
+    console.log('=== UPLOAD START ===');
+    console.log('File name:', file.name);
+    console.log('File size:', file.size, 'bytes', '(' + (file.size / 1024 / 1024).toFixed(2) + ' MB)');
+    console.log('File type:', file.type);
+    console.log('API URL:', API_URL);
+    
     setUploading(true);
     
     const formData = new FormData();
     formData.append('file', file);
     
+    const uploadUrl = `${API_URL}/api/builder/upload-media`;
+    console.log('Upload URL:', uploadUrl);
+    
     try {
-      const res = await fetch(`${API_URL}/api/builder/upload-media`, { 
+      console.log('Starting fetch request...');
+      const res = await fetch(uploadUrl, { 
         method: 'POST', 
         body: formData 
       });
       
-      console.log('Upload response status:', res.status);
+      console.log('Response received');
+      console.log('Response status:', res.status);
+      console.log('Response ok:', res.ok);
+      console.log('Response headers:', Object.fromEntries(res.headers.entries()));
       
       if (res.ok) { 
         const data = await res.json(); 
-        console.log('Upload success:', data);
+        console.log('Upload SUCCESS:', data);
+        console.log('URL received:', data.url?.substring(0, 100) + '...');
         setUrl(data.url); 
+        alert('¡Archivo subido exitosamente!');
       } else {
-        const errorData = await res.text();
-        console.error('Upload failed:', res.status, errorData);
-        alert(`Error al subir: ${res.status} - ${errorData}`);
+        const errorText = await res.text();
+        console.error('Upload FAILED - Status:', res.status);
+        console.error('Error response:', errorText);
+        alert(`Error al subir: ${res.status} - ${errorText}`);
       }
     } catch (err) { 
-      console.error('Upload error:', err);
-      alert(`Error de conexión: ${err.message}`);
+      console.error('=== UPLOAD ERROR ===');
+      console.error('Error name:', err.name);
+      console.error('Error message:', err.message);
+      console.error('Error stack:', err.stack);
+      alert(`Error de conexión: ${err.name} - ${err.message}`);
+    } finally {
+      setUploading(false);
+      console.log('=== UPLOAD END ===');
     }
-    setUploading(false);
   };
 
   const isCurrentVideo = isVideo(url);
