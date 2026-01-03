@@ -22,6 +22,7 @@ import { UGCCreators } from "./components/UGCCreators";
 import { UGCCampaignsList } from "./components/UGCCampaignsList";
 import { TuMarca } from "./components/TuMarca";
 import { TerminosCondiciones } from "./components/TerminosCondiciones";
+import { TerminosEcommerce } from "./components/TerminosEcommerce";
 import { ShopPage } from "./components/ShopPage";
 import { CartPage } from "./components/CartPage";
 import { CheckoutPage } from "./components/CheckoutPage";
