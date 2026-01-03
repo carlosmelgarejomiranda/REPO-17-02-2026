@@ -865,6 +865,38 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
   const imageRef = useRef(null);
   const containerRef = useRef(null);
   const dragStartRef = useRef({ x: 0, y: 0, posX: 50, posY: 50 });
+  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  
+  // Handle apply button click
+  const handleApplyClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('=== APPLY BUTTON CLICKED ===');
+    console.log('URL to apply:', url?.substring(0, 100));
+    console.log('Position:', position);
+    
+    if (!url) {
+      console.error('No URL to apply');
+      alert('Por favor, sube una imagen o video primero');
+      return;
+    }
+    
+    try {
+      onSelect(url, position);
+      console.log('onSelect called successfully');
+    } catch (err) {
+      console.error('Error in onSelect:', err);
+      alert(`Error al aplicar: ${err.message}`);
+    }
+  };
+  
+  // Handle modal background click - only close if clicking on the background
+  const handleBackgroundClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
 
   // Check if URL is a video
   const isVideo = (src) => {
