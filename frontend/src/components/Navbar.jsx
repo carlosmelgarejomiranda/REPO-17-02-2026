@@ -21,8 +21,13 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
               alt="Avenue"
-              className="h-10 w-auto"
-              style={{ filter: 'brightness(1.1)', minWidth: '120px', objectFit: 'contain' }}
+              style={{ 
+                height: '40px', 
+                width: 'auto', 
+                filter: 'brightness(1.2)',
+                transform: 'scale(3)',
+                transformOrigin: 'left center'
+              }}
             />
           </a>
           
