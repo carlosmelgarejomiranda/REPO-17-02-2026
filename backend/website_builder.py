@@ -286,6 +286,8 @@ async def reset_page_content(page_id: str):
 @router.post("/upload-media")
 async def upload_media(file: UploadFile = File(...)):
     """Upload image or video file"""
+    import uuid
+    
     # Validate file type
     allowed_types = [
         "image/jpeg", "image/png", "image/webp", "image/gif",
@@ -302,11 +304,10 @@ async def upload_media(file: UploadFile = File(...)):
     # Read file content
     content = await file.read()
     
-    # For videos larger than 5MB, we should use a different approach
-    # but for now we'll use base64 (works for smaller files)
-    max_size = 50 * 1024 * 1024  # 50MB limit
+    # 250MB limit
+    max_size = 250 * 1024 * 1024
     if len(content) > max_size:
-        raise HTTPException(status_code=400, detail="File too large. Maximum size is 50MB")
+        raise HTTPException(status_code=400, detail="File too large. Maximum size is 250MB")
     
     # Determine content type
     content_type = file.content_type
@@ -315,9 +316,42 @@ async def upload_media(file: UploadFile = File(...)):
     elif file_ext == '.mp4' and content_type == 'application/octet-stream':
         content_type = 'video/mp4'
     
-    # Convert to base64 data URL
-    base64_content = base64.b64encode(content).decode('utf-8')
-    data_url = f"data:{content_type};base64,{base64_content}"
+    # For files larger than 5MB, save to disk instead of base64
+    if len(content) > 5 * 1024 * 1024:
+        # Create uploads directory if it doesn't exist
+        uploads_dir = "/app/frontend/public/uploads"
+        os.makedirs(uploads_dir, exist_ok=True)
+        
+        # Generate unique filename
+        unique_filename = f"{uuid.uuid4().hex}{file_ext}"
+        file_path = os.path.join(uploads_dir, unique_filename)
+        
+        # Save file
+        with open(file_path, "wb") as f:
+            f.write(content)
+        
+        # Return URL that can be accessed from frontend
+        file_url = f"/uploads/{unique_filename}"
+        
+        return {
+            "success": True,
+            "url": file_url,
+            "filename": file.filename,
+            "content_type": content_type,
+            "size": len(content)
+        }
+    else:
+        # For smaller files, use base64 data URL
+        base64_content = base64.b64encode(content).decode('utf-8')
+        data_url = f"data:{content_type};base64,{base64_content}"
+        
+        return {
+            "success": True,
+            "url": data_url,
+            "filename": file.filename,
+            "content_type": content_type,
+            "size": len(content)
+        }
     
     return {
         "success": True,
