@@ -41,12 +41,7 @@ export const MainLanding = ({ t }) => {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <a href="/" className="flex items-center">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
-                alt="Avenue"
-                className="h-8"
-                style={{ filter: 'brightness(1.1)' }}
-              />
+              <span className="text-lg font-light text-white tracking-[0.3em]">AVENUE</span>
             </a>
             
             {/* Navigation Links */}
