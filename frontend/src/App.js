@@ -472,15 +472,15 @@ function AppRouter() {
           {/* Studio Rental Page */}
           <Route path="/studio/alquiler" element={
             <>
-              <StudioNav 
-                t={t} 
-                language={language} 
-                setLanguage={setLanguage}
+              <Navbar 
                 user={user}
                 onLoginClick={() => setShowAuthModal(true)}
                 onLogout={logout}
+                language={language}
+                setLanguage={setLanguage}
+                t={t}
               />
-              <div style={{ paddingTop: '80px' }}>
+              <div style={{ paddingTop: '64px' }}>
                 <AvenueStudio t={t} />
               </div>
               <Footer t={t} />
