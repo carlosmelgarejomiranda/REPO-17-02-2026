@@ -359,7 +359,7 @@ export const UGCCreators = ({ t, campaignId }) => {
       </section>
 
       {/* Application Form */}
-      <section className="py-20 px-6 bg-[#000000]">
+      <section className="py-20 px-6 bg-[#0a0a0a]">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
@@ -371,10 +371,10 @@ export const UGCCreators = ({ t, campaignId }) => {
           </div>
           
           {/* Form Container */}
-          <div className="bg-[#050505] border border-white/10">
+          <div className="bg-[#141414] border border-white/10">
             <div className="p-10 md:p-12">
               {errors.submit && (
-                <div className="mb-8 p-4 border-l-2 border-red-500 bg-red-500/5 text-red-400 text-sm">
+                <div className="mb-8 p-4 border-l-2 border-red-500 bg-red-500/10 text-red-400 text-sm">
                   {errors.submit}
                 </div>
               )}
@@ -389,12 +389,12 @@ export const UGCCreators = ({ t, campaignId }) => {
                   
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">Email *</label>
+                      <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Email *</label>
                       <input
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateField('email', e.target.value)}
-                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.email ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.email ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                         placeholder="tu@email.com"
                       />
                       {errors.email && <p className="text-xs mt-2 text-red-400">{errors.email}</p>}
@@ -402,18 +402,18 @@ export const UGCCreators = ({ t, campaignId }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">Nombre *</label>
+                        <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Nombre *</label>
                         <input
                           type="text"
                           value={formData.nombre}
                           onChange={(e) => updateField('nombre', e.target.value)}
-                          className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.nombre ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.nombre ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                           placeholder="Tu nombre"
                         />
                         {errors.nombre && <p className="text-xs mt-2 text-red-400">{errors.nombre}</p>}
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">Apellido *</label>
+                        <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Apellido *</label>
                         <input
                           type="text"
                           value={formData.apellido}
