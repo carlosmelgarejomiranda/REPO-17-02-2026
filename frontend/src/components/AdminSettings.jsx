@@ -239,6 +239,33 @@ export const AdminSettings = ({ currentUser }) => {
           </div>
         </div>
 
+        {/* WhatsApp Marcas */}
+        <div className="bg-neutral-800 rounded-lg p-6">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-amber-500/20 rounded-lg">
+              <Phone className="w-6 h-6 text-amber-500" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-white font-semibold">WhatsApp Marcas</h3>
+              <p className="text-gray-400 text-sm mt-1">
+                Número de WhatsApp donde se recibirán las consultas de marcas interesadas en colaborar con Avenue.
+              </p>
+              <div className="mt-3">
+                <label className="block text-sm text-gray-400 mb-1">Número de WhatsApp</label>
+                <input
+                  type="text"
+                  value={settings.whatsapp_marcas}
+                  onChange={(e) => handleChange('whatsapp_marcas', e.target.value)}
+                  placeholder="+595976691520"
+                  disabled={!canChangeSettings}
+                  className="w-full max-w-xs px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 disabled:opacity-50"
+                />
+                <p className="text-gray-500 text-xs mt-1">Formato: +595XXXXXXXXX (incluir código de país)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Order Status Info */}
         <div className="bg-neutral-800 rounded-lg p-6">
           <div className="flex items-start gap-4">
