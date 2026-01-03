@@ -469,7 +469,7 @@ function AppRouter() {
                   t={t} 
                   user={user}
                   onLoginClick={() => setShowLoginModal(true)}
-                  onLogout={handleLogout}
+                  onLogout={logout}
                   language={language}
                   setLanguage={setLanguage}
                 />
