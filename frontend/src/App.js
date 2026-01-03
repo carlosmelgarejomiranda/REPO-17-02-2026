@@ -459,7 +459,7 @@ function AppRouter() {
               <StudioLanding 
                 t={t} 
                 user={user}
-                onLoginClick={() => setShowLoginModal(true)}
+                onLoginClick={() => setShowAuthModal(true)}
                 onLogout={logout}
                 language={language}
                 setLanguage={setLanguage}
