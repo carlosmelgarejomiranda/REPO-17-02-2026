@@ -86,7 +86,8 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                     <a
                       key={link.href}
                       href={link.href}
-                      className="block px-6 py-4 text-xs tracking-[0.15em] uppercase text-gray-300 hover:bg-white/5 hover:text-[#d4a968] transition-colors border-b border-white/5 last:border-0"
+                      className="block px-6 py-4 text-xs tracking-[0.15em] uppercase hover:bg-white/5 hover:text-[#d4a968] transition-colors border-b border-white/5 last:border-0"
+                      style={{ color: '#f5ede4' }}
                       onClick={() => setShowMenu(false)}
                     >
                       {link.label}
