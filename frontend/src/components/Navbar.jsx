@@ -76,9 +76,9 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
               {/* Dropdown Menu */}
               {showMenu && (
                 <div 
-                  className="absolute right-0 top-full mt-2 w-52 rounded-lg shadow-2xl overflow-hidden"
+                  className="absolute right-0 top-full mt-2 w-52 rounded-none shadow-2xl overflow-hidden bg-black"
                   style={{ 
-                    backgroundColor: '#000000',
+                    backgroundColor: '#000000 !important',
                     border: '1px solid rgba(212, 169, 104, 0.3)'
                   }}
                 >
@@ -86,9 +86,11 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                     <a
                       key={link.href}
                       href={link.href}
-                      className="block px-6 py-4 text-xs tracking-[0.15em] uppercase hover:bg-white/5 hover:text-[#d4a968] transition-colors border-b border-white/5 last:border-0"
-                      style={{ color: '#f5ede4' }}
+                      className="block px-6 py-4 text-xs tracking-[0.15em] uppercase hover:bg-white/5 transition-colors border-b border-white/5 last:border-0"
+                      style={{ color: '#f5ede4', backgroundColor: '#000000' }}
                       onClick={() => setShowMenu(false)}
+                      onMouseEnter={(e) => e.target.style.color = '#d4a968'}
+                      onMouseLeave={(e) => e.target.style.color = '#f5ede4'}
                     >
                       {link.label}
                     </a>
