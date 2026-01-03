@@ -40,7 +40,7 @@ const ACTIVITIES = [
   { name: 'Contenido UGC', icon: '✨' },
 ];
 
-export const StudioLanding = ({ t }) => {
+export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLanguage }) => {
   const sl = t?.studioLanding || {};
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isVisible, setIsVisible] = useState({});
