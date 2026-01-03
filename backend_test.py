@@ -1518,6 +1518,257 @@ def test_admin_top_products():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+# ==================== COUPON SYSTEM TESTS ====================
+
+def test_create_coupon():
+    """Test 1: Create a test coupon - POST /api/shop/coupons"""
+    print_test_header("Test Create Coupon")
+    
+    global test_coupon_id
+    
+    try:
+        url = f"{BACKEND_URL}/shop/coupons"
+        payload = {
+            "code": "BIENVENIDA10",
+            "discount_type": "percentage",
+            "discount_value": 10,
+            "min_purchase": 100000,
+            "max_uses": 100,
+            "is_active": True,
+            "description": "Cupón de bienvenida 10% descuento"
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            if ("success" in data and data["success"] and 
+                "coupon" in data and 
+                data["coupon"].get("code") == "BIENVENIDA10"):
+                
+                test_coupon_id = data["coupon"].get("id")
+                print_success("✅ Coupon created successfully")
+                print_success(f"Coupon ID: {test_coupon_id}")
+                print_success(f"Code: {data['coupon']['code']}")
+                print_success(f"Discount: {data['coupon']['discount_value']}% off")
+                print_success(f"Min purchase: {data['coupon']['min_purchase']:,} Gs")
+                add_test_result("Create Coupon", "PASS")
+                return True
+            else:
+                print_error("Response missing required fields or incorrect values")
+                add_test_result("Create Coupon", "FAIL", "Invalid response structure")
+                return False
+        elif response.status_code == 400 and "Ya existe" in response.text:
+            print_warning("Coupon already exists, continuing with tests...")
+            add_test_result("Create Coupon", "PASS", "Coupon already exists")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("Create Coupon", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Create Coupon", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_get_all_coupons():
+    """Test 2: Get all coupons - GET /api/shop/coupons"""
+    print_test_header("Test Get All Coupons")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/coupons"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: Found {len(data)} coupons")
+            
+            # Validate response structure - should be array of coupons
+            if isinstance(data, list):
+                print_success("✅ Get coupons endpoint working correctly")
+                print_success(f"Total coupons: {len(data)}")
+                
+                # Check if our test coupon is in the list
+                test_coupon = next((c for c in data if c.get("code") == "BIENVENIDA10"), None)
+                if test_coupon:
+                    print_success("✅ Test coupon BIENVENIDA10 found in list")
+                    print_info(f"Coupon details: {test_coupon.get('description')}")
+                    print_info(f"Discount: {test_coupon.get('discount_value')}% off")
+                    print_info(f"Min purchase: {test_coupon.get('min_purchase'):,} Gs")
+                else:
+                    print_warning("Test coupon BIENVENIDA10 not found in list")
+                
+                add_test_result("Get All Coupons", "PASS")
+                return True
+            else:
+                print_error(f"Expected array response, got: {type(data)}")
+                add_test_result("Get All Coupons", "FAIL", f"Wrong response type: {type(data)}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("Get All Coupons", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Get All Coupons", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_apply_coupon_valid():
+    """Test 3: Apply coupon (valid case) - POST /api/shop/apply-coupon"""
+    print_test_header("Test Apply Coupon (Valid Case)")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/apply-coupon"
+        payload = {
+            "code": "BIENVENIDA10",
+            "subtotal": 200000
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure and values
+            if (data.get("valid") == True and 
+                "discount_amount" in data and 
+                "new_subtotal" in data and
+                "coupon" in data):
+                
+                discount_amount = data.get("discount_amount")
+                new_subtotal = data.get("new_subtotal")
+                expected_discount = 200000 * 0.10  # 10% of 200000 = 20000
+                
+                print_success("✅ Coupon applied successfully")
+                print_success(f"Original subtotal: 200,000 Gs")
+                print_success(f"Discount amount: {discount_amount:,.0f} Gs")
+                print_success(f"New subtotal: {new_subtotal:,.0f} Gs")
+                
+                # Verify discount calculation
+                if abs(discount_amount - expected_discount) < 1:  # Allow for small rounding differences
+                    print_success("✅ Discount calculation is correct (10% = 20,000 Gs)")
+                    add_test_result("Apply Coupon Valid", "PASS")
+                    return True
+                else:
+                    print_error(f"Discount calculation incorrect. Expected: {expected_discount}, Got: {discount_amount}")
+                    add_test_result("Apply Coupon Valid", "FAIL", "Incorrect discount calculation")
+                    return False
+            else:
+                print_error("Response missing required fields or invalid values")
+                add_test_result("Apply Coupon Valid", "FAIL", "Invalid response structure")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("Apply Coupon Valid", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Apply Coupon Valid", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_apply_coupon_below_minimum():
+    """Test 4: Apply coupon (below minimum) - POST /api/shop/apply-coupon"""
+    print_test_header("Test Apply Coupon (Below Minimum)")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/apply-coupon"
+        payload = {
+            "code": "BIENVENIDA10",
+            "subtotal": 50000
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info("Expected: 400 error about minimum purchase (100,000 Gs)")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            error_text = response.text
+            print_info(f"Error response: {error_text}")
+            
+            # Check if error message mentions minimum purchase
+            if ("mínimo" in error_text.lower() or "minimum" in error_text.lower()):
+                print_success("✅ Correctly rejected coupon for below minimum purchase")
+                print_success("✅ Error message mentions minimum purchase requirement")
+                add_test_result("Apply Coupon Below Minimum", "PASS")
+                return True
+            else:
+                print_warning("Coupon rejected but error message doesn't mention minimum purchase")
+                add_test_result("Apply Coupon Below Minimum", "PASS", "Rejected but unclear error message")
+                return True
+        else:
+            print_error(f"Expected 400 error, got {response.status_code}: {response.text}")
+            add_test_result("Apply Coupon Below Minimum", "FAIL", f"Expected 400, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Apply Coupon Below Minimum", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_apply_invalid_coupon():
+    """Test 5: Apply invalid coupon - POST /api/shop/apply-coupon"""
+    print_test_header("Test Apply Invalid Coupon")
+    
+    try:
+        url = f"{BACKEND_URL}/shop/apply-coupon"
+        payload = {
+            "code": "INVALIDO",
+            "subtotal": 200000
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info("Expected: 404 error about invalid coupon")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            error_text = response.text
+            print_info(f"Error response: {error_text}")
+            
+            # Check if error message mentions invalid coupon
+            if ("válido" in error_text.lower() or "valid" in error_text.lower() or "not found" in error_text.lower()):
+                print_success("✅ Correctly rejected invalid coupon code")
+                print_success("✅ Error message indicates coupon is not valid")
+                add_test_result("Apply Invalid Coupon", "PASS")
+                return True
+            else:
+                print_warning("Coupon rejected but error message is unclear")
+                add_test_result("Apply Invalid Coupon", "PASS", "Rejected but unclear error message")
+                return True
+        else:
+            print_error(f"Expected 404 error, got {response.status_code}: {response.text}")
+            add_test_result("Apply Invalid Coupon", "FAIL", f"Expected 404, got {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Apply Invalid Coupon", "FAIL", f"Exception: {str(e)}")
+        return False
+
 def test_admin_export_report():
     """Test Admin Export Report: GET /api/shop/admin/reports/export"""
     print_test_header("Test Admin Export Report")
