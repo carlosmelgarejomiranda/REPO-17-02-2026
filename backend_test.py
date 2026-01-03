@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Avenue Studio Booking System API Tests
-Tests the core booking flow and admin functionality
+Avenue Studio Media Master API Tests
+Complete backend verification for deployment
+Tests ALL critical API endpoints as requested in review
 """
 
 import requests
