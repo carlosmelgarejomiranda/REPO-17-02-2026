@@ -418,7 +418,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                           type="text"
                           value={formData.apellido}
                           onChange={(e) => updateField('apellido', e.target.value)}
-                          className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.apellido ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.apellido ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                           placeholder="Tu apellido"
                         />
                         {errors.apellido && <p className="text-xs mt-2 text-red-400">{errors.apellido}</p>}
@@ -427,11 +427,11 @@ export const UGCCreators = ({ t, campaignId }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Sexo *</label>
+                        <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">Sexo *</label>
                         <select
                           value={formData.sexo}
                           onChange={(e) => updateField('sexo', e.target.value)}
-                          className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.sexo ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.sexo ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                           style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23666\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center', backgroundSize: '24px' }}
                         >
                           <option value="" className="bg-black">Seleccionar</option>
@@ -442,12 +442,12 @@ export const UGCCreators = ({ t, campaignId }) => {
                         {errors.sexo && <p className="text-xs mt-2 text-red-400">{errors.sexo}</p>}
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Fecha de Nacimiento *</label>
+                        <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">Fecha de Nacimiento *</label>
                         <input
                           type="date"
                           value={formData.fecha_nacimiento}
                           onChange={(e) => updateField('fecha_nacimiento', e.target.value)}
-                          className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors ${errors.fecha_nacimiento ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors ${errors.fecha_nacimiento ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                         />
                         {errors.fecha_nacimiento && <p className="text-xs mt-2 text-red-400">{errors.fecha_nacimiento}</p>}
                       </div>
@@ -483,7 +483,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                           placeholder="tu_usuario"
                           value={formData.instagram_username}
                           onChange={(e) => updateField('instagram_username', e.target.value.replace('@', ''))}
-                          className="flex-1 p-4 bg-transparent border-b border-white/20 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          className="flex-1 p-4 bg-transparent border-b border-white/20 text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none transition-colors"
                         />
                       </div>
                       {formData.instagram_username && (
@@ -493,7 +493,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                             <select
                               value={formData.instagram_privado}
                               onChange={(e) => updateField('instagram_privado', e.target.value)}
-                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.instagram_privado ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.instagram_privado ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                             >
                               <option value="" className="bg-black">Seleccionar</option>
                               <option value="publico" className="bg-black">Público</option>
@@ -506,7 +506,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                             <select
                               value={formData.instagram_seguidores}
                               onChange={(e) => updateField('instagram_seguidores', e.target.value)}
-                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.instagram_seguidores ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.instagram_seguidores ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                             >
                               <option value="" className="bg-black">Seleccionar</option>
                               {FOLLOWER_RANGES.map(r => (
@@ -532,7 +532,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                           placeholder="tu_usuario"
                           value={formData.tiktok_username}
                           onChange={(e) => updateField('tiktok_username', e.target.value.replace('@', ''))}
-                          className="flex-1 p-4 bg-transparent border-b border-white/20 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          className="flex-1 p-4 bg-transparent border-b border-white/20 text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none transition-colors"
                         />
                       </div>
                       {formData.tiktok_username && (
@@ -542,7 +542,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                             <select
                               value={formData.tiktok_privado}
                               onChange={(e) => updateField('tiktok_privado', e.target.value)}
-                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.tiktok_privado ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.tiktok_privado ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                             >
                               <option value="" className="bg-black">Seleccionar</option>
                               <option value="publico" className="bg-black">Público</option>
@@ -555,7 +555,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                             <select
                               value={formData.tiktok_seguidores}
                               onChange={(e) => updateField('tiktok_seguidores', e.target.value)}
-                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.tiktok_seguidores ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.tiktok_seguidores ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                             >
                               <option value="" className="bg-black">Seleccionar</option>
                               {FOLLOWER_RANGES.map(r => (
@@ -580,24 +580,24 @@ export const UGCCreators = ({ t, campaignId }) => {
                   
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Link Video 1 *</label>
+                      <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">Link Video 1 *</label>
                       <input
                         type="url"
                         placeholder="https://instagram.com/reel/... o tiktok.com/..."
                         value={formData.video_link_1}
                         onChange={(e) => updateField('video_link_1', e.target.value)}
-                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.video_link_1 ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.video_link_1 ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                       />
                       {errors.video_link_1 && <p className="text-xs mt-2 text-red-400">{errors.video_link_1}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Link Video 2 *</label>
+                      <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">Link Video 2 *</label>
                       <input
                         type="url"
                         placeholder="https://instagram.com/reel/... o tiktok.com/..."
                         value={formData.video_link_2}
                         onChange={(e) => updateField('video_link_2', e.target.value)}
-                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.video_link_2 ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.video_link_2 ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                       />
                       {errors.video_link_2 && <p className="text-xs mt-2 text-red-400">{errors.video_link_2}</p>}
                     </div>
@@ -613,11 +613,11 @@ export const UGCCreators = ({ t, campaignId }) => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Ciudad *</label>
+                      <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">Ciudad *</label>
                       <select
                         value={formData.ciudad}
                         onChange={(e) => updateField('ciudad', e.target.value)}
-                        className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.ciudad ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.ciudad ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23666\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center', backgroundSize: '24px' }}
                       >
                         <option value="" className="bg-black">Seleccionar</option>
@@ -628,13 +628,13 @@ export const UGCCreators = ({ t, campaignId }) => {
                       {errors.ciudad && <p className="text-xs mt-2 text-red-400">{errors.ciudad}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">WhatsApp *</label>
+                      <label className="block text-xs text-gray-400 tracking-[0.15em] uppercase mb-3">WhatsApp *</label>
                       <input
                         type="tel"
                         placeholder="+595 9XX XXX XXX"
                         value={formData.whatsapp}
                         onChange={(e) => updateField('whatsapp', e.target.value)}
-                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.whatsapp ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.whatsapp ? 'border-red-500' : 'border-white/30 focus:border-[#d4a968]'}`}
                       />
                       {errors.whatsapp && <p className="text-xs mt-2 text-red-400">{errors.whatsapp}</p>}
                     </div>
