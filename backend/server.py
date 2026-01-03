@@ -1658,6 +1658,101 @@ WhatsApp: +595 973 666 000"""
     except Exception as e:
         logger.error(f"Failed to send invoiced notification to {customer_phone}: {e}")
 
+# ==================== BRAND INQUIRIES ROUTES ====================
+
+INTEREST_LABELS = {
+    "venta_tienda": "Venta en tienda física",
+    "tienda_online": "Presencia en tienda online",
+    "estudio": "Sesiones fotográficas",
+    "ugc": "Campañas con creators/UGC",
+    "eventos": "Eventos y activaciones",
+    "todo": "Todo lo anterior"
+}
+
+@api_router.post("/contact/brands")
+async def submit_brand_inquiry(inquiry: BrandInquiry):
+    """Submit a brand inquiry from Tu Marca page"""
+    inquiry_doc = {
+        "inquiry_id": f"BRD-{str(uuid4())[:8].upper()}",
+        "brand_name": inquiry.brand_name,
+        "contact_name": inquiry.contact_name,
+        "email": inquiry.email,
+        "phone": inquiry.phone or "",
+        "interest": inquiry.interest,
+        "interest_label": INTEREST_LABELS.get(inquiry.interest, inquiry.interest),
+        "message": inquiry.message or "",
+        "status": "nuevo",  # nuevo, contactado, en_proceso, cerrado
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "notes": ""
+    }
+    
+    await db.brand_inquiries.insert_one(inquiry_doc)
+    inquiry_doc.pop("_id", None)
+    
+    # Send WhatsApp notification to commercial
+    whatsapp_message = f"""🏷️ *NUEVA MARCA INTERESADA - Avenue*
+
+🏢 *Marca:* {inquiry.brand_name}
+👤 *Contacto:* {inquiry.contact_name}
+📧 *Email:* {inquiry.email}
+📱 *Teléfono:* {inquiry.phone or 'No proporcionado'}
+
+💡 *Interés:* {INTEREST_LABELS.get(inquiry.interest, inquiry.interest)}
+
+💬 *Mensaje:* {inquiry.message or 'Sin mensaje adicional'}
+
+⏰ *Recibido:* {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')}
+
+_Revisar en panel de administración_"""
+    
+    try:
+        await send_whatsapp_notification(WHATSAPP_COMMERCIAL, whatsapp_message)
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp for brand inquiry: {e}")
+    
+    return {"success": True, "inquiry_id": inquiry_doc["inquiry_id"]}
+
+@api_router.get("/admin/brand-inquiries")
+async def get_brand_inquiries(status: Optional[str] = None):
+    """Get all brand inquiries for admin panel"""
+    query = {}
+    if status:
+        query["status"] = status
+    
+    inquiries = await db.brand_inquiries.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return inquiries
+
+@api_router.put("/admin/brand-inquiries/{inquiry_id}")
+async def update_brand_inquiry(inquiry_id: str, data: dict):
+    """Update a brand inquiry status or notes"""
+    allowed_fields = ["status", "notes"]
+    update_data = {k: v for k, v in data.items() if k in allowed_fields}
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No valid fields to update")
+    
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.brand_inquiries.update_one(
+        {"inquiry_id": inquiry_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Consulta no encontrada")
+    
+    return {"message": "Consulta actualizada", "inquiry_id": inquiry_id}
+
+@api_router.delete("/admin/brand-inquiries/{inquiry_id}")
+async def delete_brand_inquiry(inquiry_id: str):
+    """Delete a brand inquiry"""
+    result = await db.brand_inquiries.delete_one({"inquiry_id": inquiry_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Consulta no encontrada")
+    
+    return {"message": "Consulta eliminada"}
+
 # ==================== BASIC ROUTES ====================
 
 @api_router.get("/")
