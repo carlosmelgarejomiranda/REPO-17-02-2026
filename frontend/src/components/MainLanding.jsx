@@ -57,11 +57,11 @@ export const MainLanding = ({ t }) => {
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-20 w-full">
           <div className={`max-w-3xl transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             {/* Logo */}
-            <div className="mb-12">
+            <div className="mb-6">
               <img 
                 src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
                 alt="Avenue"
-                style={{ height: '300px', width: 'auto', filter: 'brightness(1.1)', maxWidth: '100%' }}
+                style={{ height: '600px', width: 'auto', filter: 'brightness(1.1)', maxWidth: '100%' }}
               />
             </div>
 
