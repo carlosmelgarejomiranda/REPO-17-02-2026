@@ -58,6 +58,7 @@ export const AdminDashboard = ({ user }) => {
   const [reservations, setReservations] = useState([]);
   const [users, setUsers] = useState([]);
   const [ugcApplications, setUgcApplications] = useState([]);
+  const [brandInquiries, setBrandInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(() => {
     // Set default tab based on user role
@@ -67,6 +68,7 @@ export const AdminDashboard = ({ user }) => {
   const [filterDate, setFilterDate] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [ugcFilterStatus, setUgcFilterStatus] = useState('');
+  const [brandFilterStatus, setBrandFilterStatus] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [sendingTestEmail, setSendingTestEmail] = useState(false);
   const [testEmailStatus, setTestEmailStatus] = useState(null);
