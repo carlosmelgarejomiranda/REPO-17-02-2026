@@ -174,7 +174,7 @@ export const AvenueStudio = ({ t }) => {
                   {rate.hours}
                 </p>
                 
-                <p className="text-4xl md:text-5xl font-light mb-2">
+                <p className={`text-4xl md:text-5xl font-light mb-2 ${selectedRate === index ? 'text-black' : 'text-gray-200'}`}>
                   {rate.price}
                 </p>
                 <p className={`text-sm ${selectedRate === index ? 'text-black/70' : 'text-gray-500'}`}>
