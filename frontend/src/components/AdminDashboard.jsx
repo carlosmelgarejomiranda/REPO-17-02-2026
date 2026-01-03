@@ -104,7 +104,7 @@ export const AdminDashboard = ({ user }) => {
 
   useEffect(() => {
     fetchData();
-  }, [filterDate, filterStatus, ugcFilterStatus]);
+  }, [filterDate, filterStatus, ugcFilterStatus, brandFilterStatus]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -113,16 +113,19 @@ export const AdminDashboard = ({ user }) => {
       if (filterDate) query += `?date=${filterDate}`;
       if (filterStatus) query += `${query ? '&' : '?'}status=${filterStatus}`;
       let ugcQuery = ugcFilterStatus ? `?status=${ugcFilterStatus}` : '';
+      let brandQuery = brandFilterStatus ? `?status=${brandFilterStatus}` : '';
 
-      const [resResponse, usersResponse, ugcResponse] = await Promise.all([
+      const [resResponse, usersResponse, ugcResponse, brandResponse] = await Promise.all([
         fetch(`${API_URL}/api/admin/reservations${query}`, { headers: getAuthHeaders() }),
         fetch(`${API_URL}/api/admin/users`, { headers: getAuthHeaders() }),
-        fetch(`${API_URL}/api/admin/ugc${ugcQuery}`, { headers: getAuthHeaders() })
+        fetch(`${API_URL}/api/admin/ugc${ugcQuery}`, { headers: getAuthHeaders() }),
+        fetch(`${API_URL}/api/admin/brand-inquiries${brandQuery}`, { headers: getAuthHeaders() })
       ]);
 
       if (resResponse.ok) setReservations(await resResponse.json());
       if (usersResponse.ok) setUsers(await usersResponse.json());
       if (ugcResponse.ok) setUgcApplications(await ugcResponse.json());
+      if (brandResponse.ok) setBrandInquiries(await brandResponse.json());
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
