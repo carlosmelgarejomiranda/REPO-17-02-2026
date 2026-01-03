@@ -709,6 +709,151 @@ export const AdminDashboard = ({ user }) => {
           </div>
         )}
 
+        {/* Brands Tab - Marcas Interesadas */}
+        {activeTab === 'brands' && (
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
+            <div className="p-6 border-b border-white/10">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <h2 className="text-xl font-light text-white">Marcas <span className="italic text-[#d4a968]">Interesadas</span></h2>
+                <div className="flex gap-3 flex-wrap">
+                  <select
+                    value={brandFilterStatus}
+                    onChange={(e) => setBrandFilterStatus(e.target.value)}
+                    className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm"
+                  >
+                    <option value="">Todos los estados</option>
+                    <option value="nuevo">Nuevo</option>
+                    <option value="contactado">Contactado</option>
+                    <option value="en_proceso">En Proceso</option>
+                    <option value="cerrado">Cerrado</option>
+                  </select>
+                  <Button
+                    onClick={() => exportToExcel(brandInquiries, 'marcas_interesadas', [
+                      { key: 'inquiry_id', label: 'ID' },
+                      { key: 'brand_name', label: 'Marca' },
+                      { key: 'contact_name', label: 'Contacto' },
+                      { key: 'email', label: 'Email' },
+                      { key: 'phone', label: 'Teléfono' },
+                      { key: 'interest_label', label: 'Interés' },
+                      { key: 'message', label: 'Mensaje' },
+                      { key: 'status', label: 'Estado' },
+                      { key: 'created_at', label: 'Fecha', getValue: (item) => new Date(item.created_at).toLocaleDateString('es-PY') }
+                    ])}
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                    Exportar Excel
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              {brandInquiries.length === 0 ? (
+                <p className="text-gray-500 text-center py-12">No hay consultas de marcas</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-white/10">
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Marca</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Contacto</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Email</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Teléfono</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Interés</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Estado</th>
+                        <th className="text-left py-3 px-4 text-gray-400 font-medium text-sm">Fecha</th>
+                        <th className="text-right py-3 px-4 text-gray-400 font-medium text-sm">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {brandInquiries.map((inquiry) => (
+                        <tr key={inquiry.inquiry_id} className="border-b border-white/5 hover:bg-white/5">
+                          <td className="py-4 px-4">
+                            <div className="font-medium text-white">{inquiry.brand_name}</div>
+                            {inquiry.message && (
+                              <div className="text-xs text-gray-500 mt-1 max-w-xs truncate" title={inquiry.message}>
+                                {inquiry.message}
+                              </div>
+                            )}
+                          </td>
+                          <td className="py-4 px-4 text-gray-300">{inquiry.contact_name}</td>
+                          <td className="py-4 px-4">
+                            <a href={`mailto:${inquiry.email}`} className="text-[#d4a968] hover:underline">
+                              {inquiry.email}
+                            </a>
+                          </td>
+                          <td className="py-4 px-4">
+                            {inquiry.phone ? (
+                              <a href={`https://wa.me/${inquiry.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline flex items-center gap-1">
+                                <Phone className="w-3 h-3" />
+                                {inquiry.phone}
+                              </a>
+                            ) : (
+                              <span className="text-gray-500">-</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4 text-gray-300 text-sm">{inquiry.interest_label}</td>
+                          <td className="py-4 px-4">
+                            <select
+                              value={inquiry.status}
+                              onChange={async (e) => {
+                                try {
+                                  await fetch(`${API_URL}/api/admin/brand-inquiries/${inquiry.inquiry_id}`, {
+                                    method: 'PUT',
+                                    headers: getAuthHeaders(),
+                                    body: JSON.stringify({ status: e.target.value })
+                                  });
+                                  fetchData();
+                                } catch (err) {
+                                  console.error('Error updating status:', err);
+                                }
+                              }}
+                              className={`px-2 py-1 rounded text-xs font-medium border ${
+                                inquiry.status === 'nuevo' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+                                inquiry.status === 'contactado' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
+                                inquiry.status === 'en_proceso' ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' :
+                                'bg-green-500/20 text-green-400 border-green-500/30'
+                              }`}
+                            >
+                              <option value="nuevo">Nuevo</option>
+                              <option value="contactado">Contactado</option>
+                              <option value="en_proceso">En Proceso</option>
+                              <option value="cerrado">Cerrado</option>
+                            </select>
+                          </td>
+                          <td className="py-4 px-4 text-gray-400 text-sm">
+                            {new Date(inquiry.created_at).toLocaleDateString('es-PY')}
+                          </td>
+                          <td className="py-4 px-4 text-right">
+                            <button
+                              onClick={async () => {
+                                if (window.confirm('¿Eliminar esta consulta?')) {
+                                  try {
+                                    await fetch(`${API_URL}/api/admin/brand-inquiries/${inquiry.inquiry_id}`, {
+                                      method: 'DELETE',
+                                      headers: getAuthHeaders()
+                                    });
+                                    fetchData();
+                                  } catch (err) {
+                                    console.error('Error deleting inquiry:', err);
+                                  }
+                                }
+                              }}
+                              className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Users Tab - Role Management */}
         {activeTab === 'users' && (
           <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden p-6">
