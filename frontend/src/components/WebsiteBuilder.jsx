@@ -305,7 +305,7 @@ const WebsiteBuilderContent = ({ onClose }) => {
       if (position && !isNewUrlVideo) newMods[`imgpos:${mediaTarget.editId}`] = position;
       
       console.log('Saving modifications:', Object.keys(newMods).length, 'items');
-      setPageModifications(newMods);
+      setPageModifications(prevMods => { const updatedMods = { ...prevMods, ...newMods }; return updatedMods; });
       setHasChanges(true);
       
       console.log('=== MEDIA CHANGE APPLIED SUCCESSFULLY ===');
