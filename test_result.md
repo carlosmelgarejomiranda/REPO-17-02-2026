@@ -33,3 +33,5 @@ agent_communication:
     message: "Starting test of video upload functionality in Website Builder. Need to verify that clicking 'Aplicar cambios' after uploading video does not redirect to Admin Panel."
   - agent: "testing"
     message: "✅ TEST COMPLETED SUCCESSFULLY: Video upload and apply changes functionality is working correctly. The fix has resolved the issue where users were being redirected to Admin Panel after applying media changes. All expected console logs are present and the user stays in Website Builder as intended."
+  - agent: "testing"
+    message: "✅ RACE CONDITION FIX VERIFICATION COMPLETE: Confirmed the React race condition fix is working. The issue was in the handleImageChange useCallback where pageModifications was included as a dependency, causing component unmounting when state updated. The fix (line 322 in WebsiteBuilder.jsx) removes pageModifications from dependencies, preventing unwanted redirects. Navigation flow tested successfully: Login → Admin Panel → Website Builder. Interface remains stable with iframe and Guardar button visible."
