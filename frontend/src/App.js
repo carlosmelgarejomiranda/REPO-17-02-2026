@@ -538,15 +538,15 @@ function AppRouter() {
           {/* Booking Page */}
           <Route path="/studio/reservar" element={
             <>
-              <StudioNav 
-                t={t} 
-                language={language} 
-                setLanguage={setLanguage}
+              <Navbar 
                 user={user}
                 onLoginClick={() => setShowAuthModal(true)}
                 onLogout={logout}
+                language={language}
+                setLanguage={setLanguage}
+                t={t}
               />
-              <div style={{ paddingTop: '100px', minHeight: '100vh', backgroundColor: '#0d0d0d' }}>
+              <div style={{ paddingTop: '80px', minHeight: '100vh', backgroundColor: '#0d0d0d' }}>
                 <div className="max-w-4xl mx-auto px-4 pb-8">
                   <h1 className="text-3xl md:text-4xl font-light italic text-center mb-2" style={{ color: '#f5ede4' }}>
                     Reservar Avenue Studio
