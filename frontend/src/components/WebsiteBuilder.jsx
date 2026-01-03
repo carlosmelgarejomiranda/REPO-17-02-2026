@@ -898,49 +898,31 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
     }
     
     console.log('=== UPLOAD START ===');
-    console.log('File name:', file.name);
-    console.log('File size:', file.size, 'bytes', '(' + (file.size / 1024 / 1024).toFixed(2) + ' MB)');
-    console.log('File type:', file.type);
-    console.log('API URL:', API_URL);
+    console.log('File:', file.name, '-', (file.size / 1024 / 1024).toFixed(2), 'MB');
     
     setUploading(true);
     
     const formData = new FormData();
     formData.append('file', file);
     
-    const uploadUrl = `${API_URL}/api/builder/upload-media`;
-    console.log('Upload URL:', uploadUrl);
-    
     try {
-      console.log('Starting fetch request...');
-      const res = await fetch(uploadUrl, { 
+      const res = await fetch(`${API_URL}/api/builder/upload-media`, { 
         method: 'POST', 
         body: formData 
       });
       
-      console.log('Response received');
-      console.log('Response status:', res.status);
-      console.log('Response ok:', res.ok);
-      console.log('Response headers:', Object.fromEntries(res.headers.entries()));
-      
       if (res.ok) { 
         const data = await res.json(); 
-        console.log('Upload SUCCESS:', data);
-        console.log('URL received:', data.url?.substring(0, 100) + '...');
-        setUrl(data.url); 
-        alert('¡Archivo subido exitosamente!');
+        console.log('Upload SUCCESS:', data.url?.substring(0, 80));
+        setUrl(data.url);
+        // No alert - just update state
       } else {
         const errorText = await res.text();
-        console.error('Upload FAILED - Status:', res.status);
-        console.error('Error response:', errorText);
-        alert(`Error al subir: ${res.status} - ${errorText}`);
+        console.error('Upload FAILED:', res.status, errorText);
+        // Show error inline instead of alert
       }
     } catch (err) { 
-      console.error('=== UPLOAD ERROR ===');
-      console.error('Error name:', err.name);
-      console.error('Error message:', err.message);
-      console.error('Error stack:', err.stack);
-      alert(`Error de conexión: ${err.name} - ${err.message}`);
+      console.error('Upload ERROR:', err.message);
     } finally {
       setUploading(false);
       console.log('=== UPLOAD END ===');
