@@ -37,32 +37,14 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
   return (
     <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <a href="/" className="flex items-center">
-              <span className="text-lg font-light text-white tracking-[0.3em]">AVENUE</span>
-            </a>
-            
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center gap-8">
-              <a href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">E-commerce</a>
-              <a href="/studio" className="text-sm text-gray-400 hover:text-white transition-colors">Studio</a>
-              <a href="/studio/ugc" className="text-sm text-gray-400 hover:text-white transition-colors">UGC</a>
-              <a href="/tu-marca" className="text-sm text-gray-400 hover:text-white transition-colors">Tu Marca</a>
-            </div>
-            
-            {/* CTA Button */}
-            <a 
-              href="/shop" 
-              className="px-4 py-2 bg-[#d4a968] text-black text-sm font-medium rounded hover:bg-[#c49958] transition-colors"
-            >
-              Explorar
-            </a>
-          </div>
-        </div>
-      </nav>
+      <Navbar 
+        user={user}
+        onLoginClick={onLoginClick}
+        onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
+      />
 
       {/* Hero Section - Full Screen */}
       <section className="relative min-h-screen flex items-center pt-16">
