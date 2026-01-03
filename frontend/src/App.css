@@ -154,3 +154,33 @@ a:hover {
   color: #d4a968 !important;
 }
 
+
+/* Custom Navbar Dropdown Styles - Force Black Background */
+.navbar-dropdown,
+div.navbar-dropdown {
+  background-color: #000000 !important;
+  border: 1px solid rgba(212, 169, 104, 0.3) !important;
+  border-radius: 0 !important;
+}
+
+.navbar-dropdown a,
+div.navbar-dropdown a {
+  display: block !important;
+  background-color: #000000 !important;
+  color: #f5ede4 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  padding: 16px 24px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+  text-decoration: none !important;
+}
+
+.navbar-dropdown a:last-child {
+  border-bottom: none !important;
+}
+
+.navbar-dropdown a:hover {
+  background-color: rgba(255,255,255,0.05) !important;
+  color: #d4a968 !important;
+}
