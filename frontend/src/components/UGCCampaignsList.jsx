@@ -208,7 +208,7 @@ export const UGCCampaignsList = ({ t }) => {
                   className="relative p-8 bg-[#141414] border border-white/25 group hover:border-[#d4a968]/30 transition-all duration-300"
                 >
                   {/* Step Number */}
-                  <span className="absolute top-4 right-4 text-5xl font-light text-white/[0.05] group-hover:text-[#d4a968]/20 transition-colors">
+                  <span className="absolute top-4 right-4 text-5xl font-light text-white/30 group-hover:text-[#d4a968]/50 transition-colors">
                     {item.step}
                   </span>
                   
