@@ -44,7 +44,7 @@ export const CAMPAIGNS = {
       publicProfile: 'Perfiles públicos de Instagram y/o TikTok'
     },
     image: 'https://images.unsplash.com/photo-1582418702059-97ebafb35d09?q=80&w=2030&auto=format&fit=crop',
-    color: '#8B7355'
+    color: '#d4a968'
   }
 };
 
