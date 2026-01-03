@@ -427,6 +427,29 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-6 py-12">
+        {/* Registration Banner - Show only if user is not logged in */}
+        {!user && (
+          <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-6 mb-8 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-[#d4a968]/20 rounded-full flex items-center justify-center">
+                <Gift className="w-6 h-6 text-[#d4a968]" />
+              </div>
+              <div>
+                <p className="text-white font-medium">¿Todavía no tenés cuenta?</p>
+                <p className="text-gray-300 text-sm">Creá tu cuenta ahora y ganá un cupón de <span className="text-[#d4a968] font-semibold">10% de descuento</span> en tu próxima compra</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onLoginClick}
+              className="flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black text-sm font-medium rounded-lg hover:bg-[#c99a58] transition-colors whitespace-nowrap"
+            >
+              <UserPlus className="w-4 h-4" />
+              Crear cuenta
+            </button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Form Section */}
