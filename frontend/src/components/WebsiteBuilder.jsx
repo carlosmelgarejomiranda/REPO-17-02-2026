@@ -318,7 +318,7 @@ const WebsiteBuilderContent = ({ onClose }) => {
     // Close modal after everything is done
     setShowMediaModal(false);
     setMediaTarget(null);
-  }, [mediaTarget, pageModifications]);
+  }, [mediaTarget]); // Fixed: Removed pageModifications to prevent race condition
 
   const handleCarouselChange = useCallback((newImages) => {
     if (iframeRef.current) {
