@@ -364,19 +364,16 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
         <div className="max-w-7xl mx-auto">
           {/* Main Footer Content */}
           <div className="grid md:grid-cols-12 gap-12 items-start">
-            {/* Logo & Description - Takes 5 columns */}
-            <div className="md:col-span-5">
-              <h2 className="text-xl font-light text-white mb-6 tracking-[0.3em] uppercase">
-                Avenue
-              </h2>
-              <p className="text-gray-500 text-xs leading-relaxed max-w-sm tracking-wide">
-                Un concepto premium donde las marcas brillan y el contenido cobra vida. 
-                Moda, fotografía y creatividad en un solo lugar.
+            {/* Logo & Description - Takes 4 columns */}
+            <div className="md:col-span-4">
+              <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Avenue</h4>
+              <p className="text-gray-500 text-xs leading-relaxed max-w-sm tracking-[0.1em] uppercase">
+                Un concepto premium donde las marcas brillan y el contenido cobra vida.
               </p>
             </div>
 
             {/* Spacer */}
-            <div className="hidden md:block md:col-span-3"></div>
+            <div className="hidden md:block md:col-span-4"></div>
 
             {/* Links - Takes 2 columns */}
             <div className="md:col-span-2">
@@ -393,18 +390,53 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
             <div className="md:col-span-2">
               <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Contacto</h4>
               <ul className="space-y-4">
+                {/* WhatsApp General */}
                 <li>
-                  <a href="https://wa.me/595973666000" className="text-gray-500 text-xs tracking-wide hover:text-white transition-colors">
+                  <a 
+                    href="https://wa.me/595973666000" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                  >
+                    <WhatsAppIcon className="w-4 h-4" />
                     +595 973 666 000
                   </a>
                 </li>
+                {/* WhatsApp Marcas */}
                 <li>
-                  <a href="https://instagram.com/avenue.py" className="text-gray-500 text-xs tracking-wide hover:text-white transition-colors">
+                  <a 
+                    href="https://wa.me/595981234567" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                  >
+                    <Phone className="w-4 h-4" />
+                    Marcas: +595 981 234 567
+                  </a>
+                </li>
+                {/* Instagram */}
+                <li>
+                  <a 
+                    href="https://instagram.com/avenue.py" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                  >
+                    <Instagram className="w-4 h-4" />
                     @avenue.py
                   </a>
                 </li>
-                <li className="text-gray-600 text-xs tracking-wide">
-                  Paseo Los Árboles, Asunción
+                {/* Ubicación */}
+                <li>
+                  <a 
+                    href="https://maps.google.com/?q=Paseo+Los+Árboles,+Asunción,+Paraguay" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    Paseo Los Árboles, Asunción
+                  </a>
                 </li>
               </ul>
             </div>
@@ -412,13 +444,13 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
 
           {/* Bottom Bar */}
           <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-600 text-xs tracking-[0.1em]">
+            <p className="text-gray-500 text-xs tracking-[0.1em] uppercase">
               © {new Date().getFullYear()} Avenue. Todos los derechos reservados.
             </p>
             <div className="flex items-center gap-8">
-              <a href="https://instagram.com/avenue.py" className="text-gray-600 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Instagram</a>
-              <a href="https://tiktok.com/@avenue.py" className="text-gray-600 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">TikTok</a>
-              <a href="https://wa.me/595973666000" className="text-gray-600 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">WhatsApp</a>
+              <a href="https://instagram.com/avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Instagram</a>
+              <a href="https://tiktok.com/@avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">TikTok</a>
+              <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">WhatsApp</a>
             </div>
           </div>
         </div>
