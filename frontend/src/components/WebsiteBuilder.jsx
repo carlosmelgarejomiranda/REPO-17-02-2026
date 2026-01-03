@@ -298,14 +298,15 @@ const WebsiteBuilderContent = ({ onClose }) => {
         }
       }
       
-      // Save the modification
-      const newMods = { ...pageModifications };
-      const modType = isNewUrlVideo ? 'video' : (mediaTarget.type === 'background' ? 'background' : 'img');
-      newMods[`${modType}:${mediaTarget.editId}`] = newUrl;
-      if (position && !isNewUrlVideo) newMods[`imgpos:${mediaTarget.editId}`] = position;
-      
-      console.log('Saving modifications:', Object.keys(newMods).length, 'items');
-      setPageModifications(newMods);
+      // Save the modification using functional update to prevent race condition
+      setPageModifications(prevMods => {
+        const updatedMods = { ...prevMods };
+        const modType = isNewUrlVideo ? 'video' : (mediaTarget.type === 'background' ? 'background' : 'img');
+        updatedMods[`${modType}:${mediaTarget.editId}`] = newUrl;
+        if (position && !isNewUrlVideo) updatedMods[`imgpos:${mediaTarget.editId}`] = position;
+        console.log('Saving modifications:', Object.keys(updatedMods).length, 'items');
+        return updatedMods;
+      });
       setHasChanges(true);
       
       console.log('=== MEDIA CHANGE APPLIED SUCCESSFULLY ===');
@@ -318,7 +319,7 @@ const WebsiteBuilderContent = ({ onClose }) => {
     // Close modal after everything is done
     setShowMediaModal(false);
     setMediaTarget(null);
-  }, [mediaTarget, pageModifications]);
+  }, [mediaTarget]); // Fixed: Removed pageModifications to prevent race condition
 
   const handleCarouselChange = useCallback((newImages) => {
     if (iframeRef.current) {
