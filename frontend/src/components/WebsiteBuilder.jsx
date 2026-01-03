@@ -743,13 +743,34 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    
+    console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
     setUploading(true);
+    
     const formData = new FormData();
     formData.append('file', file);
+    
     try {
-      const res = await fetch(`${API_URL}/api/builder/upload-media`, { method: 'POST', body: formData });
-      if (res.ok) { const data = await res.json(); setUrl(data.url); }
-    } catch (err) { console.error(err); }
+      const res = await fetch(`${API_URL}/api/builder/upload-media`, { 
+        method: 'POST', 
+        body: formData 
+      });
+      
+      console.log('Upload response status:', res.status);
+      
+      if (res.ok) { 
+        const data = await res.json(); 
+        console.log('Upload success:', data);
+        setUrl(data.url); 
+      } else {
+        const errorData = await res.text();
+        console.error('Upload failed:', res.status, errorData);
+        alert(`Error al subir: ${res.status} - ${errorData}`);
+      }
+    } catch (err) { 
+      console.error('Upload error:', err);
+      alert(`Error de conexión: ${err.message}`);
+    }
     setUploading(false);
   };
 
