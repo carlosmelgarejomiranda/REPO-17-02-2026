@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings } from 'lucide-react';
 import { LanguageSwitcher } from './LanguageSwitcher';
+
+// Admin roles that can access the admin panel
+const ADMIN_ROLES = ['superadmin', 'admin', 'staff', 'designer'];
 
 export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [showMenu, setShowMenu] = useState(false);
+
+  // Check if user has admin access
+  const hasAdminAccess = user && ADMIN_ROLES.includes(user.role);
 
   const navLinks = [
     { href: '/shop', label: 'E-commerce' },
@@ -34,6 +40,17 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
           
           {/* Right Section */}
           <div className="flex items-center gap-5">
+            {/* Admin Panel Button - Only for admin roles */}
+            {hasAdminAccess && (
+              <a
+                href="/admin"
+                className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black text-xs tracking-[0.1em] uppercase font-medium hover:bg-[#c49958] transition-colors"
+              >
+                <Settings className="w-3.5 h-3.5" />
+                Admin
+              </a>
+            )}
+
             {/* Language Switcher */}
             <LanguageSwitcher 
               currentLang={language} 
@@ -95,7 +112,7 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                         className="block py-4 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] bg-black hover:bg-[#111] hover:text-[#d4a968] transition-colors"
                         style={{ 
                           backgroundColor: '#000',
-                          borderBottom: index < navLinks.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                          borderBottom: '1px solid rgba(255,255,255,0.05)',
                           textDecoration: 'none'
                         }}
                         onClick={() => setShowMenu(false)}
@@ -103,6 +120,23 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                         {link.label}
                       </a>
                     ))}
+                    
+                    {/* Admin Panel link in dropdown for mobile */}
+                    {hasAdminAccess && (
+                      <a
+                        href="/admin"
+                        className="block py-4 px-6 text-[11px] tracking-[0.15em] uppercase bg-[#d4a968] text-black hover:bg-[#c49958] transition-colors font-medium"
+                        style={{ 
+                          textDecoration: 'none'
+                        }}
+                        onClick={() => setShowMenu(false)}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Settings className="w-3.5 h-3.5" />
+                          Panel Admin
+                        </span>
+                      </a>
+                    )}
                   </div>
                 </>
               )}
