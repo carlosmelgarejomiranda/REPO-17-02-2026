@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-import { ArrowLeft, MapPin, Store, Truck, Loader2, AlertTriangle, ShoppingBag, X } from 'lucide-react';
+import { ArrowLeft, MapPin, Store, Truck, Loader2, AlertTriangle, ShoppingBag, X, Tag, UserPlus, Gift } from 'lucide-react';
 import { ShopHeader } from './ShopHeader';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
