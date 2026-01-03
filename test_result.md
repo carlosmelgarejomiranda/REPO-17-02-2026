@@ -175,11 +175,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Frontend Deployment Verification"
+    - "Coupon System API Testing"
   stuck_tasks:
     - "Video upload and apply changes functionality"
   test_all: true
-  test_priority: "deployment_ready"
+  test_priority: "review_request_complete"
 
 agent_communication:
   - agent: "testing"
