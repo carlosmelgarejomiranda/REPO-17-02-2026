@@ -70,10 +70,10 @@ export const UGCCampaignsList = ({ t }) => {
           <div className="max-w-2xl">
             {/* Breadcrumb */}
             <div className="flex items-center gap-3 mb-12">
-              <a href="/studio" className="text-gray-400 text-xs tracking-[0.15em] uppercase hover:text-[#d4a968] transition-colors">
+              <a href="/studio" className="text-gray-300 text-xs tracking-[0.15em] uppercase hover:text-[#d4a968] transition-colors">
                 Avenue Studio
               </a>
-              <span className="text-gray-600">/</span>
+              <span className="text-gray-500">/</span>
               <span className="text-[#d4a968] text-xs tracking-[0.15em] uppercase">UGC Creators</span>
             </div>
 
@@ -103,20 +103,20 @@ export const UGCCampaignsList = ({ t }) => {
 
         {/* Floating Stats - Editorial */}
         <div className="absolute bottom-16 right-16 hidden lg:block">
-          <div className="flex items-center gap-12 bg-black/40 backdrop-blur-sm px-8 py-6 border border-white/10">
+          <div className="flex items-center gap-12 bg-black/40 backdrop-blur-sm px-8 py-6 border border-white/25">
             <div className="text-center">
               <div className="text-4xl font-light text-white">50<span className="text-[#d4a968]">+</span></div>
-              <div className="text-xs text-gray-400 tracking-[0.2em] uppercase mt-2">Creators</div>
+              <div className="text-xs text-gray-300 tracking-[0.2em] uppercase mt-2">Creators</div>
             </div>
             <div className="w-px h-12 bg-white/20"></div>
             <div className="text-center">
               <div className="text-4xl font-light text-white">20<span className="text-[#d4a968]">+</span></div>
-              <div className="text-xs text-gray-400 tracking-[0.2em] uppercase mt-2">Marcas</div>
+              <div className="text-xs text-gray-300 tracking-[0.2em] uppercase mt-2">Marcas</div>
             </div>
             <div className="w-px h-12 bg-white/20"></div>
             <div className="text-center">
               <div className="text-4xl font-light text-white">100<span className="text-[#d4a968]">%</span></div>
-              <div className="text-xs text-gray-400 tracking-[0.2em] uppercase mt-2">Gratis</div>
+              <div className="text-xs text-gray-300 tracking-[0.2em] uppercase mt-2">Gratis</div>
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ export const UGCCampaignsList = ({ t }) => {
               <h2 className="text-4xl md:text-5xl font-light text-white mb-8 leading-tight">
                 ¿Qué es el programa <span className="italic text-[#d4a968]">UGC</span>?
               </h2>
-              <p className="text-gray-400 leading-relaxed mb-10 text-lg">
+              <p className="text-gray-300 leading-relaxed mb-10 text-lg">
                 El programa UGC (User Generated Content) de Avenue conecta creadores de contenido 
                 con marcas premium. Creás contenido auténtico en nuestra tienda y recibís 
                 productos exclusivos como recompensa.
@@ -142,7 +142,7 @@ export const UGCCampaignsList = ({ t }) => {
                 {BENEFITS.slice(0, 4).map((benefit, index) => {
                   const Icon = benefit.icon;
                   return (
-                    <div key={index} className="flex items-center gap-4 p-4 bg-white/[0.03] border border-white/10 hover:border-[#d4a968]/30 transition-colors">
+                    <div key={index} className="flex items-center gap-4 p-4 bg-white/10 border border-white/25 hover:border-[#d4a968]/30 transition-colors">
                       <div className="w-10 h-10 bg-[#d4a968]/10 flex items-center justify-center">
                         <Icon className="w-4 h-4 text-[#d4a968]" />
                       </div>
@@ -169,10 +169,10 @@ export const UGCCampaignsList = ({ t }) => {
                   </div>
                 </div>
                 <div className="space-y-4 pt-12">
-                  <div className="bg-[#1a1a1a] border border-white/10 p-6">
+                  <div className="bg-[#1a1a1a] border border-white/25 p-6">
                     <Star className="w-6 h-6 text-[#d4a968] mb-4" />
                     <p className="text-white text-lg mb-1">100% Gratis</p>
-                    <p className="text-gray-400 text-sm">Sin costos ocultos</p>
+                    <p className="text-gray-300 text-sm">Sin costos ocultos</p>
                   </div>
                   <img 
                     src={UGC_IMAGES.creator2}
@@ -194,7 +194,7 @@ export const UGCCampaignsList = ({ t }) => {
             <h2 className="text-4xl md:text-5xl font-light text-white mb-4">
               ¿Cómo <span className="italic text-[#d4a968]">funciona</span>?
             </h2>
-            <p className="text-gray-400 max-w-xl mx-auto">
+            <p className="text-gray-300 max-w-xl mx-auto">
               Un proceso simple para conectarte con las mejores marcas
             </p>
           </div>
@@ -205,7 +205,7 @@ export const UGCCampaignsList = ({ t }) => {
               return (
                 <div 
                   key={index}
-                  className="relative p-8 bg-[#141414] border border-white/10 group hover:border-[#d4a968]/30 transition-all duration-300"
+                  className="relative p-8 bg-[#141414] border border-white/25 group hover:border-[#d4a968]/30 transition-all duration-300"
                 >
                   {/* Step Number */}
                   <span className="absolute top-4 right-4 text-5xl font-light text-white/[0.05] group-hover:text-[#d4a968]/20 transition-colors">
@@ -218,7 +218,7 @@ export const UGCCampaignsList = ({ t }) => {
                   </div>
                   
                   <h3 className="text-white text-lg mb-3">{item.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                  <p className="text-gray-300 text-sm leading-relaxed">{item.desc}</p>
                 </div>
               );
             })}
@@ -235,7 +235,7 @@ export const UGCCampaignsList = ({ t }) => {
               <h2 className="text-4xl md:text-5xl font-light text-white mb-3">
                 Campañas <span className="italic text-[#d4a968]">activas</span>
               </h2>
-              <p className="text-gray-400">
+              <p className="text-gray-300">
                 Elegí la marca que más te guste y aplicá
               </p>
             </div>
@@ -250,7 +250,7 @@ export const UGCCampaignsList = ({ t }) => {
               <a
                 key={campaign.id}
                 href={`/studio/ugc/${campaign.id}`}
-                className="group relative overflow-hidden bg-[#141414] border border-white/10 hover:border-[#d4a968]/30 transition-all duration-500"
+                className="group relative overflow-hidden bg-[#141414] border border-white/25 hover:border-[#d4a968]/30 transition-all duration-500"
                 onMouseEnter={() => setHoveredCampaign(campaign.id)}
                 onMouseLeave={() => setHoveredCampaign(null)}
               >
@@ -280,11 +280,11 @@ export const UGCCampaignsList = ({ t }) => {
                   
                   {/* Canje highlight */}
                   <div 
-                    className="flex items-center gap-4 mb-6 p-5 bg-[#1a1a1a] border border-white/10"
+                    className="flex items-center gap-4 mb-6 p-5 bg-[#1a1a1a] border border-white/25"
                   >
                     <Gift className="w-6 h-6 text-[#d4a968]" />
                     <div>
-                      <p className="text-xs text-gray-400 tracking-[0.1em] uppercase">Canje hasta</p>
+                      <p className="text-xs text-gray-300 tracking-[0.1em] uppercase">Canje hasta</p>
                       <p className="text-xl font-light text-[#d4a968]">
                         Gs. {campaign.canje.amount}
                       </p>
@@ -293,13 +293,13 @@ export const UGCCampaignsList = ({ t }) => {
 
                   {/* Requirements */}
                   <div className="flex flex-wrap gap-2 mb-6">
-                    <span className="px-3 py-1.5 bg-white/5 border border-white/10 text-xs text-gray-300">
+                    <span className="px-3 py-1.5 bg-white/10 border border-white/25 text-xs text-gray-300">
                       {campaign.requirements.genderText}
                     </span>
-                    <span className="px-3 py-1.5 bg-white/5 border border-white/10 text-xs text-gray-300">
+                    <span className="px-3 py-1.5 bg-white/10 border border-white/25 text-xs text-gray-300">
                       {campaign.requirements.location}
                     </span>
-                    <span className="px-3 py-1.5 bg-white/5 border border-white/10 text-xs text-gray-300">
+                    <span className="px-3 py-1.5 bg-white/10 border border-white/25 text-xs text-gray-300">
                       +{campaign.requirements.minFollowers.toLocaleString()} followers
                     </span>
                   </div>
@@ -320,14 +320,14 @@ export const UGCCampaignsList = ({ t }) => {
       </section>
 
       {/* For Brands CTA */}
-      <section className="py-28 px-6 bg-[#0a0a0a] border-t border-white/10">
+      <section className="py-28 px-6 bg-[#0a0a0a] border-t border-white/25">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-[#d4a968] text-xs font-medium tracking-[0.3em] uppercase mb-6">Para Marcas</p>
           
           <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
             ¿Querés lanzar tu <span className="italic text-[#d4a968]">campaña</span>?
           </h2>
-          <p className="text-gray-400 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-300 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
             Conectamos tu marca con microinfluencers verificados para crear contenido auténtico que convierte
           </p>
           
