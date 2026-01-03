@@ -30,27 +30,28 @@ export const LanguageSwitcher = ({ currentLang, onLanguageChange, isDark = false
           style={{ color: textColor }}
         >
           <span className="text-lg">{currentLanguage?.flag}</span>
-          <span className="text-sm">{currentLanguage?.name}</span>
+          <span className="text-xs tracking-[0.1em] uppercase">{currentLanguage?.name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end"
         style={{ 
-          backgroundColor: isDark ? '#1a1a1a' : 'white',
-          borderColor: isDark ? '#333' : '#e5e5e5'
+          backgroundColor: '#000000',
+          borderColor: 'rgba(212, 169, 104, 0.3)',
+          borderWidth: '1px'
         }}
       >
         {languages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
             onClick={() => onLanguageChange(lang.code)}
-            className="cursor-pointer gap-2"
+            className="cursor-pointer gap-3 py-3 px-4"
             style={{ 
-              color: isDark ? '#f5ede4' : 'inherit',
+              color: '#f5ede4',
             }}
           >
             <span className="text-lg">{lang.flag}</span>
-            <span>{lang.name}</span>
+            <span className="text-xs tracking-[0.1em] uppercase">{lang.name}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
