@@ -85,8 +85,26 @@ export const WebsiteBuilder = ({ onClose }) => {
   }, []);
 
   const handleImageChange = useCallback((newUrl, position) => {
-    if (mediaTarget && iframeRef.current) {
-      const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
+    try {
+      console.log('=== APPLYING MEDIA CHANGE ===');
+      console.log('URL length:', newUrl?.length || 0);
+      console.log('Media target:', mediaTarget);
+      
+      if (!mediaTarget || !iframeRef.current) {
+        console.error('Missing mediaTarget or iframeRef');
+        setShowMediaModal(false);
+        setMediaTarget(null);
+        return;
+      }
+      
+      const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+      if (!iframeDoc) {
+        console.error('Cannot access iframe document');
+        alert('Error: No se puede acceder al documento del iframe');
+        setShowMediaModal(false);
+        setMediaTarget(null);
+        return;
+      }
       
       // Helper to check if URL is video
       const isVideo = (url) => {
@@ -101,14 +119,25 @@ export const WebsiteBuilder = ({ onClose }) => {
       };
 
       const isNewUrlVideo = isVideo(newUrl);
+      console.log('Is video:', isNewUrlVideo);
+      
+      // Check if base64 video is too large (>10MB base64 = ~7.5MB file)
+      if (isNewUrlVideo && newUrl.startsWith('data:') && newUrl.length > 10 * 1024 * 1024) {
+        console.error('Base64 video too large:', newUrl.length);
+        alert('El video es demasiado grande para cargar en esta página. Por favor, usa un video más pequeño (máximo ~7MB) o proporciona una URL externa.');
+        return;
+      }
       
       if (mediaTarget.type === 'img' || mediaTarget.type === 'video') {
         const el = iframeDoc.querySelector(`[data-edit-id="${mediaTarget.editId}"]`);
+        console.log('Found element:', el?.tagName);
+        
         if (el) {
           const parent = el.parentElement;
           
           // If switching between image and video, we need to replace the element
           if ((el.tagName === 'IMG' && isNewUrlVideo) || (el.tagName === 'VIDEO' && !isNewUrlVideo)) {
+            console.log('Replacing element type from', el.tagName, 'to', isNewUrlVideo ? 'VIDEO' : 'IMG');
             const newEl = iframeDoc.createElement(isNewUrlVideo ? 'video' : 'img');
             newEl.src = newUrl;
             newEl.className = el.className;
@@ -124,16 +153,25 @@ export const WebsiteBuilder = ({ onClose }) => {
               if (position) newEl.style.objectPosition = position;
             }
             
-            parent.replaceChild(newEl, el);
+            if (parent) {
+              parent.replaceChild(newEl, el);
+              console.log('Element replaced successfully');
+            }
           } else {
             // Same type, just update src
+            console.log('Updating src of existing element');
             el.src = newUrl;
             if (!isNewUrlVideo && position) el.style.objectPosition = position;
           }
+        } else {
+          console.warn('Element not found:', mediaTarget.editId);
         }
       } else if (mediaTarget.type === 'background') {
         const element = iframeDoc.querySelector(`[data-bg-edit-id="${mediaTarget.editId}"]`);
-        if (element) element.style.backgroundImage = `url('${newUrl}')`;
+        if (element) {
+          element.style.backgroundImage = `url('${newUrl}')`;
+          console.log('Background updated');
+        }
       }
       
       const newMods = { ...pageModifications };
@@ -143,9 +181,15 @@ export const WebsiteBuilder = ({ onClose }) => {
       
       setPageModifications(newMods);
       setHasChanges(true);
+      console.log('=== MEDIA CHANGE APPLIED ===');
+    } catch (error) {
+      console.error('=== ERROR APPLYING MEDIA CHANGE ===');
+      console.error('Error:', error);
+      alert(`Error al aplicar cambios: ${error.message}`);
+    } finally {
+      setShowMediaModal(false);
+      setMediaTarget(null);
     }
-    setShowMediaModal(false);
-    setMediaTarget(null);
   }, [mediaTarget, pageModifications]);
 
   const handleCarouselChange = useCallback((newImages) => {
