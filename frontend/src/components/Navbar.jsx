@@ -81,8 +81,9 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                     className="fixed inset-0 z-40" 
                     onClick={() => setShowMenu(false)}
                   />
-                  <div className="absolute right-0 top-full mt-2 w-52 z-50 overflow-hidden !bg-[#000000]"
+                  <div className="absolute right-0 top-full mt-2 w-52 z-50 overflow-hidden bg-black"
                     style={{ 
+                      backgroundColor: '#000',
                       border: '1px solid rgba(212, 169, 104, 0.3)',
                       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
                     }}
@@ -91,8 +92,9 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                       <a
                         key={link.href}
                         href={link.href}
-                        className="block py-4 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] !bg-[#000000] hover:!bg-[#1a1a1a] hover:text-[#d4a968] transition-colors"
+                        className="block py-4 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] bg-black hover:bg-[#111] hover:text-[#d4a968] transition-colors"
                         style={{ 
+                          backgroundColor: '#000',
                           borderBottom: index < navLinks.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                           textDecoration: 'none'
                         }}
