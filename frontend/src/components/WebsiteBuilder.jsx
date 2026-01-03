@@ -1179,4 +1179,11 @@ const CarouselModal = ({ onClose, onSave, images }) => {
   );
 };
 
+// Export the component wrapped in Error Boundary
+export const WebsiteBuilder = ({ onClose }) => (
+  <WebsiteBuilderErrorBoundary>
+    <WebsiteBuilderContent onClose={onClose} />
+  </WebsiteBuilderErrorBoundary>
+);
+
 export default WebsiteBuilder;
