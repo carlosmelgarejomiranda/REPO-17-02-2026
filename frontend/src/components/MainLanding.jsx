@@ -353,12 +353,9 @@ export const MainLanding = ({ t }) => {
           <div className="grid md:grid-cols-12 gap-12 items-start">
             {/* Logo & Description - Takes 5 columns */}
             <div className="md:col-span-5">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
-                alt="Avenue"
-                className="mb-8"
-                style={{ height: '80px', width: 'auto' }}
-              />
+              <h2 className="text-4xl md:text-5xl font-light text-white mb-6 tracking-wider">
+                AVENUE
+              </h2>
               <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
                 Un concepto premium donde las marcas brillan y el contenido cobra vida. 
                 Moda, fotografía y creatividad en un solo lugar.
