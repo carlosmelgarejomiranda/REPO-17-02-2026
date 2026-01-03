@@ -68,54 +68,58 @@ export const AuthForms = ({ onLogin, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
-      <Card className="w-full max-w-md" style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
-        <CardHeader>
-          <CardTitle className="text-center italic" style={{ color: '#f5ede4' }}>
-            {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
-          </CardTitle>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}>
+      <Card className="w-full max-w-md relative" style={{ backgroundColor: '#000000', border: '1px solid rgba(212, 169, 104, 0.3)' }}>
+        <CardHeader className="pb-2">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-2xl"
-            style={{ color: '#666' }}
+            className="absolute top-4 right-4 text-xl text-gray-500 hover:text-white transition-colors"
           >
             ×
           </button>
+          <div className="text-center pt-2">
+            <h2 className="text-2xl font-light tracking-[0.2em] uppercase text-white mb-1">
+              {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
+            </h2>
+            <p className="text-xs tracking-[0.15em] uppercase text-gray-500">
+              {isLogin ? 'Bienvenido a Avenue' : 'Únete a Avenue'}
+            </p>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {error && (
-            <div className="mb-4 p-3 rounded" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#ef4444' }}>
+            <div className="mb-4 p-3 rounded text-center text-xs tracking-wider" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {!isLogin && (
               <>
                 <div>
-                  <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                    <User className="w-4 h-4 inline mr-1" /> Nombre
+                  <label className="block text-xs tracking-[0.1em] uppercase mb-2 text-gray-400">
+                    Nombre
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full p-3 rounded border"
-                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                    className="w-full p-4 rounded-none border text-sm tracking-wide"
+                    style={{ backgroundColor: '#0a0a0a', borderColor: 'rgba(255,255,255,0.1)', color: '#f5ede4' }}
                     placeholder="Tu nombre"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                    <Phone className="w-4 h-4 inline mr-1" /> Teléfono
+                  <label className="block text-xs tracking-[0.1em] uppercase mb-2 text-gray-400">
+                    Teléfono
                   </label>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full p-3 rounded border"
-                    style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                    className="w-full p-4 rounded-none border text-sm tracking-wide"
+                    style={{ backgroundColor: '#0a0a0a', borderColor: 'rgba(255,255,255,0.1)', color: '#f5ede4' }}
                     placeholder="+595 9XX XXX XXX"
                   />
                 </div>
@@ -123,23 +127,23 @@ export const AuthForms = ({ onLogin, onClose }) => {
             )}
 
             <div>
-              <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                <Mail className="w-4 h-4 inline mr-1" /> Email
+              <label className="block text-xs tracking-[0.1em] uppercase mb-2 text-gray-400">
+                Email
               </label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full p-3 rounded border"
-                style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                className="w-full p-4 rounded-none border text-sm tracking-wide"
+                style={{ backgroundColor: '#0a0a0a', borderColor: 'rgba(255,255,255,0.1)', color: '#f5ede4' }}
                 placeholder="tu@email.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm mb-1" style={{ color: '#a8a8a8' }}>
-                <Lock className="w-4 h-4 inline mr-1" /> Contraseña
+              <label className="block text-xs tracking-[0.1em] uppercase mb-2 text-gray-400">
+                Contraseña
               </label>
               <div className="relative">
                 <input
@@ -147,38 +151,37 @@ export const AuthForms = ({ onLogin, onClose }) => {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full p-3 rounded border pr-10"
-                  style={{ backgroundColor: '#2a2a2a', borderColor: '#333', color: '#f5ede4' }}
+                  className="w-full p-4 rounded-none border pr-12 text-sm tracking-wide"
+                  style={{ backgroundColor: '#0a0a0a', borderColor: 'rgba(255,255,255,0.1)', color: '#f5ede4' }}
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                  style={{ color: '#666' }}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
             <Button
               type="submit"
-              className="w-full py-3"
+              className="w-full py-4 rounded-none text-xs tracking-[0.2em] uppercase font-medium transition-all hover:opacity-90"
               disabled={loading}
-              style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+              style={{ backgroundColor: '#d4a968', color: '#000000' }}
             >
               {loading ? 'Procesando...' : isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
             </Button>
           </form>
 
-          <div className="mt-6">
+          <div className="mt-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t" style={{ borderColor: '#333' }}></div>
+                <div className="w-full border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}></div>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2" style={{ backgroundColor: '#1a1a1a', color: '#666' }}>
+              <div className="relative flex justify-center">
+                <span className="px-4 text-xs tracking-[0.1em] uppercase" style={{ backgroundColor: '#000000', color: '#666' }}>
                   o continuar con
                 </span>
               </div>
@@ -187,32 +190,20 @@ export const AuthForms = ({ onLogin, onClose }) => {
             <Button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full mt-4 py-3 flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#2a2a2a', color: '#f5ede4', border: '1px solid #333' }}
+              className="w-full mt-6 py-4 rounded-none flex items-center justify-center gap-3 text-xs tracking-[0.15em] uppercase transition-all hover:bg-white/5"
+              style={{ backgroundColor: 'transparent', color: '#f5ede4', border: '1px solid rgba(255,255,255,0.1)' }}
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path
-                  fill="currentColor"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               Google
             </Button>
           </div>
 
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center">
             <button
               type="button"
               onClick={() => {
