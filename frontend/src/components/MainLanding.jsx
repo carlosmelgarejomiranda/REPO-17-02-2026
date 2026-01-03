@@ -35,8 +35,41 @@ export const MainLanding = ({ t }) => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <a href="/" className="flex items-center">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
+                alt="Avenue"
+                className="h-5"
+                style={{ filter: 'brightness(1.1)' }}
+              />
+            </a>
+            
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center gap-8">
+              <a href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors">E-commerce</a>
+              <a href="/studio" className="text-sm text-gray-400 hover:text-white transition-colors">Studio</a>
+              <a href="/studio/ugc" className="text-sm text-gray-400 hover:text-white transition-colors">UGC</a>
+              <a href="/tu-marca" className="text-sm text-gray-400 hover:text-white transition-colors">Tu Marca</a>
+            </div>
+            
+            {/* CTA Button */}
+            <a 
+              href="/shop" 
+              className="px-4 py-2 bg-[#d4a968] text-black text-sm font-medium rounded hover:bg-[#c49958] transition-colors"
+            >
+              Explorar
+            </a>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section - Full Screen */}
-      <section className="relative min-h-screen flex items-center">
+      <section className="relative min-h-screen flex items-center pt-16">
         {/* Background Images with Crossfade */}
         <div className="absolute inset-0">
           {HERO_IMAGES.map((src, index) => (
@@ -56,15 +89,6 @@ export const MainLanding = ({ t }) => {
         {/* Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-20 w-full">
           <div className={`max-w-3xl transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            {/* Logo */}
-            <div className="mb-2">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
-                alt="Avenue"
-                style={{ height: '600px', width: 'auto', filter: 'brightness(1.1)', maxWidth: '100%' }}
-              />
-            </div>
-
             {/* Main Title */}
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-light text-white mb-8 leading-[0.95]">
               <span className="block">Donde las</span>
