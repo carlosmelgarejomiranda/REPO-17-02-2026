@@ -229,7 +229,9 @@ export const AdminDashboard = ({ user }) => {
     totalRevenue: reservations.filter(r => r.status === 'confirmed').reduce((sum, r) => sum + r.price, 0),
     ugcTotal: ugcApplications.length,
     ugcPending: ugcApplications.filter(a => a.status === 'pending').length,
-    ugcApproved: ugcApplications.filter(a => a.status === 'approved').length
+    ugcApproved: ugcApplications.filter(a => a.status === 'approved').length,
+    brandTotal: brandInquiries.length,
+    brandNew: brandInquiries.filter(b => b.status === 'nuevo').length
   };
 
   // Tabs filtered by user role permissions
@@ -238,6 +240,7 @@ export const AdminDashboard = ({ user }) => {
     { id: 'images', label: 'Imágenes', icon: Image, permission: 'images' },
     { id: 'reservations', label: 'Reservas', icon: Calendar, permission: 'reservations' },
     { id: 'ugc', label: 'UGC', icon: Instagram, permission: 'ugc' },
+    { id: 'brands', label: 'Marcas', icon: Building, permission: 'brands' },
     { id: 'users', label: 'Usuarios', icon: Shield, permission: 'users' },
     { id: 'settings', label: 'Configuración', icon: Settings, permission: 'settings' }
   ];
