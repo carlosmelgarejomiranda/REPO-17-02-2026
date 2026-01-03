@@ -1097,6 +1097,99 @@ async def create_checkout(data: CheckoutData, request: Request):
     
     order_doc = {
         "order_id": order_id,
+        "items": [item.model_dump() for item in data.items],
+        "customer_name": data.customer_name,
+        "customer_email": data.customer_email,
+        "customer_phone": data.customer_phone,
+        "delivery_type": data.delivery_type,
+        "delivery_address": data.delivery_address.model_dump() if data.delivery_address else None,
+        "delivery_cost": delivery_cost,
+        "subtotal": subtotal,
+        "total": total,
+        "payment_method": data.payment_method,
+        "payment_status": "pending",
+        "order_status": initial_status,
+        "notes": data.notes,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.orders.insert_one(order_doc)
+    
+    # Build items list for notification
+    items_text = "\n".join([
+        f"• {item.name or 'Producto'}" + 
+        (f" - Talle: {item.size}" if item.size else "") + 
+        f" x{item.quantity} - {(item.price or 0):,.0f} Gs" 
+        for item in data.items
+    ])
+    
+    # Build delivery info
+    delivery_info = ""
+    location_link = ""
+    if data.delivery_type == 'delivery' and data.delivery_address:
+        addr = data.delivery_address
+        delivery_info = f"""
+📍 *Dirección de entrega:*
+{addr.address}
+{addr.reference or ''}
+🚚 *Costo de envío:* {delivery_cost:,.0f} Gs"""
+        
+        # Create Google Maps link
+        location_link = f"https://maps.google.com/?q={addr.lat},{addr.lng}"
+    else:
+        delivery_info = "🏪 *Retiro en tienda*"
+    
+    # Send notifications
+    await notify_new_order(order_doc)
+    
+    # Send WhatsApp to admin
+    whatsapp_message = f"""🛒 *NUEVA SOLICITUD DE COMPRA*
+
+📦 *Pedido:* {order_id}
+👤 *Cliente:* {data.customer_name}
+📧 *Email:* {data.customer_email}
+📱 *Teléfono:* {data.customer_phone}
+
+🛍️ *Productos:*
+{items_text}
+
+{delivery_info}
+
+💰 *Subtotal:* {subtotal:,.0f} Gs
+💰 *TOTAL:* {total:,.0f} Gs
+
+📝 *Notas:* {data.notes or 'Sin notas'}
+
+{location_link}"""
+
+    await send_whatsapp_notification(whatsapp_commercial, whatsapp_message)
+    
+    # Return response based on payment gateway setting
+    if not payment_enabled:
+        # CASE 1: Payment gateway disabled - create order as "solicitud"
+        order_doc.pop("_id", None)
+        
+        return {
+            "success": True,
+            "order_id": order_id,
+            "status": "solicitud",
+            "message": "Tu solicitud de compra fue enviada. Te contactaremos por WhatsApp para confirmar la recepción.",
+            "total": total
+        }
+    else:
+        # CASE 2: Payment gateway enabled - redirect to Bancard (placeholder for now)
+        # TODO: Integrate Bancard when credentials are available
+        order_doc.pop("_id", None)
+        
+        return {
+            "success": True,
+            "order_id": order_id,
+            "status": "pending",
+            "message": "Redirigiendo a pasarela de pago...",
+            "total": total,
+            "payment_url": None,  # Will be Bancard URL when integrated
+            "payment_gateway": "bancard"
+        }
 
 
 # ==================== COUPON SYSTEM ====================
