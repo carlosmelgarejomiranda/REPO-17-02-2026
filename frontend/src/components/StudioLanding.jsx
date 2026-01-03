@@ -487,8 +487,6 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
         </div>
       </section>
 
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

@@ -711,8 +711,6 @@ export const UGCCreators = ({ t, campaignId }) => {
         </div>
       </section>
 
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

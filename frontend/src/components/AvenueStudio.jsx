@@ -346,8 +346,6 @@ export const AvenueStudio = ({ t }) => {
         </div>
       </section>
 
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

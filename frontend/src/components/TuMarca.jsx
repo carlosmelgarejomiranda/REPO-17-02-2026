@@ -424,8 +424,6 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
         </div>
       </section>
 
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };
