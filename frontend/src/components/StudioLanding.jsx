@@ -488,28 +488,8 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
         </div>
       </section>
 
-      {/* Footer Navigation */}
-      <div className="py-8 px-6 border-t border-white/10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <a 
-            href="/"
-            className="text-gray-500 hover:text-gray-300 transition-colors text-sm"
-          >
-            ← Volver a Avenue
-          </a>
-          <div className="flex items-center gap-6">
-            <a href="/shop" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">
-              E-commerce
-            </a>
-            <a href="/studio/alquiler" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">
-              Reservar
-            </a>
-            <a href="/studio/ugc" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">
-              UGC Creators
-            </a>
-          </div>
-        </div>
-      </div>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
