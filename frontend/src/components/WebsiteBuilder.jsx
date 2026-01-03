@@ -605,7 +605,7 @@ export const WebsiteBuilder = ({ onClose }) => {
   );
 };
 
-// Media Modal with Image Positioning
+// Media Modal with Image/Video Positioning
 const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) => {
   const [url, setUrl] = useState(currentUrl || '');
   const [position, setPosition] = useState(currentPosition || '50% 50%');
@@ -616,13 +616,21 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
   const containerRef = useRef(null);
   const dragStartRef = useRef({ x: 0, y: 0, posX: 50, posY: 50 });
 
+  // Check if URL is a video
+  const isVideo = (src) => {
+    if (!src) return false;
+    const videoExtensions = ['.mp4', '.mov', '.webm', '.avi', '.mkv', '.m4v'];
+    const lowerSrc = src.toLowerCase();
+    return videoExtensions.some(ext => lowerSrc.includes(ext));
+  };
+
   const parsePosition = (pos) => {
     const match = pos.match(/(\d+)%\s+(\d+)%/);
     return match ? { x: parseInt(match[1]), y: parseInt(match[2]) } : { x: 50, y: 50 };
   };
 
   const handleMouseDown = (e) => {
-    if (type === 'background') return;
+    if (type === 'background' || isVideo(url)) return;
     e.preventDefault();
     const pos = parsePosition(position);
     dragStartRef.current = { x: e.clientX, y: e.clientY, posX: pos.x, posY: pos.y };
@@ -667,20 +675,22 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
     setUploading(false);
   };
 
+  const isCurrentVideo = isVideo(url);
+
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-[#1a1a1a] rounded-2xl p-6 max-w-2xl w-full" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl text-white font-medium flex items-center gap-2"><Image className="w-5 h-5 text-[#d4a968]" />{type === 'background' ? 'Cambiar Fondo' : 'Cambiar Imagen'}</h3>
+          <h3 className="text-xl text-white font-medium flex items-center gap-2"><Image className="w-5 h-5 text-[#d4a968]" />{type === 'background' ? 'Cambiar Fondo' : 'Cambiar Imagen o Video'}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-6 h-6" /></button>
         </div>
         
-        {/* Image Preview with Draggable Positioning */}
+        {/* Media Preview with Draggable Positioning */}
         {url && (
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Vista previa</span>
-              {type !== 'background' && (
+              <span className="text-sm text-gray-400">Vista previa {isCurrentVideo ? '(Video)' : '(Imagen)'}</span>
+              {type !== 'background' && !isCurrentVideo && (
                 <span className="text-xs text-[#d4a968] flex items-center gap-1">
                   <Move className="w-3 h-3" /> Arrastra para encuadrar
                 </span>
@@ -688,19 +698,30 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
             </div>
             <div 
               ref={containerRef}
-              className={`relative rounded-lg overflow-hidden bg-black/50 border-2 ${isDragging ? 'border-[#d4a968]' : 'border-white/10'} ${type !== 'background' ? 'cursor-move' : ''}`}
+              className={`relative rounded-lg overflow-hidden bg-black/50 border-2 ${isDragging ? 'border-[#d4a968]' : 'border-white/10'} ${type !== 'background' && !isCurrentVideo ? 'cursor-move' : ''}`}
               style={{ height: '250px' }}
               onMouseDown={handleMouseDown}
             >
-              <img 
-                ref={imageRef}
-                src={url} 
-                alt="Preview" 
-                className="w-full h-full object-cover select-none"
-                style={{ objectPosition: position }}
-                draggable={false}
-              />
-              {type !== 'background' && (
+              {isCurrentVideo ? (
+                <video 
+                  src={url} 
+                  className="w-full h-full object-cover"
+                  muted
+                  loop
+                  autoPlay
+                  playsInline
+                />
+              ) : (
+                <img 
+                  ref={imageRef}
+                  src={url} 
+                  alt="Preview" 
+                  className="w-full h-full object-cover select-none"
+                  style={{ objectPosition: position }}
+                  draggable={false}
+                />
+              )}
+              {type !== 'background' && !isCurrentVideo && (
                 <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                   Posición: {position}
                 </div>
@@ -709,14 +730,20 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
           </div>
         )}
         
-        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+        <input 
+          ref={fileInputRef} 
+          type="file" 
+          accept="image/*,video/mp4,video/quicktime,video/webm,video/x-msvideo,.mov,.mp4,.webm,.avi" 
+          onChange={handleUpload} 
+          className="hidden" 
+        />
         
         <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-full p-4 border-2 border-dashed border-white/20 rounded-xl text-gray-400 hover:border-[#d4a968] hover:text-[#d4a968] flex items-center justify-center gap-2 mb-4">
-          {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}{uploading ? 'Subiendo...' : 'Subir imagen'}
+          {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}{uploading ? 'Subiendo...' : 'Subir imagen o video (.mov, .mp4)'}
         </button>
         
         <div className="space-y-3 mb-6">
-          <label className="text-sm text-gray-400">O pega URL:</label>
+          <label className="text-sm text-gray-400">O pega URL de imagen o video:</label>
           <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none" />
         </div>
         
