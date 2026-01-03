@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, Check, Store, Camera, Users, Star, Sparkles, Phone, Mail, Building, Send } from 'lucide-react';
 import useBuilderModifications from '../hooks/useBuilderModifications';
 import { Navbar } from './Navbar';
+import { Footer } from './Footer';
 
 // Hero images
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1676517243531-69e3b27276e9?w=1920&q=80';
