@@ -1,26 +1,28 @@
-# Test Results - Video Upload Fix v2
+frontend:
+  - task: "Video upload and apply changes functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/WebsiteBuilder.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial test setup - need to verify video upload and apply changes works without redirecting to Admin Panel"
 
-## Changes Made
-1. Added `handleApplyClick` with e.stopPropagation() to prevent event bubbling
-2. Added `handleBackgroundClick` to only close on background click
-3. Added stopPropagation on modal content div
-4. Enhanced logging in apply button handler
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
 
-## Test Instructions
-1. Login: avenuepy@gmail.com / admin123
-2. Admin Panel → "Editar Web"
-3. Hover over any image → Click "Cambiar"
-4. Upload /tmp/user_video.mov (90MB)
-5. Click "Aplicar cambios"
-6. VERIFY: Should stay in Website Builder (NOT redirect to Admin)
-7. Console should show:
-   - "=== APPLY BUTTON CLICKED ==="
-   - "onSelect called successfully"
-   - "=== APPLYING MEDIA CHANGE START ==="
-   - "=== MEDIA CHANGE APPLIED SUCCESSFULLY ==="
+test_plan:
+  current_focus:
+    - "Video upload and apply changes functionality"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
 
-## Expected Behavior
-- Modal closes after applying
-- User stays in Website Builder
-- "Guardar" button becomes active
-- Changes are saved when clicking "Guardar"
+agent_communication:
+  - agent: "testing"
+    message: "Starting test of video upload functionality in Website Builder. Need to verify that clicking 'Aplicar cambios' after uploading video does not redirect to Admin Panel."
