@@ -1,64 +1,79 @@
-# Test Results - Video Upload Feature
+backend:
+  - task: "Video Upload API Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/website_builder.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Video upload API endpoint working correctly. Small files (<5MB) return base64 data URLs, large files (>5MB) are saved to /app/frontend/public/uploads/ directory. Supports multiple video formats: .mp4, .mov, .webm, .avi, .m4v. Error handling works correctly for unsupported file types."
 
-## Test Status: PASSED ✅
+  - task: "Image Upload API Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/website_builder.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Image upload API endpoint working correctly. Supports JPEG, PNG, WebP, GIF formats. Returns base64 data URLs for small files."
 
-## Summary
-Video upload functionality in Website Builder has been fixed and is now working correctly.
+  - task: "File Storage System"
+    implemented: true
+    working: true
+    file: "/app/backend/website_builder.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ File storage system working correctly. Upload directory exists at /app/frontend/public/uploads/. Large files are properly saved with unique filenames. File size validation (250MB limit) working."
 
-## Changes Made
-1. **Added detailed logging** to `handleUpload` function in `WebsiteBuilder.jsx`
-2. **Fixed `isVideo()` function** in MediaModal to detect base64 video URLs (`data:video/*`)
+  - task: "Upload Error Handling"
+    implemented: true
+    working: true
+    file: "/app/backend/website_builder.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Upload error handling working correctly. Unsupported file types return 400 error with appropriate message. File size limits enforced."
 
-## Test Evidence
+frontend:
+  - task: "Video Upload Frontend Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/WebsiteBuilder.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Frontend testing not performed as per system limitations. Backend API is working correctly and ready for frontend integration."
 
-### Backend API Test (curl) - PASSED
-```bash
-API_URL=https://media-master-10.preview.emergentagent.com
-curl -X POST "$API_URL/api/builder/upload-media" -F "file=@/tmp/test_video.mov"
-# Returns: {"success":true,"url":"data:video/quicktime;base64,...","filename":"test_video.mov","content_type":"video/quicktime","size":50140}
-```
+metadata:
+  created_by: "testing_agent"
+  version: "1.1"
+  test_sequence: 1
+  run_ui: false
 
-### Frontend Upload Test - PASSED
-- Console logs show successful upload:
-  - "=== UPLOAD START ==="
-  - "File name: test_video.mov"
-  - "File size: 50140 bytes (0.05 MB)"
-  - "Response status: 200"
-  - "Response ok: true"
-  - "=== UPLOAD END ==="
-- URL field correctly populated with base64 video data
-- Media modal shows "Vista previa (Video)" - confirming isVideo() fix works
+test_plan:
+  current_focus:
+    - "Video Upload API Endpoint"
+    - "File Storage System"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
 
-## Files Modified
-- `/app/frontend/src/components/WebsiteBuilder.jsx`:
-  - Enhanced `handleUpload` function with detailed console logging
-  - Fixed `isVideo()` function to detect `data:video/*` base64 URLs
-
-## Known Working Features
-1. ✅ Video upload via Website Builder media modal
-2. ✅ Base64 encoding for small videos (<5MB)
-3. ✅ File-based storage for large videos (>5MB) in `/app/frontend/public/uploads/`
-4. ✅ Video type detection for both file extensions and base64 URLs
-5. ✅ Media modal correctly identifies uploaded videos
-
-## Supported Video Formats
-- .mp4, .mov, .webm, .avi, .m4v, .mkv
-
-## Admin Credentials for Testing
-- Email: avenuepy@gmail.com
-- Password: admin123
-
-## How to Test Manually
-1. Login with admin credentials
-2. Click "ADMIN" in navbar
-3. Click "Editar Web" button
-4. Hover over any image and click "Cambiar"
-5. Click "Subir imagen o video (.mov, .mp4)"
-6. Select a video file
-7. Verify upload succeeds and video preview appears
-8. Click "Aplicar cambios"
-9. Click "Guardar" to save changes
-
-## Incorporate User Feedback
-- Issue was related to incomplete `isVideo()` function not detecting base64 video URLs
-- Fixed by adding check for `data:video/` prefix
+agent_communication:
+  - agent: "testing"
+    message: "✅ Video upload API endpoint testing completed successfully. All tests passed: 1) Small file upload returns base64 data URL, 2) Large file upload saves to disk and returns file path, 3) Upload directory exists and contains video files, 4) Image upload works correctly, 5) Error handling rejects unsupported file types. The API endpoint at POST /api/builder/upload-media is fully functional and ready for production use."
