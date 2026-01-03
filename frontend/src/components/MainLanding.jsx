@@ -357,7 +357,7 @@ export const MainLanding = ({ t }) => {
                 src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
                 alt="Avenue"
                 className="mb-6"
-                style={{ height: '120px', width: 'auto' }}
+                style={{ height: '200px', width: 'auto' }}
               />
               <p className="text-gray-500 text-sm leading-relaxed max-w-md">
                 Un concepto premium donde las marcas brillan y el contenido cobra vida. 
