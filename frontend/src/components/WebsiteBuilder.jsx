@@ -49,6 +49,15 @@ export const WebsiteBuilder = ({ onClose }) => {
   const applyModifications = useCallback((iframeDoc, mods) => {
     if (!iframeDoc || !mods) return;
     
+    // Helper to check if URL is video
+    const isVideoUrl = (url) => {
+      if (!url) return false;
+      const videoExtensions = ['.mp4', '.mov', '.webm', '.avi', '.m4v'];
+      const lowerUrl = url.toLowerCase();
+      if (url.startsWith('data:video/')) return true;
+      return videoExtensions.some(ext => lowerUrl.includes(ext));
+    };
+    
     Object.entries(mods).forEach(([key, value]) => {
       try {
         if (key.startsWith('text:')) {
@@ -58,11 +67,50 @@ export const WebsiteBuilder = ({ onClose }) => {
         } else if (key.startsWith('img:')) {
           const editId = key.replace('img:', '');
           const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
-          if (el) el.src = value;
+          if (el) {
+            // Check if the value is actually a video URL
+            if (isVideoUrl(value)) {
+              // Need to replace img with video
+              const parent = el.parentElement;
+              if (parent) {
+                const newEl = iframeDoc.createElement('video');
+                newEl.setAttribute('muted', '');
+                newEl.setAttribute('loop', '');
+                newEl.setAttribute('playsinline', '');
+                newEl.setAttribute('preload', 'metadata');
+                newEl.muted = true;
+                newEl.className = el.className;
+                newEl.setAttribute('data-edit-id', editId);
+                newEl.src = value;
+                parent.replaceChild(newEl, el);
+              }
+            } else {
+              el.src = value;
+            }
+          }
         } else if (key.startsWith('video:')) {
           const editId = key.replace('video:', '');
-          const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
-          if (el) el.src = value;
+          let el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
+          if (el) {
+            // If element is an img, replace it with video
+            if (el.tagName === 'IMG') {
+              const parent = el.parentElement;
+              if (parent) {
+                const newEl = iframeDoc.createElement('video');
+                newEl.setAttribute('muted', '');
+                newEl.setAttribute('loop', '');
+                newEl.setAttribute('playsinline', '');
+                newEl.setAttribute('preload', 'metadata');
+                newEl.muted = true;
+                newEl.className = el.className;
+                newEl.setAttribute('data-edit-id', editId);
+                newEl.src = value;
+                parent.replaceChild(newEl, el);
+              }
+            } else {
+              el.src = value;
+            }
+          }
         } else if (key.startsWith('imgpos:')) {
           const editId = key.replace('imgpos:', '');
           const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
