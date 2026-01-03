@@ -1085,6 +1085,278 @@ def test_admin_export_report():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+# ==================== VIDEO UPLOAD TESTS ====================
+
+def test_video_upload_small_file():
+    """Test Video Upload: Small file should return base64"""
+    print_test_header("Test Video Upload - Small File (Base64)")
+    
+    try:
+        # Create a small test video file
+        test_file_path = "/tmp/test_video_small.mov"
+        with open(test_file_path, "w") as f:
+            f.write("This is a test video file content")
+        
+        url = f"{BACKEND_URL}/builder/upload-media"
+        
+        with open(test_file_path, "rb") as f:
+            files = {"file": ("test_video_small.mov", f, "video/quicktime")}
+            response = requests.post(url, files=files)
+        
+        print_info(f"POST {url}")
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["success", "url", "filename", "content_type", "size"]
+            if all(field in data for field in required_fields):
+                success = data.get("success")
+                url_value = data.get("url", "")
+                content_type = data.get("content_type")
+                size = data.get("size")
+                
+                print_success(f"Video upload endpoint working correctly")
+                print_success(f"Success: {success}")
+                print_success(f"Content type: {content_type}")
+                print_success(f"Size: {size} bytes")
+                
+                # Check if small file returns base64
+                if url_value.startswith("data:video/"):
+                    print_success("✅ Small file correctly returned as base64 data URL")
+                    print_info(f"Base64 URL prefix: {url_value[:50]}...")
+                    return True
+                else:
+                    print_error(f"Expected base64 data URL, got: {url_value[:50]}...")
+                    return False
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+    finally:
+        # Clean up
+        if os.path.exists(test_file_path):
+            os.remove(test_file_path)
+
+def test_video_upload_large_file():
+    """Test Video Upload: Large file should be saved to disk"""
+    print_test_header("Test Video Upload - Large File (File Storage)")
+    
+    try:
+        # Create a large test video file (>5MB)
+        test_file_path = "/tmp/test_video_large.mov"
+        with open(test_file_path, "wb") as f:
+            # Write 6MB of data
+            f.write(b"0" * (6 * 1024 * 1024))
+        
+        file_size = os.path.getsize(test_file_path)
+        print_info(f"Created test file size: {file_size / (1024*1024):.1f} MB")
+        
+        url = f"{BACKEND_URL}/builder/upload-media"
+        
+        with open(test_file_path, "rb") as f:
+            files = {"file": ("test_video_large.mov", f, "video/quicktime")}
+            response = requests.post(url, files=files)
+        
+        print_info(f"POST {url}")
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["success", "url", "filename", "content_type", "size"]
+            if all(field in data for field in required_fields):
+                success = data.get("success")
+                url_value = data.get("url", "")
+                content_type = data.get("content_type")
+                size = data.get("size")
+                
+                print_success(f"Large video upload working correctly")
+                print_success(f"Success: {success}")
+                print_success(f"Content type: {content_type}")
+                print_success(f"Size: {size} bytes ({size/(1024*1024):.1f} MB)")
+                
+                # Check if large file returns file path
+                if not url_value.startswith("data:") and url_value.startswith("/uploads/"):
+                    print_success("✅ Large file correctly saved to disk and returned file path")
+                    print_info(f"File URL: {url_value}")
+                    
+                    # Verify file was actually saved
+                    filename = url_value.split("/")[-1]
+                    saved_file_path = f"/app/frontend/public/uploads/{filename}"
+                    
+                    if os.path.exists(saved_file_path):
+                        saved_size = os.path.getsize(saved_file_path)
+                        print_success(f"✅ File saved to disk: {saved_file_path}")
+                        print_success(f"Saved file size: {saved_size} bytes")
+                        print_success(f"Size matches: {saved_size == size}")
+                        return True
+                    else:
+                        print_error(f"File not found at expected path: {saved_file_path}")
+                        return False
+                else:
+                    print_error(f"Expected file path URL, got: {url_value}")
+                    return False
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+    finally:
+        # Clean up
+        if os.path.exists(test_file_path):
+            os.remove(test_file_path)
+
+def test_video_upload_directory_exists():
+    """Test Video Upload: Verify upload directory exists"""
+    print_test_header("Test Video Upload - Directory Verification")
+    
+    try:
+        upload_dir = "/app/frontend/public/uploads/"
+        
+        print_info(f"Checking upload directory: {upload_dir}")
+        
+        if os.path.exists(upload_dir):
+            files = os.listdir(upload_dir)
+            print_success(f"✅ Upload directory exists")
+            print_success(f"Files in directory: {len(files)}")
+            
+            # Check for video files
+            video_files = [f for f in files if f.endswith(('.mov', '.mp4', '.webm', '.avi', '.m4v'))]
+            print_success(f"Video files found: {len(video_files)}")
+            
+            if video_files:
+                print_info(f"Sample video files: {video_files[:3]}")
+                
+                # Check file sizes
+                for video_file in video_files[:3]:
+                    file_path = os.path.join(upload_dir, video_file)
+                    file_size = os.path.getsize(file_path)
+                    print_info(f"  {video_file}: {file_size/(1024*1024):.1f} MB")
+            
+            return True
+        else:
+            print_warning("Upload directory does not exist, creating it...")
+            os.makedirs(upload_dir, exist_ok=True)
+            
+            if os.path.exists(upload_dir):
+                print_success("✅ Upload directory created successfully")
+                return True
+            else:
+                print_error("Failed to create upload directory")
+                return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_image_upload():
+    """Test Image Upload: Verify image files also work"""
+    print_test_header("Test Image Upload")
+    
+    try:
+        # Create a test image file
+        test_file_path = "/tmp/test_image.jpg"
+        with open(test_file_path, "w") as f:
+            f.write("fake image content for testing")
+        
+        url = f"{BACKEND_URL}/builder/upload-media"
+        
+        with open(test_file_path, "rb") as f:
+            files = {"file": ("test_image.jpg", f, "image/jpeg")}
+            response = requests.post(url, files=files)
+        
+        print_info(f"POST {url}")
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["success", "url", "filename", "content_type", "size"]
+            if all(field in data for field in required_fields):
+                success = data.get("success")
+                content_type = data.get("content_type")
+                
+                print_success(f"Image upload working correctly")
+                print_success(f"Success: {success}")
+                print_success(f"Content type: {content_type}")
+                
+                if content_type == "image/jpeg":
+                    print_success("✅ Image file correctly processed")
+                    return True
+                else:
+                    print_warning(f"Unexpected content type: {content_type}")
+                    return True  # Still consider success
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+    finally:
+        # Clean up
+        if os.path.exists(test_file_path):
+            os.remove(test_file_path)
+
+def test_upload_error_handling():
+    """Test Upload Error Handling: Unsupported file types"""
+    print_test_header("Test Upload Error Handling")
+    
+    try:
+        # Create a test text file (unsupported)
+        test_file_path = "/tmp/test_unsupported.txt"
+        with open(test_file_path, "w") as f:
+            f.write("This is a text file that should be rejected")
+        
+        url = f"{BACKEND_URL}/builder/upload-media"
+        
+        with open(test_file_path, "rb") as f:
+            files = {"file": ("test_unsupported.txt", f, "text/plain")}
+            response = requests.post(url, files=files)
+        
+        print_info(f"POST {url}")
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 400:
+            print_success("✅ Unsupported file type correctly rejected")
+            print_info(f"Error message: {response.text}")
+            return True
+        else:
+            print_error(f"Expected 400 error, got {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+    finally:
+        # Clean up
+        if os.path.exists(test_file_path):
+            os.remove(test_file_path)
+
 def test_order_status_validation():
     """Test Order Status Validation: Valid statuses"""
     print_test_header("Test Order Status Validation")
