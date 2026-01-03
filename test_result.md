@@ -119,6 +119,18 @@ backend:
         agent: "testing"
         comment: "✅ PASS: Website builder endpoint working correctly. Returns proper structure with page_id: main-landing, modifications object, and updated_at timestamp. Endpoint: GET /api/builder/modifications/main-landing"
 
+  - task: "Coupon System API"
+    implemented: true
+    working: true
+    file: "/app/backend/ecommerce.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASS: Coupon system API endpoints working correctly. ALL 5 TESTS PASSED: 1. Create coupon (POST /api/shop/coupons) - 200 OK with coupon data ✅ 2. Get all coupons (GET /api/shop/coupons) - Returns array with test coupon BIENVENIDA10 ✅ 3. Apply valid coupon (POST /api/shop/apply-coupon) - Correctly calculates 10% discount (20,000 Gs from 200,000 Gs subtotal) ✅ 4. Apply coupon below minimum (POST /api/shop/apply-coupon) - 400 error for purchases below 100,000 Gs minimum ✅ 5. Apply invalid coupon (POST /api/shop/apply-coupon) - 404 error for non-existent coupon codes ✅. Coupon validation logic working properly including percentage discounts, minimum purchase requirements, and error handling."
+
 frontend:
   - task: "Video upload and apply changes functionality"
     implemented: true
