@@ -1337,46 +1337,6 @@ async def increment_coupon_use(code: str):
         {"$inc": {"current_uses": 1}}
     )
     return {"success": True}
-
-        "items": [item.model_dump() for item in data.items],
-        "customer_name": data.customer_name,
-        "customer_email": data.customer_email,
-        "customer_phone": data.customer_phone,
-        "delivery_type": data.delivery_type,
-        "delivery_address": data.delivery_address.model_dump() if data.delivery_address else None,
-        "delivery_cost": delivery_cost,
-        "subtotal": subtotal,
-        "total": total,
-        "payment_method": data.payment_method,
-        "payment_status": "pending",
-        "order_status": initial_status,
-        "notes": data.notes,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    
-    await db.orders.insert_one(order_doc)
-    
-    # Build items list for notification
-    items_text = "\n".join([
-        f"• {item.name or 'Producto'}" + 
-        (f" - Talle: {item.size}" if item.size else "") + 
-        f" x{item.quantity} - {(item.price or 0):,.0f} Gs" 
-        for item in data.items
-    ])
-    
-    # Build delivery info
-    delivery_info = ""
-    location_link = ""
-    if data.delivery_type == 'delivery' and data.delivery_address:
-        addr = data.delivery_address
-        delivery_info = f"📍 *Dirección de entrega:*\n{addr.address}\n{addr.reference or ''}"
-        location_link = f"\n🗺️ *Link ubicación:* https://maps.google.com/?q={addr.lat},{addr.lng}"
-    else:
-        delivery_info = "🏪 *Retiro en tienda*"
-    
-    if not payment_enabled:
-        # CASE 1: Payment gateway disabled - send as purchase request
-        order_doc.pop("_id", None)
         
         # Send WhatsApp to commercial with order details
         whatsapp_message = f"""🛒 *SOLICITUD DE COMPRA - Avenue Online*
