@@ -75,18 +75,52 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
               
               {/* Dropdown Menu */}
               {showMenu && (
-                <div className="navbar-dropdown absolute right-0 top-full mt-2 w-52 shadow-2xl overflow-hidden">
-                  {navLinks.map((link, index) => (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      className="block px-6 py-4 text-xs tracking-[0.15em] uppercase"
-                      onClick={() => setShowMenu(false)}
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
+                <>
+                  {/* Backdrop to close menu */}
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowMenu(false)}
+                  />
+                  <div 
+                    className="absolute right-0 top-full mt-2 w-52 z-50"
+                    style={{ 
+                      backgroundColor: '#000',
+                      border: '1px solid rgba(212, 169, 104, 0.3)',
+                      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                    }}
+                  >
+                    {navLinks.map((link, index) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        className="menu-link"
+                        style={{ 
+                          display: 'block',
+                          padding: '16px 24px',
+                          fontSize: '11px',
+                          letterSpacing: '0.15em',
+                          textTransform: 'uppercase',
+                          color: '#f5ede4',
+                          backgroundColor: '#000',
+                          borderBottom: index < navLinks.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                          textDecoration: 'none',
+                          transition: 'all 0.2s'
+                        }}
+                        onClick={() => setShowMenu(false)}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                          e.target.style.color = '#d4a968';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = '#000';
+                          e.target.style.color = '#f5ede4';
+                        }}
+                      >
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </div>
