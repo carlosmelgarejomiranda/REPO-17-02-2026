@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Instagram, Music2, CheckCircle, ChevronLeft, Send, Gift, MapPin, Phone, ArrowRight, Check, Sparkles, Users, Star } from 'lucide-react';
 import { Button } from './ui/button';
 import { getCampaign } from '../data/campaigns';
-import { Footer } from './Footer';
 
 const CITIES = [
   'Asunción', 'Luque', 'San Lorenzo', 'Fernando de la Mora', 'Lambaré', 

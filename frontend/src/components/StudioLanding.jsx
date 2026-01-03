@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Camera, Users, ArrowRight, Play, Star, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import useBuilderModifications from '../hooks/useBuilderModifications';
 import { Navbar } from './Navbar';
-import { Footer } from './Footer';
 
 // Studio images
 const STUDIO_IMAGES = {
