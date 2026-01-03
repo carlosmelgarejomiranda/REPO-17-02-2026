@@ -697,8 +697,15 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
   // Check if URL is a video
   const isVideo = (src) => {
     if (!src) return false;
-    const videoExtensions = ['.mp4', '.mov', '.webm', '.avi', '.mkv', '.m4v'];
     const lowerSrc = src.toLowerCase();
+    
+    // Check for base64 video data URLs
+    if (lowerSrc.startsWith('data:video/')) {
+      return true;
+    }
+    
+    // Check for video file extensions
+    const videoExtensions = ['.mp4', '.mov', '.webm', '.avi', '.mkv', '.m4v'];
     return videoExtensions.some(ext => lowerSrc.includes(ext));
   };
 
