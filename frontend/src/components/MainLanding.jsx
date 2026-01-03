@@ -348,27 +348,31 @@ export const MainLanding = ({ t }) => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-white/10">
+      <footer className="py-16 px-6 border-t border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12">
-            {/* Logo & Description */}
-            <div className="md:col-span-2">
+          {/* Main Footer Content */}
+          <div className="grid md:grid-cols-12 gap-12 items-start">
+            {/* Logo & Description - Takes 5 columns */}
+            <div className="md:col-span-5">
               <img 
                 src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
                 alt="Avenue"
-                className="mb-6"
-                style={{ height: '200px', width: 'auto' }}
+                className="mb-8"
+                style={{ height: '80px', width: 'auto' }}
               />
-              <p className="text-gray-500 text-sm leading-relaxed max-w-md">
+              <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
                 Un concepto premium donde las marcas brillan y el contenido cobra vida. 
                 Moda, fotografía y creatividad en un solo lugar.
               </p>
             </div>
 
-            {/* Links */}
-            <div>
-              <h4 className="text-[#d4a968] text-sm tracking-wider uppercase mb-4">Explorar</h4>
-              <ul className="space-y-2">
+            {/* Spacer */}
+            <div className="hidden md:block md:col-span-3"></div>
+
+            {/* Links - Takes 2 columns */}
+            <div className="md:col-span-2">
+              <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Explorar</h4>
+              <ul className="space-y-3">
                 <li><a href="/shop" className="text-gray-400 text-sm hover:text-white transition-colors">E-commerce</a></li>
                 <li><a href="/studio" className="text-gray-400 text-sm hover:text-white transition-colors">Studio</a></li>
                 <li><a href="/studio/ugc" className="text-gray-400 text-sm hover:text-white transition-colors">UGC Creators</a></li>
@@ -376,10 +380,10 @@ export const MainLanding = ({ t }) => {
               </ul>
             </div>
 
-            {/* Contact */}
-            <div>
-              <h4 className="text-[#d4a968] text-sm tracking-wider uppercase mb-4">Contacto</h4>
-              <ul className="space-y-2">
+            {/* Contact - Takes 2 columns */}
+            <div className="md:col-span-2">
+              <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Contacto</h4>
+              <ul className="space-y-3">
                 <li>
                   <a href="https://wa.me/595973666000" className="text-gray-400 text-sm hover:text-white transition-colors">
                     +595 973 666 000
@@ -397,7 +401,8 @@ export const MainLanding = ({ t }) => {
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+          {/* Bottom Bar */}
+          <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-600 text-sm">
               © {new Date().getFullYear()} Avenue. Todos los derechos reservados.
             </p>
