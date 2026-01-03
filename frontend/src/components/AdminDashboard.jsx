@@ -238,6 +238,7 @@ export const AdminDashboard = ({ user }) => {
   const allTabs = [
     { id: 'orders', label: 'Pedidos', icon: ShoppingBag, permission: 'orders' },
     { id: 'images', label: 'Imágenes', icon: Image, permission: 'images' },
+    { id: 'coupons', label: 'Cupones', icon: Tag, permission: 'orders' },
     { id: 'reservations', label: 'Reservas', icon: Calendar, permission: 'reservations' },
     { id: 'ugc', label: 'UGC', icon: Instagram, permission: 'ugc' },
     { id: 'brands', label: 'Marcas', icon: Building, permission: 'brands' },
