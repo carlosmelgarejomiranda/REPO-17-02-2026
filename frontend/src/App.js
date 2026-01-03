@@ -456,24 +456,14 @@ function AppRouter() {
           {/* Studio Landing - Options Page */}
           <Route path="/studio" element={
             <>
-              <StudioNav 
+              <StudioLanding 
                 t={t} 
-                language={language} 
-                setLanguage={setLanguage}
                 user={user}
-                onLoginClick={() => setShowAuthModal(true)}
+                onLoginClick={() => setShowLoginModal(true)}
                 onLogout={logout}
+                language={language}
+                setLanguage={setLanguage}
               />
-              <div style={{ paddingTop: '80px' }}>
-                <StudioLanding 
-                  t={t} 
-                  user={user}
-                  onLoginClick={() => setShowLoginModal(true)}
-                  onLogout={logout}
-                  language={language}
-                  setLanguage={setLanguage}
-                />
-              </div>
               <Footer t={t} />
             </>
           } />
