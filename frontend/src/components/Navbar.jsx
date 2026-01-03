@@ -84,36 +84,35 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                   <div 
                     className="absolute right-0 top-full mt-2 w-52 z-50"
                     style={{ 
-                      backgroundColor: '#000',
+                      backgroundColor: 'rgb(0, 0, 0)',
                       border: '1px solid rgba(212, 169, 104, 0.3)',
-                      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
                     }}
                   >
                     {navLinks.map((link, index) => (
                       <a
                         key={link.href}
                         href={link.href}
-                        className="menu-link"
+                        className="menu-link block"
                         style={{ 
-                          display: 'block',
                           padding: '16px 24px',
                           fontSize: '11px',
                           letterSpacing: '0.15em',
                           textTransform: 'uppercase',
-                          color: '#f5ede4',
-                          backgroundColor: '#000',
+                          color: 'rgb(245, 237, 228)',
+                          background: 'rgb(0, 0, 0)',
                           borderBottom: index < navLinks.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                           textDecoration: 'none',
                           transition: 'all 0.2s'
                         }}
                         onClick={() => setShowMenu(false)}
                         onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
-                          e.target.style.color = '#d4a968';
+                          e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                          e.currentTarget.style.color = '#d4a968';
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = '#000';
-                          e.target.style.color = '#f5ede4';
+                          e.currentTarget.style.background = 'rgb(0, 0, 0)';
+                          e.currentTarget.style.color = 'rgb(245, 237, 228)';
                         }}
                       >
                         {link.label}
