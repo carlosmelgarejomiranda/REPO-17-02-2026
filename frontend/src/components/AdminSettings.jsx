@@ -7,7 +7,8 @@ export const AdminSettings = ({ currentUser }) => {
   const [settings, setSettings] = useState({
     payment_gateway_enabled: false,
     show_only_products_with_images: false,
-    whatsapp_commercial: '+595973666000'
+    whatsapp_commercial: '+595973666000',
+    whatsapp_marcas: '+595976691520'
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
