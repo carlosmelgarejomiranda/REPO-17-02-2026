@@ -303,6 +303,16 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
       return;
     }
 
+    if (!acceptedTerms) {
+      alert('Debes aceptar los términos y condiciones para continuar');
+      return;
+    }
+
+    if (needsInvoice && (!billingData.razon_social || !billingData.ruc)) {
+      alert('Por favor completa los datos de facturación');
+      return;
+    }
+
     // First validate inventory
     const inventoryValid = await validateInventory();
     if (!inventoryValid) {
@@ -333,7 +343,10 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
           reference: reference
         } : null,
         payment_method: 'bancard',
-        notes: formData.notes
+        notes: formData.notes,
+        billing: needsInvoice ? billingData : null,
+        coupon_code: appliedCoupon?.code || null,
+        coupon_discount: couponDiscount
       };
 
       const response = await fetch(`${API_URL}/api/shop/checkout`, {
