@@ -96,6 +96,15 @@ class UGCApplication(BaseModel):
     acepta_whatsapp: Optional[bool] = False
     autoriza_contenido: bool
 
+# Brand Inquiry Model (for "Tu Marca" form)
+class BrandInquiry(BaseModel):
+    brand_name: str
+    contact_name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    interest: str
+    message: Optional[str] = None
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
