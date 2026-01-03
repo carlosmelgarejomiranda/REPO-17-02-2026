@@ -712,19 +712,8 @@ export const UGCCreators = ({ t, campaignId }) => {
         </div>
       </section>
 
-      {/* Footer Navigation */}
-      <div className="py-8 px-6 border-t border-white/10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <a href="/studio/ugc" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">
-            ← Ver todas las campañas
-          </a>
-          <div className="flex items-center gap-6">
-            <a href="/shop" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">E-commerce</a>
-            <a href="/studio" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">Avenue Studio</a>
-            <a href="https://wa.me/595973666000" className="text-gray-500 hover:text-gray-300 transition-colors text-sm">WhatsApp</a>
-          </div>
-        </div>
-      </div>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
