@@ -20,69 +20,82 @@ The initial request was for a high-end landing page, which has since evolved int
     *   Implement a consistent, elegant, black-themed navbar across all pages (except e-commerce).
     *   Refine the UI of the login modal and footer to be more elegant with pure black backgrounds and specific typography.
     *   Perform numerous specific, pixel-level adjustments to logos and layout on the main landing page.
+7.  **Media Handling:** Allow videos (e.g., ) to be used in place of images and be uploadable via the Website Builder.
 
 **PRODUCT REQUIREMENTS:**
 -   A comprehensive admin panel for managing users, roles, settings, orders, product images, booking requests, and brand inquiries.
 -   A revised e-commerce checkout supporting a request-only mode with automated WhatsApp notifications.
 -   A robust batch image assignment tool with undo/de-link functionality.
--   Functional, automated Twilio WhatsApp notifications for both the business and the customer.
+-   Functional, automated Twilio WhatsApp notifications for both the business and the customer, configured for production use.
 -   A new admin report for brand partnership inquiries with data export capabilities.
 -   A consistent and aesthetically refined UI, featuring a unified black navbar and elegant design elements in key components like the login modal and footer.
+-   The Website Builder must support uploading and displaying video content up to 250MB.
 
 **User's preferred language**: Spanish
 
 **what currently exists?**
-A full-stack React/FastAPI application with most of the user's core requests implemented.
-- The 4-tier user role system is functional.
-- The e-commerce flow has been overhauled: stock validation is fixed, and the solicitud (request) checkout flow now works, correctly displaying a confirmation page and sending a WhatsApp notification to the business. Customer-facing notifications are also implemented in the backend.
-- The Batch Image Assignment tool is functional, with fixes for undoing assignments and de-linking images.
-- A new admin report for Marcas Interesadas has been created, with functionality to export data to Excel. Export functionality has also been added to other admin reports.
-- **UI/UX:** A major UI refactor was completed, creating a new, consistent black  component that is used across all main pages (, , , ). The login modal and footer have been restyled for a more elegant look.
+A full-stack React/FastAPI application with many features implemented. The key updates from the last session include a complete redesign of the UGC (User-Generated Content) pages (, ) to an elegant, editorial black theme with high contrast, after multiple user-guided iterations. The main footer has been redesigned, unified into a reusable component (), and deployed across all relevant pages with added business hours. The navbar is now pure black and conditionally displays an ADMIN button for administrative roles. The Admin Panel's settings page now includes a field for the Marcas WhatsApp number. The backend has been updated to handle large file uploads (up to 250MB) by saving them to disk instead of using Base64, but the frontend upload functionality is not working.
 
 **Last working item**:
-- Last item agent was working: The user requested a redesign of the footer on the main landing page for better aesthetic consistency and functionality.
-- Status: NOT STARTED
-- Agent Testing Done: N
-- Which testing method agent to use? Use the  tool to verify the visual changes to the footer. Manually click the new icons/links to ensure the WhatsApp, Google Maps, and Instagram links work correctly.
+- Last item agent was working: Debugging why video uploads are failing from the frontend Website Builder, even for a small 100kb  file.
+    - The agent had already refactored the backend to support large file uploads (saving to disk for files > 5MB) and confirmed this works via direct API calls. The user reported that uploads from the UI still fail. The agent hypothesized a silent error in the frontend  function within  and was about to add more detailed error logging to diagnose it.
+- Status: IN PROGRESS
+- Agent Testing Done: Y (Backend API was tested with  and a python script. Frontend is failing.)
+- Which testing method agent to use? Manual testing. After applying a fix to the frontend code in , the agent should use the Website Builder UI to attempt a video upload and check the browser console for logs. A screenshot of the successful upload or any new error messages will be needed.
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1**: Footer Redesign and Unification (Priority: P0)
--   **Issue 2**: Dropdown Menus Background Color is not Pure Black (Priority: P1)
-
+  - Issue 1: Video Uploads Fail From Frontend (Priority: P0)
+  - Issue 2: Dropdown Menus Background Color is not Pure Black (Priority: P1)
+  - Issue 3: Production Twilio Setup Required (Priority: P2)
+  
 **Issues Detail:**
--   **Issue 1: Footer Redesign and Unification**
-    -   **Attempted fixes:** None yet. This is the user's latest request.
-    -   **Next debug checklist:**
-        1.  Modify .
-        2.  Unify the typography, color, and size of the left side (AVENUE text) to match the right side (EXPLORAR, CONTACTO).
-        3.  Install  if icons are not available.
-        4.  Add a commercial phone number to the contact section.
-        5.  Add clickable icons for WhatsApp, Location (linking to Google Maps), and Instagram.
-    -   **Why fix this issue and what will be achieved with the fix?** To satisfy the user's design requirements and improve the footer's usability and professional appearance.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** None.
--   **Issue 2: Dropdown Menus Background Color is not Pure Black**
-    -   **Attempted fixes:** The agent made multiple attempts to change the background color of the hamburger menu and language switcher dropdowns to pure black (). This included inline styles, custom CSS classes, and  tags. The background remains a dark grey/off-black. The agent correctly identified that a  style () is likely overriding the custom styles.
-    -   **Next debug checklist:**
-        1.  Inspect  or a global CSS file like .
-        2.  Attempt to override the  and  CSS variables within a specific, high-priority selector that targets the dropdowns.
-        3.  Alternatively, use the  property of the  component from  to apply a new  that forces the black background.
-    -   **Why fix this issue and what will be achieved with the fix?** To meet the user's specific pure black design requirement and achieve a consistent, elegant UI.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** None.
+  - **Issue 1: Video Uploads Fail From Frontend**
+     - **Attempted fixes:** The agent successfully refactored the backend API () to handle large files by saving them to a local  directory instead of using Base64. This was tested and confirmed to work via direct API calls. The issue persists in the UI.
+     - **Next debug checklist:**
+        1.  Edit .
+        2.  Locate the  function inside the  component.
+        3.  Add comprehensive  blocks and / statements to the  call to expose any silent network errors, API responses, or javascript exceptions.
+        4.  Re-test uploading a small video file from the UI and inspect the browser's developer console.
+     - **Why fix this issue and what will be achieved with the fix?** This is a critical blocker for the user's request to support video content across the site. Fixing it will enable videos to be uploaded via the Website Builder.
+     - **Status:** IN PROGRESS
+     - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Frontend
+     - **Blocked on other issue:** None.
+
+  - **Issue 2: Dropdown Menus Background Color is not Pure Black**
+     - **Attempted fixes:** (From previous fork) Multiple attempts were made using inline styles, custom CSS, and . The issue is that a  style () overrides the changes.
+     - **Next debug checklist:**
+        1.  Inspect  or .
+        2.  Attempt to override the  and  CSS variables globally or with a more specific selector targeting the dropdowns.
+     - **Why fix this issue and what will be achieved with the fix?** To meet the user's specific pure black design requirement and achieve UI consistency.
+     - **Status:** NOT STARTED
+     - **Is recurring issue?** Y
+     - **Should Test frontend/backend/both after fix?** Frontend
+     - **Blocked on other issue:** None.
+
+  - **Issue 3: Production Twilio Setup Required**
+     - **Attempted fixes:** The agent diagnosed that WhatsApp notifications were not being received due to Twilio Sandbox limitations (Error 63015: Recipient not opted-in).
+     - **Next debug checklist:**
+        1.  Explain to the user the steps to move from Twilio Sandbox to a production-ready number.
+        2.  This involves registering their business with Meta, getting a dedicated Twilio number, and creating pre-approved message templates.
+        3.  Guide the user on where to get the production , , and the new Twilio phone number ().
+     - **Why fix this issue and what will be achieved with the fix?** This will enable reliable, automated WhatsApp notifications to customers and staff without requiring sandbox opt-ins.
+     - **Status:** BLOCKED (Awaiting user decision/action to proceed with production setup).
+     - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Backend
+     - **Blocked on other issue:** None.
 
 **In progress Task List**:
-- None.
+  - **Task 1: Complete Video Support Implementation**
+     - **Where to resume:** This task is blocked by the Video Uploads Fail issue. Once that is resolved, the following steps are needed.
+     - **What will be achieved with this?** The entire application will be ableto render videos instead of just images where applicable.
+     - **Status:** BLOCKED
+     - **Should Test frontend/backend/both after fix?** Both
+     - **Blocked on something:** Issue 1: Video Uploads Fail From Frontend.
 
 **Upcoming and Future Tasks**
-
     Upcoming Tasks:
-    - **P0: Configure Production Twilio for Customer Notifications**: The user postponed the final setup. The agent needs to guide the user on registering their business number with Twilio and creating message templates to move beyond the sandbox environment.
     - **P1: Edit E-commerce in Website Builder**: A major feature request to allow editing product details (text, images) directly from the Website Builder interface. This has not been started. (Files: , )
     - **P2: Google Analytics Integration**: A major feature to implement Google Analytics tracking and display key metrics in a new section of the admin dashboard. This has not been started.
     
@@ -90,16 +103,26 @@ A full-stack React/FastAPI application with most of the user's core requests imp
     - **Implement Bancard Payment Gateway**: Blocked, awaiting API credentials from the user.
 
 **Completed work in this session**
-- **Batch Image Tool Fixes**: Successfully implemented fixes for truncated product names, a functional Undo button, and a De-link image feature.
-- **Critical Bug Fix (Inventory)**: Resolved a major bug where products were incorrectly shown as out of stock by correcting the database query to check the correct product collection ().
-- **Critical Bug Fix (Checkout Flow)**: Fixed the checkout process for when the payment gateway is disabled. The correct Solicitud Enviada page is now displayed, and the business WhatsApp notification is confirmed to be working.
-- **New Feature (Admin Reports)**: Implemented a new Marcas Interesadas section in the Admin Dashboard to display form submissions, complete with Export to Excel functionality. Added export capability to other reports.
-- **Major UI Refactor (Navbar)**: Created a new, unified, and consistent black-themed  component. Applied it across all main pages (, , , , etc.) while leaving the e-commerce header untouched, as requested.
-- **Major UI Refactor (Elegant Design)**: Performed extensive styling changes on the main landing page, footer, and login modal to match the user's elegant design specification, including typography, colors, and layout adjustments.
-- **Login Functionality Fix**: Debugged and fixed the login button, which was not opening the authentication modal.
+- **UI/UX Redesign (UGC Pages)**: Performed a major redesign of the UGC campaigns list () and application form () to an elegant, editorial black theme, iterating multiple times on contrast for text and borders based on user feedback.
+- **UI/UX Refinements**:
+  - Fixed the text contrast for prices on the Studio booking page ().
+  - Corrected the accent color for a campaign to match the site's standard gold color in .
+  - Made the main  background pure black ().
+- **Footer Unification**:
+  - Redesigned the footer with unified styles, contact icons (WhatsApp, Instagram, Maps), and correct phone numbers.
+  - Added business operating hours (Lunes a Sábado, 9:00 - 21:00).
+  - Refactored the footer into a reusable  component and ensured it's correctly displayed on all pages (except e-commerce) without duplication.
+- **Admin Functionality**:
+  - Added a conditional ADMIN button to  that appears for all administrative user roles and links to the admin panel.
+  - Added a new input field for WhatsApp Marcas to the admin settings page () and updated the corresponding backend API and database model in .
+- **Terms & Conditions Link**: Added a clickable link to the Terms & Conditions page on the UGC application form checkbox.
+- **Twilio Notification Debugging**:
+  - Correctly routed the Marcas form notifications to a new, dedicated WhatsApp number by adding a  environment variable.
+  - Diagnosed that failed message delivery was due to Twilio Sandbox limitations (Error 63015) and informed the user.
+- **Video Upload Backend**: Refactored the media upload endpoint in  to support files up to 250MB by saving large files to disk instead of using Base64 encoding.
 
 **Earlier issues found/mentioned but not fixed**
-   - The dropdown menu background color issue (listed as P1 In Progress) is the primary one.
+   - **Issue 1**: Dropdown menu background color is not pure black (Tracked in All Pending/In progress Issue list).
 
 **Known issue recurrence from previous fork**
   - None.
@@ -108,65 +131,65 @@ A full-stack React/FastAPI application with most of the user's core requests imp
 
 
 **Key Technical Concepts**
-- **Component-Based Architecture**: Refactored the UI to use a centralized  component, promoting code reuse and consistency.
-- **React State & Navigation Race Conditions**: Identified and fixed a bug in  by introducing a  state to manage asynchronous operations and prevent premature redirects.
-- **CSS Specificity and  Theming**: Encountered and struggled with CSS specificity issues where  default theme variables () override custom styles. This requires a more targeted approach to theming.
-- **Backend Logic Debugging**: Successfully diagnosed complex backend issues by cross-referencing database schemas ( vs. ) and analyzing server logs (Twilio API responses).
-- **Data Export**: Implemented client-side data export to Excel using the  library.
+- **Iterative UI/UX Refinement**: The agent performed multiple cycles of implementation and adjustment based on specific user feedback regarding colors, contrast, and layout, especially on the UGC pages.
+- **CSS Contrast & Accessibility**: Used subtle variations of black/grey (, ) and brighter text/borders (, ) to improve legibility on a dark theme.
+- **Component Refactoring**: Abstracted the page footer from  into a reusable  component and correctly integrated it via  to avoid duplication.
+- **Conditional Rendering**: Implemented logic in React () to render UI elements (the Admin button) based on user role attributes.
+- **Large File Uploads**: Refactored a backend endpoint from a Base64-only approach to a hybrid system that saves large files (>5MB) to the server's filesystem and returns a URL, overcoming request size limitations.
+- **Third-Party API Debugging**: Diagnosed a failed Twilio integration by checking API logs and identifying a specific error code (63015) related to sandbox usage.
 
 **key DB schema**
--   **brand_inquiries**: **New collection**. .
+- **settings** (in  collection):  was added to the schema.
 
 **changes in tech stack**
--   **xlsx**: Added to the frontend for client-side Excel file generation.
+- No new libraries were added, but the backend file handling strategy was significantly changed.
 
 **All files of reference**
--   : **CRITICAL FILE**. Contains the footer that needs to be redesigned.
--   : **CRITICAL FILE**. Contains the dropdown menus that have the background color issue.
--   : Likely needs modification to fix the dropdown background color.
--   : May need to be inspected to understand  theming variables.
--   : Contains brand inquiry endpoints.
--   : Contains the logic for the admin reports.
+-   : **CRITICAL FILE**. Contains the broken frontend video upload logic that needs to be debugged.
+-   : Core file for the UGC application form and campaign details, heavily modified.
+-   : Core file for the UGC campaigns list, heavily modified.
+-   : Contains the dropdowns with the background color issue and the new Admin button logic.
+-   : The new centralized footer component.
+-   : Contains the backend logic for file uploads.
+-   : Contains logic for admin settings and Twilio notifications.
 
 **Areas that need refactoring**:
--    continues to grow in complexity and is a strong candidate for being broken down into smaller sub-components for each tab/report.
--    has a significant amount of routing logic and prop-drilling for authentication state (, , ). This could be greatly simplified by using a React Context Provider for authentication.
+-    is extremely large and complex. The media modal logic could be extracted into its own component.
+-   The use of a multi-file search and replace to update styles across  and  suggests these components could share more common styled components or a more robust theming solution to avoid code duplication.
 
 **key api endpoints**
--   : **NEW**. Submits the interested brand form.
--   : **NEW**. Fetches all brand inquiries for the admin report.
--   : **NEW**. Deletes a specific image from a product.
--   : **MODIFIED**. Now correctly checks grouped products.
--   : **MODIFIED**. Now sends notifications to customers.
--   : **MODIFIED**. Now sends facturado notifications to customers.
+-   : **MODIFIED**. Now handles large files by saving to disk and returning a URL path instead of always returning a base64 string.
+-   : **MODIFIED**. Now returns the  field.
+-   : **MODIFIED**. Now accepts and saves the  field.
 
 **Critical Info for New Agent**
--   **Your immediate priority (P0)** is the footer redesign as detailed in the user's last message. This is a design and layout task in .
--   **The second priority (P1)** is to solve the stubborn dropdown menu background color issue. The previous agent struggled with CSS specificity against . You should investigate overriding the  CSS variable in  or  as a potential solution.
--   The user is very particular about visual details and often makes multiple small, iterative requests. Be prepared for a cycle of implement, screenshot, adjust.
--   The low-resolution logo asset is a recurring problem. Prefer using styled text (AVENUE) over the image file for better scalability and quality, as this has been the successful pattern.
+-   **Your immediate priority (P0) is to fix the video upload.** The backend is likely correct; the problem is a silent failure in the frontend. Start by adding detailed error logging to the  function in .
+-   The user is highly visual and detail-oriented. Expect multiple small adjustments to get the elegant aesthetic right. High-contrast on a black background is key.
+-   The Twilio Sandbox is a blocker for real-world notifications. Once the current task is done, you should guide the user toward setting up a production Twilio number.
+-   The dropdown menu background color issue is a known, unresolved problem from a previous session. It requires overriding  theme variables.
 
 **documents and test reports created in this job**
--    was updated for backend testing.
+- None.
 
 **Last 10 User Messages and any pending HUMAN messages**
--   **10.** Requests an elegant design for the login modal and footer, and pure black backgrounds for dropdowns.
--   **9.** Likes the larger logo but wants it centered. After centering, asks for it to be moved slightly down. After that, asks for it to be moved to a midpoint.
--   **8.** Reports the login is not working.
--   **7.** Likes the unified navbar but wants to copy the login icon and typography from the e-commerce page. Also points out the UGC page still has the old navbar.
--   **6.** Wants the navbar logo to be even bigger (double the current size).
--   **5.** Dislikes the large logo in the hero section. Requests to remove it and instead add a consistent black navbar to all pages, with the logo on the left and a hamburger menu/login on the right.
--   **4.** Is unhappy with the footer logo alignment after the agent's attempt to fix it. Requests to remove the logo and just use AVENUE text. Asks to make the separate hero section logo 20x bigger.
--   **3.** Reports the enlarged footer logo still looks small and asks why.
--   **2.** Asks to make the logo in a specific section of the footer 20 times larger.
--   **1.** (LATEST) User is not satisfied with the footer's aesthetic. Requests to unify the styles of the left and right sections, add a commercial phone number, and add clickable icons for WhatsApp, location (Google Maps), and Instagram.
+-   **10.** Requests a more elegant, high-contrast design for the UGC form.
+-   **9.** Asks to apply the new elegant aesthetic to several other sections of the UGC campaign list page.
+-   **8.** Complains that the new design is too black and needs better contrast.
+-   **7.** Asks for even more contrast on perimeters and text.
+-   **6.** Points out that the numbers in one section of the UGC page are still not legible enough.
+-   **5.** Reports that the accent color for the SANTAL campaign is dull and inconsistent.
+-   **4.** Requests to apply the new aesthetic to the individual campaign details page.
+-   **3.** Reports the navbar is not pure black on the UGC page.
+-   **2.** Requests an Admin Panel button in the navbar for admin users.
+-   **1.** Asks to add a field for the marcas phone number in the admin panel.
+-   ... (subsequent messages led to the video upload feature request and debugging).
 
 **Project Health Check:**
--   **Broken**: The styling of the hamburger and language switcher dropdowns does not match the user's pure black request.
--   **Mocked**: The Twilio integration is functional but relies on the Twilio Sandbox. It is not yet configured for the user's own WhatsApp Business number, a step the user has postponed.
+-   **Broken**: The frontend video upload functionality in the Website Builder is not working.
+-   **Mocked**: The Twilio integration is functional but relies on the Twilio Sandbox. It is not configured for production use and messages will fail for users who have not opted into the sandbox.
 
 **3rd Party Integrations**
-- **Twilio**: For WhatsApp notifications. **(Partially Implemented)**. Uses Sandbox credentials. Final setup is pending user action.
+- **Twilio**: For WhatsApp notifications. **(Partially Implemented/Blocked)**. Uses Sandbox credentials. Final production setup is pending user action.
 - **xlsx**: For client-side Excel export.
 - **Bancard (Payments)**: **Blocked** pending user-provided credentials.
 - **Google Maps API**: For delivery cost calculation.
@@ -174,13 +197,13 @@ A full-stack React/FastAPI application with most of the user's core requests imp
 - **Google Generative AI (Gemini Nano Banana)**: Used for flyer generation. Uses Emergent LLM Key.
 
 **Testing status**
-- Testing agent used after significant changes: YES. The agent used it to validate new admin endpoints.
-- Troubleshoot agent used after agent stuck in loop: NO
-- Test files created:  was updated.
-- Known regressions: None identified.
+  - Testing agent used after significant changes: NO
+  - Troubleshoot agent used after agent stuck in loop: NO
+  - Test files created: None.
+  - Known regressions: None.
 
 **Credentials to test flow:**
 -   **Admin User**: Email: , Password: 
 
 **What agent forgot to execute**
-- The agent did not forget any tasks. The Twilio setup was explicitly postponed by the user. The dropdown menu background is a known, difficult issue the agent was actively trying to solve, not one that was overlooked.</analysis>
+-   The agent did not start working on the P1 issue from the handoff: Dropdown Menus Background Color is not Pure Black. It correctly prioritized the user's immediate and new requests.</analysis>
