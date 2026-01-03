@@ -61,8 +61,7 @@ export const MainLanding = ({ t }) => {
               <img 
                 src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
                 alt="Avenue"
-                className="h-8 md:h-10"
-                style={{ filter: 'brightness(1.1)' }}
+                style={{ height: '200px', width: 'auto', filter: 'brightness(1.1)' }}
               />
             </div>
 
