@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Store, Camera, ShoppingBag, Sparkles, Play } from 'lucide-react';
 import useBuilderModifications from '../hooks/useBuilderModifications';
+import { Navbar } from './Navbar';
 
 // Hero images for rotation
 const HERO_IMAGES = [
@@ -18,7 +19,7 @@ const BRANDS_LOGOS = [
   { name: 'AGUARA', type: 'fitness' },
 ];
 
-export const MainLanding = ({ t }) => {
+export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLanguage }) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   
