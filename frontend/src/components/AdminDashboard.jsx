@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail, Palette, Shield, UserCog, AlertCircle, Phone, CheckCircle } from 'lucide-react';
+import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail, Palette, Shield, UserCog, AlertCircle, Phone, CheckCircle, Building, Download, FileSpreadsheet } from 'lucide-react';
 import { Button } from './ui/button';
 import { OrdersManagement } from './OrdersManagement';
 import { ProductImagesManager } from './ProductImagesManager';
@@ -10,13 +10,48 @@ import { AdminSettings } from './AdminSettings';
 // Permission helper based on role
 const hasPermission = (role, permission) => {
   const permissions = {
-    superadmin: ['all', 'users', 'settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics'],
-    admin: ['settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics'],
-    staff: ['orders', 'reservations', 'ugc', 'analytics'],
+    superadmin: ['all', 'users', 'settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics', 'brands'],
+    admin: ['settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics', 'brands'],
+    staff: ['orders', 'reservations', 'ugc', 'analytics', 'brands'],
     designer: ['website', 'images'],
     user: []
   };
   return permissions[role]?.includes('all') || permissions[role]?.includes(permission);
+};
+
+// Excel export helper function
+const exportToExcel = (data, filename, columns) => {
+  if (!data || data.length === 0) {
+    alert('No hay datos para exportar');
+    return;
+  }
+  
+  // Create CSV content
+  const headers = columns.map(col => col.label).join(',');
+  const rows = data.map(item => 
+    columns.map(col => {
+      let value = col.getValue ? col.getValue(item) : item[col.key] || '';
+      // Escape commas and quotes
+      if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
+        value = `"${value.replace(/"/g, '""')}"`;
+      }
+      return value;
+    }).join(',')
+  );
+  
+  const csvContent = [headers, ...rows].join('\n');
+  
+  // Add BOM for Excel to recognize UTF-8
+  const BOM = '\uFEFF';
+  const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${filename}_${new Date().toISOString().split('T')[0]}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 };
 
 export const AdminDashboard = ({ user }) => {
