@@ -281,15 +281,15 @@ const UGCCampaignPage = ({ t, language, setLanguage, user, onLoginClick, onLogou
   
   return (
     <>
-      <StudioNav 
-        t={t} 
-        language={language} 
-        setLanguage={setLanguage}
+      <Navbar 
         user={user}
         onLoginClick={onLoginClick}
         onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
       />
-      <div style={{ paddingTop: '80px' }}>
+      <div style={{ paddingTop: '64px' }}>
         <UGCCreators t={t} campaignId={campaignId} />
       </div>
       <Footer t={t} />
