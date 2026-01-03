@@ -33,7 +33,7 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
           </a>
           
           {/* Right Section */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
             {/* Language Switcher */}
             <LanguageSwitcher 
               currentLang={language} 
@@ -43,23 +43,24 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
 
             {/* Login/User Button */}
             {user ? (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-400 hidden md:block">{user.name?.split(' ')[0]}</span>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-gray-400 hidden md:block tracking-[0.1em] uppercase">{user.name?.split(' ')[0]}</span>
                 <button
                   onClick={onLogout}
-                  className="p-2 text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-400 hover:text-white transition-colors"
                   title="Cerrar sesión"
                 >
-                  <LogOut className="w-5 h-5" />
+                  <LogOut className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={onLoginClick}
-                className="p-2 text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
                 title="Iniciar sesión"
               >
-                <User className="w-5 h-5" />
+                <User className="w-4 h-4" />
+                <span className="text-xs tracking-[0.1em] uppercase hidden md:block">Login</span>
               </button>
             )}
 
@@ -69,7 +70,7 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                 onClick={() => setShowMenu(!showMenu)}
                 className="p-2 text-gray-400 hover:text-white transition-colors"
               >
-                {showMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {showMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
               
               {/* Dropdown Menu */}
@@ -79,7 +80,7 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                     <a
                       key={link.href}
                       href={link.href}
-                      className="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-b border-white/5 last:border-0"
+                      className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-b border-white/5 last:border-0"
                       onClick={() => setShowMenu(false)}
                     >
                       {link.label}
