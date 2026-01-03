@@ -1,177 +1,122 @@
 import React from 'react';
-import { Instagram, Facebook, ArrowRight, MapPin, Phone, Mail } from 'lucide-react';
+import { Instagram, MapPin, Clock } from 'lucide-react';
+
+// Custom WhatsApp icon component
+const WhatsAppIcon = ({ className }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    className={className}
+  >
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+);
 
 export const Footer = ({ t }) => {
-  const socialLinks = [
-    { icon: Instagram, url: 'https://instagram.com/avenue.py', label: 'Instagram' },
-    { icon: Facebook, url: 'https://facebook.com/avenue.py', label: 'Facebook' },
-  ];
-
-  const contactOptions = [
-    { label: 'Tienda', text: '+595 973 666 000', url: 'https://wa.me/595973666000' },
-    { label: 'Studio', text: '+595 973 666 001', url: 'https://wa.me/595973666001' },
-  ];
-
   return (
-    <footer className="bg-[#0a0a0a] border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Brand Column */}
-          <div className="lg:col-span-1">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
-              alt="Avenue"
-              className="h-32 w-auto mb-6"
-              style={{ filter: 'brightness(1.1)' }}
-            />
-            <p className="text-gray-500 text-sm leading-relaxed mb-6 max-w-xs">
-              {t?.footer?.tagline || 'Un concepto premium donde las marcas brillan y el contenido cobra vida.'}
+    <footer className="py-20 px-6 border-t border-white/10 bg-[#000000]">
+      <div className="max-w-7xl mx-auto">
+        {/* Main Footer Content */}
+        <div className="grid md:grid-cols-12 gap-12 items-start">
+          {/* Logo & Description - Takes 3 columns */}
+          <div className="md:col-span-3">
+            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Avenue</h4>
+            <p className="text-gray-500 text-xs leading-relaxed max-w-sm tracking-[0.1em] uppercase">
+              Un concepto premium donde las marcas brillan y el contenido cobra vida.
             </p>
-            
-            {/* Social Links */}
-            <div className="flex gap-3">
-              {socialLinks.map((social, index) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={index}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-gray-400 hover:border-[#d4a968] hover:text-[#d4a968] transition-all duration-300"
-                    aria-label={social.label}
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                );
-              })}
-            </div>
           </div>
 
-          {/* Navigation Column */}
-          <div>
-            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">
-              Explorar
-            </h4>
-            <ul className="space-y-3">
+          {/* Spacer */}
+          <div className="hidden md:block md:col-span-3"></div>
+
+          {/* Links - Takes 2 columns */}
+          <div className="md:col-span-2">
+            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Explorar</h4>
+            <ul className="space-y-4">
+              <li><a href="/shop" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">E-commerce</a></li>
+              <li><a href="/studio" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">Studio</a></li>
+              <li><a href="/studio/ugc" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">UGC Creators</a></li>
+              <li><a href="/tu-marca" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">Para Marcas</a></li>
+            </ul>
+          </div>
+
+          {/* Contact - Takes 2 columns */}
+          <div className="md:col-span-2">
+            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Contacto</h4>
+            <ul className="space-y-4">
+              {/* WhatsApp Comercial */}
               <li>
-                <a href="/shop" className="text-gray-400 text-sm hover:text-white transition-colors inline-flex items-center gap-2 group">
-                  E-commerce
-                  <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <a 
+                  href="https://wa.me/595973666000" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <WhatsAppIcon className="w-4 h-4" />
+                  Comercial: +595 973 666 000
                 </a>
               </li>
+              {/* WhatsApp Marcas */}
               <li>
-                <a href="/studio" className="text-gray-400 text-sm hover:text-white transition-colors inline-flex items-center gap-2 group">
-                  Avenue Studio
-                  <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <a 
+                  href="https://wa.me/595976691520" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <WhatsAppIcon className="w-4 h-4" />
+                  Marcas: +595 976 691 520
                 </a>
               </li>
+              {/* Instagram */}
               <li>
-                <a href="/studio/ugc" className="text-gray-400 text-sm hover:text-white transition-colors inline-flex items-center gap-2 group">
-                  UGC Creators
-                  <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <a 
+                  href="https://instagram.com/avenue.py" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <Instagram className="w-4 h-4" />
+                  @avenue.py
                 </a>
               </li>
+              {/* Ubicación */}
               <li>
-                <a href="/tu-marca" className="text-gray-400 text-sm hover:text-white transition-colors inline-flex items-center gap-2 group">
-                  Para Marcas
-                  <ArrowRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                <a 
+                  href="https://maps.google.com/?q=Paseo+Los+Árboles,+Asunción,+Paraguay" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Paseo Los Árboles, Asunción
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Contact Column */}
-          <div>
-            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">
-              WhatsApp
-            </h4>
-            <div className="space-y-4">
-              {contactOptions.map((option, index) => (
-                <a
-                  key={index}
-                  href={option.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-[#d4a968]/20 transition-colors">
-                    <Phone className="w-3.5 h-3.5 text-[#d4a968]" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-600">{option.label}</p>
-                    <p className="text-sm">{option.text}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Location Column */}
-          <div>
-            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">
-              Ubicación
-            </h4>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-3.5 h-3.5 text-[#d4a968]" />
-              </div>
+          {/* Horarios - Takes 2 columns */}
+          <div className="md:col-span-2">
+            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Horarios</h4>
+            <div className="flex items-start gap-2">
+              <Clock className="w-4 h-4 text-gray-500 mt-0.5" />
               <div>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Paseo Los Árboles<br />
-                  Av. San Martín<br />
-                  Asunción, Paraguay
-                </p>
+                <p className="text-gray-500 text-xs tracking-[0.1em] uppercase">Lunes a Sábado</p>
+                <p className="text-gray-400 text-xs tracking-[0.1em] uppercase mt-1">9:00 - 21:00</p>
               </div>
-            </div>
-            
-            {/* Schedule */}
-            <div className="mt-6 p-4 rounded-lg bg-white/5 border border-white/10">
-              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Horario</p>
-              <p className="text-sm text-gray-300">Lun - Sáb: 10:00 - 20:00</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Newsletter Section */}
-        <div className="py-10 px-8 rounded-2xl bg-gradient-to-r from-[#d4a968]/10 to-transparent border border-white/10 mb-12">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-xl font-light text-white mb-2">
-                Mantente <span className="italic text-[#d4a968]">conectad@</span>
-              </h3>
-              <p className="text-gray-500 text-sm">Recibe novedades de campañas y nuevas colecciones</p>
-            </div>
-            <div className="flex gap-3 w-full md:w-auto">
-              <input 
-                type="email"
-                placeholder="tu@email.com"
-                className="flex-1 md:w-64 px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors text-sm"
-              />
-              <button className="px-6 py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors flex items-center gap-2">
-                <span className="hidden sm:inline">Suscribir</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-gray-600 text-sm">
-            © {new Date().getFullYear()} Avenue. {t?.footer?.rights || 'Todos los derechos reservados.'}
+        <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-gray-500 text-xs tracking-[0.1em] uppercase">
+            © {new Date().getFullYear()} Avenue. Todos los derechos reservados.
           </p>
-          <div className="flex items-center gap-6">
-            <a href="https://instagram.com/avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-sm">
-              Instagram
-            </a>
-            <a href="https://tiktok.com/@avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-sm">
-              TikTok
-            </a>
-            <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-sm">
-              WhatsApp
-            </a>
+          <div className="flex items-center gap-8">
+            <a href="https://instagram.com/avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Instagram</a>
+            <a href="https://tiktok.com/@avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">TikTok</a>
+            <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">WhatsApp</a>
           </div>
         </div>
       </div>
