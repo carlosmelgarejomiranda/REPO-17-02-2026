@@ -81,42 +81,22 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                     className="fixed inset-0 z-40" 
                     onClick={() => setShowMenu(false)}
                   />
-                  <div 
-                    className="absolute right-0 top-full mt-2 w-52 z-50 overflow-hidden"
+                  <div className="absolute right-0 top-full mt-2 w-52 z-50 overflow-hidden !bg-[#000000]"
                     style={{ 
-                      backgroundColor: '#000000',
-                      background: '#000000',
                       border: '1px solid rgba(212, 169, 104, 0.3)',
-                      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
-                      isolation: 'isolate'
+                      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
                     }}
                   >
                     {navLinks.map((link, index) => (
                       <a
                         key={link.href}
                         href={link.href}
-                        className="block"
+                        className="block py-4 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] !bg-[#000000] hover:!bg-[#1a1a1a] hover:text-[#d4a968] transition-colors"
                         style={{ 
-                          padding: '16px 24px',
-                          fontSize: '11px',
-                          letterSpacing: '0.15em',
-                          textTransform: 'uppercase',
-                          color: '#f5ede4',
-                          backgroundColor: '#000000',
-                          background: '#000000',
                           borderBottom: index < navLinks.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                          textDecoration: 'none',
-                          transition: 'color 0.2s, background 0.2s'
+                          textDecoration: 'none'
                         }}
                         onClick={() => setShowMenu(false)}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = 'rgba(30,30,30,1)';
-                          e.currentTarget.style.color = '#d4a968';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = '#000000';
-                          e.currentTarget.style.color = '#f5ede4';
-                        }}
                       >
                         {link.label}
                       </a>
