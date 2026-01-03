@@ -390,7 +390,7 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
             <div className="md:col-span-2">
               <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Contacto</h4>
               <ul className="space-y-4">
-                {/* WhatsApp General */}
+                {/* WhatsApp Comercial */}
                 <li>
                   <a 
                     href="https://wa.me/595973666000" 
@@ -399,19 +399,19 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
                     className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
                   >
                     <WhatsAppIcon className="w-4 h-4" />
-                    +595 973 666 000
+                    Comercial: +595 973 666 000
                   </a>
                 </li>
                 {/* WhatsApp Marcas */}
                 <li>
                   <a 
-                    href="https://wa.me/595981234567" 
+                    href="https://wa.me/595976691520" 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
                   >
-                    <Phone className="w-4 h-4" />
-                    Marcas: +595 981 234 567
+                    <WhatsAppIcon className="w-4 h-4" />
+                    Marcas: +595 976 691 520
                   </a>
                 </li>
                 {/* Instagram */}
