@@ -1501,6 +1501,7 @@ class AdminSettings(BaseModel):
     payment_gateway_enabled: Optional[bool] = None
     show_only_products_with_images: Optional[bool] = None
     whatsapp_commercial: Optional[str] = None
+    whatsapp_marcas: Optional[str] = None
 
 @api_router.get("/admin/settings")
 async def get_admin_settings(request: Request):
@@ -1514,7 +1515,8 @@ async def get_admin_settings(request: Request):
             "_id": "global",
             "payment_gateway_enabled": False,  # Start with gateway disabled
             "show_only_products_with_images": False,
-            "whatsapp_commercial": "+595973666000"
+            "whatsapp_commercial": "+595973666000",
+            "whatsapp_marcas": "+595976691520"
         }
         await db.admin_settings.insert_one(default_settings)
         settings = default_settings
@@ -1523,7 +1525,8 @@ async def get_admin_settings(request: Request):
     return {
         "payment_gateway_enabled": settings.get("payment_gateway_enabled", False),
         "show_only_products_with_images": settings.get("show_only_products_with_images", False),
-        "whatsapp_commercial": settings.get("whatsapp_commercial", "+595973666000")
+        "whatsapp_commercial": settings.get("whatsapp_commercial", "+595973666000"),
+        "whatsapp_marcas": settings.get("whatsapp_marcas", "+595976691520")
     }
 
 @api_router.put("/admin/settings")
