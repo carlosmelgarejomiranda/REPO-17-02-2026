@@ -756,12 +756,69 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
                   ))}
                 </div>
 
+                {/* Coupon Section */}
+                <div className="py-6 border-b border-gray-100">
+                  <h3 className="text-xs tracking-[0.15em] uppercase text-gray-700 mb-4 flex items-center gap-2">
+                    <Tag className="w-4 h-4" />
+                    Cupón de descuento
+                  </h3>
+                  
+                  {!appliedCoupon ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        placeholder="Código del cupón"
+                        className="flex-1 px-4 py-2 bg-gray-50 border-0 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-200 uppercase"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleApplyCoupon}
+                        disabled={couponLoading || !couponCode.trim()}
+                        className="px-4 py-2 bg-gray-900 text-white text-sm hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                      >
+                        {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Aplicar'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between bg-green-50 p-3 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Tag className="w-4 h-4 text-green-600" />
+                        <span className="text-sm font-medium text-green-800">{appliedCoupon.code}</span>
+                        <span className="text-xs text-green-600">
+                          (-{appliedCoupon.discount_type === 'percentage' 
+                            ? `${appliedCoupon.discount_value}%` 
+                            : formatPrice(appliedCoupon.discount_value)})
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                  
+                  {couponError && (
+                    <p className="text-xs text-red-500 mt-2">{couponError}</p>
+                  )}
+                </div>
+
                 {/* Totals */}
                 <div className="space-y-3 py-6 border-b border-gray-100">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal</span>
                     <span className="text-gray-900">{formatPrice(subtotal)}</span>
                   </div>
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-green-600">Descuento cupón</span>
+                      <span className="text-green-600">-{formatPrice(couponDiscount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Envío</span>
                     <span className="text-gray-900">
@@ -775,10 +832,33 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
                   <span className="text-lg text-gray-900">{formatPrice(total)}</span>
                 </div>
 
+                {/* Terms and Conditions Checkbox */}
+                <div className="mb-6">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="w-4 h-4 mt-0.5 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
+                    />
+                    <span className="text-xs text-gray-600 leading-relaxed">
+                      He leído y acepto los{' '}
+                      <Link 
+                        to="/shop/terminos-condiciones" 
+                        target="_blank"
+                        className="text-gray-900 underline hover:text-gray-600"
+                      >
+                        términos y condiciones
+                      </Link>
+                      {' '}del ecommerce de Avenue
+                    </span>
+                  </label>
+                </div>
+
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={loading || validatingInventory || (deliveryType === 'delivery' && !selectedLocation)}
+                  disabled={loading || validatingInventory || (deliveryType === 'delivery' && !selectedLocation) || !acceptedTerms}
                   className="w-full py-4 bg-gray-900 text-white text-sm tracking-[0.15em] uppercase hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {validatingInventory ? (
