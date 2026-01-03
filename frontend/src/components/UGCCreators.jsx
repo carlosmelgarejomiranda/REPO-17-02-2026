@@ -359,300 +359,327 @@ export const UGCCreators = ({ t, campaignId }) => {
       </section>
 
       {/* Application Form */}
-      <section className="py-16 px-6 border-t border-white/10">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-light text-white mb-2">
-              Completá tu <span className="italic" style={{ color: campaign.color }}>aplicación</span>
+      <section className="py-20 px-6 bg-[#000000]">
+        <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <p className="text-[#d4a968] text-xs font-medium tracking-[0.3em] uppercase mb-4">Aplicación</p>
+            <h2 className="text-4xl md:text-5xl font-light text-white mb-4 leading-tight">
+              Únete al <span className="italic text-[#d4a968]">programa</span>
             </h2>
-            <p className="text-gray-500">Te contactaremos por WhatsApp si quedás seleccionad@</p>
+            <p className="text-gray-500 text-sm tracking-wide">Te contactaremos por WhatsApp si quedás seleccionad@</p>
           </div>
           
-          <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/10">
-            <div className="p-8 md:p-10">
+          {/* Form Container */}
+          <div className="bg-[#000000] border border-white/10">
+            <div className="p-10 md:p-12">
               {errors.submit && (
-                <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400">
+                <div className="mb-8 p-4 border-l-2 border-red-500 bg-red-500/5 text-red-400 text-sm">
                   {errors.submit}
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-12">
                 {/* Personal Data */}
                 <div>
-                  <h4 className="text-sm font-medium mb-6 uppercase tracking-wider flex items-center gap-2" style={{ color: campaign.color }}>
-                    <Users className="w-4 h-4" /> Datos Personales
-                  </h4>
-                  <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-8 h-[1px] bg-[#d4a968]"></div>
+                    <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase">Datos Personales</h4>
+                  </div>
+                  
+                  <div className="space-y-6">
                     <div>
-                      <label className="block text-sm mb-2 text-gray-400">Email *</label>
+                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Email *</label>
                       <input
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateField('email', e.target.value)}
-                        className={`w-full p-4 rounded-lg bg-white/5 border text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.email ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.email ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                         placeholder="tu@email.com"
                       />
-                      {errors.email && <p className="text-sm mt-2 text-red-400">{errors.email}</p>}
+                      {errors.email && <p className="text-xs mt-2 text-red-400">{errors.email}</p>}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm mb-2 text-gray-400">Nombre *</label>
+                        <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Nombre *</label>
                         <input
                           type="text"
                           value={formData.nombre}
                           onChange={(e) => updateField('nombre', e.target.value)}
-                          className={`w-full p-4 rounded-lg bg-white/5 border text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.nombre ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.nombre ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                           placeholder="Tu nombre"
                         />
-                        {errors.nombre && <p className="text-sm mt-2 text-red-400">{errors.nombre}</p>}
+                        {errors.nombre && <p className="text-xs mt-2 text-red-400">{errors.nombre}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm mb-2 text-gray-400">Apellido *</label>
+                        <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Apellido *</label>
                         <input
                           type="text"
                           value={formData.apellido}
                           onChange={(e) => updateField('apellido', e.target.value)}
-                          className={`w-full p-4 rounded-lg bg-white/5 border text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.apellido ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.apellido ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                           placeholder="Tu apellido"
                         />
-                        {errors.apellido && <p className="text-sm mt-2 text-red-400">{errors.apellido}</p>}
+                        {errors.apellido && <p className="text-xs mt-2 text-red-400">{errors.apellido}</p>}
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm mb-2 text-gray-400">Sexo *</label>
+                        <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Sexo *</label>
                         <select
                           value={formData.sexo}
                           onChange={(e) => updateField('sexo', e.target.value)}
-                          className={`w-full p-4 rounded-lg bg-white/5 border text-white focus:outline-none transition-colors ${errors.sexo ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.sexo ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                          style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23666\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center', backgroundSize: '24px' }}
                         >
-                          <option value="" className="bg-[#1a1a1a]">Seleccionar</option>
-                          <option value="femenino" className="bg-[#1a1a1a]">Femenino</option>
-                          <option value="masculino" className="bg-[#1a1a1a]">Masculino</option>
-                          <option value="otro" className="bg-[#1a1a1a]">Otro</option>
+                          <option value="" className="bg-black">Seleccionar</option>
+                          <option value="femenino" className="bg-black">Femenino</option>
+                          <option value="masculino" className="bg-black">Masculino</option>
+                          <option value="otro" className="bg-black">Otro</option>
                         </select>
-                        {errors.sexo && <p className="text-sm mt-2 text-red-400">{errors.sexo}</p>}
+                        {errors.sexo && <p className="text-xs mt-2 text-red-400">{errors.sexo}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm mb-2 text-gray-400">Fecha de Nacimiento *</label>
+                        <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Fecha de Nacimiento *</label>
                         <input
                           type="date"
                           value={formData.fecha_nacimiento}
                           onChange={(e) => updateField('fecha_nacimiento', e.target.value)}
-                          className={`w-full p-4 rounded-lg bg-white/5 border text-white focus:outline-none transition-colors ${errors.fecha_nacimiento ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors ${errors.fecha_nacimiento ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                         />
-                        {errors.fecha_nacimiento && <p className="text-sm mt-2 text-red-400">{errors.fecha_nacimiento}</p>}
+                        {errors.fecha_nacimiento && <p className="text-xs mt-2 text-red-400">{errors.fecha_nacimiento}</p>}
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Social Networks */}
-                <div className="pt-6 border-t border-white/10">
-                  <h4 className="text-sm font-medium mb-6 uppercase tracking-wider flex items-center gap-2" style={{ color: campaign.color }}>
-                    <Instagram className="w-4 h-4" /> Redes Sociales (mínimo 1)
-                  </h4>
+                <div>
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-8 h-[1px] bg-[#d4a968]"></div>
+                    <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase">Redes Sociales</h4>
+                    <span className="text-gray-600 text-xs">(mínimo 1)</span>
+                  </div>
+                  
                   {errors.redes && (
-                    <div className="mb-4 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                    <div className="mb-6 p-4 border-l-2 border-red-500 bg-red-500/5 text-red-400 text-sm">
                       {errors.redes}
                     </div>
                   )}
 
-                  {/* Instagram */}
-                  <div className="p-6 rounded-xl bg-white/5 border border-white/10 mb-4">
-                    <label className="block text-sm mb-3 font-medium text-white flex items-center gap-2">
-                      <Instagram className="w-4 h-4" style={{ color: campaign.color }} /> Instagram
-                    </label>
-                    <div className="flex items-center mb-4">
-                      <span className="p-4 rounded-l-lg border border-r-0 text-sm bg-black/30 border-white/10 text-gray-500">@</span>
-                      <input
-                        type="text"
-                        placeholder="tu_usuario"
-                        value={formData.instagram_username}
-                        onChange={(e) => updateField('instagram_username', e.target.value.replace('@', ''))}
-                        className="w-full p-4 rounded-r-lg border border-white/10 bg-white/5 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
-                      />
-                    </div>
-                    {formData.instagram_username && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs mb-2 text-gray-500">¿Público o privado?</label>
-                          <select
-                            value={formData.instagram_privado}
-                            onChange={(e) => updateField('instagram_privado', e.target.value)}
-                            className={`w-full p-3 rounded-lg border text-sm bg-white/5 text-white focus:outline-none transition-colors ${errors.instagram_privado ? 'border-red-500/50' : 'border-white/10 focus:border-[#d4a968]'}`}
-                          >
-                            <option value="" className="bg-[#1a1a1a]">Seleccionar</option>
-                            <option value="publico" className="bg-[#1a1a1a]">Público</option>
-                            <option value="privado" className="bg-[#1a1a1a]">Privado</option>
-                          </select>
-                          {errors.instagram_privado && <p className="text-xs mt-1 text-red-400">{errors.instagram_privado}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-xs mb-2 text-gray-500">Seguidores</label>
-                          <select
-                            value={formData.instagram_seguidores}
-                            onChange={(e) => updateField('instagram_seguidores', e.target.value)}
-                            className={`w-full p-3 rounded-lg border text-sm bg-white/5 text-white focus:outline-none transition-colors ${errors.instagram_seguidores ? 'border-red-500/50' : 'border-white/10 focus:border-[#d4a968]'}`}
-                          >
-                            <option value="" className="bg-[#1a1a1a]">Seleccionar</option>
-                            {FOLLOWER_RANGES.map(r => (
-                              <option key={r.value} value={r.value} className="bg-[#1a1a1a]">{r.label}</option>
-                            ))}
-                          </select>
-                          {errors.instagram_seguidores && <p className="text-xs mt-1 text-red-400">{errors.instagram_seguidores}</p>}
-                        </div>
+                  <div className="space-y-8">
+                    {/* Instagram */}
+                    <div className="p-6 border border-white/10 bg-white/[0.02]">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Instagram className="w-4 h-4 text-[#d4a968]" />
+                        <span className="text-white text-sm font-medium">Instagram</span>
                       </div>
-                    )}
-                  </div>
+                      <div className="flex items-center">
+                        <span className="px-4 py-4 border-b border-white/20 text-gray-500 text-sm">@</span>
+                        <input
+                          type="text"
+                          placeholder="tu_usuario"
+                          value={formData.instagram_username}
+                          onChange={(e) => updateField('instagram_username', e.target.value.replace('@', ''))}
+                          className="flex-1 p-4 bg-transparent border-b border-white/20 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                        />
+                      </div>
+                      {formData.instagram_username && (
+                        <div className="grid grid-cols-2 gap-4 mt-6">
+                          <div>
+                            <label className="block text-xs text-gray-500 tracking-wide uppercase mb-2">Visibilidad</label>
+                            <select
+                              value={formData.instagram_privado}
+                              onChange={(e) => updateField('instagram_privado', e.target.value)}
+                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.instagram_privado ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                            >
+                              <option value="" className="bg-black">Seleccionar</option>
+                              <option value="publico" className="bg-black">Público</option>
+                              <option value="privado" className="bg-black">Privado</option>
+                            </select>
+                            {errors.instagram_privado && <p className="text-xs mt-1 text-red-400">{errors.instagram_privado}</p>}
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-500 tracking-wide uppercase mb-2">Seguidores</label>
+                            <select
+                              value={formData.instagram_seguidores}
+                              onChange={(e) => updateField('instagram_seguidores', e.target.value)}
+                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.instagram_seguidores ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                            >
+                              <option value="" className="bg-black">Seleccionar</option>
+                              {FOLLOWER_RANGES.map(r => (
+                                <option key={r.value} value={r.value} className="bg-black">{r.label}</option>
+                              ))}
+                            </select>
+                            {errors.instagram_seguidores && <p className="text-xs mt-1 text-red-400">{errors.instagram_seguidores}</p>}
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
-                  {/* TikTok */}
-                  <div className="p-6 rounded-xl bg-white/5 border border-white/10">
-                    <label className="block text-sm mb-3 font-medium text-white flex items-center gap-2">
-                      <Music2 className="w-4 h-4" style={{ color: campaign.color }} /> TikTok
-                    </label>
-                    <div className="flex items-center mb-4">
-                      <span className="p-4 rounded-l-lg border border-r-0 text-sm bg-black/30 border-white/10 text-gray-500">@</span>
-                      <input
-                        type="text"
-                        placeholder="tu_usuario"
-                        value={formData.tiktok_username}
-                        onChange={(e) => updateField('tiktok_username', e.target.value.replace('@', ''))}
-                        className="w-full p-4 rounded-r-lg border border-white/10 bg-white/5 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
-                      />
-                    </div>
-                    {formData.tiktok_username && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs mb-2 text-gray-500">¿Público o privado?</label>
-                          <select
-                            value={formData.tiktok_privado}
-                            onChange={(e) => updateField('tiktok_privado', e.target.value)}
-                            className={`w-full p-3 rounded-lg border text-sm bg-white/5 text-white focus:outline-none transition-colors ${errors.tiktok_privado ? 'border-red-500/50' : 'border-white/10 focus:border-[#d4a968]'}`}
-                          >
-                            <option value="" className="bg-[#1a1a1a]">Seleccionar</option>
-                            <option value="publico" className="bg-[#1a1a1a]">Público</option>
-                            <option value="privado" className="bg-[#1a1a1a]">Privado</option>
-                          </select>
-                          {errors.tiktok_privado && <p className="text-xs mt-1 text-red-400">{errors.tiktok_privado}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-xs mb-2 text-gray-500">Seguidores</label>
-                          <select
-                            value={formData.tiktok_seguidores}
-                            onChange={(e) => updateField('tiktok_seguidores', e.target.value)}
-                            className={`w-full p-3 rounded-lg border text-sm bg-white/5 text-white focus:outline-none transition-colors ${errors.tiktok_seguidores ? 'border-red-500/50' : 'border-white/10 focus:border-[#d4a968]'}`}
-                          >
-                            <option value="" className="bg-[#1a1a1a]">Seleccionar</option>
-                            {FOLLOWER_RANGES.map(r => (
-                              <option key={r.value} value={r.value} className="bg-[#1a1a1a]">{r.label}</option>
-                            ))}
-                          </select>
-                          {errors.tiktok_seguidores && <p className="text-xs mt-1 text-red-400">{errors.tiktok_seguidores}</p>}
-                        </div>
+                    {/* TikTok */}
+                    <div className="p-6 border border-white/10 bg-white/[0.02]">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Music2 className="w-4 h-4 text-[#d4a968]" />
+                        <span className="text-white text-sm font-medium">TikTok</span>
                       </div>
-                    )}
+                      <div className="flex items-center">
+                        <span className="px-4 py-4 border-b border-white/20 text-gray-500 text-sm">@</span>
+                        <input
+                          type="text"
+                          placeholder="tu_usuario"
+                          value={formData.tiktok_username}
+                          onChange={(e) => updateField('tiktok_username', e.target.value.replace('@', ''))}
+                          className="flex-1 p-4 bg-transparent border-b border-white/20 text-white placeholder-gray-600 focus:border-[#d4a968] focus:outline-none transition-colors"
+                        />
+                      </div>
+                      {formData.tiktok_username && (
+                        <div className="grid grid-cols-2 gap-4 mt-6">
+                          <div>
+                            <label className="block text-xs text-gray-500 tracking-wide uppercase mb-2">Visibilidad</label>
+                            <select
+                              value={formData.tiktok_privado}
+                              onChange={(e) => updateField('tiktok_privado', e.target.value)}
+                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.tiktok_privado ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                            >
+                              <option value="" className="bg-black">Seleccionar</option>
+                              <option value="publico" className="bg-black">Público</option>
+                              <option value="privado" className="bg-black">Privado</option>
+                            </select>
+                            {errors.tiktok_privado && <p className="text-xs mt-1 text-red-400">{errors.tiktok_privado}</p>}
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-500 tracking-wide uppercase mb-2">Seguidores</label>
+                            <select
+                              value={formData.tiktok_seguidores}
+                              onChange={(e) => updateField('tiktok_seguidores', e.target.value)}
+                              className={`w-full p-3 bg-transparent border-b text-sm text-white focus:outline-none transition-colors ${errors.tiktok_seguidores ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                            >
+                              <option value="" className="bg-black">Seleccionar</option>
+                              {FOLLOWER_RANGES.map(r => (
+                                <option key={r.value} value={r.value} className="bg-black">{r.label}</option>
+                              ))}
+                            </select>
+                            {errors.tiktok_seguidores && <p className="text-xs mt-1 text-red-400">{errors.tiktok_seguidores}</p>}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Video Portfolio */}
-                <div className="pt-6 border-t border-white/10">
-                  <h4 className="text-sm font-medium mb-2 uppercase tracking-wider" style={{ color: campaign.color }}>
-                    🎬 Portfolio de Videos
-                  </h4>
+                <div>
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-8 h-[1px] bg-[#d4a968]"></div>
+                    <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase">Portfolio de Videos</h4>
+                  </div>
                   <p className="text-gray-500 text-sm mb-6">Comparte 2 videos que muestren tu estilo de contenido</p>
                   
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     <div>
-                      <label className="block text-sm mb-2 text-gray-400">Link Video 1 *</label>
+                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Link Video 1 *</label>
                       <input
                         type="url"
                         placeholder="https://instagram.com/reel/... o tiktok.com/..."
                         value={formData.video_link_1}
                         onChange={(e) => updateField('video_link_1', e.target.value)}
-                        className={`w-full p-4 rounded-lg bg-white/5 border text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.video_link_1 ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.video_link_1 ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                       />
-                      {errors.video_link_1 && <p className="text-sm mt-2 text-red-400">{errors.video_link_1}</p>}
+                      {errors.video_link_1 && <p className="text-xs mt-2 text-red-400">{errors.video_link_1}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm mb-2 text-gray-400">Link Video 2 *</label>
+                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Link Video 2 *</label>
                       <input
                         type="url"
                         placeholder="https://instagram.com/reel/... o tiktok.com/..."
                         value={formData.video_link_2}
                         onChange={(e) => updateField('video_link_2', e.target.value)}
-                        className={`w-full p-4 rounded-lg bg-white/5 border text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.video_link_2 ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.video_link_2 ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                       />
-                      {errors.video_link_2 && <p className="text-sm mt-2 text-red-400">{errors.video_link_2}</p>}
+                      {errors.video_link_2 && <p className="text-xs mt-2 text-red-400">{errors.video_link_2}</p>}
                     </div>
                   </div>
                 </div>
 
                 {/* Location & Contact */}
-                <div className="pt-6 border-t border-white/10">
-                  <h4 className="text-sm font-medium mb-6 uppercase tracking-wider flex items-center gap-2" style={{ color: campaign.color }}>
-                    <MapPin className="w-4 h-4" /> Ubicación y Contacto
-                  </h4>
+                <div>
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="w-8 h-[1px] bg-[#d4a968]"></div>
+                    <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase">Ubicación y Contacto</h4>
+                  </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm mb-2 text-gray-400">Ciudad *</label>
+                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">Ciudad *</label>
                       <select
                         value={formData.ciudad}
                         onChange={(e) => updateField('ciudad', e.target.value)}
-                        className={`w-full p-4 rounded-lg bg-white/5 border text-white focus:outline-none transition-colors ${errors.ciudad ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.ciudad ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23666\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center', backgroundSize: '24px' }}
                       >
-                        <option value="" className="bg-[#1a1a1a]">Seleccionar</option>
+                        <option value="" className="bg-black">Seleccionar</option>
                         {CITIES.map(city => (
-                          <option key={city} value={city} className="bg-[#1a1a1a]">{city}</option>
+                          <option key={city} value={city} className="bg-black">{city}</option>
                         ))}
                       </select>
-                      {errors.ciudad && <p className="text-sm mt-2 text-red-400">{errors.ciudad}</p>}
+                      {errors.ciudad && <p className="text-xs mt-2 text-red-400">{errors.ciudad}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm mb-2 text-gray-400">WhatsApp *</label>
+                      <label className="block text-xs text-gray-500 tracking-[0.15em] uppercase mb-3">WhatsApp *</label>
                       <input
                         type="tel"
                         placeholder="+595 9XX XXX XXX"
                         value={formData.whatsapp}
                         onChange={(e) => updateField('whatsapp', e.target.value)}
-                        className={`w-full p-4 rounded-lg bg-white/5 border text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.whatsapp ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-transparent border-b text-white placeholder-gray-600 focus:outline-none transition-colors ${errors.whatsapp ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
                       />
-                      {errors.whatsapp && <p className="text-sm mt-2 text-red-400">{errors.whatsapp}</p>}
+                      {errors.whatsapp && <p className="text-xs mt-2 text-red-400">{errors.whatsapp}</p>}
                     </div>
                   </div>
                 </div>
 
                 {/* Confirmations */}
-                <div className="pt-6 border-t border-white/10 space-y-4">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-[1px] bg-[#d4a968]"></div>
+                    <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase">Confirmaciones</h4>
+                  </div>
+
                   {/* Store confirmation */}
-                  <label className={`flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-colors ${formData.confirma_grabar_tienda ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}>
+                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.confirma_grabar_tienda ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/10 hover:border-white/20'}`}>
+                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.confirma_grabar_tienda ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/30'}`}>
+                      {formData.confirma_grabar_tienda && <Check className="w-3 h-3 text-black" />}
+                    </div>
                     <input
                       type="checkbox"
                       checked={formData.confirma_grabar_tienda}
                       onChange={(e) => updateField('confirma_grabar_tienda', e.target.checked)}
-                      className="mt-1 w-5 h-5 rounded accent-[#d4a968]"
+                      className="sr-only"
                     />
                     <div>
-                      <span className="text-white">Confirmo que grabaré el contenido en AVENUE *</span>
-                      <p className="text-gray-500 text-sm mt-1">El contenido debe ser grabado en nuestra tienda física</p>
+                      <span className="text-white text-sm">Confirmo que grabaré el contenido en AVENUE *</span>
+                      <p className="text-gray-500 text-xs mt-1">El contenido debe ser grabado en nuestra tienda física</p>
                     </div>
                   </label>
-                  {errors.confirma_grabar_tienda && <p className="text-sm text-red-400">{errors.confirma_grabar_tienda}</p>}
+                  {errors.confirma_grabar_tienda && <p className="text-xs text-red-400 ml-9">{errors.confirma_grabar_tienda}</p>}
 
                   {/* Terms */}
-                  <label className={`flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-colors ${formData.acepta_condiciones ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}>
+                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.acepta_condiciones ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/10 hover:border-white/20'}`}>
+                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.acepta_condiciones ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/30'}`}>
+                      {formData.acepta_condiciones && <Check className="w-3 h-3 text-black" />}
+                    </div>
                     <input
                       type="checkbox"
                       checked={formData.acepta_condiciones}
                       onChange={(e) => updateField('acepta_condiciones', e.target.checked)}
-                      className="mt-1 w-5 h-5 rounded accent-[#d4a968]"
+                      className="sr-only"
                     />
                     <div>
-                      <span className="text-white">Acepto las condiciones de participación *</span>
-                      <p className="text-gray-500 text-sm mt-1">
+                      <span className="text-white text-sm">Acepto las condiciones de participación *</span>
+                      <p className="text-gray-500 text-xs mt-1">
                         He leído y acepto los{' '}
                         <a 
                           href="/studio/ugc/terms" 
@@ -667,40 +694,42 @@ export const UGCCreators = ({ t, campaignId }) => {
                       </p>
                     </div>
                   </label>
-                  {errors.acepta_condiciones && <p className="text-sm text-red-400">{errors.acepta_condiciones}</p>}
+                  {errors.acepta_condiciones && <p className="text-xs text-red-400 ml-9">{errors.acepta_condiciones}</p>}
 
                   {/* WhatsApp permission */}
-                  <label className={`flex items-start gap-4 p-4 rounded-xl cursor-pointer transition-colors ${formData.acepta_whatsapp ? 'bg-white/10 border border-white/20' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}>
+                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.acepta_whatsapp ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/10 hover:border-white/20'}`}>
+                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.acepta_whatsapp ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/30'}`}>
+                      {formData.acepta_whatsapp && <Check className="w-3 h-3 text-black" />}
+                    </div>
                     <input
                       type="checkbox"
                       checked={formData.acepta_whatsapp}
                       onChange={(e) => updateField('acepta_whatsapp', e.target.checked)}
-                      className="mt-1 w-5 h-5 rounded accent-[#d4a968]"
+                      className="sr-only"
                     />
                     <div>
-                      <span className="text-white">Acepto recibir información por WhatsApp</span>
-                      <p className="text-gray-500 text-sm mt-1">Me gustaría recibir novedades de futuras campañas</p>
+                      <span className="text-white text-sm">Acepto recibir información por WhatsApp</span>
+                      <p className="text-gray-500 text-xs mt-1">Me gustaría recibir novedades de futuras campañas</p>
                     </div>
                   </label>
                 </div>
 
                 {/* Submit */}
-                <div className="pt-6">
+                <div className="pt-8">
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full py-5 font-medium text-lg rounded-lg transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed text-black"
-                    style={{ backgroundColor: campaign.color }}
+                    className="w-full py-5 bg-[#d4a968] text-black font-medium tracking-wide hover:bg-[#c49958] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? (
                       <>
                         <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                        <span>Enviando...</span>
+                        <span className="uppercase text-sm tracking-wider">Enviando...</span>
                       </>
                     ) : (
                       <>
-                        <Sparkles className="w-5 h-5" />
-                        <span>Enviar Aplicación</span>
+                        <span className="uppercase text-sm tracking-wider">Enviar Aplicación</span>
+                        <ArrowRight className="w-4 h-4" />
                       </>
                     )}
                   </button>
