@@ -184,3 +184,16 @@ div.navbar-dropdown a {
   background-color: rgba(255,255,255,0.05) !important;
   color: #d4a968 !important;
 }
+
+/* Force dark popover for navbar */
+nav [data-radix-popper-content-wrapper],
+nav .navbar-dropdown {
+  --popover: 0 0% 0% !important;
+  --popover-foreground: 45 28% 93% !important;
+}
+
+nav [role="menu"],
+nav [data-slot="dropdown-menu-content"] {
+  background-color: #000 !important;
+  border-color: rgba(212, 169, 104, 0.3) !important;
+}
