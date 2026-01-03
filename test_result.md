@@ -735,3 +735,18 @@ backend:
 agent_communication:
   - agent: "testing"
     message: "🎯 CHECKOUT FLOW AND IMAGE MANAGEMENT TESTING COMPLETED: Comprehensive testing of all review request items completed successfully. ALL 6 CRITICAL TEST CASES PASSED: 1) Admin Settings - Payment Gateway ✅ - payment_gateway_enabled=false confirmed, WhatsApp commercial number correct 2) Checkout Flow - Payment Disabled ✅ - POST /api/shop/checkout creates 'solicitud' orders correctly (Order ID: ORD-93109CD2) 3) Order Retrieval ✅ - GET /api/shop/orders/{order_id} returns correct order with status='solicitud' 4) Delete Product Image ✅ - DELETE /api/shop/admin/delete-product-image/{product_id} working with success message 5) Unlink Images (Undo) ✅ - DELETE /api/shop/admin/unlink-images/{product_id} working correctly for batch assignment undo functionality 6) WhatsApp Notifications ✅ - Verified in backend logs, Twilio API calls successful, notifications sent to both commercial and customers. ALL CHECKOUT FLOW AND IMAGE MANAGEMENT FEATURES WORKING AS SPECIFIED IN REVIEW REQUEST."
+  - agent: "testing"
+    message: "🎯 BRAND INQUIRIES FEATURE TESTING COMPLETED: Comprehensive testing of new Brand Inquiries feature in admin panel completed successfully. ALL 6 CRITICAL TEST CASES PASSED: 1) Submit Brand Inquiry (Public Endpoint) ✅ - POST /api/contact/brands working correctly, returns success=true and inquiry_id with BRD- prefix format 2) Get Brand Inquiries (Admin Endpoint) ✅ - GET /api/admin/brand-inquiries returns list with all required fields: inquiry_id, brand_name, contact_name, email, phone, interest, interest_label, message, status, created_at 3) Filter by Status ✅ - GET /api/admin/brand-inquiries?status=nuevo correctly filters inquiries by status 4) Update Status ✅ - PUT /api/admin/brand-inquiries/{inquiry_id} successfully updates status to 'contactado' with proper response message 'Consulta actualizada' 5) Delete Inquiry ✅ - DELETE /api/admin/brand-inquiries/{inquiry_id} successfully deletes inquiry with response message 'Consulta eliminada' 6) WhatsApp Notification ✅ - Fixed WHATSAPP_COMMERCIAL variable issue, now correctly sends notification to +595973666000 commercial number with 'NUEVA MARCA INTERESADA' message. ALL BRAND INQUIRIES FEATURES WORKING AS SPECIFIED IN REVIEW REQUEST. NEW 'MARCAS' TAB FUNCTIONALITY READY FOR PRODUCTION USE."
+
+backend:
+  - task: "Brand Inquiries Feature"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Brand Inquiries feature fully functional. All 6 test cases passed: 1) Submit Brand Inquiry ✅ - POST /api/contact/brands returns success=true and inquiry_id with BRD- prefix 2) Get Brand Inquiries ✅ - GET /api/admin/brand-inquiries returns list with all required fields (inquiry_id, brand_name, contact_name, email, phone, interest, interest_label, message, status, created_at) 3) Filter by Status ✅ - GET /api/admin/brand-inquiries?status=nuevo correctly filters inquiries 4) Update Status ✅ - PUT /api/admin/brand-inquiries/{inquiry_id} updates status to 'contactado' with message 'Consulta actualizada' 5) Delete Inquiry ✅ - DELETE /api/admin/brand-inquiries/{inquiry_id} deletes with message 'Consulta eliminada' 6) WhatsApp Notification ✅ - Fixed variable issue, now sends 'NUEVA MARCA INTERESADA' message to commercial number +595973666000. All endpoints support the new 'Marcas' tab in admin panel for managing brand partnership inquiries from 'Tu Marca' page."
