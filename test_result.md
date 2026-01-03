@@ -19,6 +19,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL FAILURE: Video upload with simplified code test FAILED. The race condition issue has returned. After clicking 'Aplicar cambios', user is redirected back to Admin Panel instead of staying in Website Builder. Console logs show: 'onSelect called successfully', 'Modifications updated: 2 items', but also 'UPLOAD ERROR: Failed to fetch'. The handleImageChange function is being called (logs show '=== HANDLE IMAGE CHANGE CALLED ===' and '=== HANDLE IMAGE CHANGE COMPLETE ===') but the component is still unmounting. Final state: Current URL shows '/admin', no 'Guardar' button present, no iframe present. The simplified code changes did not resolve the race condition issue."
+      - working: false
+        agent: "testing"
+        comment: "❌ FINAL TEST CONFIRMATION: Race condition issue DEFINITIVELY CONFIRMED with 90MB video upload test. Test results: ✅ Login successful ✅ Admin panel access ✅ Website Builder loads correctly ✅ Iframe and 'Guardar' button visible ✅ Media modal opens ✅ Video file upload works ✅ 'Aplicar cambios' button visible and clickable ❌ CRITICAL FAILURE: After clicking 'Aplicar cambios', user is redirected to Admin Panel (URL: /admin) instead of staying in Website Builder. Console logs show the handleImageChange function executes ('=== APPLY BUTTON CLICKED ===', '=== HANDLE IMAGE CHANGE CALLED ===', '=== HANDLE IMAGE CHANGE COMPLETE ===') but the component still unmounts and redirects. The race condition persists despite previous fix attempts. This is a HIGH PRIORITY issue requiring a different approach to resolve."
 
 metadata:
   created_by: "testing_agent"
