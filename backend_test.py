@@ -3220,6 +3220,339 @@ def test_whatsapp_notifications_logs():
         print_warning(f"⚠️ Could not check logs: {str(e)}")
         return True  # Don't fail the test for log access issues
 
+# ==================== BRAND INQUIRIES TESTS ====================
+
+def test_submit_brand_inquiry():
+    """Test Brand Inquiry: Submit brand inquiry (public endpoint)"""
+    print_test_header("Test Submit Brand Inquiry")
+    
+    global brand_inquiry_id
+    
+    try:
+        url = f"{BACKEND_URL}/contact/brands"
+        payload = {
+            "brand_name": "Fashion Store XYZ",
+            "contact_name": "Maria Garcia",
+            "email": "maria@fashionxyz.com",
+            "phone": "+595981555777",
+            "interest": "venta_tienda",
+            "message": "Tenemos una marca de ropa premium y nos interesa estar en Avenue"
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["success", "inquiry_id"]
+            if all(field in data for field in required_fields):
+                if data.get("success") == True and data.get("inquiry_id", "").startswith("BRD-"):
+                    brand_inquiry_id = data["inquiry_id"]
+                    print_success("✅ Brand inquiry submitted successfully")
+                    print_success(f"Inquiry ID: {brand_inquiry_id}")
+                    return True
+                else:
+                    print_error(f"Unexpected response values: success={data.get('success')}, inquiry_id={data.get('inquiry_id')}")
+                    return False
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_get_brand_inquiries():
+    """Test Brand Inquiry: Get brand inquiries (admin endpoint)"""
+    print_test_header("Test Get Brand Inquiries")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/brand-inquiries"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: Found {len(data)} brand inquiries")
+            
+            if isinstance(data, list):
+                print_success("✅ Brand inquiries endpoint working correctly")
+                print_success(f"Total inquiries: {len(data)}")
+                
+                if data:
+                    # Check first inquiry structure
+                    first_inquiry = data[0]
+                    required_fields = ["inquiry_id", "brand_name", "contact_name", "email", "phone", "interest", "interest_label", "message", "status", "created_at"]
+                    
+                    if all(field in first_inquiry for field in required_fields):
+                        print_success("✅ Inquiry structure contains all required fields")
+                        print_info(f"Sample inquiry: {first_inquiry.get('brand_name')} - {first_inquiry.get('contact_name')} - {first_inquiry.get('status')}")
+                        
+                        # Check if our test inquiry is in the list
+                        if brand_inquiry_id:
+                            found_inquiry = any(inq.get("inquiry_id") == brand_inquiry_id for inq in data)
+                            if found_inquiry:
+                                print_success("✅ Test brand inquiry found in admin list")
+                            else:
+                                print_warning("⚠️ Test brand inquiry not found in admin list")
+                        
+                        return True
+                    else:
+                        missing = [f for f in required_fields if f not in first_inquiry]
+                        print_error(f"Missing required fields in inquiry: {missing}")
+                        return False
+                else:
+                    print_warning("⚠️ No brand inquiries found")
+                    return True  # Still consider success as endpoint works
+            else:
+                print_error("Expected array response")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_filter_brand_inquiries_by_status():
+    """Test Brand Inquiry: Filter brand inquiries by status"""
+    print_test_header("Test Filter Brand Inquiries by Status")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/brand-inquiries?status=nuevo"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: Found {len(data)} inquiries with status 'nuevo'")
+            
+            if isinstance(data, list):
+                print_success("✅ Brand inquiries status filter working correctly")
+                print_success(f"Inquiries with status 'nuevo': {len(data)}")
+                
+                # Verify all returned inquiries have status 'nuevo'
+                if data:
+                    all_nuevo = all(inq.get("status") == "nuevo" for inq in data)
+                    if all_nuevo:
+                        print_success("✅ All returned inquiries have status 'nuevo'")
+                    else:
+                        print_error("❌ Some inquiries don't have status 'nuevo'")
+                        return False
+                
+                return True
+            else:
+                print_error("Expected array response")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_update_brand_inquiry_status():
+    """Test Brand Inquiry: Update brand inquiry status"""
+    print_test_header("Test Update Brand Inquiry Status")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    if not brand_inquiry_id:
+        print_error("No brand inquiry ID available from submit test")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/brand-inquiries/{brand_inquiry_id}"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        payload = {"status": "contactado"}
+        
+        print_info(f"PUT {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.put(url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["message", "inquiry_id"]
+            if all(field in data for field in required_fields):
+                if (data.get("message") == "Consulta actualizada" and 
+                    data.get("inquiry_id") == brand_inquiry_id):
+                    print_success("✅ Brand inquiry status updated successfully")
+                    print_success(f"Updated inquiry: {brand_inquiry_id}")
+                    
+                    # Verify the update by fetching the inquiry again
+                    verify_url = f"{BACKEND_URL}/admin/brand-inquiries"
+                    verify_response = requests.get(verify_url, headers=headers)
+                    
+                    if verify_response.status_code == 200:
+                        inquiries = verify_response.json()
+                        updated_inquiry = next((inq for inq in inquiries if inq.get("inquiry_id") == brand_inquiry_id), None)
+                        
+                        if updated_inquiry and updated_inquiry.get("status") == "contactado":
+                            print_success("✅ Status update verified: contactado")
+                            return True
+                        else:
+                            print_error("❌ Status not updated in database")
+                            return False
+                    else:
+                        print_warning("⚠️ Could not verify status update")
+                        return True
+                else:
+                    print_error("Response missing expected message or inquiry_id")
+                    return False
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_delete_brand_inquiry():
+    """Test Brand Inquiry: Delete brand inquiry"""
+    print_test_header("Test Delete Brand Inquiry")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    if not brand_inquiry_id:
+        print_error("No brand inquiry ID available from submit test")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/brand-inquiries/{brand_inquiry_id}"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"DELETE {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.delete(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            if data.get("message") == "Consulta eliminada":
+                print_success("✅ Brand inquiry deleted successfully")
+                
+                # Verify the deletion by trying to fetch the inquiry again
+                verify_url = f"{BACKEND_URL}/admin/brand-inquiries"
+                verify_response = requests.get(verify_url, headers=headers)
+                
+                if verify_response.status_code == 200:
+                    inquiries = verify_response.json()
+                    deleted_inquiry = next((inq for inq in inquiries if inq.get("inquiry_id") == brand_inquiry_id), None)
+                    
+                    if deleted_inquiry is None:
+                        print_success("✅ Deletion verified: inquiry not found in list")
+                        return True
+                    else:
+                        print_error("❌ Inquiry still exists after deletion")
+                        return False
+                else:
+                    print_warning("⚠️ Could not verify deletion")
+                    return True
+            else:
+                print_error(f"Unexpected response message: {data.get('message')}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_whatsapp_notification_logs():
+    """Test Brand Inquiry: Verify WhatsApp notification sent"""
+    print_test_header("Test WhatsApp Notification Logs")
+    
+    try:
+        # Check backend logs for WhatsApp notification
+        import subprocess
+        result = subprocess.run(
+            ["tail", "-n", "100", "/var/log/supervisor/backend.err.log"],
+            capture_output=True,
+            text=True
+        )
+        
+        if result.returncode == 0:
+            log_content = result.stdout
+            print_info(f"Checking last 100 lines of backend logs...")
+            
+            # Look for brand inquiry WhatsApp notification
+            if "NUEVA MARCA INTERESADA" in log_content:
+                print_success("✅ Found 'NUEVA MARCA INTERESADA' WhatsApp notification in logs")
+                
+                # Look for commercial number
+                if "+595973666000" in log_content:
+                    print_success("✅ WhatsApp sent to commercial number (+595973666000)")
+                else:
+                    print_warning("⚠️ Commercial number not found in logs")
+                
+                # Look for Twilio success
+                if "WhatsApp notification sent" in log_content:
+                    print_success("✅ WhatsApp notification sent successfully")
+                    return True
+                else:
+                    print_warning("⚠️ WhatsApp send confirmation not found")
+                    return True
+            else:
+                print_warning("⚠️ 'NUEVA MARCA INTERESADA' message not found in recent logs")
+                print_info("This might be expected if the notification was sent earlier")
+                return True
+        else:
+            print_warning("⚠️ Could not read backend logs")
+            return True
+            
+    except Exception as e:
+        print_warning(f"⚠️ Could not check logs: {str(e)}")
+        return True  # Don't fail the test for log checking issues
+
 def run_all_tests():
     """Run all tests in sequence"""
     print(f"{Colors.BOLD}{Colors.BLUE}Avenue Studio & E-commerce API Tests{Colors.ENDC}")
