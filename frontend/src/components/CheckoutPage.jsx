@@ -108,12 +108,30 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
   const [address, setAddress] = useState('');
   const [reference, setReference] = useState('');
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState('');
+  
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
     phone: user?.phone || '',
     notes: ''
   });
+  
+  // Billing data state
+  const [billingData, setBillingData] = useState({
+    razon_social: '',
+    ruc: '',
+    direccion_fiscal: ''
+  });
+  const [needsInvoice, setNeedsInvoice] = useState(false);
+  
   const geocoderRef = useRef(null);
 
   const { isLoaded } = useJsApiLoader({
