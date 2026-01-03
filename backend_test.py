@@ -40,6 +40,7 @@ def print_info(message):
 # Global variables to store tokens and IDs
 admin_token = None
 test_results = []
+test_coupon_id = None
 
 def add_test_result(test_name, status, message=""):
     """Add test result to global results list"""
