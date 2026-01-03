@@ -653,6 +653,18 @@ function AppRouter() {
               t={t}
             />
           } />
+
+          <Route path="/shop/terminos-condiciones" element={
+            <TerminosEcommerce 
+              cart={cart}
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
+          } />
         </Routes>
       </div>
     </>
