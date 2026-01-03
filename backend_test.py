@@ -3632,6 +3632,14 @@ def run_all_tests():
         ("Test Assign Images Endpoint", test_assign_images_endpoint),
         ("Test Batch Assignment Admin Access", test_batch_image_assignment_admin_access),
         ("Test Batch Assignment Brand Filtering", test_batch_image_assignment_brand_filtering),
+        
+        # NEW: Brand Inquiries Tests
+        ("Test Submit Brand Inquiry", test_submit_brand_inquiry),
+        ("Test Get Brand Inquiries", test_get_brand_inquiries),
+        ("Test Filter Brand Inquiries by Status", test_filter_brand_inquiries_by_status),
+        ("Test Update Brand Inquiry Status", test_update_brand_inquiry_status),
+        ("Test Delete Brand Inquiry", test_delete_brand_inquiry),
+        ("Test WhatsApp Notification Logs", test_whatsapp_notification_logs),
     ]
     
     results = []
