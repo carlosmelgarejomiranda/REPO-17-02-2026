@@ -262,59 +262,58 @@ export const UGCCreators = ({ t, campaignId }) => {
       <section className="relative h-[50vh] min-h-[400px] flex items-center">
         <div className="absolute inset-0">
           <img src={CREATOR_HERO} alt="UGC Creators" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/50" />
-          {/* Campaign Color Overlay */}
-          <div className="absolute inset-0 opacity-20" style={{ background: `radial-gradient(circle at 80% 50%, ${campaign.color}40, transparent 60%)` }}></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-black/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/40" />
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full">
-          <a href="/studio/ugc" className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors mb-6">
+          <a href="/studio/ugc" className="inline-flex items-center gap-2 text-gray-300 hover:text-[#d4a968] transition-colors mb-8">
             <ChevronLeft className="w-4 h-4" />
-            <span className="text-sm">Ver todas las campañas</span>
+            <span className="text-xs tracking-[0.15em] uppercase">Ver todas las campañas</span>
           </a>
           
           {/* Campaign Badge */}
           <div 
-            className="inline-block px-5 py-2 rounded-full text-sm font-medium mb-6"
-            style={{ backgroundColor: campaign.color, color: '#0d0d0d' }}
+            className="inline-block px-5 py-2 text-xs font-medium tracking-[0.15em] uppercase mb-6"
+            style={{ backgroundColor: campaign.color, color: '#000' }}
           >
             Campaña {campaign.brand}
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white leading-tight mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white leading-tight mb-6">
             {campaign.title.split(' ').slice(0, 2).join(' ')} <span className="italic" style={{ color: campaign.color }}>{campaign.title.split(' ').slice(2).join(' ')}</span>
           </h1>
           
-          <p className="text-lg text-gray-300 max-w-xl">
+          <p className="text-lg text-gray-300 max-w-xl leading-relaxed">
             {campaign.description}
           </p>
         </div>
       </section>
 
       {/* Canje Highlight */}
-      <section className="py-16 px-6 border-t border-white/25" style={{ backgroundColor: '#0d0d0d' }}>
+      <section className="py-20 px-6 bg-[#0f0f0f] border-t border-white/20">
         <div className="max-w-5xl mx-auto">
-          <div className="relative overflow-hidden rounded-2xl p-8 md:p-12" style={{ backgroundColor: `${campaign.color}10`, border: `1px solid ${campaign.color}30` }}>
-            {/* Decorative */}
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20" style={{ backgroundColor: campaign.color }}></div>
-            
-            <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-              <div className="w-20 h-20 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: campaign.color }}>
-                <Gift className="w-10 h-10 text-black" />
+          <div className="text-center mb-8">
+            <p className="text-[#d4a968] text-xs font-medium tracking-[0.3em] uppercase mb-4">Beneficio</p>
+            <h2 className="text-3xl md:text-4xl font-light text-white">
+              Mega Canje en <span className="italic text-[#d4a968]">Tienda</span>
+            </h2>
+          </div>
+          
+          <div className="bg-[#141414] border border-white/30 p-10 md:p-12">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="w-20 h-20 bg-[#d4a968]/10 flex items-center justify-center flex-shrink-0">
+                <Gift className="w-10 h-10 text-[#d4a968]" />
               </div>
               
               <div className="flex-1 text-center md:text-left">
-                <h3 className="text-2xl font-light text-white mb-2">
-                  🎁 Mega Canje en Tienda
-                </h3>
-                <p className="text-xl text-white mb-2">
+                <p className="text-xl text-gray-200 mb-4 leading-relaxed">
                   {campaign.canje.description.split('Gs.')[0]}
-                  <span className="font-medium" style={{ color: campaign.color }}>Gs. {campaign.canje.amount}</span>
+                  <span className="font-medium text-[#d4a968]">Gs. {campaign.canje.amount}</span>
                   {campaign.canje.description.split(campaign.canje.amount)[1] || '.'}
                 </p>
-                <div className="flex items-center gap-2 justify-center md:justify-start text-gray-300">
-                  <MapPin className="w-4 h-4" />
+                <div className="flex items-center gap-3 justify-center md:justify-start text-gray-400">
+                  <MapPin className="w-4 h-4 text-[#d4a968]" />
                   <span className="text-sm">{campaign.location}</span>
                 </div>
               </div>
@@ -324,16 +323,17 @@ export const UGCCreators = ({ t, campaignId }) => {
       </section>
 
       {/* Requirements */}
-      <section className="py-16 px-6">
+      <section className="py-20 px-6 bg-[#0a0a0a]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-light text-white mb-2">
-              Requisitos de la <span className="italic" style={{ color: campaign.color }}>campaña</span>
+            <p className="text-[#d4a968] text-xs font-medium tracking-[0.3em] uppercase mb-4">Requisitos</p>
+            <h2 className="text-3xl md:text-4xl font-light text-white mb-3">
+              Requisitos de la <span className="italic text-[#d4a968]">campaña</span>
             </h2>
             <p className="text-gray-400">Asegúrate de cumplir con estos requisitos antes de aplicar</p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { icon: Users, text: campaign.requirements.genderText },
               { icon: Star, text: `Mayores de ${campaign.requirements.minAge} años` },
@@ -345,12 +345,12 @@ export const UGCCreators = ({ t, campaignId }) => {
               return (
                 <div 
                   key={i} 
-                  className="flex items-center gap-4 p-5 rounded-xl bg-white/5 border border-white/30 hover:border-white/25 transition-colors"
+                  className="flex items-center gap-4 p-6 bg-[#141414] border border-white/30 hover:border-[#d4a968]/50 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${campaign.color}20` }}>
-                    <Icon className="w-5 h-5" style={{ color: campaign.color }} />
+                  <div className="w-12 h-12 bg-[#d4a968]/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-[#d4a968]" />
                   </div>
-                  <span className="text-gray-300">{req.text}</span>
+                  <span className="text-gray-200">{req.text}</span>
                 </div>
               );
             })}
