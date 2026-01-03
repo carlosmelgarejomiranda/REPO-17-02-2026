@@ -59,6 +59,10 @@ export const WebsiteBuilder = ({ onClose }) => {
           const editId = key.replace('img:', '');
           const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
           if (el) el.src = value;
+        } else if (key.startsWith('video:')) {
+          const editId = key.replace('video:', '');
+          const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
+          if (el) el.src = value;
         } else if (key.startsWith('imgpos:')) {
           const editId = key.replace('imgpos:', '');
           const el = iframeDoc.querySelector(`[data-edit-id="${editId}"]`);
