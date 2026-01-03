@@ -1707,7 +1707,7 @@ async def submit_brand_inquiry(inquiry: BrandInquiry):
 _Revisar en panel de administración_"""
     
     try:
-        await send_whatsapp_notification(NOTIFICATION_WHATSAPP_ECOMMERCE, whatsapp_message)
+        await send_whatsapp_notification(NOTIFICATION_WHATSAPP_MARCAS, whatsapp_message)
     except Exception as e:
         logger.error(f"Failed to send WhatsApp for brand inquiry: {e}")
     
