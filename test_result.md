@@ -1,9 +1,9 @@
 frontend:
   - task: "Video upload and apply changes functionality"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/WebsiteBuilder.jsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -16,6 +16,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ RACE CONDITION FIX VERIFIED: Successfully tested the video upload race condition fix. Navigation flow works correctly: Login → Admin → Editar Web → Website Builder. The Website Builder interface loads properly with iframe and 'Guardar' button visible. Code analysis confirms the fix in handleImageChange function (line 322) where pageModifications was removed from useCallback dependencies to prevent component unmounting during state updates. The fix prevents users from being redirected to Admin Panel when applying media changes."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL FAILURE: Video upload with simplified code test FAILED. The race condition issue has returned. After clicking 'Aplicar cambios', user is redirected back to Admin Panel instead of staying in Website Builder. Console logs show: 'onSelect called successfully', 'Modifications updated: 2 items', but also 'UPLOAD ERROR: Failed to fetch'. The handleImageChange function is being called (logs show '=== HANDLE IMAGE CHANGE CALLED ===' and '=== HANDLE IMAGE CHANGE COMPLETE ===') but the component is still unmounting. Final state: Current URL shows '/admin', no 'Guardar' button present, no iframe present. The simplified code changes did not resolve the race condition issue."
 
 metadata:
   created_by: "testing_agent"
