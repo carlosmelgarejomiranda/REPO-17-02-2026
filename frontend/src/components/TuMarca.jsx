@@ -33,7 +33,7 @@ const BRANDS_SHOWCASE = [
   'SEROTONINA', 'FILA', 'PREMIATA', 'SUN68', 'MALVA', 'AGUARA', 'SANTAL'
 ];
 
-export const TuMarca = ({ t }) => {
+export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage }) => {
   // Apply saved modifications from website builder
   useBuilderModifications('tu-marca');
   
