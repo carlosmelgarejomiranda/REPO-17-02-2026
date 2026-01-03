@@ -579,6 +579,28 @@ export const AdminDashboard = ({ user }) => {
                   >
                     Limpiar
                   </button>
+                  <Button
+                    onClick={() => exportToExcel(ugcApplications, 'ugc_creators', [
+                      { key: 'nombre', label: 'Nombre' },
+                      { key: 'apellido', label: 'Apellido' },
+                      { key: 'email', label: 'Email' },
+                      { key: 'whatsapp', label: 'WhatsApp' },
+                      { key: 'ciudad', label: 'Ciudad' },
+                      { key: 'sexo', label: 'Sexo' },
+                      { key: 'instagram_url', label: 'Instagram' },
+                      { key: 'instagram_seguidores', label: 'Seguidores IG' },
+                      { key: 'tiktok_url', label: 'TikTok' },
+                      { key: 'tiktok_seguidores', label: 'Seguidores TT' },
+                      { key: 'video_link_1', label: 'Video 1' },
+                      { key: 'video_link_2', label: 'Video 2' },
+                      { key: 'status', label: 'Estado' },
+                      { key: 'created_at', label: 'Fecha', getValue: (item) => item.created_at ? new Date(item.created_at).toLocaleDateString('es-PY') : '' }
+                    ])}
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <FileSpreadsheet className="w-4 h-4 mr-2" />
+                    Exportar
+                  </Button>
                 </div>
               </div>
             </div>
