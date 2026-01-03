@@ -3913,6 +3913,13 @@ def run_all_tests():
         ("Test Update Brand Inquiry Status", test_update_brand_inquiry_status),
         ("Test Delete Brand Inquiry", test_delete_brand_inquiry),
         ("Test WhatsApp Notification Logs", test_whatsapp_notification_logs),
+        
+        # VIDEO UPLOAD TESTS (Review Request)
+        ("Test Video Upload - Small File (Base64)", test_video_upload_small_file),
+        ("Test Video Upload - Large File (File Storage)", test_video_upload_large_file),
+        ("Test Video Upload - Directory Verification", test_video_upload_directory_exists),
+        ("Test Image Upload", test_image_upload),
+        ("Test Upload Error Handling", test_upload_error_handling),
     ]
     
     results = []
