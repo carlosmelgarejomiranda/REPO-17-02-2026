@@ -465,7 +465,14 @@ function AppRouter() {
                 onLogout={logout}
               />
               <div style={{ paddingTop: '80px' }}>
-                <StudioLanding t={t} />
+                <StudioLanding 
+                  t={t} 
+                  user={user}
+                  onLoginClick={() => setShowLoginModal(true)}
+                  onLogout={handleLogout}
+                  language={language}
+                  setLanguage={setLanguage}
+                />
               </div>
               <Footer t={t} />
             </>
