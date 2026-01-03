@@ -26,8 +26,10 @@ metadata:
   test_sequence: 1
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus:
+    - "Video upload and apply changes functionality"
+  stuck_tasks:
+    - "Video upload and apply changes functionality"
   test_all: false
   test_priority: "high_first"
 
@@ -38,3 +40,5 @@ agent_communication:
     message: "✅ TEST COMPLETED SUCCESSFULLY: Video upload and apply changes functionality is working correctly. The fix has resolved the issue where users were being redirected to Admin Panel after applying media changes. All expected console logs are present and the user stays in Website Builder as intended."
   - agent: "testing"
     message: "✅ RACE CONDITION FIX VERIFICATION COMPLETE: Confirmed the React race condition fix is working. The issue was in the handleImageChange useCallback where pageModifications was included as a dependency, causing component unmounting when state updated. The fix (line 322 in WebsiteBuilder.jsx) removes pageModifications from dependencies, preventing unwanted redirects. Navigation flow tested successfully: Login → Admin Panel → Website Builder. Interface remains stable with iframe and Guardar button visible."
+  - agent: "testing"
+    message: "❌ CRITICAL TEST FAILURE: The video upload race condition issue has NOT been resolved despite the simplified code changes. Test results show that after clicking 'Aplicar cambios', the user is still being redirected to the Admin Panel instead of staying in the Website Builder. The handleImageChange function executes (console logs confirm this) but the component still unmounts. Console shows 'UPLOAD ERROR: Failed to fetch' which may be related to the issue. The simplified code approach (removing useCallback, capturing mediaTarget locally, closing modal first) did not fix the underlying race condition. This is a HIGH PRIORITY issue that requires further investigation and a different approach to resolve."
