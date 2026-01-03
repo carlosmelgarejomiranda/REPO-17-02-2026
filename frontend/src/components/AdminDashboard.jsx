@@ -393,6 +393,9 @@ export const AdminDashboard = ({ user }) => {
         {/* Images Tab */}
         {activeTab === 'images' && <ProductImagesManager />}
 
+        {/* Coupons Tab */}
+        {activeTab === 'coupons' && <CouponsManager />}
+
         {/* Reservations Tab */}
         {activeTab === 'reservations' && (
           <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
