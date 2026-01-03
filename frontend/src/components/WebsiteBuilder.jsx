@@ -133,76 +133,101 @@ export const WebsiteBuilder = ({ onClose }) => {
   }, []);
 
   const handleImageChange = useCallback((newUrl, position) => {
+    console.log('=== APPLYING MEDIA CHANGE START ===');
+    console.log('newUrl:', newUrl?.substring(0, 100));
+    console.log('position:', position);
+    console.log('mediaTarget:', JSON.stringify(mediaTarget));
+    
+    // Validaciones iniciales
+    if (!newUrl) {
+      console.error('No URL provided');
+      alert('Error: No se proporcionó URL');
+      return;
+    }
+    
+    if (!mediaTarget) {
+      console.error('No mediaTarget');
+      alert('Error: No hay elemento seleccionado');
+      setShowMediaModal(false);
+      return;
+    }
+    
+    if (!iframeRef.current) {
+      console.error('No iframeRef');
+      alert('Error: No se encontró el iframe');
+      setShowMediaModal(false);
+      setMediaTarget(null);
+      return;
+    }
+    
+    // Intentar acceder al documento del iframe de forma segura
+    let iframeDoc = null;
     try {
-      console.log('=== APPLYING MEDIA CHANGE ===');
-      console.log('URL length:', newUrl?.length || 0);
-      console.log('Media target:', mediaTarget);
-      
-      if (!mediaTarget || !iframeRef.current) {
-        console.error('Missing mediaTarget or iframeRef');
-        setShowMediaModal(false);
-        setMediaTarget(null);
-        return;
+      iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+    } catch (crossOriginError) {
+      console.error('Cross-origin error accessing iframe:', crossOriginError);
+      alert('Error de seguridad: No se puede acceder al iframe. Intenta recargar la página.');
+      setShowMediaModal(false);
+      setMediaTarget(null);
+      return;
+    }
+    
+    if (!iframeDoc) {
+      console.error('Cannot access iframe document - null');
+      alert('Error: No se puede acceder al documento del iframe');
+      setShowMediaModal(false);
+      setMediaTarget(null);
+      return;
+    }
+    
+    console.log('Iframe document accessed successfully');
+    
+    // Helper to check if URL is video
+    const isVideo = (url) => {
+      if (!url) return false;
+      const videoExtensions = ['.mp4', '.mov', '.webm', '.avi', '.m4v'];
+      const videoMimeTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
+      const lowerUrl = url.toLowerCase();
+      if (url.startsWith('data:video/')) return true;
+      if (url.startsWith('data:')) {
+        return videoMimeTypes.some(type => url.includes(type));
       }
-      
-      const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
-      if (!iframeDoc) {
-        console.error('Cannot access iframe document');
-        alert('Error: No se puede acceder al documento del iframe');
-        setShowMediaModal(false);
-        setMediaTarget(null);
-        return;
-      }
-      
-      // Helper to check if URL is video
-      const isVideo = (url) => {
-        if (!url) return false;
-        const videoExtensions = ['.mp4', '.mov', '.webm', '.avi', '.m4v'];
-        const videoMimeTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
-        const lowerUrl = url.toLowerCase();
-        if (url.startsWith('data:')) {
-          return videoMimeTypes.some(type => url.includes(type));
-        }
-        return videoExtensions.some(ext => lowerUrl.includes(ext));
-      };
+      return videoExtensions.some(ext => lowerUrl.includes(ext));
+    };
 
-      const isNewUrlVideo = isVideo(newUrl);
-      console.log('Is video:', isNewUrlVideo);
-      
-      // Check if base64 video is too large (>10MB base64 = ~7.5MB file)
-      if (isNewUrlVideo && newUrl.startsWith('data:') && newUrl.length > 10 * 1024 * 1024) {
-        console.error('Base64 video too large:', newUrl.length);
-        alert('El video es demasiado grande para cargar en esta página. Por favor, usa un video más pequeño (máximo ~7MB) o proporciona una URL externa.');
-        return;
-      }
-      
+    const isNewUrlVideo = isVideo(newUrl);
+    console.log('Is video:', isNewUrlVideo);
+    
+    // Check if base64 video is too large
+    if (isNewUrlVideo && newUrl.startsWith('data:') && newUrl.length > 10 * 1024 * 1024) {
+      console.error('Base64 video too large:', newUrl.length);
+      alert('El video es demasiado grande. Por favor usa un video más pequeño o proporciona una URL externa.');
+      return;
+    }
+    
+    try {
       if (mediaTarget.type === 'img' || mediaTarget.type === 'video') {
         const el = iframeDoc.querySelector(`[data-edit-id="${mediaTarget.editId}"]`);
-        console.log('Found element:', el?.tagName);
+        console.log('Found element:', el?.tagName, 'editId:', mediaTarget.editId);
         
         if (el) {
           const parent = el.parentElement;
           
-          // If switching between image and video, we need to replace the element
+          // If switching between image and video, replace the element
           if ((el.tagName === 'IMG' && isNewUrlVideo) || (el.tagName === 'VIDEO' && !isNewUrlVideo)) {
             console.log('Replacing element type from', el.tagName, 'to', isNewUrlVideo ? 'VIDEO' : 'IMG');
             const newEl = iframeDoc.createElement(isNewUrlVideo ? 'video' : 'img');
             
-            // For videos, set attributes BEFORE setting src to prevent immediate loading issues
             if (isNewUrlVideo) {
               newEl.setAttribute('muted', '');
               newEl.setAttribute('loop', '');
               newEl.setAttribute('playsinline', '');
-              newEl.setAttribute('preload', 'metadata'); // Only load metadata, not full video
+              newEl.setAttribute('preload', 'metadata');
               newEl.muted = true;
-              // Don't autoplay - let the video load first
-              // newEl.setAttribute('autoplay', '');
             }
             
             newEl.className = el.className;
             newEl.setAttribute('data-edit-id', mediaTarget.editId);
-            
-            // Set src after other attributes
             newEl.src = newUrl;
             
             if (!isNewUrlVideo && position) {
@@ -220,7 +245,8 @@ export const WebsiteBuilder = ({ onClose }) => {
             if (!isNewUrlVideo && position) el.style.objectPosition = position;
           }
         } else {
-          console.warn('Element not found:', mediaTarget.editId);
+          console.warn('Element not found with editId:', mediaTarget.editId);
+          // Still save the modification even if element not found in preview
         }
       } else if (mediaTarget.type === 'background') {
         const element = iframeDoc.querySelector(`[data-bg-edit-id="${mediaTarget.editId}"]`);
@@ -230,22 +256,26 @@ export const WebsiteBuilder = ({ onClose }) => {
         }
       }
       
+      // Save the modification
       const newMods = { ...pageModifications };
       const modType = isNewUrlVideo ? 'video' : (mediaTarget.type === 'background' ? 'background' : 'img');
       newMods[`${modType}:${mediaTarget.editId}`] = newUrl;
       if (position && !isNewUrlVideo) newMods[`imgpos:${mediaTarget.editId}`] = position;
       
+      console.log('Saving modifications:', Object.keys(newMods).length, 'items');
       setPageModifications(newMods);
       setHasChanges(true);
-      console.log('=== MEDIA CHANGE APPLIED ===');
-    } catch (error) {
-      console.error('=== ERROR APPLYING MEDIA CHANGE ===');
-      console.error('Error:', error);
-      alert(`Error al aplicar cambios: ${error.message}`);
-    } finally {
-      setShowMediaModal(false);
-      setMediaTarget(null);
+      
+      console.log('=== MEDIA CHANGE APPLIED SUCCESSFULLY ===');
+      
+    } catch (domError) {
+      console.error('DOM manipulation error:', domError);
+      alert(`Error al aplicar cambios en el DOM: ${domError.message}`);
     }
+    
+    // Close modal after everything is done
+    setShowMediaModal(false);
+    setMediaTarget(null);
   }, [mediaTarget, pageModifications]);
 
   const handleCarouselChange = useCallback((newImages) => {
