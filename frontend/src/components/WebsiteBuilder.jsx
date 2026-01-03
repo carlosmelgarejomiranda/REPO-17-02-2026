@@ -88,11 +88,48 @@ export const WebsiteBuilder = ({ onClose }) => {
     if (mediaTarget && iframeRef.current) {
       const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
       
-      if (mediaTarget.type === 'img') {
-        const img = iframeDoc.querySelector(`[data-edit-id="${mediaTarget.editId}"]`);
-        if (img) {
-          img.src = newUrl;
-          if (position) img.style.objectPosition = position;
+      // Helper to check if URL is video
+      const isVideo = (url) => {
+        if (!url) return false;
+        const videoExtensions = ['.mp4', '.mov', '.webm', '.avi', '.m4v'];
+        const videoMimeTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
+        const lowerUrl = url.toLowerCase();
+        if (url.startsWith('data:')) {
+          return videoMimeTypes.some(type => url.includes(type));
+        }
+        return videoExtensions.some(ext => lowerUrl.includes(ext));
+      };
+
+      const isNewUrlVideo = isVideo(newUrl);
+      
+      if (mediaTarget.type === 'img' || mediaTarget.type === 'video') {
+        const el = iframeDoc.querySelector(`[data-edit-id="${mediaTarget.editId}"]`);
+        if (el) {
+          const parent = el.parentElement;
+          
+          // If switching between image and video, we need to replace the element
+          if ((el.tagName === 'IMG' && isNewUrlVideo) || (el.tagName === 'VIDEO' && !isNewUrlVideo)) {
+            const newEl = iframeDoc.createElement(isNewUrlVideo ? 'video' : 'img');
+            newEl.src = newUrl;
+            newEl.className = el.className;
+            newEl.setAttribute('data-edit-id', mediaTarget.editId);
+            
+            if (isNewUrlVideo) {
+              newEl.setAttribute('autoplay', '');
+              newEl.setAttribute('muted', '');
+              newEl.setAttribute('loop', '');
+              newEl.setAttribute('playsinline', '');
+              newEl.muted = true;
+            } else {
+              if (position) newEl.style.objectPosition = position;
+            }
+            
+            parent.replaceChild(newEl, el);
+          } else {
+            // Same type, just update src
+            el.src = newUrl;
+            if (!isNewUrlVideo && position) el.style.objectPosition = position;
+          }
         }
       } else if (mediaTarget.type === 'background') {
         const element = iframeDoc.querySelector(`[data-bg-edit-id="${mediaTarget.editId}"]`);
@@ -100,8 +137,9 @@ export const WebsiteBuilder = ({ onClose }) => {
       }
       
       const newMods = { ...pageModifications };
-      newMods[`${mediaTarget.type}:${mediaTarget.editId}`] = newUrl;
-      if (position) newMods[`imgpos:${mediaTarget.editId}`] = position;
+      const modType = isNewUrlVideo ? 'video' : (mediaTarget.type === 'background' ? 'background' : 'img');
+      newMods[`${modType}:${mediaTarget.editId}`] = newUrl;
+      if (position && !isNewUrlVideo) newMods[`imgpos:${mediaTarget.editId}`] = position;
       
       setPageModifications(newMods);
       setHasChanges(true);
