@@ -361,6 +361,11 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
         // Mark checkout as successful BEFORE clearing cart
         setCheckoutSuccess(true);
         
+        // Increment coupon usage if a coupon was applied
+        if (appliedCoupon?.code) {
+          fetch(`${API_URL}/api/shop/use-coupon/${appliedCoupon.code}`, { method: 'POST' }).catch(() => {});
+        }
+        
         // Clear cart
         setCart([]);
         localStorage.removeItem('avenue_cart');
