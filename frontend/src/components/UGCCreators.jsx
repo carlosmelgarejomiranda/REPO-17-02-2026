@@ -58,7 +58,7 @@ export const UGCCreators = ({ t, campaignId }) => {
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-6">
         <div className="text-center">
           <h1 className="text-3xl font-light text-white mb-4">Campaña no encontrada</h1>
-          <p className="text-gray-500 mb-8">La campaña que buscas no está disponible</p>
+          <p className="text-gray-400 mb-8">La campaña que buscas no está disponible</p>
           <a 
             href="/studio/ugc" 
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors"
@@ -209,7 +209,7 @@ export const UGCCreators = ({ t, campaignId }) => {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-6">
         <div className="max-w-lg w-full">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/10 p-10 text-center">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/25 p-10 text-center">
             {/* Decorative Elements */}
             <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" style={{ backgroundColor: `${campaign.color}20` }}></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" style={{ backgroundColor: `${campaign.color}10` }}></div>
@@ -222,17 +222,17 @@ export const UGCCreators = ({ t, campaignId }) => {
               <h2 className="text-3xl md:text-4xl font-light text-white mb-2">
                 ¡Solicitud <span className="italic" style={{ color: campaign.color }}>Enviada</span>!
               </h2>
-              <p className="text-gray-400 mb-8">
+              <p className="text-gray-300 mb-8">
                 Gracias por tu interés en ser parte de AVENUE
               </p>
               
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10 mb-8 text-left">
+              <div className="p-6 rounded-xl bg-white/5 border border-white/25 mb-8 text-left">
                 <p className="text-gray-300 text-sm leading-relaxed">
                   Revisaremos tu perfil y te contactaremos por <span style={{ color: campaign.color }}>WhatsApp</span> si quedás seleccionad@ para la campaña de <span className="font-medium text-white">{campaign.brand}</span>.
                 </p>
               </div>
               
-              <p className="text-gray-500 text-sm mb-8">¡Buena suerte! 🍀✨</p>
+              <p className="text-gray-400 text-sm mb-8">¡Buena suerte! 🍀✨</p>
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
@@ -244,7 +244,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                 </a>
                 <a 
                   href="/studio"
-                  className="flex-1 py-4 px-6 border border-white/20 text-white font-medium rounded-lg hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 py-4 px-6 border border-white/40 text-white font-medium rounded-lg hover:bg-white/5 transition-colors flex items-center justify-center gap-2"
                 >
                   Volver al Studio
                 </a>
@@ -269,7 +269,7 @@ export const UGCCreators = ({ t, campaignId }) => {
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full">
-          <a href="/studio/ugc" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6">
+          <a href="/studio/ugc" className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors mb-6">
             <ChevronLeft className="w-4 h-4" />
             <span className="text-sm">Ver todas las campañas</span>
           </a>
@@ -293,7 +293,7 @@ export const UGCCreators = ({ t, campaignId }) => {
       </section>
 
       {/* Canje Highlight */}
-      <section className="py-16 px-6 border-t border-white/10" style={{ backgroundColor: '#0d0d0d' }}>
+      <section className="py-16 px-6 border-t border-white/25" style={{ backgroundColor: '#0d0d0d' }}>
         <div className="max-w-5xl mx-auto">
           <div className="relative overflow-hidden rounded-2xl p-8 md:p-12" style={{ backgroundColor: `${campaign.color}10`, border: `1px solid ${campaign.color}30` }}>
             {/* Decorative */}
@@ -313,7 +313,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                   <span className="font-medium" style={{ color: campaign.color }}>Gs. {campaign.canje.amount}</span>
                   {campaign.canje.description.split(campaign.canje.amount)[1] || '.'}
                 </p>
-                <div className="flex items-center gap-2 justify-center md:justify-start text-gray-400">
+                <div className="flex items-center gap-2 justify-center md:justify-start text-gray-300">
                   <MapPin className="w-4 h-4" />
                   <span className="text-sm">{campaign.location}</span>
                 </div>
@@ -330,7 +330,7 @@ export const UGCCreators = ({ t, campaignId }) => {
             <h2 className="text-3xl md:text-4xl font-light text-white mb-2">
               Requisitos de la <span className="italic" style={{ color: campaign.color }}>campaña</span>
             </h2>
-            <p className="text-gray-500">Asegúrate de cumplir con estos requisitos antes de aplicar</p>
+            <p className="text-gray-400">Asegúrate de cumplir con estos requisitos antes de aplicar</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -345,7 +345,7 @@ export const UGCCreators = ({ t, campaignId }) => {
               return (
                 <div 
                   key={i} 
-                  className="flex items-center gap-4 p-5 rounded-xl bg-white/5 border border-white/15 hover:border-white/25 transition-colors"
+                  className="flex items-center gap-4 p-5 rounded-xl bg-white/5 border border-white/30 hover:border-white/25 transition-colors"
                 >
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${campaign.color}20` }}>
                     <Icon className="w-5 h-5" style={{ color: campaign.color }} />
@@ -367,11 +367,11 @@ export const UGCCreators = ({ t, campaignId }) => {
             <h2 className="text-4xl md:text-5xl font-light text-white mb-4 leading-tight">
               Únete al <span className="italic text-[#d4a968]">programa</span>
             </h2>
-            <p className="text-gray-400 text-sm tracking-wide">Te contactaremos por WhatsApp si quedás seleccionad@</p>
+            <p className="text-gray-300 text-sm tracking-wide">Te contactaremos por WhatsApp si quedás seleccionad@</p>
           </div>
           
           {/* Form Container */}
-          <div className="bg-[#141414] border border-white/10">
+          <div className="bg-[#141414] border border-white/25">
             <div className="p-10 md:p-12">
               {errors.submit && (
                 <div className="mb-8 p-4 border-l-2 border-red-500 bg-red-500/10 text-red-400 text-sm">
@@ -389,12 +389,12 @@ export const UGCCreators = ({ t, campaignId }) => {
                   
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Email *</label>
+                      <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">Email *</label>
                       <input
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateField('email', e.target.value)}
-                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.email ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.email ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                         placeholder="tu@email.com"
                       />
                       {errors.email && <p className="text-xs mt-2 text-red-400">{errors.email}</p>}
@@ -402,23 +402,23 @@ export const UGCCreators = ({ t, campaignId }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Nombre *</label>
+                        <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">Nombre *</label>
                         <input
                           type="text"
                           value={formData.nombre}
                           onChange={(e) => updateField('nombre', e.target.value)}
-                          className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.nombre ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.nombre ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                           placeholder="Tu nombre"
                         />
                         {errors.nombre && <p className="text-xs mt-2 text-red-400">{errors.nombre}</p>}
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Apellido *</label>
+                        <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">Apellido *</label>
                         <input
                           type="text"
                           value={formData.apellido}
                           onChange={(e) => updateField('apellido', e.target.value)}
-                          className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.apellido ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.apellido ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                           placeholder="Tu apellido"
                         />
                         {errors.apellido && <p className="text-xs mt-2 text-red-400">{errors.apellido}</p>}
@@ -427,11 +427,11 @@ export const UGCCreators = ({ t, campaignId }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Sexo *</label>
+                        <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">Sexo *</label>
                         <select
                           value={formData.sexo}
                           onChange={(e) => updateField('sexo', e.target.value)}
-                          className={`w-full p-4 bg-[#1a1a1a] border text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.sexo ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-[#1a1a1a] border text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.sexo ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                           style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23666\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center', backgroundSize: '24px' }}
                         >
                           <option value="" className="bg-black">Seleccionar</option>
@@ -442,12 +442,12 @@ export const UGCCreators = ({ t, campaignId }) => {
                         {errors.sexo && <p className="text-xs mt-2 text-red-400">{errors.sexo}</p>}
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Fecha de Nacimiento *</label>
+                        <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">Fecha de Nacimiento *</label>
                         <input
                           type="date"
                           value={formData.fecha_nacimiento}
                           onChange={(e) => updateField('fecha_nacimiento', e.target.value)}
-                          className={`w-full p-4 bg-[#1a1a1a] border text-white focus:outline-none transition-colors ${errors.fecha_nacimiento ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                          className={`w-full p-4 bg-[#1a1a1a] border text-white focus:outline-none transition-colors ${errors.fecha_nacimiento ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                         />
                         {errors.fecha_nacimiento && <p className="text-xs mt-2 text-red-400">{errors.fecha_nacimiento}</p>}
                       </div>
@@ -471,29 +471,29 @@ export const UGCCreators = ({ t, campaignId }) => {
 
                   <div className="space-y-8">
                     {/* Instagram */}
-                    <div className="p-6 border border-white/10 bg-[#1a1a1a]">
+                    <div className="p-6 border border-white/25 bg-[#1a1a1a]">
                       <div className="flex items-center gap-2 mb-4">
                         <Instagram className="w-4 h-4 text-[#d4a968]" />
                         <span className="text-white text-sm font-medium">Instagram</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="px-4 py-4 border-b border-white/20 text-gray-500 text-sm">@</span>
+                        <span className="px-4 py-4 border-b border-white/40 text-gray-400 text-sm">@</span>
                         <input
                           type="text"
                           placeholder="tu_usuario"
                           value={formData.instagram_username}
                           onChange={(e) => updateField('instagram_username', e.target.value.replace('@', ''))}
-                          className="flex-1 p-4 bg-[#1a1a1a] border border-white/20 text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          className="flex-1 p-4 bg-[#1a1a1a] border border-white/40 text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none transition-colors"
                         />
                       </div>
                       {formData.instagram_username && (
                         <div className="grid grid-cols-2 gap-4 mt-6">
                           <div>
-                            <label className="block text-xs text-gray-500 tracking-wide uppercase mb-2">Visibilidad</label>
+                            <label className="block text-xs text-gray-400 tracking-wide uppercase mb-2">Visibilidad</label>
                             <select
                               value={formData.instagram_privado}
                               onChange={(e) => updateField('instagram_privado', e.target.value)}
-                              className={`w-full p-3 bg-[#1a1a1a] border text-sm text-white focus:outline-none transition-colors ${errors.instagram_privado ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                              className={`w-full p-3 bg-[#1a1a1a] border text-sm text-white focus:outline-none transition-colors ${errors.instagram_privado ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                             >
                               <option value="" className="bg-black">Seleccionar</option>
                               <option value="publico" className="bg-black">Público</option>
@@ -502,11 +502,11 @@ export const UGCCreators = ({ t, campaignId }) => {
                             {errors.instagram_privado && <p className="text-xs mt-1 text-red-400">{errors.instagram_privado}</p>}
                           </div>
                           <div>
-                            <label className="block text-xs text-gray-500 tracking-wide uppercase mb-2">Seguidores</label>
+                            <label className="block text-xs text-gray-400 tracking-wide uppercase mb-2">Seguidores</label>
                             <select
                               value={formData.instagram_seguidores}
                               onChange={(e) => updateField('instagram_seguidores', e.target.value)}
-                              className={`w-full p-3 bg-[#1a1a1a] border text-sm text-white focus:outline-none transition-colors ${errors.instagram_seguidores ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                              className={`w-full p-3 bg-[#1a1a1a] border text-sm text-white focus:outline-none transition-colors ${errors.instagram_seguidores ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                             >
                               <option value="" className="bg-black">Seleccionar</option>
                               {FOLLOWER_RANGES.map(r => (
@@ -520,29 +520,29 @@ export const UGCCreators = ({ t, campaignId }) => {
                     </div>
 
                     {/* TikTok */}
-                    <div className="p-6 border border-white/10 bg-[#1a1a1a]">
+                    <div className="p-6 border border-white/25 bg-[#1a1a1a]">
                       <div className="flex items-center gap-2 mb-4">
                         <Music2 className="w-4 h-4 text-[#d4a968]" />
                         <span className="text-white text-sm font-medium">TikTok</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="px-4 py-4 border-b border-white/20 text-gray-500 text-sm">@</span>
+                        <span className="px-4 py-4 border-b border-white/40 text-gray-400 text-sm">@</span>
                         <input
                           type="text"
                           placeholder="tu_usuario"
                           value={formData.tiktok_username}
                           onChange={(e) => updateField('tiktok_username', e.target.value.replace('@', ''))}
-                          className="flex-1 p-4 bg-[#1a1a1a] border border-white/20 text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          className="flex-1 p-4 bg-[#1a1a1a] border border-white/40 text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none transition-colors"
                         />
                       </div>
                       {formData.tiktok_username && (
                         <div className="grid grid-cols-2 gap-4 mt-6">
                           <div>
-                            <label className="block text-xs text-gray-500 tracking-wide uppercase mb-2">Visibilidad</label>
+                            <label className="block text-xs text-gray-400 tracking-wide uppercase mb-2">Visibilidad</label>
                             <select
                               value={formData.tiktok_privado}
                               onChange={(e) => updateField('tiktok_privado', e.target.value)}
-                              className={`w-full p-3 bg-[#1a1a1a] border text-sm text-white focus:outline-none transition-colors ${errors.tiktok_privado ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                              className={`w-full p-3 bg-[#1a1a1a] border text-sm text-white focus:outline-none transition-colors ${errors.tiktok_privado ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                             >
                               <option value="" className="bg-black">Seleccionar</option>
                               <option value="publico" className="bg-black">Público</option>
@@ -551,11 +551,11 @@ export const UGCCreators = ({ t, campaignId }) => {
                             {errors.tiktok_privado && <p className="text-xs mt-1 text-red-400">{errors.tiktok_privado}</p>}
                           </div>
                           <div>
-                            <label className="block text-xs text-gray-500 tracking-wide uppercase mb-2">Seguidores</label>
+                            <label className="block text-xs text-gray-400 tracking-wide uppercase mb-2">Seguidores</label>
                             <select
                               value={formData.tiktok_seguidores}
                               onChange={(e) => updateField('tiktok_seguidores', e.target.value)}
-                              className={`w-full p-3 bg-[#1a1a1a] border text-sm text-white focus:outline-none transition-colors ${errors.tiktok_seguidores ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                              className={`w-full p-3 bg-[#1a1a1a] border text-sm text-white focus:outline-none transition-colors ${errors.tiktok_seguidores ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                             >
                               <option value="" className="bg-black">Seleccionar</option>
                               {FOLLOWER_RANGES.map(r => (
@@ -576,28 +576,28 @@ export const UGCCreators = ({ t, campaignId }) => {
                     <div className="w-8 h-[1px] bg-[#d4a968]"></div>
                     <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase">Portfolio de Videos</h4>
                   </div>
-                  <p className="text-gray-500 text-sm mb-6">Comparte 2 videos que muestren tu estilo de contenido</p>
+                  <p className="text-gray-400 text-sm mb-6">Comparte 2 videos que muestren tu estilo de contenido</p>
                   
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Link Video 1 *</label>
+                      <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">Link Video 1 *</label>
                       <input
                         type="url"
                         placeholder="https://instagram.com/reel/... o tiktok.com/..."
                         value={formData.video_link_1}
                         onChange={(e) => updateField('video_link_1', e.target.value)}
-                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.video_link_1 ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.video_link_1 ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                       />
                       {errors.video_link_1 && <p className="text-xs mt-2 text-red-400">{errors.video_link_1}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Link Video 2 *</label>
+                      <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">Link Video 2 *</label>
                       <input
                         type="url"
                         placeholder="https://instagram.com/reel/... o tiktok.com/..."
                         value={formData.video_link_2}
                         onChange={(e) => updateField('video_link_2', e.target.value)}
-                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.video_link_2 ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.video_link_2 ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                       />
                       {errors.video_link_2 && <p className="text-xs mt-2 text-red-400">{errors.video_link_2}</p>}
                     </div>
@@ -613,11 +613,11 @@ export const UGCCreators = ({ t, campaignId }) => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">Ciudad *</label>
+                      <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">Ciudad *</label>
                       <select
                         value={formData.ciudad}
                         onChange={(e) => updateField('ciudad', e.target.value)}
-                        className={`w-full p-4 bg-[#1a1a1a] border text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.ciudad ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-[#1a1a1a] border text-white focus:outline-none transition-colors appearance-none cursor-pointer ${errors.ciudad ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%23666\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center', backgroundSize: '24px' }}
                       >
                         <option value="" className="bg-black">Seleccionar</option>
@@ -628,13 +628,13 @@ export const UGCCreators = ({ t, campaignId }) => {
                       {errors.ciudad && <p className="text-xs mt-2 text-red-400">{errors.ciudad}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-300 tracking-[0.15em] uppercase mb-3">WhatsApp *</label>
+                      <label className="block text-xs text-gray-200 tracking-[0.15em] uppercase mb-3">WhatsApp *</label>
                       <input
                         type="tel"
                         placeholder="+595 9XX XXX XXX"
                         value={formData.whatsapp}
                         onChange={(e) => updateField('whatsapp', e.target.value)}
-                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.whatsapp ? 'border-red-500' : 'border-white/20 focus:border-[#d4a968]'}`}
+                        className={`w-full p-4 bg-[#1a1a1a] border text-white placeholder-gray-500 focus:outline-none transition-colors ${errors.whatsapp ? 'border-red-500' : 'border-white/40 focus:border-[#d4a968]'}`}
                       />
                       {errors.whatsapp && <p className="text-xs mt-2 text-red-400">{errors.whatsapp}</p>}
                     </div>
@@ -649,8 +649,8 @@ export const UGCCreators = ({ t, campaignId }) => {
                   </div>
 
                   {/* Store confirmation */}
-                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.confirma_grabar_tienda ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/15 hover:border-white/25'}`}>
-                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.confirma_grabar_tienda ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/20'}`}>
+                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.confirma_grabar_tienda ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/30 hover:border-white/25'}`}>
+                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.confirma_grabar_tienda ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/40'}`}>
                       {formData.confirma_grabar_tienda && <Check className="w-3 h-3 text-black" />}
                     </div>
                     <input
@@ -661,14 +661,14 @@ export const UGCCreators = ({ t, campaignId }) => {
                     />
                     <div>
                       <span className="text-white text-sm">Confirmo que grabaré el contenido en AVENUE *</span>
-                      <p className="text-gray-500 text-xs mt-1">El contenido debe ser grabado en nuestra tienda física</p>
+                      <p className="text-gray-400 text-xs mt-1">El contenido debe ser grabado en nuestra tienda física</p>
                     </div>
                   </label>
                   {errors.confirma_grabar_tienda && <p className="text-xs text-red-400 ml-9">{errors.confirma_grabar_tienda}</p>}
 
                   {/* Terms */}
-                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.acepta_condiciones ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/15 hover:border-white/25'}`}>
-                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.acepta_condiciones ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/20'}`}>
+                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.acepta_condiciones ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/30 hover:border-white/25'}`}>
+                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.acepta_condiciones ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/40'}`}>
                       {formData.acepta_condiciones && <Check className="w-3 h-3 text-black" />}
                     </div>
                     <input
@@ -679,7 +679,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                     />
                     <div>
                       <span className="text-white text-sm">Acepto las condiciones de participación *</span>
-                      <p className="text-gray-500 text-xs mt-1">
+                      <p className="text-gray-400 text-xs mt-1">
                         He leído y acepto los{' '}
                         <a 
                           href="/studio/ugc/terms" 
@@ -697,8 +697,8 @@ export const UGCCreators = ({ t, campaignId }) => {
                   {errors.acepta_condiciones && <p className="text-xs text-red-400 ml-9">{errors.acepta_condiciones}</p>}
 
                   {/* WhatsApp permission */}
-                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.acepta_whatsapp ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/15 hover:border-white/25'}`}>
-                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.acepta_whatsapp ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/20'}`}>
+                  <label className={`flex items-start gap-4 p-5 cursor-pointer transition-all duration-300 border ${formData.acepta_whatsapp ? 'border-[#d4a968]/50 bg-[#d4a968]/5' : 'border-white/30 hover:border-white/25'}`}>
+                    <div className={`w-5 h-5 border flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${formData.acepta_whatsapp ? 'border-[#d4a968] bg-[#d4a968]' : 'border-white/40'}`}>
                       {formData.acepta_whatsapp && <Check className="w-3 h-3 text-black" />}
                     </div>
                     <input
@@ -709,7 +709,7 @@ export const UGCCreators = ({ t, campaignId }) => {
                     />
                     <div>
                       <span className="text-white text-sm">Acepto recibir información por WhatsApp</span>
-                      <p className="text-gray-500 text-xs mt-1">Me gustaría recibir novedades de futuras campañas</p>
+                      <p className="text-gray-400 text-xs mt-1">Me gustaría recibir novedades de futuras campañas</p>
                     </div>
                   </label>
                 </div>
