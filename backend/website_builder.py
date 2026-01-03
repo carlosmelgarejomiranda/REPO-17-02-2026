@@ -296,6 +296,7 @@ async def upload_media(file: UploadFile = File(...)):
     
     # Also check by file extension for .mov files that might have wrong mime type
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.mp4', '.webm', '.mov', '.avi', '.m4v']
+    video_extensions = ['.mp4', '.webm', '.mov', '.avi', '.m4v']
     file_ext = os.path.splitext(file.filename.lower())[1] if file.filename else ''
     
     if file.content_type not in allowed_types and file_ext not in allowed_extensions:
@@ -316,8 +317,12 @@ async def upload_media(file: UploadFile = File(...)):
     elif file_ext == '.mp4' and content_type == 'application/octet-stream':
         content_type = 'video/mp4'
     
-    # For files larger than 5MB, save to disk instead of base64
-    if len(content) > 5 * 1024 * 1024:
+    # Check if it's a video file
+    is_video = file_ext in video_extensions or content_type.startswith('video/')
+    
+    # For videos (any size) or large files (>5MB), save to disk instead of base64
+    # Videos should ALWAYS be saved to disk to avoid browser memory issues
+    if is_video or len(content) > 5 * 1024 * 1024:
         # Create uploads directory if it doesn't exist
         uploads_dir = "/app/frontend/public/uploads"
         os.makedirs(uploads_dir, exist_ok=True)
@@ -338,10 +343,11 @@ async def upload_media(file: UploadFile = File(...)):
             "url": file_url,
             "filename": file.filename,
             "content_type": content_type,
-            "size": len(content)
+            "size": len(content),
+            "storage": "disk"
         }
     else:
-        # For smaller files, use base64 data URL
+        # For smaller image files, use base64 data URL
         base64_content = base64.b64encode(content).decode('utf-8')
         data_url = f"data:{content_type};base64,{base64_content}"
         
@@ -350,7 +356,8 @@ async def upload_media(file: UploadFile = File(...)):
             "url": data_url,
             "filename": file.filename,
             "content_type": content_type,
-            "size": len(content)
+            "size": len(content),
+            "storage": "base64"
         }
 
 @router.post("/sections/{page_id}/reorder")
