@@ -812,22 +812,16 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
     e.stopPropagation();
     
     console.log('=== APPLY BUTTON CLICKED ===');
-    console.log('URL to apply:', url?.substring(0, 100));
-    console.log('Position:', position);
+    console.log('URL:', url?.substring(0, 80));
     
     if (!url) {
-      console.error('No URL to apply');
-      alert('Por favor, sube una imagen o video primero');
+      console.error('No URL');
       return;
     }
     
-    try {
-      onSelect(url, position);
-      console.log('onSelect called successfully');
-    } catch (err) {
-      console.error('Error in onSelect:', err);
-      alert(`Error al aplicar: ${err.message}`);
-    }
+    // Call onSelect directly - no try/catch to avoid masking errors
+    onSelect(url, position);
+    console.log('onSelect completed');
   };
   
   // Handle modal background click - only close if clicking on the background
