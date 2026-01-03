@@ -7,6 +7,7 @@ Tests the core booking flow and admin functionality
 import requests
 import json
 import sys
+import os
 from datetime import datetime, timedelta
 
 # Backend URL from frontend/.env
