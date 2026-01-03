@@ -353,7 +353,7 @@ export const MainLanding = ({ t }) => {
           <div className="grid md:grid-cols-12 gap-12 items-start">
             {/* Logo & Description - Takes 5 columns */}
             <div className="md:col-span-5">
-              <h2 className="text-4xl md:text-5xl font-light text-white mb-6 tracking-wider">
+              <h2 className="text-2xl font-light text-white mb-4 tracking-widest">
                 AVENUE
               </h2>
               <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
