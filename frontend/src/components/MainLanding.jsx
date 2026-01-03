@@ -349,16 +349,16 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
       </section>
 
       {/* Footer */}
-      <footer className="py-16 px-6 border-t border-white/10">
+      <footer className="py-20 px-6 border-t border-white/10 bg-[#000000]">
         <div className="max-w-7xl mx-auto">
           {/* Main Footer Content */}
           <div className="grid md:grid-cols-12 gap-12 items-start">
             {/* Logo & Description - Takes 5 columns */}
             <div className="md:col-span-5">
-              <h2 className="text-2xl font-light text-white mb-4 tracking-widest">
-                AVENUE
+              <h2 className="text-xl font-light text-white mb-6 tracking-[0.3em] uppercase">
+                Avenue
               </h2>
-              <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
+              <p className="text-gray-500 text-xs leading-relaxed max-w-sm tracking-wide">
                 Un concepto premium donde las marcas brillan y el contenido cobra vida. 
                 Moda, fotografía y creatividad en un solo lugar.
               </p>
@@ -370,29 +370,29 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
             {/* Links - Takes 2 columns */}
             <div className="md:col-span-2">
               <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Explorar</h4>
-              <ul className="space-y-3">
-                <li><a href="/shop" className="text-gray-400 text-sm hover:text-white transition-colors">E-commerce</a></li>
-                <li><a href="/studio" className="text-gray-400 text-sm hover:text-white transition-colors">Studio</a></li>
-                <li><a href="/studio/ugc" className="text-gray-400 text-sm hover:text-white transition-colors">UGC Creators</a></li>
-                <li><a href="/tu-marca" className="text-gray-400 text-sm hover:text-white transition-colors">Para Marcas</a></li>
+              <ul className="space-y-4">
+                <li><a href="/shop" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">E-commerce</a></li>
+                <li><a href="/studio" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">Studio</a></li>
+                <li><a href="/studio/ugc" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">UGC Creators</a></li>
+                <li><a href="/tu-marca" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">Para Marcas</a></li>
               </ul>
             </div>
 
             {/* Contact - Takes 2 columns */}
             <div className="md:col-span-2">
               <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Contacto</h4>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 <li>
-                  <a href="https://wa.me/595973666000" className="text-gray-400 text-sm hover:text-white transition-colors">
+                  <a href="https://wa.me/595973666000" className="text-gray-500 text-xs tracking-wide hover:text-white transition-colors">
                     +595 973 666 000
                   </a>
                 </li>
                 <li>
-                  <a href="https://instagram.com/avenue.py" className="text-gray-400 text-sm hover:text-white transition-colors">
+                  <a href="https://instagram.com/avenue.py" className="text-gray-500 text-xs tracking-wide hover:text-white transition-colors">
                     @avenue.py
                   </a>
                 </li>
-                <li className="text-gray-500 text-sm">
+                <li className="text-gray-600 text-xs tracking-wide">
                   Paseo Los Árboles, Asunción
                 </li>
               </ul>
@@ -400,14 +400,14 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
           </div>
 
           {/* Bottom Bar */}
-          <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-600 text-sm">
+          <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-gray-600 text-xs tracking-[0.1em]">
               © {new Date().getFullYear()} Avenue. Todos los derechos reservados.
             </p>
-            <div className="flex items-center gap-6">
-              <a href="https://instagram.com/avenue.py" className="text-gray-500 hover:text-[#d4a968] transition-colors text-sm">Instagram</a>
-              <a href="https://tiktok.com/@avenue.py" className="text-gray-500 hover:text-[#d4a968] transition-colors text-sm">TikTok</a>
-              <a href="https://wa.me/595973666000" className="text-gray-500 hover:text-[#d4a968] transition-colors text-sm">WhatsApp</a>
+            <div className="flex items-center gap-8">
+              <a href="https://instagram.com/avenue.py" className="text-gray-600 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Instagram</a>
+              <a href="https://tiktok.com/@avenue.py" className="text-gray-600 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">TikTok</a>
+              <a href="https://wa.me/595973666000" className="text-gray-600 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">WhatsApp</a>
             </div>
           </div>
         </div>
