@@ -352,14 +352,6 @@ async def upload_media(file: UploadFile = File(...)):
             "content_type": content_type,
             "size": len(content)
         }
-    
-    return {
-        "success": True,
-        "url": data_url,
-        "filename": file.filename,
-        "content_type": content_type,
-        "size": len(content)
-    }
 
 @router.post("/sections/{page_id}/reorder")
 async def reorder_sections(page_id: str, section_orders: List[Dict[str, Any]]):
