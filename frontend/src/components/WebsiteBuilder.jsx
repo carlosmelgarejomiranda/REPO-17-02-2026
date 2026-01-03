@@ -139,18 +139,26 @@ export const WebsiteBuilder = ({ onClose }) => {
           if ((el.tagName === 'IMG' && isNewUrlVideo) || (el.tagName === 'VIDEO' && !isNewUrlVideo)) {
             console.log('Replacing element type from', el.tagName, 'to', isNewUrlVideo ? 'VIDEO' : 'IMG');
             const newEl = iframeDoc.createElement(isNewUrlVideo ? 'video' : 'img');
-            newEl.src = newUrl;
-            newEl.className = el.className;
-            newEl.setAttribute('data-edit-id', mediaTarget.editId);
             
+            // For videos, set attributes BEFORE setting src to prevent immediate loading issues
             if (isNewUrlVideo) {
-              newEl.setAttribute('autoplay', '');
               newEl.setAttribute('muted', '');
               newEl.setAttribute('loop', '');
               newEl.setAttribute('playsinline', '');
+              newEl.setAttribute('preload', 'metadata'); // Only load metadata, not full video
               newEl.muted = true;
-            } else {
-              if (position) newEl.style.objectPosition = position;
+              // Don't autoplay - let the video load first
+              // newEl.setAttribute('autoplay', '');
+            }
+            
+            newEl.className = el.className;
+            newEl.setAttribute('data-edit-id', mediaTarget.editId);
+            
+            // Set src after other attributes
+            newEl.src = newUrl;
+            
+            if (!isNewUrlVideo && position) {
+              newEl.style.objectPosition = position;
             }
             
             if (parent) {
