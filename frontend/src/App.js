@@ -357,7 +357,16 @@ function AppRouter() {
       <div className="App">
         <Routes>
           {/* New Main Landing - Entry Point */}
-          <Route path="/" element={<MainLanding t={t} />} />
+          <Route path="/" element={
+            <MainLanding 
+              t={t} 
+              user={user}
+              onLoginClick={() => setShowLoginModal(true)}
+              onLogout={handleLogout}
+              language={language}
+              setLanguage={setLanguage}
+            />
+          } />
 
           {/* Brands Page (Former Landing) */}
           <Route path="/marcas" element={
