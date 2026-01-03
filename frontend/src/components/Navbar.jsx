@@ -25,7 +25,7 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                 height: '40px', 
                 width: 'auto', 
                 filter: 'brightness(1.2)',
-                transform: 'scale(6) translateY(0)',
+                transform: 'scale(6) translateY(2px)',
                 transformOrigin: 'left center'
               }}
               className="my-auto"
