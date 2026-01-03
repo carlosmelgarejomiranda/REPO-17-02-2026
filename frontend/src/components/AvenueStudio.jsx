@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Camera, Lightbulb, Users, Wifi, Droplet, Tv, Square, ArrowRight, Check, Play, Calendar, Clock, MapPin } from 'lucide-react';
+import { Footer } from './Footer';
 
 // Studio images with editorial aesthetic
 const STUDIO_IMAGES = {
