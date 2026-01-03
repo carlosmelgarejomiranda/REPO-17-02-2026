@@ -1082,7 +1082,7 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
         
         <div className="flex gap-3">
           <button onClick={onClose} className="flex-1 px-6 py-3 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10">Cancelar</button>
-          <button onClick={() => url && onSelect(url, position)} disabled={!url} className="flex-1 px-6 py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] disabled:opacity-50 flex items-center justify-center gap-2">
+          <button onClick={handleApplyClick} disabled={!url} className="flex-1 px-6 py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] disabled:opacity-50 flex items-center justify-center gap-2">
             <Check className="w-5 h-5" /> Aplicar cambios
           </button>
         </div>
