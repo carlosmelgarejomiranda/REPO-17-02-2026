@@ -78,8 +78,18 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] overflow-hidden">
+      {/* Navbar */}
+      <Navbar 
+        user={user}
+        onLoginClick={onLoginClick}
+        onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
+      />
+
       {/* Hero Section - Full Screen with Search */}
-      <section className="relative min-h-screen flex items-center">
+      <section className="relative min-h-screen flex items-center pt-16">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <img 
