@@ -1,10 +1,52 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, Component } from 'react';
 import { 
   X, Save, Eye, Smartphone, Monitor, ChevronLeft, Upload, Check,
   Edit3, Loader2, Image, Images, ChevronRight, Move
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+// Error Boundary to catch any React errors
+class WebsiteBuilderErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('WebsiteBuilder Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="fixed inset-0 z-50 bg-[#0a0a0a] flex flex-col items-center justify-center">
+          <div className="bg-red-900/20 border border-red-500 rounded-lg p-6 max-w-md text-center">
+            <h2 className="text-xl text-white mb-4">Error en el Editor</h2>
+            <p className="text-gray-400 mb-4">
+              Ocurrió un error inesperado. Por favor, recarga la página.
+            </p>
+            <p className="text-red-400 text-sm mb-4">
+              {this.state.error?.message || 'Error desconocido'}
+            </p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-6 py-2 bg-[#d4a968] text-black rounded-lg font-medium"
+            >
+              Recargar Página
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 const EDITABLE_PAGES = [
   { id: 'main-landing', name: 'Página Principal', path: '/' },
@@ -14,7 +56,7 @@ const EDITABLE_PAGES = [
   { id: 'booking', name: 'Reservas Studio', path: '/studio/reservar' },
 ];
 
-export const WebsiteBuilder = ({ onClose }) => {
+const WebsiteBuilderContent = ({ onClose }) => {
   const [selectedPage, setSelectedPage] = useState(EDITABLE_PAGES[0]);
   const [previewDevice, setPreviewDevice] = useState('desktop');
   const [isEditing, setIsEditing] = useState(true);
