@@ -875,10 +875,6 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
                     'Finalizar Compra'
                   )}
                 </button>
-
-                <p className="text-xs text-gray-400 text-center mt-6">
-                  Al realizar el pedido, aceptas nuestros términos y condiciones
-                </p>
               </div>
             </div>
           </div>
