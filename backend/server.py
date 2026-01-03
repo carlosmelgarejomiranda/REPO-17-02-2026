@@ -1673,7 +1673,7 @@ INTEREST_LABELS = {
 async def submit_brand_inquiry(inquiry: BrandInquiry):
     """Submit a brand inquiry from Tu Marca page"""
     inquiry_doc = {
-        "inquiry_id": f"BRD-{str(uuid4())[:8].upper()}",
+        "inquiry_id": f"BRD-{str(uuid.uuid4())[:8].upper()}",
         "brand_name": inquiry.brand_name,
         "contact_name": inquiry.contact_name,
         "email": inquiry.email,
