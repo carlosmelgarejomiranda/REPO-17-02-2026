@@ -26,6 +26,7 @@ import { ShopPage } from "./components/ShopPage";
 import { CartPage } from "./components/CartPage";
 import { CheckoutPage } from "./components/CheckoutPage";
 import { OrderSuccessPage } from "./components/OrderSuccessPage";
+import { Navbar } from "./components/Navbar";
 import { Button } from "./components/ui/button";
 import { Menu, X, User, LogOut, Calendar, ShoppingBag } from "lucide-react";
 
