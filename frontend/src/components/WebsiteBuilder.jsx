@@ -418,7 +418,7 @@ export const WebsiteBuilder = ({ onClose }) => {
           if (!parent.querySelector('.builder-img-btn')) {
             const btn = iframeDoc.createElement('button');
             btn.className = 'builder-img-btn';
-            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg> Cambiar imagen';
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg> Cambiar';
             btn.onclick = (e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -430,6 +430,42 @@ export const WebsiteBuilder = ({ onClose }) => {
                   editId: editId, 
                   imageType: 'img',
                   currentPosition: currentPos
+                } 
+              }, '*');
+            };
+            parent.appendChild(btn);
+          }
+        }
+      });
+
+      // Video elements
+      iframeDoc.querySelectorAll('video').forEach((video, index) => {
+        if (video.hasAttribute('data-builder-video')) return;
+        
+        const editId = `video-${selectedPage.id}-${index}`;
+        video.setAttribute('data-edit-id', editId);
+        video.setAttribute('data-builder-video', 'true');
+        
+        const parent = video.parentElement;
+        if (parent) {
+          const ps = window.getComputedStyle(parent);
+          if (ps.position === 'static') parent.style.position = 'relative';
+          parent.setAttribute('data-builder-video', 'true');
+          
+          if (!parent.querySelector('.builder-video-btn')) {
+            const btn = iframeDoc.createElement('button');
+            btn.className = 'builder-img-btn builder-video-btn';
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Cambiar video';
+            btn.onclick = (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.parent.postMessage({ 
+                type: 'openImageModal', 
+                data: { 
+                  currentUrl: video.src, 
+                  editId: editId, 
+                  imageType: 'video',
+                  currentPosition: '50% 50%'
                 } 
               }, '*');
             };
