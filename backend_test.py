@@ -4648,6 +4648,13 @@ def run_all_tests():
         ("Test Order Creation in Database", test_order_creation_in_database),
         ("Test Checkout Status Endpoint", test_checkout_status_endpoint),
         ("Test Notifications System", test_notifications_system),
+        
+        # NEW: COUPON SYSTEM TESTS (Review Request)
+        ("Test Create Coupon", test_create_coupon),
+        ("Test Get All Coupons", test_get_all_coupons),
+        ("Test Apply Coupon Valid", test_apply_coupon_valid),
+        ("Test Apply Coupon Below Minimum", test_apply_coupon_below_minimum),
+        ("Test Apply Invalid Coupon", test_apply_invalid_coupon),
         ("Test Admin Orders Endpoint", test_admin_orders_endpoint),
         
         # NEW: Batch Image Assignment Tests
