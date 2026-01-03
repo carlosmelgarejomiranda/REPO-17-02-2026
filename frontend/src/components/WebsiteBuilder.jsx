@@ -178,19 +178,17 @@ const WebsiteBuilderContent = ({ onClose }) => {
   const handleImageChange = (newUrl, position) => {
     console.log('=== HANDLE IMAGE CHANGE CALLED ===');
     console.log('newUrl:', newUrl?.substring(0, 100));
-    console.log('position:', position);
     
     // Capture current mediaTarget in local variable immediately
     const currentTarget = mediaTarget;
-    console.log('currentTarget:', JSON.stringify(currentTarget));
     
-    // Close modal FIRST to prevent any issues
+    // Close modal FIRST
     setShowMediaModal(false);
+    setMediaTarget(null);
     
     // Validate inputs
     if (!newUrl || !currentTarget) {
       console.error('Missing newUrl or currentTarget');
-      setMediaTarget(null);
       return;
     }
     
@@ -205,41 +203,31 @@ const WebsiteBuilderContent = ({ onClose }) => {
     const isNewUrlVideo = isVideo(newUrl);
     console.log('Is video:', isNewUrlVideo);
     
-    // Try to update iframe element (optional - preview only)
-    try {
-      if (iframeRef.current) {
-        const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
-        if (iframeDoc && (currentTarget.type === 'img' || currentTarget.type === 'video')) {
-          const el = iframeDoc.querySelector(`[data-edit-id="${currentTarget.editId}"]`);
-          if (el) {
-            console.log('Updating iframe element:', el.tagName);
-            if ((el.tagName === 'IMG' && isNewUrlVideo) || (el.tagName === 'VIDEO' && !isNewUrlVideo)) {
-              // Replace element type
-              const newEl = iframeDoc.createElement(isNewUrlVideo ? 'video' : 'img');
-              if (isNewUrlVideo) {
-                newEl.setAttribute('muted', '');
-                newEl.setAttribute('loop', '');
-                newEl.setAttribute('playsinline', '');
-                newEl.setAttribute('preload', 'metadata');
-                newEl.muted = true;
-              }
-              newEl.className = el.className;
-              newEl.setAttribute('data-edit-id', currentTarget.editId);
-              newEl.src = newUrl;
-              if (!isNewUrlVideo && position) newEl.style.objectPosition = position;
-              el.parentElement?.replaceChild(newEl, el);
-            } else {
+    // IMPORTANT: For videos, DON'T update iframe preview immediately
+    // This prevents browser issues with large video files
+    // The video will be applied when user saves and page reloads
+    if (!isNewUrlVideo) {
+      // Only update iframe for images (not videos)
+      try {
+        if (iframeRef.current) {
+          const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+          if (iframeDoc && (currentTarget.type === 'img' || currentTarget.type === 'video')) {
+            const el = iframeDoc.querySelector(`[data-edit-id="${currentTarget.editId}"]`);
+            if (el && el.tagName === 'IMG') {
+              console.log('Updating image preview');
               el.src = newUrl;
-              if (!isNewUrlVideo && position) el.style.objectPosition = position;
+              if (position) el.style.objectPosition = position;
             }
+          } else if (iframeDoc && currentTarget.type === 'background') {
+            const el = iframeDoc.querySelector(`[data-bg-edit-id="${currentTarget.editId}"]`);
+            if (el) el.style.backgroundImage = `url('${newUrl}')`;
           }
-        } else if (iframeDoc && currentTarget.type === 'background') {
-          const el = iframeDoc.querySelector(`[data-bg-edit-id="${currentTarget.editId}"]`);
-          if (el) el.style.backgroundImage = `url('${newUrl}')`;
         }
+      } catch (e) {
+        console.warn('Could not update iframe preview:', e.message);
       }
-    } catch (e) {
-      console.warn('Could not update iframe preview:', e.message);
+    } else {
+      console.log('Video detected - skipping iframe preview update to prevent browser issues');
     }
     
     // Save the modification - this is the important part
@@ -249,13 +237,11 @@ const WebsiteBuilderContent = ({ onClose }) => {
     setPageModifications(prev => {
       const updated = { ...prev, [modKey]: newUrl };
       if (position && !isNewUrlVideo) updated[`imgpos:${currentTarget.editId}`] = position;
-      console.log('Modifications updated:', Object.keys(updated).length, 'items');
+      console.log('Modifications saved:', modKey);
       return updated;
     });
     
     setHasChanges(true);
-    setMediaTarget(null);
-    
     console.log('=== HANDLE IMAGE CHANGE COMPLETE ===');
   };
 
