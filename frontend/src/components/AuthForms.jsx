@@ -213,7 +213,9 @@ export const AuthForms = ({ onLogin, onClose }) => {
               className="text-sm"
               style={{ color: '#d4a968' }}
             >
-              {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
+              <span className="text-xs tracking-[0.1em] uppercase text-gray-500 hover:text-[#d4a968] transition-colors">
+                {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
+              </span>
             </button>
           </div>
         </CardContent>
