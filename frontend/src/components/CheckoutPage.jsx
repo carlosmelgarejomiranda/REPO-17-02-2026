@@ -183,10 +183,51 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
   }, []);
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const total = subtotal + (deliveryType === 'delivery' ? deliveryCost : 0);
+  const subtotalWithDiscount = subtotal - couponDiscount;
+  const total = subtotalWithDiscount + (deliveryType === 'delivery' ? deliveryCost : 0);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
+  };
+
+  // Apply coupon
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    
+    setCouponLoading(true);
+    setCouponError('');
+    
+    try {
+      const response = await fetch(`${API_URL}/api/shop/apply-coupon`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponCode, subtotal })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.valid) {
+        setAppliedCoupon(data.coupon);
+        setCouponDiscount(data.discount_amount);
+        setCouponError('');
+      } else {
+        setCouponError(data.detail || 'Cupón no válido');
+        setAppliedCoupon(null);
+        setCouponDiscount(0);
+      }
+    } catch (err) {
+      setCouponError('Error al validar cupón');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  // Remove coupon
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponDiscount(0);
+    setCouponCode('');
+    setCouponError('');
   };
 
   // Validate inventory before checkout
