@@ -120,8 +120,18 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
+      {/* Navbar */}
+      <Navbar 
+        user={user}
+        onLoginClick={onLoginClick}
+        onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
+      />
+
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center">
+      <section className="relative min-h-[70vh] flex items-center pt-16">
         <div className="absolute inset-0">
           <img src={HERO_IMAGE} alt="Tu marca en Avenue" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/40" />
