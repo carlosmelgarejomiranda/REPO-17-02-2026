@@ -174,152 +174,90 @@ const WebsiteBuilderContent = ({ onClose }) => {
     });
   }, []);
 
-  const handleImageChange = useCallback((newUrl, position) => {
-    console.log('=== APPLYING MEDIA CHANGE START ===');
+  // Simple function without useCallback to avoid React closure issues
+  const handleImageChange = (newUrl, position) => {
+    console.log('=== HANDLE IMAGE CHANGE CALLED ===');
     console.log('newUrl:', newUrl?.substring(0, 100));
     console.log('position:', position);
-    console.log('mediaTarget:', JSON.stringify(mediaTarget));
     
-    // Validaciones iniciales
-    if (!newUrl) {
-      console.error('No URL provided');
-      alert('Error: No se proporcionó URL');
-      return;
-    }
+    // Capture current mediaTarget in local variable immediately
+    const currentTarget = mediaTarget;
+    console.log('currentTarget:', JSON.stringify(currentTarget));
     
-    if (!mediaTarget) {
-      console.error('No mediaTarget');
-      alert('Error: No hay elemento seleccionado');
-      setShowMediaModal(false);
-      return;
-    }
+    // Close modal FIRST to prevent any issues
+    setShowMediaModal(false);
     
-    if (!iframeRef.current) {
-      console.error('No iframeRef');
-      alert('Error: No se encontró el iframe');
-      setShowMediaModal(false);
+    // Validate inputs
+    if (!newUrl || !currentTarget) {
+      console.error('Missing newUrl or currentTarget');
       setMediaTarget(null);
       return;
     }
-    
-    // Intentar acceder al documento del iframe de forma segura
-    let iframeDoc = null;
-    try {
-      iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
-    } catch (crossOriginError) {
-      console.error('Cross-origin error accessing iframe:', crossOriginError);
-      alert('Error de seguridad: No se puede acceder al iframe. Intenta recargar la página.');
-      setShowMediaModal(false);
-      setMediaTarget(null);
-      return;
-    }
-    
-    if (!iframeDoc) {
-      console.error('Cannot access iframe document - null');
-      alert('Error: No se puede acceder al documento del iframe');
-      setShowMediaModal(false);
-      setMediaTarget(null);
-      return;
-    }
-    
-    console.log('Iframe document accessed successfully');
     
     // Helper to check if URL is video
     const isVideo = (url) => {
       if (!url) return false;
-      const videoExtensions = ['.mp4', '.mov', '.webm', '.avi', '.m4v'];
-      const videoMimeTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
       const lowerUrl = url.toLowerCase();
       if (url.startsWith('data:video/')) return true;
-      if (url.startsWith('data:')) {
-        return videoMimeTypes.some(type => url.includes(type));
-      }
-      return videoExtensions.some(ext => lowerUrl.includes(ext));
+      return ['.mp4', '.mov', '.webm', '.avi', '.m4v'].some(ext => lowerUrl.includes(ext));
     };
 
     const isNewUrlVideo = isVideo(newUrl);
     console.log('Is video:', isNewUrlVideo);
     
-    // Check if base64 video is too large
-    if (isNewUrlVideo && newUrl.startsWith('data:') && newUrl.length > 10 * 1024 * 1024) {
-      console.error('Base64 video too large:', newUrl.length);
-      alert('El video es demasiado grande. Por favor usa un video más pequeño o proporciona una URL externa.');
-      return;
-    }
-    
+    // Try to update iframe element (optional - preview only)
     try {
-      if (mediaTarget.type === 'img' || mediaTarget.type === 'video') {
-        const el = iframeDoc.querySelector(`[data-edit-id="${mediaTarget.editId}"]`);
-        console.log('Found element:', el?.tagName, 'editId:', mediaTarget.editId);
-        
-        if (el) {
-          const parent = el.parentElement;
-          
-          // If switching between image and video, replace the element
-          if ((el.tagName === 'IMG' && isNewUrlVideo) || (el.tagName === 'VIDEO' && !isNewUrlVideo)) {
-            console.log('Replacing element type from', el.tagName, 'to', isNewUrlVideo ? 'VIDEO' : 'IMG');
-            const newEl = iframeDoc.createElement(isNewUrlVideo ? 'video' : 'img');
-            
-            if (isNewUrlVideo) {
-              newEl.setAttribute('muted', '');
-              newEl.setAttribute('loop', '');
-              newEl.setAttribute('playsinline', '');
-              newEl.setAttribute('preload', 'metadata');
-              newEl.muted = true;
+      if (iframeRef.current) {
+        const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+        if (iframeDoc && (currentTarget.type === 'img' || currentTarget.type === 'video')) {
+          const el = iframeDoc.querySelector(`[data-edit-id="${currentTarget.editId}"]`);
+          if (el) {
+            console.log('Updating iframe element:', el.tagName);
+            if ((el.tagName === 'IMG' && isNewUrlVideo) || (el.tagName === 'VIDEO' && !isNewUrlVideo)) {
+              // Replace element type
+              const newEl = iframeDoc.createElement(isNewUrlVideo ? 'video' : 'img');
+              if (isNewUrlVideo) {
+                newEl.setAttribute('muted', '');
+                newEl.setAttribute('loop', '');
+                newEl.setAttribute('playsinline', '');
+                newEl.setAttribute('preload', 'metadata');
+                newEl.muted = true;
+              }
+              newEl.className = el.className;
+              newEl.setAttribute('data-edit-id', currentTarget.editId);
+              newEl.src = newUrl;
+              if (!isNewUrlVideo && position) newEl.style.objectPosition = position;
+              el.parentElement?.replaceChild(newEl, el);
+            } else {
+              el.src = newUrl;
+              if (!isNewUrlVideo && position) el.style.objectPosition = position;
             }
-            
-            newEl.className = el.className;
-            newEl.setAttribute('data-edit-id', mediaTarget.editId);
-            newEl.src = newUrl;
-            
-            if (!isNewUrlVideo && position) {
-              newEl.style.objectPosition = position;
-            }
-            
-            if (parent) {
-              parent.replaceChild(newEl, el);
-              console.log('Element replaced successfully');
-            }
-          } else {
-            // Same type, just update src
-            console.log('Updating src of existing element');
-            el.src = newUrl;
-            if (!isNewUrlVideo && position) el.style.objectPosition = position;
           }
-        } else {
-          console.warn('Element not found with editId:', mediaTarget.editId);
-          // Still save the modification even if element not found in preview
-        }
-      } else if (mediaTarget.type === 'background') {
-        const element = iframeDoc.querySelector(`[data-bg-edit-id="${mediaTarget.editId}"]`);
-        if (element) {
-          element.style.backgroundImage = `url('${newUrl}')`;
-          console.log('Background updated');
+        } else if (iframeDoc && currentTarget.type === 'background') {
+          const el = iframeDoc.querySelector(`[data-bg-edit-id="${currentTarget.editId}"]`);
+          if (el) el.style.backgroundImage = `url('${newUrl}')`;
         }
       }
-      
-      // Save the modification using functional update to prevent race condition
-      setPageModifications(prevMods => {
-        const updatedMods = { ...prevMods };
-        const modType = isNewUrlVideo ? 'video' : (mediaTarget.type === 'background' ? 'background' : 'img');
-        updatedMods[`${modType}:${mediaTarget.editId}`] = newUrl;
-        if (position && !isNewUrlVideo) updatedMods[`imgpos:${mediaTarget.editId}`] = position;
-        console.log('Saving modifications:', Object.keys(updatedMods).length, 'items');
-        return updatedMods;
-      });
-      setHasChanges(true);
-      
-      console.log('=== MEDIA CHANGE APPLIED SUCCESSFULLY ===');
-      
-    } catch (domError) {
-      console.error('DOM manipulation error:', domError);
-      alert(`Error al aplicar cambios en el DOM: ${domError.message}`);
+    } catch (e) {
+      console.warn('Could not update iframe preview:', e.message);
     }
     
-    // Close modal after everything is done
-    setShowMediaModal(false);
+    // Save the modification - this is the important part
+    const modType = isNewUrlVideo ? 'video' : (currentTarget.type === 'background' ? 'background' : 'img');
+    const modKey = `${modType}:${currentTarget.editId}`;
+    
+    setPageModifications(prev => {
+      const updated = { ...prev, [modKey]: newUrl };
+      if (position && !isNewUrlVideo) updated[`imgpos:${currentTarget.editId}`] = position;
+      console.log('Modifications updated:', Object.keys(updated).length, 'items');
+      return updated;
+    });
+    
+    setHasChanges(true);
     setMediaTarget(null);
-  }, [mediaTarget]); // Fixed: Removed pageModifications to prevent race condition
+    
+    console.log('=== HANDLE IMAGE CHANGE COMPLETE ===');
+  };
 
   const handleCarouselChange = useCallback((newImages) => {
     if (iframeRef.current) {
