@@ -1011,7 +1011,7 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
   const isCurrentVideo = isVideo(url);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4" onClick={handleBackgroundClick}>
       <div className="bg-[#1a1a1a] rounded-2xl p-6 max-w-2xl w-full" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl text-white font-medium flex items-center gap-2"><Image className="w-5 h-5 text-[#d4a968]" />{type === 'background' ? 'Cambiar Fondo' : 'Cambiar Imagen o Video'}</h3>
