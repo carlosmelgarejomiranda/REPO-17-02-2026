@@ -1097,6 +1097,154 @@ async def create_checkout(data: CheckoutData, request: Request):
     
     order_doc = {
         "order_id": order_id,
+
+
+# ==================== COUPON SYSTEM ====================
+
+class CouponCreate(BaseModel):
+    code: str
+    discount_type: str  # 'percentage' or 'fixed'
+    discount_value: float
+    min_purchase: Optional[float] = None
+    max_uses: Optional[int] = None
+    expires_at: Optional[str] = None
+    is_active: bool = True
+    description: Optional[str] = None
+
+class CouponApply(BaseModel):
+    code: str
+    subtotal: float
+
+@ecommerce_router.get("/coupons")
+async def get_all_coupons():
+    """Get all coupons (admin)"""
+    coupons = await db.shop_coupons.find({}, {"_id": 0}).to_list(1000)
+    return coupons
+
+@ecommerce_router.post("/coupons")
+async def create_coupon(coupon: CouponCreate):
+    """Create a new coupon (admin)"""
+    # Check if code already exists
+    existing = await db.shop_coupons.find_one({"code": coupon.code.upper()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Ya existe un cupón con ese código")
+    
+    coupon_data = {
+        "id": str(uuid.uuid4()),
+        "code": coupon.code.upper().strip(),
+        "discount_type": coupon.discount_type,
+        "discount_value": coupon.discount_value,
+        "min_purchase": coupon.min_purchase,
+        "max_uses": coupon.max_uses,
+        "current_uses": 0,
+        "expires_at": coupon.expires_at,
+        "is_active": coupon.is_active,
+        "description": coupon.description,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.shop_coupons.insert_one(coupon_data)
+    return {"success": True, "coupon": {k: v for k, v in coupon_data.items() if k != "_id"}}
+
+@ecommerce_router.put("/coupons/{coupon_id}")
+async def update_coupon(coupon_id: str, coupon: CouponCreate):
+    """Update an existing coupon (admin)"""
+    existing = await db.shop_coupons.find_one({"id": coupon_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Cupón no encontrado")
+    
+    # Check if new code conflicts with another coupon
+    if coupon.code.upper() != existing.get("code"):
+        conflict = await db.shop_coupons.find_one({"code": coupon.code.upper(), "id": {"$ne": coupon_id}})
+        if conflict:
+            raise HTTPException(status_code=400, detail="Ya existe otro cupón con ese código")
+    
+    update_data = {
+        "code": coupon.code.upper().strip(),
+        "discount_type": coupon.discount_type,
+        "discount_value": coupon.discount_value,
+        "min_purchase": coupon.min_purchase,
+        "max_uses": coupon.max_uses,
+        "expires_at": coupon.expires_at,
+        "is_active": coupon.is_active,
+        "description": coupon.description,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.shop_coupons.update_one({"id": coupon_id}, {"$set": update_data})
+    return {"success": True, "message": "Cupón actualizado"}
+
+@ecommerce_router.delete("/coupons/{coupon_id}")
+async def delete_coupon(coupon_id: str):
+    """Delete a coupon (admin)"""
+    result = await db.shop_coupons.delete_one({"id": coupon_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Cupón no encontrado")
+    return {"success": True, "message": "Cupón eliminado"}
+
+@ecommerce_router.post("/apply-coupon")
+async def apply_coupon(data: CouponApply):
+    """Validate and apply a coupon code"""
+    code = data.code.upper().strip()
+    subtotal = data.subtotal
+    
+    coupon = await db.shop_coupons.find_one({"code": code}, {"_id": 0})
+    
+    if not coupon:
+        raise HTTPException(status_code=404, detail="Cupón no válido")
+    
+    if not coupon.get("is_active", True):
+        raise HTTPException(status_code=400, detail="Este cupón ya no está activo")
+    
+    # Check expiration
+    if coupon.get("expires_at"):
+        expires = datetime.fromisoformat(coupon["expires_at"].replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > expires:
+            raise HTTPException(status_code=400, detail="Este cupón ha expirado")
+    
+    # Check max uses
+    if coupon.get("max_uses") and coupon.get("current_uses", 0) >= coupon["max_uses"]:
+        raise HTTPException(status_code=400, detail="Este cupón ha alcanzado el límite de usos")
+    
+    # Check minimum purchase
+    if coupon.get("min_purchase") and subtotal < coupon["min_purchase"]:
+        min_purchase = coupon["min_purchase"]
+        raise HTTPException(
+            status_code=400, 
+            detail=f"El pedido mínimo para este cupón es de {int(min_purchase):,} Gs".replace(",", ".")
+        )
+    
+    # Calculate discount
+    if coupon["discount_type"] == "percentage":
+        discount_amount = subtotal * (coupon["discount_value"] / 100)
+    else:
+        discount_amount = coupon["discount_value"]
+    
+    # Ensure discount doesn't exceed subtotal
+    discount_amount = min(discount_amount, subtotal)
+    
+    return {
+        "valid": True,
+        "coupon": {
+            "code": coupon["code"],
+            "discount_type": coupon["discount_type"],
+            "discount_value": coupon["discount_value"],
+            "description": coupon.get("description")
+        },
+        "discount_amount": discount_amount,
+        "new_subtotal": subtotal - discount_amount
+    }
+
+@ecommerce_router.post("/use-coupon/{code}")
+async def increment_coupon_use(code: str):
+    """Increment coupon usage count (called after successful order)"""
+    code = code.upper().strip()
+    await db.shop_coupons.update_one(
+        {"code": code},
+        {"$inc": {"current_uses": 1}}
+    )
+    return {"success": True}
+
         "items": [item.model_dump() for item in data.items],
         "customer_name": data.customer_name,
         "customer_email": data.customer_email,
