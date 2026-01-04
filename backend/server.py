@@ -1880,6 +1880,13 @@ _Revisar en panel de administración_"""
     except Exception as e:
         logger.error(f"Failed to send WhatsApp for brand inquiry: {e}")
     
+    # Send confirmation email to brand via email service
+    try:
+        from email_service import send_brand_inquiry_confirmation
+        await send_brand_inquiry_confirmation(db, inquiry_doc)
+    except Exception as e:
+        logger.error(f"Failed to send brand inquiry email: {e}")
+    
     return {"success": True, "inquiry_id": inquiry_doc["inquiry_id"]}
 
 @api_router.get("/admin/brand-inquiries")
