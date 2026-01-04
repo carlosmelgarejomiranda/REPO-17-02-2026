@@ -4882,6 +4882,55 @@ def test_whatsapp_notification_logs():
         print_warning(f"⚠️ Could not check logs: {str(e)}")
         return True  # Don't fail the test for log checking issues
 
+def run_security_tests():
+    """Run Security Hardening Pack tests specifically"""
+    print(f"{Colors.BOLD}{Colors.BLUE}Security Hardening Pack Tests{Colors.ENDC}")
+    print(f"Backend URL: {BACKEND_URL}")
+    print("=" * 60)
+    
+    security_tests = [
+        # SECURITY HARDENING TESTS (Review Request)
+        ("Test Rate Limiting - Login", test_rate_limiting_login),
+        ("Test Admin Login MFA Flow", test_admin_login_mfa_flow),
+        ("Test MFA Setup Endpoint", test_mfa_setup_endpoint),
+        ("Test Audit Logs Endpoint", test_audit_logs_endpoint),
+        ("Test Security Headers", test_security_headers),
+    ]
+    
+    results = []
+    
+    for test_name, test_func in security_tests:
+        try:
+            result = test_func()
+            results.append((test_name, result))
+        except Exception as e:
+            print_error(f"Test {test_name} crashed: {str(e)}")
+            results.append((test_name, False))
+    
+    # Summary
+    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SECURITY TEST SUMMARY ==={Colors.ENDC}")
+    passed = 0
+    failed = 0
+    
+    for test_name, result in results:
+        if result:
+            print_success(f"{test_name}")
+            passed += 1
+        else:
+            print_error(f"{test_name}")
+            failed += 1
+    
+    print(f"\n{Colors.BOLD}Total: {len(results)} security tests{Colors.ENDC}")
+    print(f"{Colors.GREEN}Passed: {passed}{Colors.ENDC}")
+    print(f"{Colors.RED}Failed: {failed}{Colors.ENDC}")
+    
+    if failed == 0:
+        print(f"\n{Colors.GREEN}{Colors.BOLD}🎉 All security tests passed!{Colors.ENDC}")
+        return True
+    else:
+        print(f"\n{Colors.RED}{Colors.BOLD}❌ {failed} security test(s) failed{Colors.ENDC}")
+        return False
+
 def run_all_tests():
     """Run all tests in sequence"""
     print(f"{Colors.BOLD}{Colors.BLUE}Avenue Studio & E-commerce API Tests{Colors.ENDC}")
@@ -4889,6 +4938,13 @@ def run_all_tests():
     print("=" * 60)
     
     tests = [
+        # SECURITY HARDENING TESTS (Priority - Review Request)
+        ("Test Rate Limiting - Login", test_rate_limiting_login),
+        ("Test Admin Login MFA Flow", test_admin_login_mfa_flow),
+        ("Test MFA Setup Endpoint", test_mfa_setup_endpoint),
+        ("Test Audit Logs Endpoint", test_audit_logs_endpoint),
+        ("Test Security Headers", test_security_headers),
+        
         # NEW FEATURES TESTS (Priority)
         ("Test Superadmin Login", test_superadmin_login),
         ("Test Admin Permissions", test_admin_permissions),
