@@ -5076,5 +5076,6 @@ def run_all_tests():
         return False
 
 if __name__ == "__main__":
-    success = run_all_tests()
+    # Run only security tests for this review request
+    success = run_security_tests()
     sys.exit(0 if success else 1)
