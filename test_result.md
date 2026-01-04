@@ -198,3 +198,136 @@ agent_communication:
     message: "✅ COMPREHENSIVE FRONTEND DEPLOYMENT VERIFICATION COMPLETE: Conducted thorough testing of all critical pages and functionality as requested. ALL MAJOR FEATURES WORKING: Landing page loads correctly, login flow works with admin credentials, admin panel fully functional with all 6 tabs, e-commerce shows 9 products properly, studio and UGC pages load correctly, Tu Marca page accessible. Only minor external resource loading issues (Google Analytics, fonts) which don't affect core functionality. The application is READY FOR DEPLOYMENT. The only remaining issue is the video upload race condition in Website Builder which is a separate known issue."
   - agent: "testing"
     message: "✅ COUPON SYSTEM API TESTING COMPLETE: Successfully tested all 5 coupon system endpoints as requested in the review. RESULTS: ✅ Create coupon (POST /api/shop/coupons) with BIENVENIDA10 code - 200 OK ✅ Get all coupons (GET /api/shop/coupons) - Returns array with test coupon ✅ Apply valid coupon with 200,000 Gs subtotal - Correctly calculates 20,000 Gs discount (10%) ✅ Apply coupon below 100,000 Gs minimum - 400 error with proper message ✅ Apply invalid coupon code 'INVALIDO' - 404 error as expected. All coupon validation logic working correctly including percentage discounts, minimum purchase requirements, expiration checks, usage limits, and proper error handling. The coupon system is FULLY FUNCTIONAL and ready for production use."
+  - task: "Coupon System - Create"
+    implemented: true
+    working: true
+    file: "/app/backend/ecommerce.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Coupon creation working. POST /api/shop/coupons creates coupon with code, discount_type, discount_value, max_uses"
+
+  - task: "Coupon System - List"
+    implemented: true
+    working: true
+    file: "/app/backend/ecommerce.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Coupon listing working. GET /api/shop/coupons returns all coupons with details"
+
+  - task: "Coupon System - Apply"
+    implemented: true
+    working: true
+    file: "/app/backend/ecommerce.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Coupon application working. POST /api/shop/apply-coupon validates and applies discount. Tested with TEST10 code - 10% discount correctly calculated"
+
+  - task: "Admin Coupon Management UI"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AdminDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Admin Cupones tab visible and working. Shows list of coupons with edit/delete buttons and 'Nuevo Cupón' button"
+
+frontend:
+  - task: "Checkout Page - Registration Banner"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/CheckoutPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Registration banner shows for non-logged users: '¿Todavía no tenés cuenta? Creá tu cuenta ahora y ganá un cupón de 10% de descuento'"
+
+  - task: "Checkout Page - Coupon Input"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/CheckoutPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Coupon input field visible with 'Aplicar' button in checkout summary"
+
+  - task: "Checkout Page - Terms Checkbox"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/CheckoutPage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Terms and conditions checkbox visible with link to T&C page"
+
+  - task: "Terms and Conditions Page"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/TerminosEcommerce.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Términos y Condiciones page loads correctly at /shop/terminos-condiciones"
+
+  - task: "Privacy Policy Page"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/PoliticaPrivacidad.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Política de Privacidad page loads correctly at /politica-privacidad with full legal text"
+
+  - task: "Footer Privacy Link"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/Footer.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Footer shows 'POLÍTICA DE PRIVACIDAD' link visible"
+
+  - task: "Cookie Consent Banner"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/CookieBanner.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Cookie banner appears on page load with 'Aceptar todas', 'Solo necesarias', 'Configurar' options"
+
