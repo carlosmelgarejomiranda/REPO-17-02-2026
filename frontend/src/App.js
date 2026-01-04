@@ -667,8 +667,13 @@ function AppRouter() {
               t={t}
             />
           } />
+
+          <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
         </Routes>
       </div>
+      
+      {/* Cookie Banner - Global */}
+      <CookieBanner />
     </>
   );
 }
