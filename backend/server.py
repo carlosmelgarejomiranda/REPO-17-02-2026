@@ -233,13 +233,18 @@ def verify_password(password: str, hashed: str) -> bool:
     """Verify a password against its hash"""
     return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
 
-def create_jwt_token(user_id: str, email: str, role: str) -> str:
-    """Create a JWT token"""
+def create_jwt_token(user_id: str, email: str, role: str, mfa_verified: bool = False) -> str:
+    """Create a JWT token with appropriate expiration based on role"""
+    # Shorter session for admins
+    expiration_hours = JWT_EXPIRATION_HOURS_ADMIN if is_admin_role(role) else JWT_EXPIRATION_HOURS
+    
     payload = {
         "user_id": user_id,
         "email": email,
         "role": role,
-        "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)
+        "mfa_verified": mfa_verified,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=expiration_hours),
+        "iat": datetime.now(timezone.utc)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
