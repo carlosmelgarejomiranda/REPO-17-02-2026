@@ -662,12 +662,35 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
 
                 {/* Submit */}
                 <div className="pt-6">
+                  {/* Terms and Conditions Checkbox */}
+                  <div className="mb-6 p-4 rounded-xl bg-white/5 border border-white/10">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={acceptedTerms}
+                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        className="w-5 h-5 mt-0.5 rounded border-white/30 bg-white/10 text-[#d4a968] focus:ring-[#d4a968] focus:ring-offset-0 focus:ring-offset-transparent"
+                      />
+                      <span className="text-sm text-gray-300 leading-relaxed">
+                        He leído y acepto los{' '}
+                        <Link 
+                          to="/studio/terminos-condiciones" 
+                          target="_blank"
+                          className="text-[#d4a968] underline hover:no-underline"
+                        >
+                          términos y condiciones de uso del espacio
+                        </Link>
+                        {' '}de Avenue Studio
+                      </span>
+                    </label>
+                  </div>
+                  
                   <p className="text-xs text-gray-600 mb-4 text-center">
                     * El pago se realiza en Avenue antes de ingresar al estudio.
                   </p>
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || !acceptedTerms}
                     className="w-full py-5 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium text-lg rounded-lg transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? (
