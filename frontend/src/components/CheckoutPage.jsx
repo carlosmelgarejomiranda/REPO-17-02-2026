@@ -498,6 +498,70 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
                 </div>
               </section>
 
+              {/* Billing / Invoice Data - MOVED BEFORE Delivery Method */}
+              <section className="bg-white p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900">
+                    Datos de facturación
+                  </h2>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={noNeedsInvoice}
+                      onChange={(e) => setNoNeedsInvoice(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-500"
+                    />
+                    <span className="text-sm text-gray-600">No necesito factura con RUC</span>
+                  </label>
+                </div>
+                
+                {!noNeedsInvoice && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-2">Razón Social / Nombre *</label>
+                      <input
+                        type="text"
+                        required={!noNeedsInvoice}
+                        value={billingData.razon_social}
+                        onChange={(e) => setBillingData({ ...billingData, razon_social: e.target.value })}
+                        placeholder="Nombre o razón social para la factura"
+                        className="w-full px-4 py-3 bg-gray-50 border-0 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-200"
+                      />
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-2">RUC *</label>
+                        <input
+                          type="text"
+                          required={!noNeedsInvoice}
+                          value={billingData.ruc}
+                          onChange={(e) => setBillingData({ ...billingData, ruc: e.target.value })}
+                          placeholder="Ej: 80012345-6"
+                          className="w-full px-4 py-3 bg-gray-50 border-0 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-200"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-2">Dirección fiscal (opcional)</label>
+                        <input
+                          type="text"
+                          value={billingData.direccion_fiscal}
+                          onChange={(e) => setBillingData({ ...billingData, direccion_fiscal: e.target.value })}
+                          placeholder="Dirección para la factura"
+                          className="w-full px-4 py-3 bg-gray-50 border-0 text-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-200"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {noNeedsInvoice && (
+                  <p className="text-sm text-gray-500">
+                    Se emitirá factura a consumidor final.
+                  </p>
+                )}
+              </section>
+
               {/* Delivery Method */}
               <section className="bg-white p-8">
                 <h2 className="text-xs tracking-[0.2em] uppercase text-gray-900 mb-6">
