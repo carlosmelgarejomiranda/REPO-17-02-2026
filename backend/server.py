@@ -1484,6 +1484,13 @@ async def ugc_apply(application: UGCApplication):
     # Send admin notification (WhatsApp + Email)
     await notify_new_ugc_application(app_doc)
     
+    # Send confirmation email to applicant via email service
+    try:
+        from email_service import send_ugc_application_confirmation
+        await send_ugc_application_confirmation(db, app_doc)
+    except Exception as e:
+        logger.error(f"Failed to send UGC application email: {e}")
+    
     return {
         "application_id": application_id,
         "status": status,
