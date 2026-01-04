@@ -23,6 +23,7 @@ import { UGCCampaignsList } from "./components/UGCCampaignsList";
 import { TuMarca } from "./components/TuMarca";
 import { TerminosCondiciones } from "./components/TerminosCondiciones";
 import { TerminosEcommerce } from "./components/TerminosEcommerce";
+import { TerminosStudio } from "./components/TerminosStudio";
 import { PoliticaPrivacidad } from "./components/PoliticaPrivacidad";
 import { CookieBanner } from "./components/CookieBanner";
 import { ShopPage } from "./components/ShopPage";
