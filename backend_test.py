@@ -41,6 +41,8 @@ def print_info(message):
 admin_token = None
 test_results = []
 test_coupon_id = None
+stripe_session_id = None
+test_order_id = None
 
 def add_test_result(test_name, status, message=""):
     """Add test result to global results list"""
