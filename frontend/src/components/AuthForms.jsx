@@ -145,6 +145,30 @@ export const AuthForms = ({ onLogin, onClose }) => {
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
+  // Show MFA verification modal
+  if (mfaRequired) {
+    return (
+      <MFAVerification
+        partialToken={partialToken}
+        onVerified={handleMFAVerified}
+        onCancel={() => {
+          setMfaRequired(false);
+          setPartialToken(null);
+        }}
+      />
+    );
+  }
+
+  // Show MFA setup modal (required for admins)
+  if (mfaSetupRequired) {
+    return (
+      <MFASetup
+        token={partialToken}
+        onComplete={handleMFASetupComplete}
+      />
+    );
+  }
+
   // Show welcome coupon modal
   if (welcomeCoupon) {
     return (
