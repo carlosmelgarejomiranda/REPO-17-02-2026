@@ -1530,13 +1530,13 @@ def test_rate_limiting_login():
     try:
         url = f"{BACKEND_URL}/auth/login"
         wrong_credentials = {
-            "email": "avenuepy@gmail.com",
+            "email": "test_rate_limit@example.com",  # Use different email to avoid existing lockout
             "password": "wrongpassword"
         }
         
         print_info(f"Testing rate limiting with 6 failed login attempts")
         print_info(f"POST {url}")
-        print_info(f"Using wrong password: {wrong_credentials['password']}")
+        print_info(f"Using test email: {wrong_credentials['email']}")
         
         # Make 6 failed attempts
         for attempt in range(1, 7):
