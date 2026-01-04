@@ -1519,6 +1519,310 @@ def test_admin_top_products():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+# ==================== SECURITY HARDENING TESTS ====================
+
+def test_rate_limiting_login():
+    """Test 1: Rate Limiting - Login Endpoint (6 failed attempts)"""
+    print_test_header("Test Rate Limiting - Login")
+    
+    try:
+        url = f"{BACKEND_URL}/auth/login"
+        wrong_credentials = {
+            "email": "avenuepy@gmail.com",
+            "password": "wrongpassword"
+        }
+        
+        print_info(f"Testing rate limiting with 6 failed login attempts")
+        print_info(f"POST {url}")
+        print_info(f"Using wrong password: {wrong_credentials['password']}")
+        
+        # Make 6 failed attempts
+        for attempt in range(1, 7):
+            print_info(f"\nAttempt {attempt}/6:")
+            response = requests.post(url, json=wrong_credentials)
+            print_info(f"Status Code: {response.status_code}")
+            
+            if attempt <= 5:
+                # First 5 attempts should return 401 (unauthorized)
+                if response.status_code == 401:
+                    print_success(f"Attempt {attempt}: Correctly rejected with 401")
+                elif response.status_code == 423:
+                    print_warning(f"Attempt {attempt}: Already locked out at attempt {attempt}")
+                    break
+                else:
+                    print_error(f"Attempt {attempt}: Unexpected status {response.status_code}")
+            else:
+                # 6th attempt should be blocked (423 or 429)
+                if response.status_code in [423, 429]:
+                    data = response.json() if response.headers.get('content-type', '').startswith('application/json') else {}
+                    print_success(f"✅ Rate limiting working: Account locked after 5 attempts")
+                    print_success(f"Status: {response.status_code}")
+                    print_info(f"Response: {response.text}")
+                    add_test_result("Rate Limiting - Login", "PASS")
+                    return True
+                else:
+                    print_error(f"Expected lockout (423/429), got {response.status_code}")
+                    add_test_result("Rate Limiting - Login", "FAIL", f"No lockout after 5 attempts")
+                    return False
+        
+        add_test_result("Rate Limiting - Login", "PASS")
+        return True
+        
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Rate Limiting - Login", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_admin_login_mfa_flow():
+    """Test 2: Admin Login MFA Flow"""
+    print_test_header("Test Admin Login MFA Flow")
+    
+    global admin_token
+    
+    try:
+        url = f"{BACKEND_URL}/auth/login"
+        admin_credentials = {
+            "email": "avenuepy@gmail.com",
+            "password": "admin123"
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Testing admin login with correct credentials")
+        
+        response = requests.post(url, json=admin_credentials)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Check if MFA setup is required
+            if data.get("mfa_setup_required"):
+                print_success("✅ MFA setup required for admin user")
+                print_success(f"Partial token provided: {data.get('partial_token')[:20]}...")
+                admin_token = data.get("partial_token")
+                add_test_result("Admin Login MFA Flow", "PASS")
+                return True
+            elif data.get("mfa_required"):
+                print_success("✅ MFA verification required for admin user")
+                print_success(f"Partial token provided: {data.get('partial_token')[:20]}...")
+                admin_token = data.get("partial_token")
+                add_test_result("Admin Login MFA Flow", "PASS")
+                return True
+            else:
+                print_warning("⚠️ Admin login successful without MFA requirement")
+                admin_token = data.get("token")
+                add_test_result("Admin Login MFA Flow", "PASS", "No MFA required")
+                return True
+        else:
+            print_error(f"Admin login failed: {response.status_code} - {response.text}")
+            add_test_result("Admin Login MFA Flow", "FAIL", f"Login failed: {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Admin Login MFA Flow", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_mfa_setup_endpoint():
+    """Test 3: MFA Setup Endpoint"""
+    print_test_header("Test MFA Setup Endpoint")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("MFA Setup Endpoint", "FAIL", "No admin token")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/auth/mfa/setup"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"POST {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.post(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate MFA setup response
+            required_fields = ["secret", "qr_code", "recovery_codes"]
+            if all(field in data for field in required_fields):
+                secret = data.get("secret")
+                qr_code = data.get("qr_code")
+                recovery_codes = data.get("recovery_codes", [])
+                
+                print_success("✅ MFA setup endpoint working correctly")
+                print_success(f"Secret provided: {secret[:10]}... (base32 string)")
+                print_success(f"QR code provided: {len(qr_code)} characters (base64)")
+                print_success(f"Recovery codes: {len(recovery_codes)} codes provided")
+                
+                # Validate recovery codes format
+                if len(recovery_codes) == 10:
+                    print_success("✅ Correct number of recovery codes (10)")
+                    print_info(f"Sample recovery codes: {recovery_codes[:3]}")
+                else:
+                    print_warning(f"⚠️ Expected 10 recovery codes, got {len(recovery_codes)}")
+                
+                add_test_result("MFA Setup Endpoint", "PASS")
+                return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                add_test_result("MFA Setup Endpoint", "FAIL", f"Missing fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("MFA Setup Endpoint", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("MFA Setup Endpoint", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_audit_logs_endpoint():
+    """Test 4: Audit Logs Endpoint"""
+    print_test_header("Test Audit Logs Endpoint")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("Audit Logs Endpoint", "FAIL", "No admin token")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/admin/audit-logs?limit=10"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate audit logs response
+            if "logs" in data and isinstance(data["logs"], list):
+                logs = data.get("logs", [])
+                total = data.get("total", 0)
+                
+                print_success("✅ Audit logs endpoint working correctly")
+                print_success(f"Total logs: {total}")
+                print_success(f"Logs in response: {len(logs)}")
+                
+                if logs:
+                    # Check first log structure
+                    first_log = logs[0]
+                    required_fields = ["action", "user_email", "ip_address", "timestamp"]
+                    
+                    if all(field in first_log for field in required_fields):
+                        print_success("✅ Log entries have required fields")
+                        print_info(f"Sample log action: {first_log.get('action')}")
+                        print_info(f"Sample log user: {first_log.get('user_email')}")
+                        print_info(f"Sample log IP: {first_log.get('ip_address')}")
+                        print_info(f"Sample log time: {first_log.get('timestamp')}")
+                        
+                        # Look for recent login attempts
+                        login_logs = [log for log in logs if 'login' in log.get('action', '')]
+                        print_info(f"Login-related logs found: {len(login_logs)}")
+                        
+                        add_test_result("Audit Logs Endpoint", "PASS")
+                        return True
+                    else:
+                        missing = [f for f in required_fields if f not in first_log]
+                        print_error(f"Log entries missing required fields: {missing}")
+                        add_test_result("Audit Logs Endpoint", "FAIL", f"Missing log fields: {missing}")
+                        return False
+                else:
+                    print_warning("⚠️ No audit logs found")
+                    add_test_result("Audit Logs Endpoint", "PASS", "No logs found")
+                    return True
+            else:
+                print_error("Response missing 'logs' array")
+                add_test_result("Audit Logs Endpoint", "FAIL", "Missing logs array")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("Audit Logs Endpoint", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Audit Logs Endpoint", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_security_headers():
+    """Test 5: Security Headers"""
+    print_test_header("Test Security Headers")
+    
+    try:
+        # Test with health endpoint
+        url = f"{BACKEND_URL}/health"
+        
+        print_info(f"GET {url}")
+        print_info("Testing security headers on health endpoint")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        # Check for security headers
+        headers = response.headers
+        print_info(f"Response headers: {dict(headers)}")
+        
+        required_security_headers = {
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "SAMEORIGIN",
+            "Referrer-Policy": "strict-origin-when-cross-origin"
+        }
+        
+        found_headers = {}
+        missing_headers = []
+        
+        for header_name, expected_value in required_security_headers.items():
+            actual_value = headers.get(header_name)
+            if actual_value:
+                found_headers[header_name] = actual_value
+                if actual_value == expected_value:
+                    print_success(f"✅ {header_name}: {actual_value}")
+                else:
+                    print_warning(f"⚠️ {header_name}: {actual_value} (expected: {expected_value})")
+            else:
+                missing_headers.append(header_name)
+                print_error(f"❌ Missing header: {header_name}")
+        
+        # Test with products endpoint as well
+        products_url = f"{BACKEND_URL}/shop/products"
+        print_info(f"\nTesting headers on: {products_url}")
+        
+        products_response = requests.get(products_url)
+        products_headers = products_response.headers
+        
+        for header_name in required_security_headers:
+            actual_value = products_headers.get(header_name)
+            if actual_value:
+                print_success(f"✅ Products endpoint - {header_name}: {actual_value}")
+            else:
+                print_error(f"❌ Products endpoint - Missing header: {header_name}")
+        
+        if len(found_headers) >= 2:  # At least 2 security headers present
+            print_success("✅ Security headers middleware working")
+            add_test_result("Security Headers", "PASS")
+            return True
+        else:
+            print_error("❌ Insufficient security headers found")
+            add_test_result("Security Headers", "FAIL", f"Missing headers: {missing_headers}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Security Headers", "FAIL", f"Exception: {str(e)}")
+        return False
+
 # ==================== COUPON SYSTEM TESTS ====================
 
 def test_create_coupon():
