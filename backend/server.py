@@ -1897,6 +1897,349 @@ async def delete_brand_inquiry(inquiry_id: str):
     
     return {"message": "Consulta eliminada"}
 
+# ==================== MFA ENDPOINTS ====================
+
+@api_router.post("/auth/mfa/setup")
+async def setup_mfa(request: Request):
+    """Initialize MFA setup - generate secret and QR code"""
+    user = await require_auth(request)
+    
+    # Generate TOTP secret
+    secret = generate_totp_secret()
+    recovery_codes = generate_recovery_codes()
+    
+    # Store temporarily (will be confirmed when user verifies)
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {
+            "mfa_temp_secret": secret,
+            "mfa_temp_recovery_codes": recovery_codes
+        }}
+    )
+    
+    # Generate QR code
+    uri = get_totp_uri(secret, user["email"])
+    qr_code = generate_qr_code_base64(uri)
+    
+    return MFASetupResponse(
+        secret=secret,
+        qr_code=qr_code,
+        recovery_codes=recovery_codes
+    )
+
+@api_router.post("/auth/mfa/verify-setup")
+async def verify_mfa_setup(data: MFAVerifyRequest, request: Request, response: Response):
+    """Verify MFA setup with TOTP code"""
+    user = await require_auth(request)
+    ip_address = get_client_ip(request)
+    user_agent = get_user_agent(request)
+    
+    temp_secret = user.get("mfa_temp_secret")
+    if not temp_secret:
+        raise HTTPException(status_code=400, detail="No hay configuración MFA pendiente")
+    
+    if not verify_totp(temp_secret, data.code):
+        await create_audit_log(
+            db, AuditAction.MFA_FAILED, user["user_id"], user["email"], user.get("role"),
+            ip_address, user_agent, {"type": "setup_verification"}
+        )
+        raise HTTPException(status_code=400, detail="Código inválido")
+    
+    # Activate MFA
+    temp_recovery = user.get("mfa_temp_recovery_codes", [])
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {
+            "$set": {
+                "mfa_enabled": True,
+                "mfa_secret": temp_secret,
+                "mfa_recovery_codes": temp_recovery,
+                "mfa_enabled_at": datetime.now(timezone.utc).isoformat()
+            },
+            "$unset": {
+                "mfa_temp_secret": "",
+                "mfa_temp_recovery_codes": ""
+            }
+        }
+    )
+    
+    await create_audit_log(
+        db, AuditAction.MFA_ENABLED, user["user_id"], user["email"], user.get("role"),
+        ip_address, user_agent, {}
+    )
+    
+    # Create new token with MFA verified
+    token = create_jwt_token(user["user_id"], user["email"], user.get("role", "user"), mfa_verified=True)
+    
+    # Set cookie
+    role = user.get("role", "user")
+    expiration_hours = JWT_EXPIRATION_HOURS_ADMIN if is_admin_role(role) else JWT_EXPIRATION_HOURS
+    response.set_cookie(
+        key="session_token",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=expiration_hours * 3600,
+        path="/"
+    )
+    
+    return {
+        "success": True,
+        "message": "MFA activado correctamente",
+        "token": token,
+        "recovery_codes_count": len(temp_recovery)
+    }
+
+@api_router.post("/auth/mfa/verify")
+async def verify_mfa(data: MFAVerifyRequest, request: Request, response: Response):
+    """Verify MFA code during login"""
+    # Get user from partial token
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token requerido")
+    
+    token = auth_header.split(" ")[1]
+    
+    try:
+        payload = decode_jwt_token(token)
+    except:
+        raise HTTPException(status_code=401, detail="Token inválido")
+    
+    user = await db.users.find_one({"user_id": payload["user_id"]}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    ip_address = get_client_ip(request)
+    user_agent = get_user_agent(request)
+    
+    secret = user.get("mfa_secret")
+    if not secret:
+        raise HTTPException(status_code=400, detail="MFA no configurado")
+    
+    if not verify_totp(secret, data.code):
+        await create_audit_log(
+            db, AuditAction.MFA_FAILED, user["user_id"], user["email"], user.get("role"),
+            ip_address, user_agent, {"type": "login_verification"}
+        )
+        raise HTTPException(status_code=400, detail="Código inválido")
+    
+    # Create full token with MFA verified
+    role = user.get("role", "user")
+    new_token = create_jwt_token(user["user_id"], user["email"], role, mfa_verified=True)
+    
+    # Set cookie
+    expiration_hours = JWT_EXPIRATION_HOURS_ADMIN if is_admin_role(role) else JWT_EXPIRATION_HOURS
+    response.set_cookie(
+        key="session_token",
+        value=new_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=expiration_hours * 3600,
+        path="/"
+    )
+    
+    await create_audit_log(
+        db, AuditAction.MFA_VERIFIED, user["user_id"], user["email"], role,
+        ip_address, user_agent, {}
+    )
+    
+    return {
+        "success": True,
+        "user_id": user["user_id"],
+        "email": user["email"],
+        "name": user["name"],
+        "role": role,
+        "token": new_token
+    }
+
+@api_router.post("/auth/mfa/recovery")
+async def use_recovery_code(request: Request, response: Response):
+    """Use recovery code when TOTP is unavailable"""
+    body = await request.json()
+    recovery_code = body.get("recovery_code")
+    
+    if not recovery_code:
+        raise HTTPException(status_code=400, detail="Código de recuperación requerido")
+    
+    # Get user from partial token
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Token requerido")
+    
+    token = auth_header.split(" ")[1]
+    
+    try:
+        payload = decode_jwt_token(token)
+    except:
+        raise HTTPException(status_code=401, detail="Token inválido")
+    
+    user = await db.users.find_one({"user_id": payload["user_id"]}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    ip_address = get_client_ip(request)
+    user_agent = get_user_agent(request)
+    
+    recovery_codes = user.get("mfa_recovery_codes", [])
+    is_valid, updated_codes = verify_recovery_code(recovery_code, recovery_codes)
+    
+    if not is_valid:
+        await create_audit_log(
+            db, AuditAction.MFA_FAILED, user["user_id"], user["email"], user.get("role"),
+            ip_address, user_agent, {"type": "recovery_code_invalid"}
+        )
+        raise HTTPException(status_code=400, detail="Código de recuperación inválido")
+    
+    # Update recovery codes (remove used one)
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {"mfa_recovery_codes": updated_codes}}
+    )
+    
+    # Create full token
+    role = user.get("role", "user")
+    new_token = create_jwt_token(user["user_id"], user["email"], role, mfa_verified=True)
+    
+    # Set cookie
+    expiration_hours = JWT_EXPIRATION_HOURS_ADMIN if is_admin_role(role) else JWT_EXPIRATION_HOURS
+    response.set_cookie(
+        key="session_token",
+        value=new_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=expiration_hours * 3600,
+        path="/"
+    )
+    
+    await create_audit_log(
+        db, AuditAction.MFA_VERIFIED, user["user_id"], user["email"], role,
+        ip_address, user_agent, {"type": "recovery_code", "codes_remaining": len(updated_codes)}
+    )
+    
+    return {
+        "success": True,
+        "user_id": user["user_id"],
+        "email": user["email"],
+        "name": user["name"],
+        "role": role,
+        "token": new_token,
+        "recovery_codes_remaining": len(updated_codes)
+    }
+
+@api_router.get("/auth/mfa/status")
+async def get_mfa_status(request: Request):
+    """Get MFA status for current user"""
+    user = await require_auth(request)
+    
+    return {
+        "mfa_enabled": user.get("mfa_enabled", False),
+        "mfa_enabled_at": user.get("mfa_enabled_at"),
+        "recovery_codes_remaining": len(user.get("mfa_recovery_codes", []))
+    }
+
+@api_router.post("/auth/mfa/regenerate-recovery")
+async def regenerate_recovery_codes(data: MFAVerifyRequest, request: Request):
+    """Regenerate recovery codes (requires MFA verification)"""
+    user = await require_auth(request)
+    ip_address = get_client_ip(request)
+    user_agent = get_user_agent(request)
+    
+    if not user.get("mfa_enabled"):
+        raise HTTPException(status_code=400, detail="MFA no está habilitado")
+    
+    # Verify current MFA code
+    if not verify_totp(user.get("mfa_secret", ""), data.code):
+        await create_audit_log(
+            db, AuditAction.MFA_FAILED, user["user_id"], user["email"], user.get("role"),
+            ip_address, user_agent, {"type": "regenerate_recovery_verification"}
+        )
+        raise HTTPException(status_code=400, detail="Código MFA inválido")
+    
+    # Generate new recovery codes
+    new_codes = generate_recovery_codes()
+    
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {"mfa_recovery_codes": new_codes}}
+    )
+    
+    await create_audit_log(
+        db, AuditAction.MFA_ENABLED, user["user_id"], user["email"], user.get("role"),
+        ip_address, user_agent, {"type": "recovery_codes_regenerated"}
+    )
+    
+    return {
+        "success": True,
+        "recovery_codes": new_codes
+    }
+
+# ==================== AUDIT LOG ENDPOINTS ====================
+
+@api_router.get("/admin/audit-logs")
+async def get_audit_logs(
+    request: Request,
+    action: Optional[str] = None,
+    user_email: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    limit: int = 100,
+    skip: int = 0
+):
+    """Get audit logs (admin only)"""
+    await require_admin(request)
+    
+    # Build query
+    query = {}
+    
+    if action:
+        query["action"] = action
+    if user_email:
+        query["user_email"] = {"$regex": user_email, "$options": "i"}
+    if start_date:
+        query["timestamp"] = {"$gte": start_date}
+    if end_date:
+        if "timestamp" in query:
+            query["timestamp"]["$lte"] = end_date
+        else:
+            query["timestamp"] = {"$lte": end_date}
+    
+    # Get logs
+    logs = await db.audit_logs.find(query, {"_id": 0}).sort("timestamp", -1).skip(skip).limit(limit).to_list(limit)
+    total = await db.audit_logs.count_documents(query)
+    
+    return {
+        "logs": logs,
+        "total": total,
+        "limit": limit,
+        "skip": skip
+    }
+
+@api_router.get("/admin/audit-logs/actions")
+async def get_audit_action_types(request: Request):
+    """Get list of audit action types"""
+    await require_admin(request)
+    
+    return {
+        "actions": [
+            {"value": AuditAction.LOGIN_SUCCESS, "label": "Login exitoso"},
+            {"value": AuditAction.LOGIN_FAILED, "label": "Login fallido"},
+            {"value": AuditAction.LOGOUT, "label": "Logout"},
+            {"value": AuditAction.MFA_ENABLED, "label": "MFA activado"},
+            {"value": AuditAction.MFA_DISABLED, "label": "MFA desactivado"},
+            {"value": AuditAction.MFA_VERIFIED, "label": "MFA verificado"},
+            {"value": AuditAction.MFA_FAILED, "label": "MFA fallido"},
+            {"value": AuditAction.PASSWORD_CHANGED, "label": "Contraseña cambiada"},
+            {"value": AuditAction.USER_ROLE_CHANGED, "label": "Rol de usuario cambiado"},
+            {"value": AuditAction.ORDER_STATUS_CHANGED, "label": "Estado de pedido cambiado"},
+            {"value": AuditAction.SETTINGS_CHANGED, "label": "Configuración cambiada"},
+            {"value": AuditAction.COUPON_CREATED, "label": "Cupón creado"},
+            {"value": AuditAction.COUPON_DELETED, "label": "Cupón eliminado"},
+        ]
+    }
+
 # ==================== BASIC ROUTES ====================
 
 @api_router.get("/")
