@@ -59,13 +59,26 @@ if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
 # JWT configuration
 JWT_SECRET = os.environ.get('JWT_SECRET', 'default_secret_key')
 JWT_ALGORITHM = "HS256"
-JWT_EXPIRATION_HOURS = 168  # 7 days
+JWT_EXPIRATION_HOURS = 168  # 7 days for regular users
+JWT_EXPIRATION_HOURS_ADMIN = 12  # 12 hours for admins
 
 # Admin email
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'avenuepy@gmail.com')
 
 # Create the main app
 app = FastAPI()
+
+# Security Headers Middleware
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        # Add security headers
+        headers = get_security_headers()
+        for key, value in headers.items():
+            response.headers[key] = value
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
