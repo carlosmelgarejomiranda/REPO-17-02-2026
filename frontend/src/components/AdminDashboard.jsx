@@ -1221,6 +1221,50 @@ export const AdminDashboard = ({ user }) => {
           </div>
         )}
 
+        {/* Security Tab */}
+        {activeTab === 'security' && (
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden p-6">
+            <div className="space-y-6">
+              <h2 className="text-xl font-medium text-white mb-6">Seguridad de la cuenta</h2>
+              <MFASettings 
+                user={user} 
+                token={localStorage.getItem('auth_token')} 
+                onUpdate={() => window.location.reload()}
+              />
+              
+              {/* Security Tips */}
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
+                <h3 className="text-lg font-medium text-blue-400 mb-3">Recomendaciones de seguridad</h3>
+                <ul className="space-y-2 text-sm text-gray-300">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                    <span>Activa MFA para proteger tu cuenta de administrador</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                    <span>Usa contraseñas únicas de al menos 12 caracteres</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                    <span>Guarda tus códigos de recuperación en un lugar seguro</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                    <span>Revisa periódicamente el registro de auditoría</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Audit Log Tab */}
+        {activeTab === 'audit' && (
+          <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden p-6">
+            <AuditLogViewer token={localStorage.getItem('auth_token')} />
+          </div>
+        )}
+
         {/* Settings Tab */}
         {activeTab === 'settings' && (
           <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden p-6">
