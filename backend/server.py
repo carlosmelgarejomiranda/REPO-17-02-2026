@@ -1,7 +1,9 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
@@ -16,6 +18,17 @@ import asyncio
 import resend
 import httpx
 from twilio.rest import Client as TwilioClient
+
+# Import security module
+from security import (
+    generate_totp_secret, generate_recovery_codes, get_totp_uri,
+    generate_qr_code_base64, verify_totp, verify_recovery_code,
+    is_admin_role, AuditAction, create_audit_log, get_client_ip,
+    get_user_agent, check_rate_limit, get_rate_limit_key,
+    RateLimitExceeded, track_login_attempt, is_login_blocked,
+    LoginAttemptResult, validate_password_strength, get_security_headers,
+    MFASetupResponse, MFAVerifyRequest
+)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
