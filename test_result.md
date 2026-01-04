@@ -190,11 +190,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Studio Booking Form with Terms and Conditions Checkbox"
+    - "Transactional Email System Testing"
   stuck_tasks:
     - "Video upload and apply changes functionality"
   test_all: false
-  test_priority: "review_request_complete"
+  test_priority: "transactional_email_complete"
 
 agent_communication:
   - agent: "testing"
