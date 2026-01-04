@@ -178,7 +178,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Review Request Testing Complete"
+    - "E-commerce Checkout UI Testing Complete"
   stuck_tasks:
     - "Video upload and apply changes functionality"
   test_all: false
