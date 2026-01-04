@@ -836,6 +836,7 @@ async def send_order_status_update(db: AsyncIOMotorDatabase, order: Dict[str, An
 
 async def send_ugc_application_confirmation(db: AsyncIOMotorDatabase, application: Dict[str, Any]) -> Dict[str, Any]:
     """Send UGC application confirmation to applicant and notification to admin"""
+    import asyncio
     results = []
     
     # Send to applicant
@@ -849,6 +850,9 @@ async def send_ugc_application_confirmation(db: AsyncIOMotorDatabase, applicatio
             entity_id=application.get('id')
         )
         results.append(('applicant', result))
+    
+    # Small delay to avoid rate limiting
+    await asyncio.sleep(0.6)
     
     # Send to admin
     admin_subject, admin_html, _ = admin_new_lead_email('ugc', application)
