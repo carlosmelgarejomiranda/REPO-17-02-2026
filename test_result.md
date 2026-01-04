@@ -176,9 +176,21 @@ metadata:
         agent: "testing"
         comment: "✅ COMPREHENSIVE FRONTEND DEPLOYMENT VERIFICATION COMPLETE: Tested all critical pages and functionality for deployment. RESULTS: ✅ Landing Page: Loads correctly with proper title 'Avenue | Boutique Premium - Asunción, Paraguay', navbar and footer visible ✅ Login Flow: LOGIN button works, login form appears, credentials (avenuepy@gmail.com/admin123) accepted successfully ✅ Admin Panel: ADMIN button appears after login, all 6 tabs visible (Pedidos, Reservas, UGC, Marcas, Usuarios, Configuración), dashboard shows proper data (2 reservas, 2 confirmadas, 500,000 Gs ingresos, 3 UGC total, 0 pendientes) ✅ E-commerce/Shop: Products load correctly (9 products visible with IMMORTAL NYC perfumes), proper product grid layout ✅ Studio Page: Loads with proper content and navigation ✅ UGC Page: Campaign page loads with proper content and benefits section ✅ Tu Marca Page: Loads correctly. Minor: Some external resources fail to load (Google Analytics, fonts, images) but core functionality works. The frontend is READY FOR DEPLOYMENT."
 
+  - task: "Studio Booking Form with Terms and Conditions Checkbox"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/BookingCalendar.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE STUDIO BOOKING FORM TESTING COMPLETE: Successfully tested all requested features from the review request. RESULTS: ✅ Terms and Conditions Page Test: /studio/terminos-condiciones loads correctly with 'TÉRMINOS Y CONDICIONES' title, 'USO DEL ESTUDIO (AVENUE STUDIO)' subtitle visible, content sections present (1) Identificación del proveedor, 2) Definiciones, etc.) ✅ Booking Form Navigation: Successfully navigated through all 3 steps - Step 1: Date selection from calendar works, Step 2: Time slot selection (10:00) works, Step 3: Form loads with all required elements ✅ Form Elements Verification: Personal data fields (Nombre, Teléfono, Email) present, Billing section (Razón Social, RUC) present ✅ NEW Terms and Conditions Checkbox: Checkbox found with correct text 'He leído y acepto los términos y condiciones de uso del espacio', Link to /studio/terminos-condiciones works correctly ✅ Button Validation: 'Confirmar Reserva' button is DISABLED when checkbox is unchecked (disabled:true), Button becomes ENABLED when checkbox is checked (disabled:false), Checkbox can be toggled back and forth with proper button state changes. ALL REQUESTED FEATURES ARE WORKING CORRECTLY. The studio booking form with the new Terms and Conditions checkbox is FULLY FUNCTIONAL and ready for production use."
+
 test_plan:
   current_focus:
-    - "E-commerce Checkout UI Testing Complete"
+    - "Studio Booking Form with Terms and Conditions Checkbox"
   stuck_tasks:
     - "Video upload and apply changes functionality"
   test_all: false
@@ -205,6 +217,8 @@ agent_communication:
     message: "✅ REVIEW REQUEST COUPON TESTING COMPLETE: Executed comprehensive testing of the e-commerce checkout flow with coupon system as specifically requested. ALL 5 BACKEND API TESTS PASSED (100% success rate): ✅ Create VERIFY20 coupon (POST /api/shop/coupons) - Successfully created with 20% discount, 50 max uses ✅ List all coupons (GET /api/shop/coupons) - Returns array with both TEST10 and VERIFY20 coupons ✅ Apply TEST10 coupon with 500,000 Gs subtotal (POST /api/shop/apply-coupon) - Correctly calculates 50,000 Gs discount (10%), new subtotal 450,000 Gs ✅ Delete VERIFY20 coupon (DELETE /api/shop/coupons/VERIFY20) - Proper 404 response ✅ Shop products (GET /api/shop/products) - Returns 9 products with proper structure. The coupon CRUD operations, discount calculations, and product listing are ALL WORKING CORRECTLY. The e-commerce backend is FULLY FUNCTIONAL for checkout flow with coupon system."
   - agent: "testing"
     message: "✅ E-COMMERCE CHECKOUT UI WITH COUPON SYSTEM TESTING COMPLETE: Conducted comprehensive UI testing as requested in the review. RESULTS: ✅ Cookie Banner Test: Banner appears with 'Utilizamos cookies' text, 'Aceptar todas' button works, banner disappears after accepting ✅ Shop Flow: Products load correctly (9 perfume products), product cards clickable, add to cart functionality works ✅ Checkout Page: Successfully loads with all required elements - 'Checkout' title visible, '¿Todavía no tenés cuenta?' registration banner present (user not logged in), 'CUPÓN DE DESCUENTO' section visible, 'He leído y acepto los términos y condiciones' checkbox present, contact information form, delivery method selection, order summary ✅ Static Pages: Terms page loads with 'TÉRMINOS Y CONDICIONES' title, Privacy policy page loads with 'POLÍTICA DE PRIVACIDAD Y COOKIES' title ✅ Footer: 'POLÍTICA DE PRIVACIDAD' link visible in footer. ALL REQUESTED UI ELEMENTS AND FLOWS ARE WORKING CORRECTLY. The e-commerce checkout UI with coupon system is FULLY FUNCTIONAL and ready for production use."
+  - agent: "testing"
+    message: "✅ STUDIO BOOKING FORM WITH TERMS AND CONDITIONS TESTING COMPLETE: Successfully completed comprehensive testing of the studio booking form with the new Terms and Conditions checkbox as requested in the review. ALL TESTS PASSED: ✅ Terms and Conditions Page (/studio/terminos-condiciones) loads correctly with proper title, subtitle, and content sections ✅ Booking form navigation works through all 3 steps (Date → Time → Form) ✅ Step 3 form contains all required elements: Personal data fields, Billing section, NEW Terms and Conditions checkbox ✅ Checkbox validation works perfectly: Initially unchecked with button disabled, Becomes enabled when checked, Can be toggled with proper state changes ✅ Link to terms page works correctly. The studio booking form with Terms and Conditions checkbox is FULLY FUNCTIONAL and ready for production use."
   - task: "Coupon System - Create"
     implemented: true
     working: true
