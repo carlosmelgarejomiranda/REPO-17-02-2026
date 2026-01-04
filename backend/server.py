@@ -1283,6 +1283,25 @@ async def admin_confirm_reservation(reservation_id: str, request: Request):
     # Send confirmation email to customer
     await send_confirmation_email(updated)
     
+    # Send booking confirmation email via email service
+    try:
+        from email_service import send_booking_confirmation
+        # Map reservation fields to expected format
+        email_reservation = {
+            "reservation_id": updated.get("reservation_id"),
+            "date": updated.get("date"),
+            "time": updated.get("start_time"),
+            "end_time": updated.get("end_time"),
+            "duration": updated.get("duration_hours"),
+            "total_price": updated.get("price"),
+            "customer_name": updated.get("name"),
+            "customer_email": updated.get("email"),
+            "customer_phone": updated.get("phone")
+        }
+        await send_booking_confirmation(db, email_reservation)
+    except Exception as e:
+        logger.error(f"Failed to send booking confirmation email: {e}")
+    
     # Send WhatsApp confirmation to customer
     await send_reservation_confirmed_notification(updated)
     
