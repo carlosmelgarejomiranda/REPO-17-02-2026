@@ -114,8 +114,9 @@ export const Footer = ({ t }) => {
             © {new Date().getFullYear()} Avenue. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-8">
+            <a href="/politica-privacidad" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Política de Privacidad</a>
+            <a href="/terminos-condiciones" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Términos</a>
             <a href="https://instagram.com/avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Instagram</a>
-            <a href="https://tiktok.com/@avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">TikTok</a>
             <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">WhatsApp</a>
           </div>
         </div>
