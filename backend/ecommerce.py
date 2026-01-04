@@ -1074,6 +1074,12 @@ async def create_checkout(data: CheckoutData, request: Request):
     """Create order - handles both payment gateway and request mode"""
     from server import notify_new_order, send_whatsapp_notification
     
+    # Rate limiting - 5 checkouts per minute per IP
+    rate_key = get_rate_limit_key(request, "checkout")
+    is_allowed, _ = check_rate_limit(rate_key, max_requests=5, window_seconds=60)
+    if not is_allowed:
+        raise RateLimitExceeded(retry_after=60)
+    
     # Get admin settings to check if payment gateway is enabled
     settings = await get_admin_settings_for_checkout()
     payment_enabled = settings.get("payment_gateway_enabled", False)
