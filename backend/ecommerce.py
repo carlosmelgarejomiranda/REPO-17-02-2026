@@ -1173,6 +1173,13 @@ async def create_checkout(data: CheckoutData, request: Request):
 
     await send_whatsapp_notification(whatsapp_commercial, whatsapp_message)
     
+    # Import email service and send order confirmation email
+    try:
+        from email_service import send_order_confirmation
+        await send_order_confirmation(db, order_doc)
+    except Exception as e:
+        logger.error(f"Failed to send order confirmation email: {e}")
+    
     # Return response based on payment gateway setting
     if not payment_enabled:
         # CASE 1: Payment gateway disabled - create order as "solicitud"
