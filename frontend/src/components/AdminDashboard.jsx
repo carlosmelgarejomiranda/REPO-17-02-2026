@@ -556,7 +556,9 @@ export const AdminDashboard = ({ user }) => {
     { id: 'reservations', label: 'Reservas', icon: Calendar, permission: 'reservations' },
     { id: 'ugc', label: 'UGC', icon: Instagram, permission: 'ugc' },
     { id: 'brands', label: 'Marcas', icon: Building, permission: 'brands' },
-    { id: 'users', label: 'Usuarios', icon: Shield, permission: 'users' },
+    { id: 'security', label: 'Seguridad', icon: Shield, permission: 'security' },
+    { id: 'audit', label: 'Auditoría', icon: FileText, permission: 'audit' },
+    { id: 'users', label: 'Usuarios', icon: UserCog, permission: 'users' },
     { id: 'settings', label: 'Configuración', icon: Settings, permission: 'settings' }
   ];
 
