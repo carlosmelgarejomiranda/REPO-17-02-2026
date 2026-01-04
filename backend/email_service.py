@@ -788,6 +788,7 @@ async def send_order_confirmation(db: AsyncIOMotorDatabase, order: Dict[str, Any
 
 async def send_booking_confirmation(db: AsyncIOMotorDatabase, reservation: Dict[str, Any]) -> Dict[str, Any]:
     """Send booking confirmation to customer and notification to admin"""
+    import asyncio
     results = []
     
     # Send to customer
@@ -801,6 +802,9 @@ async def send_booking_confirmation(db: AsyncIOMotorDatabase, reservation: Dict[
             entity_id=reservation.get('reservation_id')
         )
         results.append(('customer', result))
+    
+    # Small delay to avoid rate limiting
+    await asyncio.sleep(0.6)
     
     # Send to admin
     admin_subject, admin_html, _ = admin_new_booking_email(reservation)
