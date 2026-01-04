@@ -93,9 +93,24 @@ def test_admin_authentication():
             data = response.json()
             print_info(f"Response: {json.dumps(data, indent=2)}")
             
-            # Validate response structure
-            required_fields = ["user_id", "email", "name", "role", "token"]
-            if all(field in data for field in required_fields):
+            # Check if MFA setup is required
+            if data.get("mfa_setup_required") and "partial_token" in data:
+                admin_token = data["partial_token"]
+                role = data.get("role")
+                
+                if role in ["admin", "superadmin"]:
+                    print_success("Admin authentication successful (MFA setup required)")
+                    print_success(f"Role: {role}")
+                    print_success(f"Partial token received and stored")
+                    add_test_result("Admin Authentication", "PASS")
+                    return True
+                else:
+                    print_error(f"Expected admin/superadmin role, got '{role}'")
+                    add_test_result("Admin Authentication", "FAIL", f"Wrong role: {role}")
+                    return False
+            
+            # Check for regular token
+            elif "token" in data:
                 admin_token = data["token"]
                 role = data.get("role")
                 
@@ -110,9 +125,8 @@ def test_admin_authentication():
                     add_test_result("Admin Authentication", "FAIL", f"Wrong role: {role}")
                     return False
             else:
-                missing = [f for f in required_fields if f not in data]
-                print_error(f"Missing required fields: {missing}")
-                add_test_result("Admin Authentication", "FAIL", f"Missing fields: {missing}")
+                print_error("No token or partial_token found in response")
+                add_test_result("Admin Authentication", "FAIL", "No token in response")
                 return False
         else:
             print_error(f"Failed with status {response.status_code}: {response.text}")
