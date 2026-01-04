@@ -797,6 +797,24 @@ async def register(user_data: UserCreate, response: Response):
     
     await db.users.insert_one(user_doc)
     
+    # Create welcome coupon (10% off) for new users
+    welcome_coupon_code = f"BIENVENIDO{uuid.uuid4().hex[:6].upper()}"
+    welcome_coupon = {
+        "id": str(uuid.uuid4()),
+        "code": welcome_coupon_code,
+        "discount_type": "percentage",
+        "discount_value": 10,
+        "min_purchase": None,
+        "max_uses": 1,
+        "current_uses": 0,
+        "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+        "is_active": True,
+        "description": f"Cupón de bienvenida para {user_data.email}",
+        "user_id": user_id,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.shop_coupons.insert_one(welcome_coupon)
+    
     # Create token
     token = create_jwt_token(user_id, user_data.email, role)
     
@@ -816,7 +834,8 @@ async def register(user_data: UserCreate, response: Response):
         "email": user_data.email,
         "name": user_data.name,
         "role": role,
-        "token": token
+        "token": token,
+        "welcome_coupon": welcome_coupon_code
     }
 
 @api_router.post("/auth/login")
