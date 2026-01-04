@@ -344,7 +344,7 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
         } : null,
         payment_method: 'bancard',
         notes: formData.notes,
-        billing: needsInvoice ? billingData : null,
+        billing: !noNeedsInvoice ? billingData : null,
         coupon_code: appliedCoupon?.code || null,
         coupon_discount: couponDiscount
       };
