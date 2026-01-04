@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail, Palette, Shield, UserCog, AlertCircle, Phone, CheckCircle, Building, Download, FileSpreadsheet, Tag, Percent, Loader2 } from 'lucide-react';
+import { Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, Instagram, MessageCircle, ShoppingBag, Image, ChevronLeft, Settings, BarChart3, Mail, Palette, Shield, UserCog, AlertCircle, Phone, CheckCircle, Building, Download, FileSpreadsheet, Tag, Percent, Loader2, FileText } from 'lucide-react';
 import { Button } from './ui/button';
 import { OrdersManagement } from './OrdersManagement';
 import { ProductImagesManager } from './ProductImagesManager';
 import { WebsiteBuilder } from './WebsiteBuilder';
 import { UserRolesManager } from './UserRolesManager';
 import { AdminSettings } from './AdminSettings';
+import { MFASettings } from './MFAComponents';
+import { AuditLogViewer } from './AuditLogViewer';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 // Permission helper based on role
 const hasPermission = (role, permission) => {
   const permissions = {
-    superadmin: ['all', 'users', 'settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics', 'brands'],
-    admin: ['settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics', 'brands'],
+    superadmin: ['all', 'users', 'settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics', 'brands', 'security', 'audit'],
+    admin: ['settings', 'website', 'orders', 'reservations', 'ugc', 'images', 'analytics', 'brands', 'security'],
     staff: ['orders', 'reservations', 'ugc', 'analytics', 'brands'],
     designer: ['website', 'images'],
     user: []
