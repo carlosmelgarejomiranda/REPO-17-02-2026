@@ -34,6 +34,7 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
