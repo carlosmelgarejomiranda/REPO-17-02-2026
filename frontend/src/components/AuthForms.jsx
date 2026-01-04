@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Lock, User, Phone, Eye, EyeOff, Gift, Copy, Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
+import { MFAVerification, MFASetup } from './MFAComponents';
 
 export const AuthForms = ({ onLogin, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,6 +11,12 @@ export const AuthForms = ({ onLogin, onClose }) => {
   const [error, setError] = useState(null);
   const [welcomeCoupon, setWelcomeCoupon] = useState(null);
   const [couponCopied, setCouponCopied] = useState(false);
+  
+  // MFA states
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaSetupRequired, setMfaSetupRequired] = useState(false);
+  const [partialToken, setPartialToken] = useState(null);
+  const [pendingUserData, setPendingUserData] = useState(null);
   
   const [formData, setFormData] = useState({
     email: '',
@@ -50,6 +57,22 @@ export const AuthForms = ({ onLogin, onClose }) => {
         throw new Error(data.detail || 'Error de autenticación');
       }
 
+      // Check if MFA verification is required
+      if (data.mfa_required) {
+        setMfaRequired(true);
+        setPartialToken(data.partial_token);
+        setPendingUserData(data);
+        return;
+      }
+      
+      // Check if MFA setup is required (admin first login)
+      if (data.mfa_setup_required) {
+        setMfaSetupRequired(true);
+        setPartialToken(data.partial_token);
+        setPendingUserData(data);
+        return;
+      }
+
       // Store token in localStorage as backup
       if (data.token) {
         localStorage.setItem('auth_token', data.token);
@@ -67,6 +90,36 @@ export const AuthForms = ({ onLogin, onClose }) => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle MFA verification success
+  const handleMFAVerified = (data) => {
+    if (data.token) {
+      localStorage.setItem('auth_token', data.token);
+    }
+    setMfaRequired(false);
+    setPartialToken(null);
+    onLogin(data);
+  };
+
+  // Handle MFA setup completion
+  const handleMFASetupComplete = async () => {
+    // After MFA setup, we need to get the new token
+    try {
+      const response = await fetch(`${API_URL}/api/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        }
+      });
+      const userData = await response.json();
+      setMfaSetupRequired(false);
+      setPartialToken(null);
+      onLogin({ ...pendingUserData, ...userData, token: localStorage.getItem('auth_token') });
+    } catch (err) {
+      // If we can't get user data, just proceed with what we have
+      setMfaSetupRequired(false);
+      onLogin(pendingUserData);
     }
   };
 
