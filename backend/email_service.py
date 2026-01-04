@@ -755,6 +755,7 @@ async def send_email(
 
 async def send_order_confirmation(db: AsyncIOMotorDatabase, order: Dict[str, Any]) -> Dict[str, Any]:
     """Send order confirmation to customer and notification to admin"""
+    import asyncio
     results = []
     
     # Send to customer
@@ -768,6 +769,9 @@ async def send_order_confirmation(db: AsyncIOMotorDatabase, order: Dict[str, Any
             entity_id=order.get('order_id')
         )
         results.append(('customer', result))
+    
+    # Small delay to avoid rate limiting
+    await asyncio.sleep(0.6)
     
     # Send to admin
     admin_subject, admin_html, _ = admin_new_order_email(order)
