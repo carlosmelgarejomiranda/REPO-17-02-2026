@@ -659,12 +659,14 @@ async def send_email(
     sender_type: str = 'ecommerce',
     entity_type: str = None,
     entity_id: str = None,
-    plain_text: str = None
+    plain_text: str = None,
+    retry_count: int = 3
 ) -> Dict[str, Any]:
     """
     Send email and log the result
     Returns: {'success': bool, 'message_id': str or None, 'error': str or None}
     """
+    import asyncio
     
     sender = EMAIL_SENDERS.get(sender_type, EMAIL_SENDERS['ecommerce'])
     
@@ -684,40 +686,62 @@ async def send_email(
         "sent_at": None
     }
     
-    try:
-        # Send email via Resend
-        response = resend.Emails.send({
-            "from": sender,
-            "to": [to_email],
-            "subject": subject,
-            "html": html_content,
-            "text": plain_text or subject  # Fallback plain text
-        })
-        
-        # Update log with success
-        log_entry["status"] = "sent"
-        log_entry["message_id"] = response.get("id")
-        log_entry["sent_at"] = datetime.now(timezone.utc).isoformat()
-        
-        logger.info(f"Email sent successfully to {to_email}: {subject}")
-        
-        result = {
-            "success": True,
-            "message_id": response.get("id"),
-            "error": None
-        }
-        
-    except Exception as e:
-        # Update log with error
+    last_error = None
+    
+    for attempt in range(retry_count):
+        try:
+            # Send email via Resend
+            response = resend.Emails.send({
+                "from": sender,
+                "to": [to_email],
+                "subject": subject,
+                "html": html_content,
+                "text": plain_text or subject  # Fallback plain text
+            })
+            
+            # Update log with success
+            log_entry["status"] = "sent"
+            log_entry["message_id"] = response.get("id")
+            log_entry["sent_at"] = datetime.now(timezone.utc).isoformat()
+            
+            logger.info(f"Email sent successfully to {to_email}: {subject}")
+            
+            result = {
+                "success": True,
+                "message_id": response.get("id"),
+                "error": None
+            }
+            break
+            
+        except Exception as e:
+            last_error = str(e)
+            
+            # Check if it's a rate limit error
+            if "rate" in str(e).lower() and attempt < retry_count - 1:
+                logger.warning(f"Rate limited, retrying in {1 + attempt}s... (attempt {attempt + 1}/{retry_count})")
+                await asyncio.sleep(1 + attempt)  # Exponential backoff
+                continue
+            
+            # Update log with error
+            log_entry["status"] = "failed"
+            log_entry["error_message"] = str(e)
+            
+            logger.error(f"Failed to send email to {to_email}: {str(e)}")
+            
+            result = {
+                "success": False,
+                "message_id": None,
+                "error": str(e)
+            }
+            break
+    else:
+        # All retries exhausted
         log_entry["status"] = "failed"
-        log_entry["error_message"] = str(e)
-        
-        logger.error(f"Failed to send email to {to_email}: {str(e)}")
-        
+        log_entry["error_message"] = last_error
         result = {
             "success": False,
             "message_id": None,
-            "error": str(e)
+            "error": last_error
         }
     
     # Save log to database
