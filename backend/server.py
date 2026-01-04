@@ -870,32 +870,122 @@ async def register(user_data: UserCreate, response: Response):
     }
 
 @api_router.post("/auth/login")
-async def login(credentials: UserLogin, response: Response):
-    """Login with email/password"""
+async def login(credentials: UserLogin, request: Request, response: Response):
+    """Login with email/password - with rate limiting and audit logging"""
+    ip_address = get_client_ip(request)
+    user_agent = get_user_agent(request)
+    
+    # Check rate limit
+    rate_key = get_rate_limit_key(request, "login")
+    is_allowed, _ = check_rate_limit(rate_key, max_requests=10, window_seconds=60)
+    if not is_allowed:
+        await create_audit_log(
+            db, AuditAction.LOGIN_FAILED, None, credentials.email, None,
+            ip_address, user_agent, {"reason": "rate_limited"}
+        )
+        raise RateLimitExceeded(retry_after=60)
+    
+    # Check if account is locked
+    is_blocked, lockout_seconds = is_login_blocked(credentials.email)
+    if is_blocked:
+        await create_audit_log(
+            db, AuditAction.LOGIN_FAILED, None, credentials.email, None,
+            ip_address, user_agent, {"reason": "account_locked", "lockout_seconds": lockout_seconds}
+        )
+        raise HTTPException(
+            status_code=423, 
+            detail=f"Cuenta bloqueada temporalmente. Intenta de nuevo en {lockout_seconds // 60} minutos."
+        )
+    
     user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     
     if not user or not verify_password(credentials.password, user.get("password", "")):
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        # Track failed attempt
+        result, lockout = track_login_attempt(credentials.email, success=False)
+        
+        await create_audit_log(
+            db, AuditAction.LOGIN_FAILED, 
+            user.get("user_id") if user else None, 
+            credentials.email, 
+            user.get("role") if user else None,
+            ip_address, user_agent, {"reason": "invalid_credentials"}
+        )
+        
+        if result == LoginAttemptResult.BLOCKED:
+            raise HTTPException(
+                status_code=423, 
+                detail=f"Demasiados intentos fallidos. Cuenta bloqueada por {lockout // 60} minutos."
+            )
+        raise HTTPException(status_code=401, detail="Email o contraseña incorrectos")
     
-    # Create token
-    token = create_jwt_token(user["user_id"], user["email"], user.get("role", "user"))
+    # Successful login - reset attempts
+    track_login_attempt(credentials.email, success=True)
+    
+    role = user.get("role", "user")
+    has_mfa = user.get("mfa_enabled", False)
+    
+    # Check if admin needs MFA
+    if is_admin_role(role) and has_mfa:
+        # Return partial token - MFA verification required
+        partial_token = create_jwt_token(user["user_id"], user["email"], role, mfa_verified=False)
+        
+        await create_audit_log(
+            db, AuditAction.LOGIN_SUCCESS, user["user_id"], user["email"], role,
+            ip_address, user_agent, {"mfa_required": True}
+        )
+        
+        return {
+            "user_id": user["user_id"],
+            "email": user["email"],
+            "name": user["name"],
+            "role": role,
+            "mfa_required": True,
+            "partial_token": partial_token
+        }
+    
+    # Check if admin needs to setup MFA (enforce for admins)
+    if is_admin_role(role) and not has_mfa:
+        partial_token = create_jwt_token(user["user_id"], user["email"], role, mfa_verified=False)
+        
+        await create_audit_log(
+            db, AuditAction.LOGIN_SUCCESS, user["user_id"], user["email"], role,
+            ip_address, user_agent, {"mfa_setup_required": True}
+        )
+        
+        return {
+            "user_id": user["user_id"],
+            "email": user["email"],
+            "name": user["name"],
+            "role": role,
+            "mfa_setup_required": True,
+            "partial_token": partial_token
+        }
+    
+    # Create full token for non-admin users
+    token = create_jwt_token(user["user_id"], user["email"], role, mfa_verified=True)
     
     # Set cookie
+    expiration_hours = JWT_EXPIRATION_HOURS_ADMIN if is_admin_role(role) else JWT_EXPIRATION_HOURS
     response.set_cookie(
         key="session_token",
         value=token,
         httponly=True,
         secure=True,
         samesite="none",
-        max_age=JWT_EXPIRATION_HOURS * 3600,
+        max_age=expiration_hours * 3600,
         path="/"
+    )
+    
+    await create_audit_log(
+        db, AuditAction.LOGIN_SUCCESS, user["user_id"], user["email"], role,
+        ip_address, user_agent, {}
     )
     
     return {
         "user_id": user["user_id"],
         "email": user["email"],
         "name": user["name"],
-        "role": user.get("role", "user"),
+        "role": role,
         "token": token
     }
 
