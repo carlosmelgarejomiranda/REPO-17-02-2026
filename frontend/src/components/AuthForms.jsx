@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Phone, Eye, EyeOff, Gift, Copy, Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 
@@ -8,6 +8,8 @@ export const AuthForms = ({ onLogin, onClose }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [welcomeCoupon, setWelcomeCoupon] = useState(null);
+  const [couponCopied, setCouponCopied] = useState(false);
   
   const [formData, setFormData] = useState({
     email: '',
@@ -53,7 +55,14 @@ export const AuthForms = ({ onLogin, onClose }) => {
         localStorage.setItem('auth_token', data.token);
       }
 
-      onLogin(data);
+      // Check for welcome coupon (new registration)
+      if (data.welcome_coupon) {
+        setWelcomeCoupon(data.welcome_coupon);
+        // Store the user data to pass after modal closes
+        localStorage.setItem('pending_login_data', JSON.stringify(data));
+      } else {
+        onLogin(data);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -61,11 +70,86 @@ export const AuthForms = ({ onLogin, onClose }) => {
     }
   };
 
+  const handleCopyCoupon = () => {
+    navigator.clipboard.writeText(welcomeCoupon);
+    setCouponCopied(true);
+    setTimeout(() => setCouponCopied(false), 2000);
+  };
+
+  const handleContinueAfterCoupon = () => {
+    const pendingData = localStorage.getItem('pending_login_data');
+    if (pendingData) {
+      const data = JSON.parse(pendingData);
+      localStorage.removeItem('pending_login_data');
+      onLogin(data);
+    }
+    onClose();
+  };
+
   const handleGoogleLogin = () => {
     // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
     const redirectUrl = window.location.origin + '/auth/callback';
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
+
+  // Show welcome coupon modal
+  if (welcomeCoupon) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.95)' }}>
+        <Card className="w-full max-w-md relative" style={{ backgroundColor: '#000000', border: '1px solid rgba(212, 169, 104, 0.5)' }}>
+          <CardContent className="pt-8 pb-8">
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(212, 169, 104, 0.1)' }}>
+                <Gift className="w-10 h-10 text-[#d4a968]" />
+              </div>
+              
+              <h2 className="text-2xl font-light tracking-[0.15em] uppercase text-white mb-2">
+                ¡Bienvenido a Avenue!
+              </h2>
+              <p className="text-gray-400 text-sm mb-6">
+                Gracias por crear tu cuenta. Aquí está tu cupón de bienvenida:
+              </p>
+              
+              <div className="bg-gradient-to-r from-[#d4a968]/20 to-[#d4a968]/10 border border-[#d4a968]/50 rounded-xl p-6 mb-6">
+                <p className="text-xs text-gray-400 mb-2 tracking-[0.15em] uppercase">Tu cupón de 10% de descuento</p>
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-2xl font-mono font-bold text-[#d4a968] tracking-wider">
+                    {welcomeCoupon}
+                  </span>
+                  <button
+                    onClick={handleCopyCoupon}
+                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    title="Copiar código"
+                  >
+                    {couponCopied ? (
+                      <Check className="w-5 h-5 text-green-400" />
+                    ) : (
+                      <Copy className="w-5 h-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-3">
+                  Válido por 30 días • Un solo uso
+                </p>
+              </div>
+              
+              <p className="text-xs text-gray-500 mb-6">
+                Usalo en el checkout ingresando el código en el campo de cupón de descuento.
+              </p>
+              
+              <Button
+                onClick={handleContinueAfterCoupon}
+                className="w-full py-3 text-sm tracking-[0.15em] uppercase"
+                style={{ backgroundColor: '#d4a968', color: '#000' }}
+              >
+                Continuar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}>
