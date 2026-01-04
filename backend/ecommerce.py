@@ -1285,8 +1285,14 @@ async def delete_coupon(coupon_id: str):
     return {"success": True, "message": "Cupón eliminado"}
 
 @ecommerce_router.post("/apply-coupon")
-async def apply_coupon(data: CouponApply):
+async def apply_coupon(data: CouponApply, request: Request):
     """Validate and apply a coupon code"""
+    # Rate limiting - 10 coupon attempts per minute per IP
+    rate_key = get_rate_limit_key(request, "coupon")
+    is_allowed, _ = check_rate_limit(rate_key, max_requests=10, window_seconds=60)
+    if not is_allowed:
+        raise RateLimitExceeded(retry_after=60)
+    
     code = data.code.upper().strip()
     subtotal = data.subtotal
     
