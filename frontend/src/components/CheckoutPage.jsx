@@ -130,7 +130,7 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
     ruc: '',
     direccion_fiscal: ''
   });
-  const [needsInvoice, setNeedsInvoice] = useState(false);
+  const [noNeedsInvoice, setNoNeedsInvoice] = useState(false);
   
   const geocoderRef = useRef(null);
 
