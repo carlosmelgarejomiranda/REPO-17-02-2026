@@ -178,10 +178,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Coupon System API Testing"
+    - "Review Request Testing Complete"
   stuck_tasks:
     - "Video upload and apply changes functionality"
-  test_all: true
+  test_all: false
   test_priority: "review_request_complete"
 
 agent_communication:
