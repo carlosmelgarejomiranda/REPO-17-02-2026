@@ -142,6 +142,12 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!acceptedTerms) {
+      setError('Debes aceptar los términos y condiciones de uso del espacio para continuar');
+      return;
+    }
+    
     setSubmitting(true);
     setError(null);
 
