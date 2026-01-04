@@ -308,8 +308,8 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
       return;
     }
 
-    if (needsInvoice && (!billingData.razon_social || !billingData.ruc)) {
-      alert('Por favor completa los datos de facturación');
+    if (!noNeedsInvoice && (!billingData.razon_social || !billingData.ruc)) {
+      alert('Por favor completa los datos de facturación (Razón Social y RUC)');
       return;
     }
 
