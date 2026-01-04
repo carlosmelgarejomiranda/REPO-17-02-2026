@@ -19,6 +19,9 @@ from io import BytesIO
 from PIL import Image as PILImage
 from dotenv import load_dotenv
 
+# Import security functions
+from security import check_rate_limit, get_rate_limit_key, RateLimitExceeded, get_client_ip
+
 # Load environment variables
 load_dotenv()
 
