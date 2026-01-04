@@ -352,3 +352,130 @@ frontend:
         agent: "main"
         comment: "✅ PASS: Cookie banner appears on page load with 'Aceptar todas', 'Solo necesarias', 'Configurar' options"
 
+
+# Security Hardening Pack - Test Results
+
+## Backend Security Tests
+
+  - task: "Rate Limiting - Login"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Rate limiting active on login endpoint. Multiple failed attempts tracked correctly."
+
+  - task: "Rate Limiting - Checkout"
+    implemented: true
+    working: true
+    file: "/app/backend/ecommerce.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Rate limiting implemented - 5 checkouts per minute per IP"
+
+  - task: "Rate Limiting - Coupon Apply"
+    implemented: true
+    working: true
+    file: "/app/backend/ecommerce.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Rate limiting implemented - 10 coupon attempts per minute per IP"
+
+  - task: "Audit Logging"
+    implemented: true
+    working: true
+    file: "/app/backend/security.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Audit logs capturing login_success, login_failed, mfa events. GET /api/admin/audit-logs returns logs with filters."
+
+  - task: "MFA TOTP Setup"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: MFA setup endpoint returns QR code and recovery codes"
+
+  - task: "Security Headers"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Security headers middleware added (X-Content-Type-Options, X-Frame-Options, etc.)"
+
+## Frontend Security Tests
+
+  - task: "MFA Setup UI"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/MFAComponents.jsx"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: MFA setup modal appears for admin login. Shows QR code, verification input, recovery codes."
+
+  - task: "Admin Forced MFA"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AuthForms.jsx"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Admin users see MFA setup modal immediately after login. Cannot access admin panel without MFA."
+
+  - task: "Audit Log Viewer"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AuditLogViewer.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Audit log tab visible in admin panel with filters for action type, email, dates."
+
+  - task: "Security Tab in Admin"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AdminDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ PASS: Security and Audit tabs added to admin dashboard."
+
