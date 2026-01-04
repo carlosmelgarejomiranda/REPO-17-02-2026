@@ -869,6 +869,7 @@ async def send_ugc_application_confirmation(db: AsyncIOMotorDatabase, applicatio
 
 async def send_brand_inquiry_confirmation(db: AsyncIOMotorDatabase, inquiry: Dict[str, Any]) -> Dict[str, Any]:
     """Send brand inquiry confirmation to brand and notification to admin"""
+    import asyncio
     results = []
     
     # Send to brand
@@ -882,6 +883,9 @@ async def send_brand_inquiry_confirmation(db: AsyncIOMotorDatabase, inquiry: Dic
             entity_id=inquiry.get('inquiry_id')
         )
         results.append(('brand', result))
+    
+    # Small delay to avoid rate limiting
+    await asyncio.sleep(0.6)
     
     # Send to admin
     admin_subject, admin_html, _ = admin_new_lead_email('brand', inquiry)
