@@ -151,10 +151,8 @@ def test_order_checkout_email():
             "customer_email": "avenuepy@gmail.com",
             "customer_phone": "+595981123456",
             "delivery_type": "pickup",
-            "items": [{"sku": "TEST001", "name": "Producto Test", "price": 150000, "quantity": 1}],
-            "subtotal": 150000,
-            "delivery_cost": 0,
-            "total": 150000
+            "items": [{"product_id": "TEST001", "sku": "TEST001", "name": "Producto Test", "price": 150000, "quantity": 1}],
+            "payment_method": "bancard"
         }
         
         print_info(f"POST {url}")
