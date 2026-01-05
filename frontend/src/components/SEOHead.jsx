@@ -189,16 +189,13 @@ export const HomeSEO = () => (
   />
 );
 
-export const ShopSEO = () => {
-  console.log("ShopSEO component rendered");
-  return (
+export const ShopSEO = () => (
   <SEOHead
     title="Tienda Online"
     description="Explorá nuestra tienda online con las mejores marcas de moda. Envío a todo Paraguay o retiro en tienda. AVENUE - Paseo Los Árboles, Asunción."
     url={`${SITE_URL}/shop`}
   />
-)};
-
+);
 
 export const ProductSEO = ({ product }) => {
   if (!product) return null;
