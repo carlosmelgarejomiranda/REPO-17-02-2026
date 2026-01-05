@@ -559,6 +559,7 @@ function AppRouter() {
           {/* Booking Page */}
           <Route path="/studio/reservar" element={
             <>
+              <StudioBookingSEO />
               <Navbar 
                 user={user}
                 onLoginClick={() => setShowAuthModal(true)}
@@ -586,6 +587,7 @@ function AppRouter() {
           <Route path="/admin" element={
             ['admin', 'superadmin', 'staff', 'designer'].includes(user?.role) ? (
               <>
+                <AdminSEO />
                 <Navbar 
                   user={user}
                   onLoginClick={() => setShowAuthModal(true)}
