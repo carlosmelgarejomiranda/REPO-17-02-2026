@@ -627,15 +627,15 @@ const fetchProducts = useCallback(async () => {
 
                 {/* Joyas & Accesorios */}
                 <div>
-                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-3 md:mb-4 pb-2 border-b border-gray-200">
                     {BRAND_CATEGORIES.joyas.title}
                   </h3>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1.5 md:space-y-2">
                     {organizedBrands.joyas.map(brand => (
                       <li key={brand}>
                         <button
                           onClick={() => handleBrandSelect(brand)}
-                          className={`text-[11px] transition-colors hover:text-gray-900 ${
+                          className={`text-[10px] md:text-[11px] transition-colors hover:text-gray-900 ${
                             selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
                           }`}
                         >
@@ -648,15 +648,15 @@ const fetchProducts = useCallback(async () => {
 
                 {/* Cosmética */}
                 <div>
-                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-3 md:mb-4 pb-2 border-b border-gray-200">
                     {BRAND_CATEGORIES.cosmetica.title}
                   </h3>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1.5 md:space-y-2">
                     {organizedBrands.cosmetica.map(brand => (
                       <li key={brand}>
                         <button
                           onClick={() => handleBrandSelect(brand)}
-                          className={`text-[11px] transition-colors hover:text-gray-900 ${
+                          className={`text-[10px] md:text-[11px] transition-colors hover:text-gray-900 ${
                             selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
                           }`}
                         >
@@ -667,14 +667,14 @@ const fetchProducts = useCallback(async () => {
                     {/* Include "Otros" brands at the end of Cosmética */}
                     {organizedBrands.otros.length > 0 && (
                       <>
-                        <li className="pt-3 mt-3 border-t border-gray-100">
+                        <li className="pt-2 md:pt-3 mt-2 md:mt-3 border-t border-gray-100">
                           <span className="text-[9px] tracking-[0.15em] uppercase text-gray-400">Otros</span>
                         </li>
                         {organizedBrands.otros.slice(0, 5).map(brand => (
                           <li key={brand}>
                             <button
                               onClick={() => handleBrandSelect(brand)}
-                              className={`text-[11px] transition-colors hover:text-gray-900 ${
+                              className={`text-[10px] md:text-[11px] transition-colors hover:text-gray-900 ${
                                 selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
                               }`}
                             >
@@ -689,7 +689,7 @@ const fetchProducts = useCallback(async () => {
               </div>
               
               {/* View All */}
-              <div className="mt-6 pt-4 border-t border-gray-100">
+              <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-gray-100">
                 <button
                   onClick={() => { setSelectedBrand(''); setShowBrandsMenu(false); }}
                   className="text-[10px] tracking-[0.15em] uppercase text-gray-500 hover:text-gray-900 transition-colors"
@@ -699,6 +699,7 @@ const fetchProducts = useCallback(async () => {
               </div>
             </div>
           </div>
+        </>
         )}
 
       {/* Main Content */}
