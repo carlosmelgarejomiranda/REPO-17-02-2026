@@ -173,6 +173,16 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
       }
 
       const reservation = await response.json();
+      
+      // Track studio booking
+      trackStudioBooking({
+        reservation_id: reservation.reservation_id,
+        date: selectedDate,
+        time_slot: selectedTime,
+        duration: selectedDuration,
+        total_price: PRICING[selectedDuration]
+      });
+      
       setSuccess(reservation);
       
       if (onBookingComplete) {
