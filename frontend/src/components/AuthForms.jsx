@@ -3,6 +3,7 @@ import { Mail, Lock, User, Phone, Eye, EyeOff, Gift, Copy, Check } from 'lucide-
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { MFAVerification, MFASetup } from './MFAComponents';
+import { trackLogin, trackSignUp } from '../utils/analytics';
 
 export const AuthForms = ({ onLogin, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
