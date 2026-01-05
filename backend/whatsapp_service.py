@@ -218,7 +218,7 @@ async def notify_new_brand_inquiry(inquiry: Dict[str, Any]) -> Dict[str, Any]:
 
 Ver detalles en el panel de administración."""
 
-    return await send_admin_notification(message)
+    return await send_admin_notification(message, 'brands')
 
 
 # ==================== BOOKING CANCELLATION NOTIFICATIONS ====================
