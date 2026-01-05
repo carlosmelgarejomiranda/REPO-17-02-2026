@@ -426,22 +426,20 @@ async def send_admin_email_notification(subject: str, html_content: str):
 
 async def notify_new_reservation(reservation: dict):
     """Send notifications for new studio reservation"""
-    # WhatsApp notification
-    whatsapp_message = f"""🎬 *NUEVA RESERVA - Avenue Studio*
-
-👤 *Cliente:* {reservation['name']}
-📧 *Email:* {reservation['email']}
-📱 *Teléfono:* {reservation.get('phone', 'N/A')}
-🏢 *Empresa:* {reservation.get('company', 'N/A')}
-
-📅 *Fecha:* {reservation['date']}
-⏰ *Horario:* {reservation['start_time']} - {reservation['end_time']}
-⏱️ *Duración:* {reservation['duration_hours']} horas
-💰 *Precio:* {reservation['price']:,} Gs
-
-ID: {reservation['reservation_id']}"""
-
-    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_STUDIO, whatsapp_message)
+    # Use new WhatsApp service
+    try:
+        from whatsapp_service import notify_new_booking
+        await notify_new_booking({
+            "reservation_id": reservation.get('reservation_id'),
+            "customer_name": reservation.get('name'),
+            "customer_phone": reservation.get('phone', 'N/A'),
+            "date": reservation.get('date'),
+            "start_time": reservation.get('start_time'),
+            "duration_hours": reservation.get('duration_hours'),
+            "total_price": reservation.get('price', 0)
+        })
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp notification: {e}")
     
     # Email notification
     email_html = f"""
