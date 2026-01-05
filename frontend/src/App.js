@@ -33,6 +33,10 @@ import { OrderSuccessPage } from "./components/OrderSuccessPage";
 import { Navbar } from "./components/Navbar";
 import { Button } from "./components/ui/button";
 import { Menu, X, User, LogOut, Calendar, ShoppingBag } from "lucide-react";
+import { 
+  HomeSEO, ShopSEO, StudioSEO, StudioBookingSEO, BrandsSEO, UGCSEO, 
+  PrivacySEO, TermsSEO, StudioTermsSEO, CheckoutSEO, CartSEO, AdminSEO 
+} from "./components/SEOHead";
 
 // Auth context helper
 const useAuth = () => {
