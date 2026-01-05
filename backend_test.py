@@ -5214,6 +5214,11 @@ def run_all_tests():
         ("Test Delete Brand Inquiry", test_delete_brand_inquiry),
         ("Test WhatsApp Notification Logs", test_whatsapp_notification_logs),
         
+        # SEO IMPLEMENTATION TESTS (Review Request)
+        ("Test SEO Sitemap XML", test_seo_sitemap_xml),
+        ("Test SEO Robots.txt", test_seo_robots_txt),
+        ("Test SEO Metadata", test_seo_metadata),
+        
         # VIDEO UPLOAD TESTS (Review Request)
         ("Test Video Upload - Small File (Base64)", test_video_upload_small_file),
         ("Test Video Upload - Large File (File Storage)", test_video_upload_large_file),
