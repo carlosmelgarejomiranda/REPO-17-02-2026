@@ -260,13 +260,13 @@ def get_webpage_jsonld(title: str, description: str, url: str) -> Dict[str, Any]
 
 # ==================== ROUTES ====================
 
-@seo_router.get("/robots.txt", response_class=PlainTextResponse)
+@seo_router.get("/api/robots.txt", response_class=PlainTextResponse)
 async def get_robots_txt():
     """Serve robots.txt"""
     return generate_robots_txt()
 
 
-@seo_router.get("/sitemap.xml")
+@seo_router.get("/api/sitemap.xml")
 async def get_sitemap_xml():
     """Serve sitemap.xml"""
     from server import db
