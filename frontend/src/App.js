@@ -533,7 +533,12 @@ function AppRouter() {
           <Route path="/studio/ugc/terms" element={<TerminosCondiciones />} />
 
           {/* Studio Terms and Conditions */}
-          <Route path="/studio/terminos-condiciones" element={<TerminosStudio />} />
+          <Route path="/studio/terminos-condiciones" element={
+            <>
+              <StudioTermsSEO />
+              <TerminosStudio />
+            </>
+          } />
 
           {/* Tu Marca en Avenue - For Brands */}
           <Route path="/tu-marca" element={
