@@ -186,6 +186,9 @@ export const UGCCreators = ({ t, campaignId }) => {
       const data = await response.json();
 
       if (response.ok) {
+        // Track UGC application
+        trackUGCApplication(formData.instagram_username ? 'instagram' : 'tiktok');
+        
         setSubmitted(true);
         setSubmitResult(data);
       } else {
