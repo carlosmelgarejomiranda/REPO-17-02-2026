@@ -449,6 +449,7 @@ function AppRouter() {
               </nav>
 
               <main>
+                <HomeSEO />
                 <Hero t={t} onBrandsClick={handleBrandsClick} onDeliveryClick={handleDeliveryClick} />
                 <div id="value"><ValueProposition t={t} /></div>
                 <div id="benefits"><Benefits t={t} /></div>
