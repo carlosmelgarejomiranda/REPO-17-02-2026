@@ -84,7 +84,11 @@ export const AuthForms = ({ onLogin, onClose }) => {
         setWelcomeCoupon(data.welcome_coupon);
         // Store the user data to pass after modal closes
         localStorage.setItem('pending_login_data', JSON.stringify(data));
+        // Track signup for new users
+        trackSignUp('email');
       } else {
+        // Track login
+        trackLogin('email');
         onLogin(data);
       }
     } catch (err) {
@@ -101,6 +105,7 @@ export const AuthForms = ({ onLogin, onClose }) => {
     }
     setMfaRequired(false);
     setPartialToken(null);
+    trackLogin('email_mfa');
     onLogin(data);
   };
 
