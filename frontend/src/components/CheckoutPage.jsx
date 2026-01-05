@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { ArrowLeft, MapPin, Store, Truck, Loader2, AlertTriangle, ShoppingBag, X, Tag, UserPlus, Gift } from 'lucide-react';
 import { ShopHeader } from './ShopHeader';
+import { trackBeginCheckout, trackAddShippingInfo, trackApplyCoupon, trackPurchase } from '../utils/analytics';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 const GOOGLE_MAPS_KEY = process.env.REACT_APP_GOOGLE_MAPS_KEY || '';
