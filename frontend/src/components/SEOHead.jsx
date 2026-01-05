@@ -162,6 +162,43 @@ export const SEOHead = ({
     }
   };
 
+  // Update meta tags directly in DOM as fallback
+  useEffect(() => {
+    // Update document title
+    document.title = fullTitle;
+    
+    // Update meta description
+    updateMetaTag('meta[name="description"]', truncatedDescription);
+    
+    // Update canonical link
+    updateLinkTag('canonical', canonical);
+    
+    // Update robots
+    updateMetaTag('meta[name="robots"]', noindex ? 'noindex, nofollow' : 'index, follow');
+    
+    // Update Open Graph tags
+    updateMetaTag('meta[property="og:type"]', type);
+    updateMetaTag('meta[property="og:url"]', canonical);
+    updateMetaTag('meta[property="og:title"]', fullTitle);
+    updateMetaTag('meta[property="og:description"]', truncatedDescription);
+    updateMetaTag('meta[property="og:image"]', image);
+    updateMetaTag('meta[property="og:site_name"]', SITE_NAME);
+    updateMetaTag('meta[property="og:locale"]', 'es_PY');
+    
+    // Update Twitter Card tags
+    updateMetaTag('meta[name="twitter:card"]', 'summary_large_image');
+    updateMetaTag('meta[name="twitter:title"]', fullTitle);
+    updateMetaTag('meta[name="twitter:description"]', truncatedDescription);
+    updateMetaTag('meta[name="twitter:image"]', image);
+    
+    // Add JSON-LD schemas
+    addJsonLd(organizationSchema, 'organization-schema');
+    addJsonLd(webPageSchema, 'webpage-schema');
+    if (productSchema) {
+      addJsonLd(productSchema, 'product-schema');
+    }
+  }, [fullTitle, truncatedDescription, canonical, noindex, type, image, organizationSchema, webPageSchema, productSchema]);
+
   return (
     <Helmet>
       {/* Basic Meta Tags */}
