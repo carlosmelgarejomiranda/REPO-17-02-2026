@@ -165,7 +165,7 @@ async def notify_new_booking(reservation: Dict[str, Any]) -> Dict[str, Any]:
 
 Ver detalles en el panel de administración."""
 
-    return await send_admin_notification(message)
+    return await send_admin_notification(message, 'studio')
 
 
 # ==================== UGC APPLICATION NOTIFICATIONS ====================
