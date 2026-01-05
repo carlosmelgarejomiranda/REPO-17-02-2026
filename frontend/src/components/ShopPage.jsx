@@ -281,6 +281,16 @@ const fetchProducts = useCallback(async () => {
       ? `${product.id}_${selectedSize}` 
       : product.id;
     
+    // Track add to cart event
+    trackAddToCart({
+      id: product.id,
+      sku: sizeInfo?.sku || product.sku,
+      name: product.name,
+      brand: product.brand,
+      category: product.category,
+      price: sizeInfo?.price || product.price
+    }, quantity);
+    
     setCart(prev => {
       const existing = prev.find(item => item.cart_item_id === cartItemId);
       if (existing) {
