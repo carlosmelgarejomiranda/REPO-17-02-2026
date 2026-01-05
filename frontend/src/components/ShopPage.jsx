@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Search, X, User, LogOut, Menu, ChevronRight } from 'lucide-react';
 import { ProductDetailModal } from './ProductDetailModal';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { trackAddToCart, trackViewItem, trackSearch } from '../utils/analytics';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
