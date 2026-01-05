@@ -65,6 +65,9 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
       });
 
       if (response.ok) {
+        // Track brand inquiry
+        trackBrandInquiry(formData.interest_type || 'general');
+        
         setSubmitted(true);
       } else {
         const data = await response.json();
