@@ -482,6 +482,7 @@ function AppRouter() {
           {/* Studio Rental Page */}
           <Route path="/studio/alquiler" element={
             <>
+              <StudioSEO />
               <Navbar 
                 user={user}
                 onLoginClick={() => setShowAuthModal(true)}
