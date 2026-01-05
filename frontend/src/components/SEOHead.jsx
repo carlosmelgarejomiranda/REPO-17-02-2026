@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 // Site configuration
@@ -20,6 +20,46 @@ const COMPANY_INFO = {
   phone: '+595973666000',
   email: 'avenuepy@gmail.com',
   logo: `${SITE_URL}/logo.png`
+};
+
+// Helper function to update or create meta tag
+const updateMetaTag = (selector, content, attrName = 'content') => {
+  let element = document.querySelector(selector);
+  if (!element) {
+    element = document.createElement('meta');
+    if (selector.includes('property=')) {
+      const property = selector.match(/property="([^"]+)"/)?.[1];
+      if (property) element.setAttribute('property', property);
+    } else if (selector.includes('name=')) {
+      const name = selector.match(/name="([^"]+)"/)?.[1];
+      if (name) element.setAttribute('name', name);
+    }
+    document.head.appendChild(element);
+  }
+  element.setAttribute(attrName, content);
+};
+
+// Helper function to update or create link tag
+const updateLinkTag = (rel, href) => {
+  let element = document.querySelector(`link[rel="${rel}"]`);
+  if (!element) {
+    element = document.createElement('link');
+    element.setAttribute('rel', rel);
+    document.head.appendChild(element);
+  }
+  element.setAttribute('href', href);
+};
+
+// Helper function to add JSON-LD schema
+const addJsonLd = (schema, id) => {
+  let element = document.getElementById(id);
+  if (!element) {
+    element = document.createElement('script');
+    element.type = 'application/ld+json';
+    element.id = id;
+    document.head.appendChild(element);
+  }
+  element.textContent = JSON.stringify(schema);
 };
 
 /**
