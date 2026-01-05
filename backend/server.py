@@ -503,8 +503,16 @@ async def notify_new_ugc_application(application: dict):
     """
     await send_admin_email_notification(f"📸 Nueva Aplicación UGC - {nombre_completo}", email_html)
 
-async def notify_new_order(order: dict):
-    """Send notifications for new e-commerce order to admin and customer"""
+async def notify_new_order_legacy(order: dict):
+    """Send notifications for new e-commerce order to admin - uses new WhatsApp service"""
+    # Use new WhatsApp service for notifications
+    try:
+        from whatsapp_service import notify_new_order as whatsapp_notify_order
+        await whatsapp_notify_order(order)
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp notification: {e}")
+    
+    # Admin Email notification
     items_text = "\n".join([
         f"• {item.get('name', 'Producto')}" + 
         (f" - Talle: {item.get('size')}" if item.get('size') else "") + 
@@ -512,42 +520,6 @@ async def notify_new_order(order: dict):
         for item in order.get('items', [])
     ])
     
-    delivery_info = ""
-    if order.get('delivery_type') == 'delivery' and order.get('delivery_address'):
-        addr = order['delivery_address']
-        delivery_info = f"""
-📍 *Dirección de entrega:*
-{addr.get('address', 'N/A')}
-{addr.get('reference', '')}
-🚚 *Costo de envío:* {order.get('delivery_cost', 0):,.0f} Gs"""
-    else:
-        delivery_info = "🏪 *Retiro en tienda*"
-    
-    # ========== ADMIN NOTIFICATIONS ==========
-    
-    # WhatsApp notification to admin
-    whatsapp_message = f"""🛒 *NUEVO PEDIDO - Avenue Online*
-
-📦 *Pedido:* {order.get('order_id', 'N/A')}
-💳 *Estado:* {order.get('payment_status', 'pending').upper()}
-
-👤 *Cliente:* {order.get('customer_name', 'N/A')}
-📧 *Email:* {order.get('customer_email', 'N/A')}
-📱 *Teléfono:* {order.get('customer_phone', 'N/A')}
-
-🛍️ *Productos:*
-{items_text}
-
-{delivery_info}
-
-💰 *Subtotal:* {order.get('subtotal', 0):,.0f} Gs
-💰 *TOTAL:* {order.get('total', 0):,.0f} Gs
-
-📝 *Notas:* {order.get('notes', 'Sin notas')}"""
-
-    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_ECOMMERCE, whatsapp_message)
-    
-    # Admin Email notification
     items_html = "".join([
         f"<tr><td style='padding: 8px; border-bottom: 1px solid #333;'>{item.get('name', 'Producto')}" +
         (f"<br><small style='color: #a8a8a8;'>Talle: {item.get('size')}</small>" if item.get('size') else "") +
