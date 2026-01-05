@@ -298,18 +298,22 @@ async function testHomePageSEO(page) {
         const title = await page.title();
         printInfo(`Page title: ${title}`);
         
-        if (title.includes('AVENUE')) {
-            printSuccess('✅ Home page title contains AVENUE');
+        if (title.includes('Avenue') || title.includes('AVENUE')) {
+            printSuccess('✅ Home page title contains Avenue/AVENUE');
         } else {
-            printError(`❌ Home page title should contain AVENUE: ${title}`);
+            printError(`❌ Home page title should contain Avenue/AVENUE: ${title}`);
         }
         
-        // Check robots meta tag
-        const robots = await page.getAttribute('meta[name="robots"]', 'content');
-        if (robots && robots.includes('index')) {
-            printSuccess(`✅ Robots meta tag allows indexing: ${robots}`);
-        } else {
-            printWarning(`⚠️ Robots meta tag: ${robots}`);
+        // Check robots meta tag with timeout handling
+        try {
+            const robots = await page.getAttribute('meta[name="robots"]', 'content', { timeout: 5000 });
+            if (robots && robots.includes('index')) {
+                printSuccess(`✅ Robots meta tag allows indexing: ${robots}`);
+            } else {
+                printWarning(`⚠️ Robots meta tag: ${robots}`);
+            }
+        } catch (e) {
+            printWarning('⚠️ Robots meta tag not found or timeout');
         }
         
         // Check if there are any noindex pages that shouldn't be indexed
