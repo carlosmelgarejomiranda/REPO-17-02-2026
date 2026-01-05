@@ -522,29 +522,44 @@ const fetchProducts = useCallback(async () => {
         
       {/* Mega Menu Dropdown - Full Width - Outside header but connected via state */}
       {showBrandsMenu && (
-        <div 
-          className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 z-40"
-          style={{ top: '99px' }}
-          onMouseEnter={handleBrandsEnter}
-          onMouseLeave={handleBrandsLeave}
-        >
-          <div className="max-w-[1400px] mx-auto px-8 py-8">
-              <div className="grid grid-cols-5 gap-6">
-                {/* Indumentaria - 2 columns span */}
-                <div className="col-span-2">
-                  {/* Two column grid for brands with title above first column */}
-                  <div className="grid grid-cols-2 gap-x-6">
+        <>
+          {/* Mobile backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/20 z-30 md:hidden" 
+            onClick={() => setShowBrandsMenu(false)}
+          />
+          <div 
+            className="fixed left-0 right-0 bg-white shadow-lg border-t border-gray-100 z-40 max-h-[70vh] overflow-y-auto"
+            style={{ top: '99px' }}
+            onMouseEnter={handleBrandsEnter}
+            onMouseLeave={handleBrandsLeave}
+          >
+            {/* Close button for mobile */}
+            <button 
+              className="md:hidden absolute top-2 right-2 p-2 text-gray-500"
+              onClick={() => setShowBrandsMenu(false)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-4 md:py-8">
+              {/* Mobile: single column, Desktop: 5 columns */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
+                {/* Indumentaria - 2 columns span on desktop, 1 on mobile */}
+                <div className="col-span-1 md:col-span-2">
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-3 md:mb-4 pb-2 border-b border-gray-200">
+                    {BRAND_CATEGORIES.indumentaria.title}
+                  </h3>
+                  {/* Mobile: single list, Desktop: two column grid */}
+                  <div className="md:grid md:grid-cols-2 md:gap-x-6">
                     {/* First column with title */}
                     <div>
-                      <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-                        {BRAND_CATEGORIES.indumentaria.title}
-                      </h3>
-                      <ul className="space-y-2">
+                      <ul className="space-y-1.5 md:space-y-2">
                         {organizedBrands.indumentaria.slice(0, 8).map(brand => (
                           <li key={brand}>
                             <button
                               onClick={() => handleBrandSelect(brand)}
-                              className={`text-[11px] transition-colors hover:text-gray-900 ${
+                              className={`text-[10px] md:text-[11px] transition-colors hover:text-gray-900 ${
                                 selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
                               }`}
                             >
@@ -554,10 +569,9 @@ const fetchProducts = useCallback(async () => {
                         ))}
                       </ul>
                     </div>
-                    {/* Second column - no title, just brands with top spacing */}
-                    <div>
-                      <div className="h-[28px] mb-4 border-b border-gray-200"></div>
-                      <ul className="space-y-2">
+                    {/* Second column - hidden on mobile */}
+                    <div className="hidden md:block">
+                      <ul className="space-y-2 mt-[28px] pt-4 border-t border-transparent">
                         {organizedBrands.indumentaria.slice(8).map(brand => (
                           <li key={brand}>
                             <button
@@ -573,19 +587,34 @@ const fetchProducts = useCallback(async () => {
                       </ul>
                     </div>
                   </div>
+                  {/* Mobile: show remaining brands */}
+                  <ul className="space-y-1.5 md:hidden">
+                    {organizedBrands.indumentaria.slice(8).map(brand => (
+                      <li key={brand}>
+                        <button
+                          onClick={() => handleBrandSelect(brand)}
+                          className={`text-[10px] transition-colors hover:text-gray-900 ${
+                            selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
+                          }`}
+                        >
+                          {brand}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
                 {/* Calzados */}
                 <div>
-                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+                  <h3 className="text-[10px] tracking-[0.2em] uppercase font-semibold text-gray-900 mb-3 md:mb-4 pb-2 border-b border-gray-200">
                     {BRAND_CATEGORIES.calzados.title}
                   </h3>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1.5 md:space-y-2">
                     {organizedBrands.calzados.map(brand => (
                       <li key={brand}>
                         <button
                           onClick={() => handleBrandSelect(brand)}
-                          className={`text-[11px] transition-colors hover:text-gray-900 ${
+                          className={`text-[10px] md:text-[11px] transition-colors hover:text-gray-900 ${
                             selectedBrand === brand ? 'text-gray-900 font-medium' : 'text-gray-500'
                           }`}
                         >
