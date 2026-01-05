@@ -501,6 +501,7 @@ function AppRouter() {
           {/* UGC Campaigns List */}
           <Route path="/studio/ugc" element={
             <>
+              <UGCSEO />
               <Navbar 
                 user={user}
                 onLoginClick={() => setShowAuthModal(true)}
