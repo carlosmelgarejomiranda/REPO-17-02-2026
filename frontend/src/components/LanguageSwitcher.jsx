@@ -26,11 +26,11 @@ export const LanguageSwitcher = ({ currentLang, onLanguageChange, isDark = false
         <Button 
           variant="ghost" 
           size="sm" 
-          className="gap-2"
+          className="gap-1 md:gap-2 px-1 md:px-2"
           style={{ color: textColor }}
         >
-          <span className="text-lg">{currentLanguage?.flag}</span>
-          <span className="text-xs tracking-[0.1em] uppercase">{currentLanguage?.name}</span>
+          <span className="text-base md:text-lg">{currentLanguage?.flag}</span>
+          <span className="text-xs tracking-[0.1em] uppercase hidden md:inline">{currentLanguage?.name}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
