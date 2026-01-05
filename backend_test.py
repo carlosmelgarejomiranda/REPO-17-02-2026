@@ -1521,6 +1521,237 @@ def test_admin_top_products():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+# ==================== SEO IMPLEMENTATION TESTS ====================
+
+def test_seo_sitemap_xml():
+    """Test SEO: GET /api/sitemap.xml - should return valid XML with static pages and products"""
+    print_test_header("Test SEO Sitemap XML")
+    
+    try:
+        url = f"{BACKEND_URL}/sitemap.xml"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        print_info(f"Content-Type: {response.headers.get('content-type', 'Unknown')}")
+        
+        if response.status_code == 200:
+            content = response.text
+            print_info(f"Response length: {len(content)} characters")
+            
+            # Validate XML structure
+            if content.startswith('<?xml version="1.0"') and '<urlset' in content:
+                print_success("Valid XML sitemap structure")
+                
+                # Check for required static pages
+                static_pages = [
+                    '<loc>https://avenue.com.py/</loc>',
+                    '<loc>https://avenue.com.py/shop</loc>',
+                    '<loc>https://avenue.com.py/studio</loc>',
+                    '<loc>https://avenue.com.py/tu-marca</loc>',
+                    '<loc>https://avenue.com.py/ugc</loc>'
+                ]
+                
+                found_pages = []
+                for page in static_pages:
+                    if page in content:
+                        found_pages.append(page)
+                        print_success(f"✅ Found static page: {page}")
+                    else:
+                        print_warning(f"⚠️ Missing static page: {page}")
+                
+                # Check for XML sitemap elements
+                required_elements = ['<lastmod>', '<changefreq>', '<priority>']
+                found_elements = []
+                for element in required_elements:
+                    if element in content:
+                        found_elements.append(element)
+                        print_success(f"✅ Found XML element: {element}")
+                    else:
+                        print_warning(f"⚠️ Missing XML element: {element}")
+                
+                # Check for products (should have product URLs)
+                if '/shop/product/' in content:
+                    print_success("✅ Products found in sitemap")
+                else:
+                    print_warning("⚠️ No products found in sitemap")
+                
+                # Validate XML namespace
+                if 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' in content:
+                    print_success("✅ Correct XML namespace")
+                else:
+                    print_warning("⚠️ Missing or incorrect XML namespace")
+                
+                add_test_result("SEO Sitemap XML", "PASS")
+                return True
+            else:
+                print_error("Invalid XML structure")
+                add_test_result("SEO Sitemap XML", "FAIL", "Invalid XML structure")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("SEO Sitemap XML", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("SEO Sitemap XML", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_seo_robots_txt():
+    """Test SEO: GET /api/robots.txt - should return proper robots file"""
+    print_test_header("Test SEO Robots.txt")
+    
+    try:
+        url = f"{BACKEND_URL}/robots.txt"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        print_info(f"Content-Type: {response.headers.get('content-type', 'Unknown')}")
+        
+        if response.status_code == 200:
+            content = response.text
+            print_info(f"Response length: {len(content)} characters")
+            print_info(f"First 200 chars: {content[:200]}")
+            
+            # Check for required Allow rules
+            allow_rules = [
+                'Allow: /',
+                'Allow: /shop',
+                'Allow: /studio',
+                'Allow: /tu-marca',
+                'Allow: /ugc'
+            ]
+            
+            found_allows = []
+            for rule in allow_rules:
+                if rule in content:
+                    found_allows.append(rule)
+                    print_success(f"✅ Found allow rule: {rule}")
+                else:
+                    print_warning(f"⚠️ Missing allow rule: {rule}")
+            
+            # Check for required Disallow rules
+            disallow_rules = [
+                'Disallow: /admin',
+                'Disallow: /checkout',
+                'Disallow: /cart',
+                'Disallow: /account',
+                'Disallow: /api/'
+            ]
+            
+            found_disallows = []
+            for rule in disallow_rules:
+                if rule in content:
+                    found_disallows.append(rule)
+                    print_success(f"✅ Found disallow rule: {rule}")
+                else:
+                    print_warning(f"⚠️ Missing disallow rule: {rule}")
+            
+            # Check for sitemap reference
+            if 'Sitemap:' in content and '/api/sitemap.xml' in content:
+                print_success("✅ Sitemap reference found")
+            else:
+                print_warning("⚠️ Missing sitemap reference")
+            
+            # Check for crawl-delay
+            if 'Crawl-delay:' in content:
+                print_success("✅ Crawl-delay setting found")
+            else:
+                print_warning("⚠️ Missing crawl-delay setting")
+            
+            # Check for User-agent
+            if 'User-agent: *' in content:
+                print_success("✅ User-agent directive found")
+            else:
+                print_warning("⚠️ Missing User-agent directive")
+            
+            add_test_result("SEO Robots.txt", "PASS")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("SEO Robots.txt", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("SEO Robots.txt", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_seo_metadata():
+    """Test SEO: GET /api/seo/metadata - should return site metadata"""
+    print_test_header("Test SEO Metadata")
+    
+    try:
+        url = f"{BACKEND_URL}/seo/metadata"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["site_url", "site_name", "company", "organization_schema"]
+            found_fields = []
+            
+            for field in required_fields:
+                if field in data:
+                    found_fields.append(field)
+                    print_success(f"✅ Found field: {field}")
+                else:
+                    print_warning(f"⚠️ Missing field: {field}")
+            
+            # Validate site_url
+            site_url = data.get("site_url")
+            if site_url and site_url.startswith("http"):
+                print_success(f"✅ Valid site_url: {site_url}")
+            else:
+                print_warning(f"⚠️ Invalid site_url: {site_url}")
+            
+            # Validate site_name
+            site_name = data.get("site_name")
+            if site_name:
+                print_success(f"✅ Site name: {site_name}")
+            else:
+                print_warning("⚠️ Missing site_name")
+            
+            # Validate company info
+            company = data.get("company", {})
+            if isinstance(company, dict) and company.get("name"):
+                print_success(f"✅ Company info: {company.get('name')}")
+                print_info(f"Company phone: {company.get('phone', 'N/A')}")
+                print_info(f"Company email: {company.get('email', 'N/A')}")
+            else:
+                print_warning("⚠️ Missing or invalid company info")
+            
+            # Validate organization schema
+            org_schema = data.get("organization_schema", {})
+            if isinstance(org_schema, dict) and org_schema.get("@type") == "LocalBusiness":
+                print_success("✅ Valid organization schema structure")
+                print_info(f"Schema type: {org_schema.get('@type')}")
+                print_info(f"Schema name: {org_schema.get('name')}")
+            else:
+                print_warning("⚠️ Missing or invalid organization schema")
+            
+            add_test_result("SEO Metadata", "PASS")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("SEO Metadata", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("SEO Metadata", "FAIL", f"Exception: {str(e)}")
+        return False
+
 # ==================== SECURITY HARDENING TESTS ====================
 
 def test_rate_limiting_login():
