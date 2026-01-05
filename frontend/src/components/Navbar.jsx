@@ -24,24 +24,14 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
         <div className="flex items-center justify-between h-16">
           {/* Logo - Left */}
           <a href="/" className="flex items-center h-full">
-            {/* Mobile: Text logo */}
-            <span 
-              className="md:hidden text-[#f5ede4] text-lg tracking-[0.25em] uppercase font-light"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
-              AVENUE
-            </span>
-            {/* Desktop: Image logo */}
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
               alt="Avenue"
-              className="my-auto hidden md:block"
+              className="my-auto h-6 md:h-10 w-auto object-contain"
               style={{ 
-                height: '40px', 
-                width: 'auto', 
                 filter: 'brightness(1.2)',
-                transform: 'scale(6)',
-                transformOrigin: 'left center'
+                imageRendering: 'auto',
+                WebkitFontSmoothing: 'antialiased'
               }}
             />
           </a>
