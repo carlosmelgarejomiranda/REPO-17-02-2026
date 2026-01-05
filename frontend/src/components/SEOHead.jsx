@@ -194,10 +194,11 @@ export const SEOHead = ({
     // Add JSON-LD schemas
     addJsonLd(organizationSchema, 'organization-schema');
     addJsonLd(webPageSchema, 'webpage-schema');
-    if (productSchema) {
+    if (product) {
       addJsonLd(productSchema, 'product-schema');
     }
-  }, [fullTitle, truncatedDescription, canonical, noindex, type, image, organizationSchema, webPageSchema, productSchema]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullTitle, truncatedDescription, canonical, noindex, type, image]);
 
   return (
     <Helmet>
