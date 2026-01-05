@@ -538,6 +538,7 @@ function AppRouter() {
           {/* Tu Marca en Avenue - For Brands */}
           <Route path="/tu-marca" element={
             <>
+              <BrandsSEO />
               <TuMarca 
                 t={t} 
                 user={user}
