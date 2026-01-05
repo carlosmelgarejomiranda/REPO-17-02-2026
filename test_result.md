@@ -190,11 +190,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Transactional Email System Testing"
+    - "SEO Implementation Testing Complete"
   stuck_tasks:
     - "Video upload and apply changes functionality"
   test_all: false
-  test_priority: "transactional_email_complete"
+  test_priority: "seo_implementation_complete"
 
 agent_communication:
   - agent: "testing"
