@@ -1299,6 +1299,22 @@ async def admin_confirm_reservation(reservation_id: str, request: Request):
     except Exception as e:
         logger.error(f"Failed to send booking confirmation email: {e}")
     
+    # Send WhatsApp notification to admin
+    try:
+        from whatsapp_service import notify_new_booking
+        whatsapp_reservation = {
+            "reservation_id": updated.get("reservation_id"),
+            "date": updated.get("date"),
+            "start_time": updated.get("start_time"),
+            "duration_hours": updated.get("duration_hours"),
+            "total_price": updated.get("price"),
+            "customer_name": updated.get("name"),
+            "customer_phone": updated.get("phone")
+        }
+        await notify_new_booking(whatsapp_reservation)
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp notification: {e}")
+    
     # Send WhatsApp confirmation to customer
     await send_reservation_confirmed_notification(updated)
     
