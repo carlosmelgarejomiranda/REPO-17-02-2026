@@ -91,9 +91,16 @@ async def send_whatsapp_message(to: str, message: str) -> Dict[str, Any]:
         return {"success": False, "error": str(e)}
 
 
-async def send_admin_notification(message: str) -> Dict[str, Any]:
-    """Send notification to admin WhatsApp"""
-    return await send_whatsapp_message(TWILIO_ADMIN_WHATSAPP, message)
+async def send_admin_notification(message: str, notification_type: str = 'ecommerce') -> Dict[str, Any]:
+    """Send notification to appropriate admin WhatsApp based on type"""
+    recipients = {
+        'ecommerce': NOTIFY_ECOMMERCE,
+        'studio': NOTIFY_STUDIO,
+        'ugc': NOTIFY_UGC,
+        'brands': NOTIFY_BRANDS
+    }
+    to = recipients.get(notification_type, NOTIFY_ECOMMERCE)
+    return await send_whatsapp_message(to, message)
 
 
 # ==================== ORDER NOTIFICATIONS ====================
@@ -128,7 +135,7 @@ async def notify_new_order(order: Dict[str, Any]) -> Dict[str, Any]:
 
 Ver detalles en el panel de administración."""
 
-    return await send_admin_notification(message)
+    return await send_admin_notification(message, 'ecommerce')
 
 
 # ==================== BOOKING NOTIFICATIONS ====================
