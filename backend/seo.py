@@ -89,7 +89,7 @@ Disallow: /api/*
 Disallow: /*?*  # Avoid query params duplicates
 
 # Sitemap location
-Sitemap: {SITE_URL}/sitemap.xml
+Sitemap: {SITE_URL}/api/sitemap.xml
 
 # Crawl-delay (be nice to server)
 Crawl-delay: 1
