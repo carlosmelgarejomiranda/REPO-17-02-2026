@@ -96,27 +96,50 @@ def test_admin_authentication():
             data = response.json()
             print_info(f"Response: {json.dumps(data, indent=2)}")
             
-            # Validate response structure
-            required_fields = ["user_id", "email", "name", "role", "token"]
-            if all(field in data for field in required_fields):
-                admin_token = data["token"]
-                role = data.get("role")
-                
-                if role in ["admin", "superadmin"]:
-                    print_success("Admin authentication successful")
-                    print_success(f"Role: {role}")
-                    print_success(f"Token received and stored")
-                    add_test_result("Admin Authentication", "PASS")
-                    return True
+            # Check if MFA is required
+            if data.get("mfa_required") or data.get("mfa_setup_required"):
+                # Use partial token for SEO tests (they don't require full admin auth)
+                partial_token = data.get("partial_token")
+                if partial_token:
+                    admin_token = partial_token
+                    role = data.get("role")
+                    
+                    if role in ["admin", "superadmin"]:
+                        print_success("Admin authentication successful (MFA pending)")
+                        print_success(f"Role: {role}")
+                        print_success(f"Partial token received and stored")
+                        add_test_result("Admin Authentication", "PASS")
+                        return True
+                    else:
+                        print_error(f"Expected admin/superadmin role, got '{role}'")
+                        add_test_result("Admin Authentication", "FAIL", f"Wrong role: {role}")
+                        return False
                 else:
-                    print_error(f"Expected admin/superadmin role, got '{role}'")
-                    add_test_result("Admin Authentication", "FAIL", f"Wrong role: {role}")
+                    print_error("No partial token received for MFA flow")
+                    add_test_result("Admin Authentication", "FAIL", "No partial token")
                     return False
             else:
-                missing = [f for f in required_fields if f not in data]
-                print_error(f"Missing required fields: {missing}")
-                add_test_result("Admin Authentication", "FAIL", f"Missing fields: {missing}")
-                return False
+                # Regular login flow
+                required_fields = ["user_id", "email", "name", "role", "token"]
+                if all(field in data for field in required_fields):
+                    admin_token = data["token"]
+                    role = data.get("role")
+                    
+                    if role in ["admin", "superadmin"]:
+                        print_success("Admin authentication successful")
+                        print_success(f"Role: {role}")
+                        print_success(f"Token received and stored")
+                        add_test_result("Admin Authentication", "PASS")
+                        return True
+                    else:
+                        print_error(f"Expected admin/superadmin role, got '{role}'")
+                        add_test_result("Admin Authentication", "FAIL", f"Wrong role: {role}")
+                        return False
+                else:
+                    missing = [f for f in required_fields if f not in data]
+                    print_error(f"Missing required fields: {missing}")
+                    add_test_result("Admin Authentication", "FAIL", f"Missing fields: {missing}")
+                    return False
         else:
             print_error(f"Failed with status {response.status_code}: {response.text}")
             add_test_result("Admin Authentication", "FAIL", f"HTTP {response.status_code}")
