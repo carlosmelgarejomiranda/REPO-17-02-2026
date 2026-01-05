@@ -619,42 +619,51 @@ function AppRouter() {
 
           {/* E-commerce Routes */}
           <Route path="/shop" element={
-            <ShopPage 
-              cart={cart} 
-              setCart={setCart} 
-              user={user}
-              onLoginClick={() => setShowAuthModal(true)}
-              onLogout={logout}
-              language={language}
-              setLanguage={setLanguage}
-              t={t}
-            />
+            <>
+              <ShopSEO />
+              <ShopPage 
+                cart={cart} 
+                setCart={setCart} 
+                user={user}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+                language={language}
+                setLanguage={setLanguage}
+                t={t}
+              />
+            </>
           } />
 
           <Route path="/shop/cart" element={
-            <CartPage 
-              cart={cart} 
-              setCart={setCart}
-              user={user}
-              onLoginClick={() => setShowAuthModal(true)}
-              onLogout={logout}
-              language={language}
-              setLanguage={setLanguage}
-              t={t}
-            />
+            <>
+              <CartSEO />
+              <CartPage 
+                cart={cart} 
+                setCart={setCart}
+                user={user}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+                language={language}
+                setLanguage={setLanguage}
+                t={t}
+              />
+            </>
           } />
 
           <Route path="/shop/checkout" element={
-            <CheckoutPage 
-              cart={cart} 
-              setCart={setCart} 
-              user={user}
-              onLoginClick={() => setShowAuthModal(true)}
-              onLogout={logout}
-              language={language}
-              setLanguage={setLanguage}
-              t={t}
-            />
+            <>
+              <CheckoutSEO />
+              <CheckoutPage 
+                cart={cart} 
+                setCart={setCart} 
+                user={user}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+                language={language}
+                setLanguage={setLanguage}
+                t={t}
+              />
+            </>
           } />
 
           <Route path="/shop/order-success" element={
@@ -670,18 +679,26 @@ function AppRouter() {
           } />
 
           <Route path="/shop/terminos-condiciones" element={
-            <TerminosEcommerce 
-              cart={cart}
-              user={user}
-              onLoginClick={() => setShowAuthModal(true)}
-              onLogout={logout}
-              language={language}
-              setLanguage={setLanguage}
-              t={t}
-            />
+            <>
+              <TermsSEO />
+              <TerminosEcommerce 
+                cart={cart}
+                user={user}
+                onLoginClick={() => setShowAuthModal(true)}
+                onLogout={logout}
+                language={language}
+                setLanguage={setLanguage}
+                t={t}
+              />
+            </>
           } />
 
-          <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
+          <Route path="/politica-privacidad" element={
+            <>
+              <PrivacySEO />
+              <PoliticaPrivacidad />
+            </>
+          } />
         </Routes>
       </div>
       
