@@ -1867,24 +1867,16 @@ async def submit_brand_inquiry(inquiry: BrandInquiry):
     await db.brand_inquiries.insert_one(inquiry_doc)
     inquiry_doc.pop("_id", None)
     
-    # Send WhatsApp notification to commercial
-    whatsapp_message = f"""🏷️ *NUEVA MARCA INTERESADA - Avenue*
-
-🏢 *Marca:* {inquiry.brand_name}
-👤 *Contacto:* {inquiry.contact_name}
-📧 *Email:* {inquiry.email}
-📱 *Teléfono:* {inquiry.phone or 'No proporcionado'}
-
-💡 *Interés:* {INTEREST_LABELS.get(inquiry.interest, inquiry.interest)}
-
-💬 *Mensaje:* {inquiry.message or 'Sin mensaje adicional'}
-
-⏰ *Recibido:* {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')}
-
-_Revisar en panel de administración_"""
-    
+    # Send WhatsApp notification to admin using new service
     try:
-        await send_whatsapp_notification(NOTIFICATION_WHATSAPP_MARCAS, whatsapp_message)
+        from whatsapp_service import notify_new_brand_inquiry
+        await notify_new_brand_inquiry({
+            "brand_name": inquiry.brand_name,
+            "contact_name": inquiry.contact_name,
+            "phone": inquiry.phone or 'N/A',
+            "email": inquiry.email,
+            "interest_type": INTEREST_LABELS.get(inquiry.interest, inquiry.interest)
+        })
     except Exception as e:
         logger.error(f"Failed to send WhatsApp for brand inquiry: {e}")
     
