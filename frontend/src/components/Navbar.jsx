@@ -23,14 +23,15 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
       <div className="max-w-7xl mx-auto px-4 md:px-12">
         <div className="flex items-center justify-between h-16">
           {/* Logo - Left */}
-          <a href="/" className="flex items-center h-full py-2">
+          <a href="/" className="flex items-center h-full">
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
               alt="Avenue"
-              className="max-h-8 md:max-h-12 w-auto"
+              className="h-[100px] md:h-[240px] w-auto"
               style={{ 
                 filter: 'brightness(1.2)',
-                objectFit: 'contain'
+                objectFit: 'contain',
+                imageRendering: 'crisp-edges'
               }}
             />
           </a>
