@@ -15,7 +15,12 @@ logger = logging.getLogger(__name__)
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
 TWILIO_WHATSAPP_FROM = os.environ.get('TWILIO_WHATSAPP_FROM', 'whatsapp:+595976750974')
-TWILIO_ADMIN_WHATSAPP = os.environ.get('TWILIO_ADMIN_WHATSAPP', 'whatsapp:+595976750974')
+
+# Notification recipients by type
+NOTIFY_ECOMMERCE = os.environ.get('TWILIO_NOTIFY_ECOMMERCE', 'whatsapp:+595973666000')
+NOTIFY_STUDIO = os.environ.get('TWILIO_NOTIFY_STUDIO', 'whatsapp:+595973666000')
+NOTIFY_UGC = os.environ.get('TWILIO_NOTIFY_UGC', 'whatsapp:+595976691520')
+NOTIFY_BRANDS = os.environ.get('TWILIO_NOTIFY_BRANDS', 'whatsapp:+595976691520')
 
 # Initialize Twilio client
 twilio_client = None
