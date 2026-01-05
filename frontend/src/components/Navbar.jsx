@@ -20,21 +20,20 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#000000] border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-12">
         <div className="flex items-center justify-between h-16">
           {/* Logo - Left */}
           <a href="/" className="flex items-center h-full">
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
               alt="Avenue"
+              className="my-auto md:scale-[6] scale-[3.5]"
               style={{ 
                 height: '40px', 
                 width: 'auto', 
                 filter: 'brightness(1.2)',
-                transform: 'scale(6) translateY(1px)',
                 transformOrigin: 'left center'
               }}
-              className="my-auto"
             />
           </a>
           
