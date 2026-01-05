@@ -457,30 +457,31 @@ const fetchProducts = useCallback(async () => {
                         <div className="border-t border-gray-100 my-2"></div>
                         <a 
                           href="/admin" 
-                          className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                          className="block px-4 md:px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
                         >
                           Admin
                         </a>
                       </>
                     )}
                   </div>
+                  </>
                 )}
               </div>
 
-              <div className="h-4 w-px bg-gray-200"></div>
+              <div className="h-4 w-px bg-gray-200 hidden md:block"></div>
 
               {/* User / Auth */}
               {user ? (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 md:gap-3">
                   <span className="text-xs text-gray-600 hidden md:block">{user.name?.split(' ')[0]}</span>
-                  <button onClick={onLogout} className="text-gray-400 hover:text-gray-600 transition-colors">
+                  <button onClick={onLogout} className="text-gray-400 hover:text-gray-600 transition-colors p-1">
                     <LogOut className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
                 <button 
                   onClick={onLoginClick}
-                  className="text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1"
+                  className="text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1 p-1"
                 >
                   <User className="w-4 h-4" />
                   <span className="text-xs tracking-[0.1em] uppercase hidden md:block">Login</span>
@@ -493,7 +494,7 @@ const fetchProducts = useCallback(async () => {
           </div>
 
           {/* Search Bar - Always visible below logo, centered */}
-          <div className="border-t border-gray-100 px-8 py-3">
+          <div className="border-t border-gray-100 px-4 md:px-8 py-2 md:py-3">
             <form onSubmit={handleSearch} className="max-w-md mx-auto">
               <div className="relative flex items-center">
                 <Search className="w-4 h-4 text-gray-400 absolute left-3" />
