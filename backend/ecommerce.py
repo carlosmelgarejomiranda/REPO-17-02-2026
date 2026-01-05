@@ -1180,6 +1180,13 @@ async def create_checkout(data: CheckoutData, request: Request):
     except Exception as e:
         logger.error(f"Failed to send order confirmation email: {e}")
     
+    # Send WhatsApp notification to admin
+    try:
+        from whatsapp_service import notify_new_order
+        await notify_new_order(order_doc)
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp notification: {e}")
+    
     # Return response based on payment gateway setting
     if not payment_enabled:
         # CASE 1: Payment gateway disabled - create order as "solicitud"
