@@ -464,27 +464,22 @@ ID: {reservation['reservation_id']}"""
 
 async def notify_new_ugc_application(application: dict):
     """Send notifications for new UGC application"""
-    nombre_completo = f"{application.get('nombre', '')} {application.get('apellido', '')}"
+    nombre_completo = f"{application.get('nombre', '')} {application.get('apellido', '')}".strip()
+    if not nombre_completo:
+        nombre_completo = application.get('full_name', 'Aplicante')
     
-    # WhatsApp notification
-    whatsapp_message = f"""📸 *NUEVA APLICACIÓN UGC*
-
-👤 *Nombre:* {nombre_completo}
-📧 *Email:* {application['email']}
-📱 *WhatsApp:* {application.get('whatsapp', 'N/A')}
-📍 *Ciudad:* {application.get('ciudad', 'N/A')}
-
-📱 *Instagram:* {application.get('instagram_url', 'N/A')} ({application.get('instagram_seguidores', '0')} seg.)
-🎵 *TikTok:* {application.get('tiktok_url', 'N/A')} ({application.get('tiktok_seguidores', '0')} seg.)
-
-📊 *Estado:* {application.get('status', 'pendiente')}
-🎯 *Campaña:* {application.get('campaign_id', 'N/A')}
-
-🔗 *Videos:*
-• {application.get('video_link_1', 'N/A')}
-• {application.get('video_link_2', 'N/A')}"""
-
-    await send_whatsapp_notification(NOTIFICATION_WHATSAPP_UGC, whatsapp_message)
+    # WhatsApp notification using new service
+    try:
+        from whatsapp_service import notify_new_ugc_application as whatsapp_notify_ugc
+        await whatsapp_notify_ugc({
+            "full_name": nombre_completo,
+            "phone": application.get('whatsapp') or application.get('phone', 'N/A'),
+            "city": application.get('ciudad') or application.get('city', 'N/A'),
+            "instagram_username": application.get('instagram_username') or application.get('instagram_url', ''),
+            "tiktok_username": application.get('tiktok_username') or application.get('tiktok_url', '')
+        })
+    except Exception as e:
+        logger.error(f"Failed to send UGC WhatsApp notification: {e}")
     
     # Email notification
     email_html = f"""
