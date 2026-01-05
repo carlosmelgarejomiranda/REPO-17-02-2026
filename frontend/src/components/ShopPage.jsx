@@ -342,7 +342,7 @@ const fetchProducts = useCallback(async () => {
       <header className="sticky top-0 z-50 bg-white">
         <div className="max-w-[1800px] mx-auto">
           {/* Main navigation bar */}
-          <div className="flex items-center justify-between px-8 h-14">
+          <div className="flex items-center justify-between px-3 md:px-8 h-14">
             {/* Left section - Only Brands */}
             <div className="flex items-center h-full">
               {/* Brands Menu Trigger - extends to bottom of header */}
@@ -351,7 +351,7 @@ const fetchProducts = useCallback(async () => {
                 onMouseEnter={handleBrandsEnter}
                 onMouseLeave={handleBrandsLeave}
               >
-                <button className="text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors font-medium h-full px-2">
+                <button className="text-[10px] md:text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 transition-colors font-medium h-full px-1 md:px-2">
                   Brands
                 </button>
               </div>
@@ -359,21 +359,21 @@ const fetchProducts = useCallback(async () => {
 
             {/* Center - Logo */}
             <a href="/shop" className="absolute left-1/2 -translate-x-1/2">
-              <h1 className="text-xl tracking-[0.3em] uppercase font-light text-gray-900">
+              <h1 className="text-sm md:text-xl tracking-[0.2em] md:tracking-[0.3em] uppercase font-light text-gray-900">
                 Avenue
               </h1>
             </a>
 
             {/* Right section - Cart, Menu, Login, Language */}
-            <div className="flex items-center gap-4 h-full">
+            <div className="flex items-center gap-1 md:gap-4 h-full">
               {/* Cart */}
               <button
                 onClick={() => navigate('/shop/cart')}
-                className="text-gray-500 hover:text-gray-900 transition-colors relative flex items-center h-full"
+                className="text-gray-500 hover:text-gray-900 transition-colors relative flex items-center h-full p-1"
               >
-                <ShoppingBag className="w-5 h-5" />
+                <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-gray-900 text-white text-[10px] rounded-full flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 md:-top-1.5 md:-right-1.5 w-3.5 h-3.5 md:w-4 md:h-4 bg-gray-900 text-white text-[8px] md:text-[10px] rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -385,19 +385,28 @@ const fetchProducts = useCallback(async () => {
                 onMouseEnter={handleNavEnter}
                 onMouseLeave={handleNavLeave}
               >
-                <button className="text-gray-500 hover:text-gray-900 transition-colors p-2">
-                  <Menu className="w-5 h-5" />
+                <button 
+                  className="text-gray-500 hover:text-gray-900 transition-colors p-1 md:p-2"
+                  onClick={() => setShowNavMenu(!showNavMenu)}
+                >
+                  <Menu className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
                 
                 {/* Navigation Dropdown - connected to button */}
                 {showNavMenu && (
-                  <div className="absolute right-0 top-full w-56 bg-white shadow-lg border border-gray-100 py-2 z-50">
-                    <a 
-                      href="/" 
-                      className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                    >
-                      Inicio
-                    </a>
+                  <>
+                    {/* Mobile backdrop */}
+                    <div 
+                      className="fixed inset-0 z-40 md:hidden" 
+                      onClick={() => setShowNavMenu(false)}
+                    />
+                    <div className="absolute right-0 top-full w-48 md:w-56 bg-white shadow-lg border border-gray-100 py-2 z-50 max-h-[80vh] overflow-y-auto">
+                      <a 
+                        href="/" 
+                        className="block px-4 md:px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                      >
+                        Inicio
+                      </a>
                     <a 
                       href="/shop" 
                       className="block px-5 py-3 text-xs tracking-[0.15em] uppercase text-gray-900 font-medium bg-gray-50"
