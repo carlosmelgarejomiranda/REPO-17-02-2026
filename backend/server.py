@@ -2291,6 +2291,10 @@ app.include_router(ecommerce_router)
 from website_builder import router as builder_router
 app.include_router(builder_router)
 
+# Include SEO router (robots.txt, sitemap.xml)
+from seo import seo_router
+app.include_router(seo_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
