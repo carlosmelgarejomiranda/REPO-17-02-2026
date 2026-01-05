@@ -240,7 +240,7 @@ async def notify_booking_cancellation(reservation: Dict[str, Any]) -> Dict[str, 
 
 La reserva ha sido cancelada."""
 
-    return await send_admin_notification(message)
+    return await send_admin_notification(message, 'studio')
 
 
 # ==================== ORDER STATUS NOTIFICATIONS ====================
