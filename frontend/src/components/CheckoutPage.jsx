@@ -359,6 +359,21 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
       const data = await response.json();
 
       if (data.success) {
+        // Track successful purchase
+        trackPurchase({
+          order_id: data.order_id,
+          total: total,
+          shipping_cost: deliveryCost,
+          coupon_code: appliedCoupon?.code || '',
+          items: cart.map(item => ({
+            id: item.product_id,
+            sku: item.sku,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+          }))
+        });
+        
         // Mark checkout as successful BEFORE clearing cart
         setCheckoutSuccess(true);
         
