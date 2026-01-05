@@ -466,6 +466,7 @@ function AppRouter() {
           {/* Studio Landing - Options Page */}
           <Route path="/studio" element={
             <>
+              <StudioSEO />
               <StudioLanding 
                 t={t} 
                 user={user}
