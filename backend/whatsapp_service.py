@@ -194,7 +194,7 @@ async def notify_new_ugc_application(application: Dict[str, Any]) -> Dict[str, A
 
 Ver perfil completo en el panel de administración."""
 
-    return await send_admin_notification(message)
+    return await send_admin_notification(message, 'ugc')
 
 
 # ==================== BRAND INQUIRY NOTIFICATIONS ====================
