@@ -6854,6 +6854,55 @@ def test_ugc_application_status_update():
         print_error(f"Exception occurred: {str(e)}")
         return False
 
+def run_sprint7_email_tests():
+    """Run Sprint 7 UGC Email Notifications Backend tests"""
+    print(f"{Colors.BOLD}{Colors.BLUE}Sprint 7: UGC Email Notifications Backend Tests{Colors.ENDC}")
+    print(f"Backend URL: {BACKEND_URL}")
+    print("=" * 60)
+    
+    # First authenticate as admin
+    print_test_header("Authentication Setup")
+    if not test_admin_authentication():
+        print_error("Failed to authenticate as admin - stopping tests")
+        return False
+    
+    tests = [
+        # SPRINT 7: EMAIL NOTIFICATION TESTS
+        ("Test Email Service Direct", test_email_service_direct),
+        ("Test Email Templates", test_email_templates),
+        ("Test UGC Application Status Update (Email Integration)", test_ugc_application_status_endpoint),
+        ("Test UGC Deliverable Review (Email Integration)", test_ugc_deliverable_review_endpoint),
+    ]
+    
+    results = []
+    
+    for test_name, test_func in tests:
+        try:
+            result = test_func()
+            results.append((test_name, result))
+        except Exception as e:
+            print_error(f"Test {test_name} crashed: {str(e)}")
+            results.append((test_name, False))
+    
+    # Summary
+    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SPRINT 7 EMAIL TESTS SUMMARY ==={Colors.ENDC}")
+    passed = 0
+    failed = 0
+    
+    for test_name, result in results:
+        if result:
+            print_success(f"{test_name}")
+            passed += 1
+        else:
+            print_error(f"{test_name}")
+            failed += 1
+    
+    print(f"\n{Colors.GREEN}✅ PASSED: {passed}{Colors.ENDC}")
+    print(f"{Colors.RED}❌ FAILED: {failed}{Colors.ENDC}")
+    print(f"{Colors.BLUE}📊 SUCCESS RATE: {passed}/{passed + failed} ({passed/(passed + failed)*100:.1f}%){Colors.ENDC}")
+    
+    return failed == 0
+
 def run_ugc_tests():
     """Run Sprint 6 UGC Reputation & Gamification Backend tests"""
     print(f"{Colors.BOLD}{Colors.BLUE}Sprint 6: UGC Reputation & Gamification Backend Tests{Colors.ENDC}")
