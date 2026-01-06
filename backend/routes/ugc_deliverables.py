@@ -6,10 +6,13 @@ from fastapi import APIRouter, HTTPException, Request
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
 import uuid
+import logging
 
 from models.ugc_models import (
     Deliverable, DeliverableSubmit, DeliverableReview, DeliverableStatus
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/ugc/deliverables", tags=["UGC Deliverables"])
 
