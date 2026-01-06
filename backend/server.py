@@ -148,21 +148,25 @@ class User(BaseModel):
     razon_social: Optional[str] = None
     ruc: Optional[str] = None
     picture: Optional[str] = None
-    role: str = "user"  # user, staff, designer, admin, superadmin
+    role: str = "user"  # user, creator, brand, staff, designer, admin, superadmin
     created_at: datetime
 
-# Role hierarchy: superadmin > admin > staff > designer > user
+# Role hierarchy: superadmin > admin > staff > designer > brand > creator > user
 # Permissions:
 # - superadmin: Everything (only avenuepy@gmail.com)
 # - admin: Everything except managing admins
 # - staff: Everything except web editor
 # - designer: Only web editor and image management
+# - brand: UGC brand access (campaigns, deliverables, reports)
+# - creator: UGC creator access (apply, deliver, metrics)
 # - user: Basic user access
 ROLE_HIERARCHY = {
-    "superadmin": 5,
-    "admin": 4,
-    "staff": 3,
-    "designer": 2,
+    "superadmin": 7,
+    "admin": 6,
+    "staff": 5,
+    "designer": 4,
+    "brand": 3,
+    "creator": 2,
     "user": 1
 }
 
