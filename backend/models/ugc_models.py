@@ -369,6 +369,8 @@ class Application(BaseModel):
 class ApplicationCreate(BaseModel):
     campaign_id: str
     motivation: Optional[str] = None
+    note: Optional[str] = None  # Alias for motivation
+    proposed_content: Optional[str] = None
     portfolio_links: List[str] = []
 
 class ApplicationStatusUpdate(BaseModel):
