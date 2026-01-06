@@ -4,8 +4,8 @@ import {
   ArrowRight, Users, Gift, Star, TrendingUp, Award, CheckCircle,
   Instagram, Music2, Camera, Sparkles, Heart, Eye, MapPin
 } from 'lucide-react';
-import { Navbar } from '../components/Navbar';
-import { Footer } from '../components/Footer';
+import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 
 const CreatorsPage = () => {
   const [campaigns, setCampaigns] = useState([]);

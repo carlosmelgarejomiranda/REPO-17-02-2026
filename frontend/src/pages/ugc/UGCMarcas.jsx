@@ -4,8 +4,8 @@ import {
   ArrowRight, Building2, Users, BarChart3, CheckCircle, Sparkles,
   FileCheck, Clock, Shield, Package, Calculator, Check, Star
 } from 'lucide-react';
-import { Navbar } from '../components/Navbar';
-import { Footer } from '../components/Footer';
+import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 
 const UGCMarcas = () => {
   const [packages, setPackages] = useState([]);
