@@ -393,7 +393,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
           </p>
           
           <Link 
-            to="/ugc/select-role"
+            to="/ugc/brand/onboarding"
             className="inline-flex items-center gap-3 px-10 py-5 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-all"
           >
             Registrar mi marca
