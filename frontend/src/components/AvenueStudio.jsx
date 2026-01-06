@@ -20,8 +20,8 @@ const RATES = [
 ];
 
 const EQUIPMENT = [
-  { icon: Lightbulb, title: '6 Luces Godox', desc: 'Iluminación profesional LED de última generación', highlight: true },
-  { icon: Camera, title: 'Flash Godox AD600', desc: 'Potencia y precisión para cualquier situación', highlight: true },
+  { icon: Lightbulb, title: 'Luz Godox SL100 Bicolor', desc: 'Iluminación LED profesional con temperatura ajustable', highlight: true },
+  { icon: Camera, title: 'Flash Godox AD200 II', desc: 'Flash portátil de alta potencia para cualquier situación', highlight: true },
   { icon: Square, title: 'Fondo Infinito', desc: 'Múltiples colores disponibles: blanco, negro, gris', highlight: false },
   { icon: Users, title: 'Mesa de Producción', desc: 'Espacio para preparación y maquillaje', highlight: false },
   { icon: Tv, title: 'Smart TV 55"', desc: 'Para referencias y revisión de material', highlight: false },
@@ -220,8 +220,8 @@ export const AvenueStudio = ({ t }) => {
                 className="w-full rounded-lg"
               />
               <div className="absolute -bottom-6 -right-6 bg-[#d4a968] text-black p-6 rounded-lg hidden md:block">
-                <p className="text-2xl font-light mb-1">+$5.000</p>
-                <p className="text-sm opacity-80">en equipamiento</p>
+                <p className="text-lg font-medium mb-1">🎉 Promo Apertura</p>
+                <p className="text-sm opacity-80">Luces incluidas en paquetes</p>
               </div>
             </div>
 
@@ -230,10 +230,13 @@ export const AvenueStudio = ({ t }) => {
               <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
                 Equipamiento <span className="italic text-[#d4a968]">profesional</span>
               </h2>
-              <p className="text-gray-400 mb-10 leading-relaxed">
-                Todo lo que necesitas para una producción de alta calidad. 
-                Sin costos adicionales, sin sorpresas.
+              <p className="text-gray-400 mb-4 leading-relaxed">
+                Todo lo que necesitas para una producción de alta calidad.
               </p>
+              <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 p-4 rounded-lg mb-10">
+                <p className="text-[#d4a968] text-sm font-medium mb-1">🎉 Promoción de Apertura</p>
+                <p className="text-gray-300 text-sm">Luz y flash incluidos en todos los paquetes. Tarifa regular: 20.000 Gs/h cada uno.</p>
+              </div>
 
               <div className="space-y-4">
                 {EQUIPMENT.map((item, index) => {
