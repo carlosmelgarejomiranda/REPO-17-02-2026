@@ -510,23 +510,16 @@ function AppRouter() {
             </>
           } />
 
-          {/* UGC Campaigns List */}
+          {/* UGC Landing Page */}
           <Route path="/studio/ugc" element={
-            <>
-              <UGCSEO />
-              <Navbar 
-                user={user}
-                onLoginClick={() => setShowAuthModal(true)}
-                onLogout={logout}
-                language={language}
-                setLanguage={setLanguage}
-                t={t}
-              />
-              <div style={{ paddingTop: '64px' }}>
-                <UGCCampaignsList t={t} />
-              </div>
-              <Footer t={t} />
-            </>
+            <UGCLanding 
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
           } />
 
           {/* Individual Campaign Page */}
@@ -720,9 +713,26 @@ function AppRouter() {
           } />
 
           {/* UGC Platform Routes */}
-          <Route path="/studio/ugc" element={<UGCLanding />} />
-          <Route path="/ugc/marcas" element={<UGCMarcas />} />
-          <Route path="/ugc/creators" element={<CreatorsPage />} />
+          <Route path="/ugc/marcas" element={
+            <UGCMarcas 
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
+          } />
+          <Route path="/ugc/creators" element={
+            <CreatorsPage 
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
+          } />
           <Route path="/ugc/select-role" element={<RoleSelector />} />
           <Route path="/ugc/creator/onboarding" element={<CreatorOnboarding />} />
           <Route path="/ugc/creator/dashboard" element={<CreatorDashboard />} />
