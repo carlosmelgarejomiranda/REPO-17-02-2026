@@ -1047,12 +1047,16 @@ async def calculate_delivery(data: DeliveryCalculation):
     # Apply minimum delivery cost of 20,000 Gs
     delivery_cost = max(delivery_cost, DELIVERY_MIN_PRICE)
     
+    # Apply maximum delivery cost of 50,000 Gs
+    delivery_cost = min(delivery_cost, 50000)
+    
     return {
         "distance_km": round(distance_km, 2),
         "rounded_distance_km": rounded_distance_km,
         "delivery_cost": int(delivery_cost),
         "price_per_km": int(DELIVERY_PRICE_PER_KM),
-        "min_price": int(DELIVERY_MIN_PRICE)
+        "min_price": int(DELIVERY_MIN_PRICE),
+        "max_price": 50000
     }
 
 def haversine_distance(lat1, lon1, lat2, lon2):
