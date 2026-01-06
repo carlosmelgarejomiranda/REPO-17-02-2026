@@ -14,46 +14,46 @@ const WhatsAppIcon = ({ className }) => (
 
 export const Footer = ({ t }) => {
   return (
-    <footer className="py-20 px-6 border-t border-white/10 bg-[#000000]">
+    <footer className="py-12 md:py-20 px-4 md:px-6 border-t border-white/10 bg-[#000000]">
       <div className="max-w-7xl mx-auto">
         {/* Main Footer Content */}
-        <div className="grid md:grid-cols-12 gap-12 items-start">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-12 items-start">
           {/* Logo & Description - Takes 3 columns */}
-          <div className="md:col-span-3">
-            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Avenue</h4>
-            <p className="text-gray-500 text-xs leading-relaxed max-w-sm tracking-[0.1em] uppercase">
+          <div className="col-span-2 md:col-span-3">
+            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-4 md:mb-6">Avenue</h4>
+            <p className="text-gray-500 text-[10px] md:text-xs leading-relaxed max-w-sm tracking-[0.1em] uppercase">
               Un concepto premium donde las marcas brillan y el contenido cobra vida.
             </p>
           </div>
 
-          {/* Spacer */}
+          {/* Spacer - hidden on mobile */}
           <div className="hidden md:block md:col-span-3"></div>
 
           {/* Links - Takes 2 columns */}
-          <div className="md:col-span-2">
-            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Explorar</h4>
-            <ul className="space-y-4">
-              <li><a href="/shop" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">E-commerce</a></li>
-              <li><a href="/studio" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">Studio</a></li>
-              <li><a href="/studio/ugc" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">UGC Creators</a></li>
-              <li><a href="/tu-marca" className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">Para Marcas</a></li>
+          <div className="col-span-1 md:col-span-2">
+            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-4 md:mb-6">Explorar</h4>
+            <ul className="space-y-3 md:space-y-4">
+              <li><a href="/shop" className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">E-commerce</a></li>
+              <li><a href="/studio" className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">Studio</a></li>
+              <li><a href="/studio/ugc" className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">UGC Creators</a></li>
+              <li><a href="/tu-marca" className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase hover:text-white transition-colors">Para Marcas</a></li>
             </ul>
           </div>
 
           {/* Contact - Takes 2 columns */}
-          <div className="md:col-span-2">
-            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Contacto</h4>
-            <ul className="space-y-4">
+          <div className="col-span-1 md:col-span-2">
+            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-4 md:mb-6">Contacto</h4>
+            <ul className="space-y-3 md:space-y-4">
               {/* WhatsApp Comercial */}
               <li>
                 <a 
                   href="https://wa.me/595973666000" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                  className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
                 >
-                  <WhatsAppIcon className="w-4 h-4" />
-                  Comercial: +595 973 666 000
+                  <WhatsAppIcon className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">Comercial:</span> +595 973 666 000
                 </a>
               </li>
               {/* WhatsApp Marcas */}
@@ -62,10 +62,10 @@ export const Footer = ({ t }) => {
                   href="https://wa.me/595976691520" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                  className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
                 >
-                  <WhatsAppIcon className="w-4 h-4" />
-                  Marcas: +595 976 691 520
+                  <WhatsAppIcon className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">Marcas:</span> +595 976 691 520
                 </a>
               </li>
               {/* Instagram */}
@@ -74,9 +74,9 @@ export const Footer = ({ t }) => {
                   href="https://instagram.com/avenue.py" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                  className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
                 >
-                  <Instagram className="w-4 h-4" />
+                  <Instagram className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
                   @avenue.py
                 </a>
               </li>
@@ -86,38 +86,40 @@ export const Footer = ({ t }) => {
                   href="https://maps.google.com/?q=Paseo+Los+Árboles,+Asunción,+Paraguay" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-500 text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
+                  className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase hover:text-white transition-colors flex items-center gap-2"
                 >
-                  <MapPin className="w-4 h-4" />
-                  Paseo Los Árboles, Asunción
+                  <MapPin className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
+                  <span className="hidden md:inline">Paseo Los Árboles, Asunción</span>
+                  <span className="md:hidden">Asunción</span>
                 </a>
               </li>
             </ul>
           </div>
 
           {/* Horarios - Takes 2 columns */}
-          <div className="md:col-span-2">
-            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-6">Horarios</h4>
+          <div className="col-span-2 md:col-span-2">
+            <h4 className="text-[#d4a968] text-xs font-medium tracking-[0.2em] uppercase mb-4 md:mb-6">Horarios</h4>
             <div className="flex items-start gap-2">
-              <Clock className="w-4 h-4 text-gray-500 mt-0.5" />
+              <Clock className="w-3 h-3 md:w-4 md:h-4 text-gray-500 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-gray-500 text-xs tracking-[0.1em] uppercase">Lunes a Sábado</p>
-                <p className="text-gray-400 text-xs tracking-[0.1em] uppercase mt-1">9:00 - 21:00</p>
+                <p className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase">Lunes a Sábado</p>
+                <p className="text-gray-400 text-[10px] md:text-xs tracking-[0.1em] uppercase mt-1">9:00 - 21:00</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-xs tracking-[0.1em] uppercase">
+        <div className="mt-10 md:mt-16 pt-6 md:pt-8 border-t border-white/5 flex flex-col items-center gap-4 md:flex-row md:justify-between">
+          <p className="text-gray-500 text-[10px] md:text-xs tracking-[0.1em] uppercase text-center md:text-left">
             © {new Date().getFullYear()} Avenue. Todos los derechos reservados.
           </p>
-          <div className="flex items-center gap-8">
-            <a href="/politica-privacidad" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Política de Privacidad</a>
-            <a href="/terminos-condiciones" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Términos</a>
-            <a href="https://instagram.com/avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">Instagram</a>
-            <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-xs tracking-[0.1em] uppercase">WhatsApp</a>
+          {/* Links - Grid on mobile, flex on desktop */}
+          <div className="grid grid-cols-2 gap-3 md:flex md:items-center md:gap-8">
+            <a href="/politica-privacidad" className="text-gray-500 hover:text-[#d4a968] transition-colors text-[10px] md:text-xs tracking-[0.1em] uppercase text-center md:text-left">Privacidad</a>
+            <a href="/shop/terminos-condiciones" className="text-gray-500 hover:text-[#d4a968] transition-colors text-[10px] md:text-xs tracking-[0.1em] uppercase text-center md:text-left">Términos</a>
+            <a href="https://instagram.com/avenue.py" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-[10px] md:text-xs tracking-[0.1em] uppercase text-center md:text-left">Instagram</a>
+            <a href="https://wa.me/595973666000" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#d4a968] transition-colors text-[10px] md:text-xs tracking-[0.1em] uppercase text-center md:text-left">WhatsApp</a>
           </div>
         </div>
       </div>
