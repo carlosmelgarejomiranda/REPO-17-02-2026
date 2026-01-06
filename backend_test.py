@@ -7197,6 +7197,6 @@ def test_ugc_campaign_metrics_report():
     return failed == 0
 
 if __name__ == "__main__":
-    # Run UGC tests for this review request
-    success = run_ugc_tests()
+    # Run Sprint 7 Email Notification tests for this review request
+    success = run_sprint7_email_tests()
     sys.exit(0 if success else 1)
