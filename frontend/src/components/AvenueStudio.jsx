@@ -145,7 +145,7 @@ export const AvenueStudio = ({ t }) => {
                 Elige tu <span className="italic text-[#d4a968]">tiempo</span>
               </h2>
               <p className="text-gray-400 max-w-lg">
-                Tarifas flexibles para cada tipo de producción. Todos los paquetes incluyen equipamiento completo.
+                Tarifas flexibles para cada tipo de producción. Por promoción de apertura, todos los paquetes incluyen iluminación.
               </p>
             </div>
           </div>
