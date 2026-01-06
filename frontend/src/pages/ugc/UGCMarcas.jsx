@@ -7,7 +7,7 @@ import {
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 
-const UGCMarcas = () => {
+const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [packages, setPackages] = useState([]);
   const [showEnterprise, setShowEnterprise] = useState(false);
   const [enterpriseForm, setEnterpriseForm] = useState({
@@ -89,7 +89,14 @@ const UGCMarcas = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navbar />
+      <Navbar 
+        user={user}
+        onLoginClick={onLoginClick}
+        onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
+      />
       
       {/* Hero */}
       <section className="relative pt-32 pb-24 px-6 overflow-hidden">
@@ -395,7 +402,7 @@ const UGCMarcas = () => {
         </div>
       </section>
 
-      <Footer />
+      <Footer t={t} />
     </div>
   );
 };
