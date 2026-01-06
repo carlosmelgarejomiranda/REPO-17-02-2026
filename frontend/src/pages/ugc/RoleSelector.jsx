@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Building2, ArrowRight, Sparkles, TrendingUp, Gift, BarChart3 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 const RoleSelector = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState(null);
 
