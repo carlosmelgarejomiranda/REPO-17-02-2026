@@ -238,6 +238,22 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
+        <p className="text-red-400 text-lg mb-2">Error</p>
+        <p className="text-gray-400">{error}</p>
+        <button 
+          onClick={fetchDashboard}
+          className="mt-4 px-4 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958]"
+        >
+          Reintentar
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Sub-navigation */}
