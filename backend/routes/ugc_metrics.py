@@ -279,6 +279,40 @@ async def update_creator_stats(db, creator_id: str):
         {"$set": {f"stats.{k}": v for k, v in stats.items()}}
     )
 
+# ==================== ADMIN: ALL METRICS ====================
+
+@router.get("/all", response_model=dict)
+async def get_all_metrics(
+    request: Request,
+    skip: int = 0,
+    limit: int = 100
+):
+    """Get all metrics with creator and campaign info"""
+    await require_admin(request)
+    db = await get_db()
+    
+    metrics = await db.ugc_metrics.find(
+        {},
+        {"_id": 0}
+    ).sort("submitted_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    # Enrich with creator and campaign info
+    for metric in metrics:
+        creator = await db.ugc_creators.find_one(
+            {"id": metric.get("creator_id")},
+            {"_id": 0, "name": 1, "level": 1}
+        )
+        campaign = await db.ugc_campaigns.find_one(
+            {"id": metric.get("campaign_id")},
+            {"_id": 0, "name": 1, "brand_id": 1}
+        )
+        metric["creator"] = creator
+        metric["campaign"] = campaign
+    
+    total = await db.ugc_metrics.count_documents({})
+    
+    return {"metrics": metrics, "total": total}
+
 # ==================== ADMIN: VERIFY METRICS ====================
 
 @router.get("/pending-verification", response_model=dict)
