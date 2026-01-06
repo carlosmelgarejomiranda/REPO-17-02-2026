@@ -591,33 +591,15 @@ function AppRouter() {
 
           {/* Admin Dashboard */}
           <Route path="/admin" element={
-            ['admin', 'superadmin', 'staff', 'designer'].includes(user?.role) ? (
-              <>
-                <AdminSEO />
-                <Navbar 
-                  user={user}
-                  onLoginClick={() => setShowAuthModal(true)}
-                  onLogout={logout}
-                  language={language}
-                  setLanguage={setLanguage}
-                  t={t}
-                />
-                <div style={{ paddingTop: '64px' }}>
-                  <AdminDashboard user={user} />
-                </div>
-              </>
-            ) : (
-              <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
-                <div className="text-center">
-                  <h1 className="text-2xl mb-4" style={{ color: '#f5ede4' }}>Acceso Restringido</h1>
-                  <p className="mb-4" style={{ color: '#a8a8a8' }}>Necesitas iniciar sesión como administrador</p>
-                  <Button 
-                    onClick={() => setShowAuthModal(true)}
-                    style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-                  >
-                    Iniciar Sesión
-                  </Button>
-                </div>
+            <AdminRoute 
+              user={user} 
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
+          } />
               </div>
             )
           } />
