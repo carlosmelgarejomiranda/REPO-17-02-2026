@@ -151,6 +151,7 @@ class BrandProfile(BaseModel):
     updated_at: str
 
 class BrandProfileCreate(BaseModel):
+    email: Optional[str] = None  # Optional - used if not logged in
     company_name: str
     industry: str
     country: str = "PY"
