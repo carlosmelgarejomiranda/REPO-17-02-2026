@@ -127,6 +127,37 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                       </a>
                     ))}
                     
+                    {/* UGC Platform Links */}
+                    <div className="border-t border-[#d4a968]/30 mt-1 pt-1">
+                      <p className="px-6 py-2 text-[10px] tracking-[0.2em] uppercase text-[#d4a968]">
+                        Plataforma UGC
+                      </p>
+                      <a
+                        href={getUGCLink()}
+                        className="block py-3 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] bg-black hover:bg-[#111] hover:text-[#d4a968] transition-colors"
+                        style={{ backgroundColor: '#000', textDecoration: 'none' }}
+                        onClick={() => setShowMenu(false)}
+                      >
+                        {user?.role === 'creator' ? '→ Mi Panel Creator' : user?.role === 'brand' ? '→ Mi Panel Marca' : '→ Unirme'}
+                      </a>
+                      <a
+                        href="/ugc/campaigns"
+                        className="block py-3 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] bg-black hover:bg-[#111] hover:text-[#d4a968] transition-colors"
+                        style={{ backgroundColor: '#000', textDecoration: 'none' }}
+                        onClick={() => setShowMenu(false)}
+                      >
+                        → Ver Campañas
+                      </a>
+                      <a
+                        href="/ugc/brand/packages"
+                        className="block py-3 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] bg-black hover:bg-[#111] hover:text-[#d4a968] transition-colors"
+                        style={{ backgroundColor: '#000', textDecoration: 'none' }}
+                        onClick={() => setShowMenu(false)}
+                      >
+                        → Paquetes Marcas
+                      </a>
+                    </div>
+                    
                     {/* Admin Panel link in dropdown for mobile */}
                     {hasAdminAccess && (
                       <a
