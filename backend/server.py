@@ -2260,6 +2260,25 @@ app.include_router(builder_router)
 from seo import seo_router
 app.include_router(seo_router)
 
+# Include UGC Platform routers
+from routes.ugc_creators import router as ugc_creators_router
+from routes.ugc_brands import router as ugc_brands_router
+from routes.ugc_campaigns import router as ugc_campaigns_router
+from routes.ugc_packages import router as ugc_packages_router
+from routes.ugc_applications import router as ugc_applications_router
+from routes.ugc_deliverables import router as ugc_deliverables_router
+from routes.ugc_metrics import router as ugc_metrics_router
+from routes.ugc_admin import router as ugc_admin_router
+
+app.include_router(ugc_creators_router)
+app.include_router(ugc_brands_router)
+app.include_router(ugc_campaigns_router)
+app.include_router(ugc_packages_router)
+app.include_router(ugc_applications_router)
+app.include_router(ugc_deliverables_router)
+app.include_router(ugc_metrics_router)
+app.include_router(ugc_admin_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
