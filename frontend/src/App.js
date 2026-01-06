@@ -600,9 +600,6 @@ function AppRouter() {
               t={t}
             />
           } />
-              </div>
-            )
-          } />
 
           {/* Auth Callback Route */}
           <Route path="/auth/callback" element={
