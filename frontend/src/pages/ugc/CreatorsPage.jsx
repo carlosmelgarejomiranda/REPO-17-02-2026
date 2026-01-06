@@ -7,7 +7,7 @@ import {
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 
-const CreatorsPage = () => {
+const CreatorsPage = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -75,7 +75,14 @@ const CreatorsPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navbar />
+      <Navbar 
+        user={user}
+        onLoginClick={onLoginClick}
+        onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
+      />
       
       {/* Hero */}
       <section className="relative pt-32 pb-24 px-6 overflow-hidden">
@@ -328,7 +335,7 @@ const CreatorsPage = () => {
         </div>
       </section>
 
-      <Footer />
+      <Footer t={t} />
     </div>
   );
 };
