@@ -322,25 +322,101 @@ export const UGCCampaignsList = ({ t }) => {
 
       {/* For Brands CTA */}
       <section className="py-28 px-6 bg-[#0a0a0a] border-t border-white/25">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-[#d4a968] text-xs font-medium tracking-[0.3em] uppercase mb-6">Para Marcas</p>
-          
-          <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
-            ¿Querés lanzar tu <span className="italic text-[#d4a968]">campaña</span>?
-          </h2>
-          <p className="text-gray-300 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
-            Conectamos tu marca con microinfluencers verificados para crear contenido auténtico que convierte
-          </p>
-          
-          <a
-            href="https://wa.me/595976691520?text=Hola!%20Me%20interesa%20lanzar%20una%20campaña%20UGC%20con%20Avenue%20Studio"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group inline-flex items-center gap-4 px-10 py-5 bg-[#d4a968] text-black font-medium tracking-wide hover:bg-[#c49958] transition-all duration-300"
-          >
-            <span>Contactar por WhatsApp</span>
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </a>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* For Creators */}
+            <div className="p-10 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <p className="text-purple-400 text-xs font-medium tracking-[0.3em] uppercase mb-4">Para Creadores</p>
+              <h3 className="text-3xl font-light text-white mb-4">
+                Empezá a <span className="italic text-purple-400">colaborar</span>
+              </h3>
+              <p className="text-gray-400 mb-8 leading-relaxed">
+                Aplicá a campañas de marcas premium, creá contenido auténtico y recibí canjes increíbles. Construí tu reputación como creador UGC.
+              </p>
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Check className="w-5 h-5 text-purple-400" />
+                  <span>Acceso a campañas exclusivas</span>
+                </div>
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Check className="w-5 h-5 text-purple-400" />
+                  <span>Sistema de niveles y reputación</span>
+                </div>
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Check className="w-5 h-5 text-purple-400" />
+                  <span>Canjes de hasta Gs. 1.000.000</span>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  to="/ugc/select-role"
+                  className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium tracking-wide hover:opacity-90 transition-all rounded-lg"
+                >
+                  <span>Registrarme como Creator</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link
+                  to="/ugc/campaigns"
+                  className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-purple-500/50 text-purple-400 font-medium tracking-wide hover:bg-purple-500/10 transition-all rounded-lg"
+                >
+                  Ver Campañas
+                </Link>
+              </div>
+            </div>
+
+            {/* For Brands */}
+            <div className="p-10 bg-gradient-to-br from-[#d4a968]/10 to-amber-600/10 border border-[#d4a968]/20 rounded-2xl">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#d4a968] to-amber-600 rounded-xl flex items-center justify-center mb-6">
+                <Building2 className="w-8 h-8 text-black" />
+              </div>
+              <p className="text-[#d4a968] text-xs font-medium tracking-[0.3em] uppercase mb-4">Para Marcas</p>
+              <h3 className="text-3xl font-light text-white mb-4">
+                Lanzá tu <span className="italic text-[#d4a968]">campaña</span>
+              </h3>
+              <p className="text-gray-400 mb-8 leading-relaxed">
+                Conectá con creadores verificados, gestioná entregas y recibí métricas detalladas. Todo desde una sola plataforma.
+              </p>
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Check className="w-5 h-5 text-[#d4a968]" />
+                  <span>Red de +50 creadores verificados</span>
+                </div>
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Check className="w-5 h-5 text-[#d4a968]" />
+                  <span>Dashboard con métricas y reportes</span>
+                </div>
+                <div className="flex items-center gap-3 text-gray-300">
+                  <Check className="w-5 h-5 text-[#d4a968]" />
+                  <span>Desde 4 entregas por Gs. 790.000</span>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  to="/ugc/brand/packages"
+                  className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#d4a968] text-black font-medium tracking-wide hover:bg-[#c49958] transition-all rounded-lg"
+                >
+                  <span>Ver Paquetes</span>
+                  <Package className="w-5 h-5" />
+                </Link>
+                <Link
+                  to="/ugc/select-role"
+                  className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-[#d4a968]/50 text-[#d4a968] font-medium tracking-wide hover:bg-[#d4a968]/10 transition-all rounded-lg"
+                >
+                  Registrar Marca
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Info */}
+          <div className="mt-16 text-center">
+            <p className="text-gray-500 text-sm">
+              ¿Tenés preguntas? <a href="mailto:ugc@avenue.com.py" className="text-[#d4a968] hover:underline">Contactanos</a>
+            </p>
+          </div>
         </div>
       </section>
     </div>
