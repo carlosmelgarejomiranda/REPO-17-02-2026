@@ -221,7 +221,7 @@ testing_notes:
 
 test_plan:
   current_focus:
-    - "Sprint 6 Reputation & Gamification Backend - COMPLETED"
+    - "Sprint 7 Email Notifications Backend - COMPLETED"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
