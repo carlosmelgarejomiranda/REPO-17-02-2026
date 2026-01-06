@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import uuid
 
 from models.ugc_models import (
-    CreatorLevel, RatingCreate
+    CreatorLevel, ReviewCreate
 )
 
 router = APIRouter(prefix="/api/ugc/reputation", tags=["UGC Reputation"])
