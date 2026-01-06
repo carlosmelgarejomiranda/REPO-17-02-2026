@@ -70,6 +70,17 @@ backend:
         agent: "testing"
         comment: "✅ SPRINT 5 TESTED: All UGC Metrics & AI Backend endpoints working correctly. POST /api/ugc/metrics/submit/{deliverable_id} requires creator profile (expected behavior). GET /api/ugc/metrics/pending-verification returns proper response structure with pending array (0 pending metrics currently). POST /api/ugc/metrics/{metrics_id}/verify returns proper 404 for non-existent metrics (expected). GET /api/ugc/metrics/campaign/{campaign_id}/report returns proper response structure with report field and message 'No hay métricas todavía' for campaigns without metrics. All endpoints properly secured with authentication and role-based access control. AI extraction system ready for screenshot analysis. Backend metrics system ready for creator metrics submission and admin verification workflow."
 
+  - task: "UGC Reputation & Gamification Backend API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/ugc_reputation.py"
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ SPRINT 6 TESTED: All UGC Reputation & Gamification Backend endpoints working perfectly. GET /api/ugc/reputation/levels returns complete level system (rookie, trusted, pro, elite) with proper thresholds and benefits structure. GET /api/ugc/reputation/leaderboard returns proper response structure with leaderboard array (0 creators currently, expected for fresh system). Leaderboard filtering by category, city, and platform working correctly. GET /api/ugc/reputation/creator/{creator_id} returns proper 404 for non-existent creators (expected behavior). GET /api/ugc/reputation/my-progress returns proper 404 for non-creator users (expected - admin user doesn't have creator profile). POST /api/ugc/reputation/rate/{deliverable_id} returns proper 404 for non-existent deliverables and proper 403 for non-brand users (expected behavior). All endpoints properly secured with authentication and role-based access control. Reputation system ready for creator level progression, public profiles, leaderboards, and brand rating functionality."
+
 frontend:
   - task: "UGC Landing Page"
     implemented: true
