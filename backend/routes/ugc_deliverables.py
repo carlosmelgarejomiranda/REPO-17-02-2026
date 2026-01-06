@@ -399,4 +399,26 @@ async def review_deliverable(
     else:
         raise HTTPException(status_code=400, detail="Acción inválida")
     
+    # Send email notification to creator
+    try:
+        from services.ugc_emails import send_deliverable_approved, send_changes_requested
+        creator = await db.ugc_creators.find_one({"id": deliverable["creator_id"]})
+        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]})
+        if creator and creator.get("email") and campaign:
+            if data.action == "approve":
+                await send_deliverable_approved(
+                    to_email=creator["email"],
+                    creator_name=creator.get("name", "Creator"),
+                    campaign_name=campaign.get("name", "")
+                )
+            elif data.action == "request_changes":
+                await send_changes_requested(
+                    to_email=creator["email"],
+                    creator_name=creator.get("name", "Creator"),
+                    campaign_name=campaign.get("name", ""),
+                    feedback=data.notes
+                )
+    except Exception as e:
+        logger.error(f"Failed to send email notification: {e}")
+    
     return {"success": True, "message": message}
