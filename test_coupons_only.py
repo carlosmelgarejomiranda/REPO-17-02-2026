@@ -8,7 +8,7 @@ import json
 import sys
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://avenue-secure-shop.preview.emergentagent.com/api"
+BACKEND_URL = "https://avenue-store.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
