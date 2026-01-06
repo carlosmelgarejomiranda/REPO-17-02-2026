@@ -13,7 +13,6 @@ const UGCLanding = () => {
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-[#d4a968]/10" />
-        <div className="absolute inset-0 bg-[url('/images/studio-bg.jpg')] bg-cover bg-center opacity-10" />
         
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <p className="text-[#d4a968] text-sm font-medium tracking-[0.3em] uppercase mb-6">
