@@ -6217,7 +6217,7 @@ def run_ugc_tests():
             results.append((test_name, False))
     
     # Summary
-    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SPRINT 3 TEST SUMMARY ==={Colors.ENDC}")
+    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SPRINT 4 TEST SUMMARY ==={Colors.ENDC}")
     passed = 0
     failed = 0
     
