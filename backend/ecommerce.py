@@ -34,10 +34,11 @@ ecommerce_router = APIRouter(prefix="/api/shop")
 ENCOM_API_URL = os.environ.get('ENCOM_API_URL', 'https://api.cloud.encom.com.py')
 ENCOM_API_TOKEN = os.environ.get('ENCOM_API_TOKEN', '')
 GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', '')
-STORE_LAT = float(os.environ.get('STORE_LAT', '-25.2867'))
-STORE_LNG = float(os.environ.get('STORE_LNG', '-57.6474'))
+# AVENUE store location - Paseo Los Árboles, Asunción
+STORE_LAT = float(os.environ.get('STORE_LAT', '-25.2921064'))
+STORE_LNG = float(os.environ.get('STORE_LNG', '-57.5738759'))
 DELIVERY_PRICE_PER_KM = float(os.environ.get('DELIVERY_PRICE_PER_KM', '2500'))
-DELIVERY_MIN_PRICE = float(os.environ.get('DELIVERY_MIN_PRICE', '15000'))
+DELIVERY_MIN_PRICE = float(os.environ.get('DELIVERY_MIN_PRICE', '20000'))
 SYNC_INTERVAL_SECONDS = 300  # 5 minutes
 WHATSAPP_COMMERCIAL = os.environ.get('NOTIFICATION_WHATSAPP_ECOMMERCE', '+595973666000')
 
