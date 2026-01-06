@@ -382,7 +382,7 @@ const BrandCampaigns = () => {
 
                             {/* Motivation */}
                             {app.motivation && (
-                              <p className="text-sm text-gray-300 mb-3 italic">"{app.motivation}"</p>
+                              <p className="text-sm text-gray-300 mb-3 italic">&ldquo;{app.motivation}&rdquo;</p>
                             )}
 
                             {/* Actions */}
