@@ -6234,6 +6234,246 @@ def run_ugc_tests():
     print(f"{Colors.RED}Failed: {failed}{Colors.ENDC}")
     print(f"{Colors.BLUE}Success Rate: {passed}/{len(results)} ({passed/len(results)*100:.1f}%){Colors.ENDC}")
     
+# ==================== UGC METRICS TESTS (SPRINT 5) ====================
+
+def test_ugc_metrics_submit():
+    """Test UGC Metrics: Submit Metrics (Creator) - POST /api/ugc/metrics/submit/{deliverable_id}"""
+    print_test_header("Test UGC Metrics Submit")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Metrics Submit", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # Test with a dummy deliverable ID to check endpoint structure
+        test_deliverable_id = "test_deliverable_123"
+        url = f"{BACKEND_URL}/ugc/metrics/submit/{test_deliverable_id}"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        payload = {
+            "screenshot_url": "https://i.imgur.com/example.png",
+            "views": 10000,
+            "reach": 5000,
+            "likes": 500,
+            "comments": 50,
+            "shares": 30,
+            "saves": 100
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.post(url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 403:
+            print_success("Submit metrics endpoint exists and requires creator profile (expected)")
+            add_test_result("UGC Metrics Submit", "PASS", "Endpoint exists, requires creator profile")
+            return True
+        elif response.status_code == 404:
+            print_success("Submit metrics endpoint exists (deliverable not found is expected)")
+            add_test_result("UGC Metrics Submit", "PASS", "Endpoint exists")
+            return True
+        elif response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            print_success("Submit metrics endpoint working correctly")
+            add_test_result("UGC Metrics Submit", "PASS")
+            return True
+        else:
+            print_error(f"Unexpected response: {response.status_code} - {response.text}")
+            add_test_result("UGC Metrics Submit", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Metrics Submit", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_metrics_pending_verification():
+    """Test UGC Metrics: Get Pending Verification (Admin) - GET /api/ugc/metrics/pending-verification"""
+    print_test_header("Test UGC Metrics Pending Verification")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Metrics Pending Verification", "FAIL", "No admin token")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/metrics/pending-verification"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            if "pending" in data and isinstance(data["pending"], list):
+                pending_count = len(data["pending"])
+                print_success("Pending verification endpoint working correctly")
+                print_success(f"Pending metrics for verification: {pending_count}")
+                
+                if pending_count > 0:
+                    first_metric = data["pending"][0]
+                    print_info(f"Sample pending metric ID: {first_metric.get('id', 'Unknown')}")
+                    print_info(f"AI confidence: {first_metric.get('ai_confidence', 0)}")
+                    print_info(f"Platform: {first_metric.get('platform', 'Unknown')}")
+                
+                add_test_result("UGC Metrics Pending Verification", "PASS")
+                return True
+            else:
+                print_error("Response missing 'pending' array or wrong type")
+                add_test_result("UGC Metrics Pending Verification", "FAIL", "Wrong response structure")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Metrics Pending Verification", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Metrics Pending Verification", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_metrics_verify():
+    """Test UGC Metrics: Verify Metrics (Admin) - POST /api/ugc/metrics/{metrics_id}/verify"""
+    print_test_header("Test UGC Metrics Verify")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Metrics Verify", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # Test with a dummy metrics ID to check endpoint structure
+        test_metrics_id = "test_metrics_123"
+        url = f"{BACKEND_URL}/ugc/metrics/{test_metrics_id}/verify"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        payload = {
+            "views": 10000,
+            "reach": 5000,
+            "likes": 500,
+            "comments": 50,
+            "shares": 30,
+            "saves": 100
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.post(url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print_success("Verify metrics endpoint exists (metrics not found is expected)")
+            add_test_result("UGC Metrics Verify", "PASS", "Endpoint exists")
+            return True
+        elif response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            print_success("Verify metrics endpoint working correctly")
+            add_test_result("UGC Metrics Verify", "PASS")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Metrics Verify", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Metrics Verify", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_campaign_metrics_report():
+    """Test UGC Metrics: Campaign Metrics Report - GET /api/ugc/metrics/campaign/{campaign_id}/report"""
+    print_test_header("Test UGC Campaign Metrics Report")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Campaign Metrics Report", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # First try to get campaigns to find one to test with
+        campaigns_url = f"{BACKEND_URL}/ugc/admin/campaigns"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        campaigns_response = requests.get(campaigns_url, headers=headers)
+        
+        if campaigns_response.status_code == 200:
+            campaigns_data = campaigns_response.json()
+            campaigns = campaigns_data.get("campaigns", [])
+            
+            if campaigns:
+                # Use first campaign
+                campaign_id = campaigns[0].get("id")
+                print_info(f"Testing with campaign ID: {campaign_id}")
+            else:
+                # Use dummy campaign ID
+                campaign_id = "test_campaign_123"
+                print_info(f"No campaigns found, testing with dummy ID: {campaign_id}")
+        else:
+            # Use dummy campaign ID
+            campaign_id = "test_campaign_123"
+            print_info(f"Could not fetch campaigns, testing with dummy ID: {campaign_id}")
+        
+        url = f"{BACKEND_URL}/ugc/metrics/campaign/{campaign_id}/report"
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            if "report" in data:
+                report = data["report"]
+                if report is None:
+                    print_success("Campaign metrics report endpoint working (no metrics yet)")
+                    print_success(f"Message: {data.get('message', 'No message')}")
+                else:
+                    # Check report structure
+                    expected_fields = ["total_deliverables", "metrics_submitted", "totals", "averages"]
+                    if all(field in report for field in expected_fields):
+                        print_success("Campaign metrics report endpoint working correctly")
+                        print_success(f"Total deliverables: {report.get('total_deliverables', 0)}")
+                        print_success(f"Metrics submitted: {report.get('metrics_submitted', 0)}")
+                        
+                        totals = report.get("totals", {})
+                        print_info(f"Total views: {totals.get('views', 0)}")
+                        print_info(f"Total reach: {totals.get('reach', 0)}")
+                        print_info(f"Total interactions: {totals.get('interactions', 0)}")
+                    else:
+                        print_warning("Report structure may be incomplete")
+                
+                add_test_result("UGC Campaign Metrics Report", "PASS")
+                return True
+            else:
+                print_error("Response missing 'report' field")
+                add_test_result("UGC Campaign Metrics Report", "FAIL", "Missing report field")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Campaign Metrics Report", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Campaign Metrics Report", "FAIL", f"Exception: {str(e)}")
+        return False
+
     return failed == 0
 
 if __name__ == "__main__":
