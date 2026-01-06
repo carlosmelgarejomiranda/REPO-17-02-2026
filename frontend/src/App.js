@@ -763,6 +763,7 @@ function AppRouter() {
           <Route path="/ugc/creator/dashboard" element={<CreatorDashboard />} />
           <Route path="/ugc/creator/workspace" element={<CreatorWorkspace />} />
           <Route path="/ugc/creator/deliverable/:id" element={<DeliverableDetail />} />
+          <Route path="/ugc/creator/metrics/:deliverableId" element={<MetricsSubmit />} />
           <Route path="/ugc/brand/onboarding" element={<BrandOnboarding onLoginClick={() => setShowAuthModal(true)} />} />
           <Route path="/ugc/brand/dashboard" element={<BrandDashboard />} />
           <Route path="/ugc/brand/packages" element={<PackagePricing />} />
