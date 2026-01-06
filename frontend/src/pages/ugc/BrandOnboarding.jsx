@@ -193,6 +193,10 @@ const BrandOnboarding = ({ onLoginClick }) => {
       setError('La contraseña debe tener al menos 6 caracteres');
       return;
     }
+    if (!formData.email) {
+      setError('Por favor ingresa un email');
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -208,19 +212,25 @@ const BrandOnboarding = ({ onLoginClick }) => {
         })
       });
       
-      const data = await res.json();
-      
       if (!res.ok) {
+        const data = await res.json().catch(() => ({ detail: 'Error de conexión' }));
         throw new Error(data.detail || 'Error al registrarse');
       }
+
+      const data = await res.json();
 
       if (data.token) {
         localStorage.setItem('auth_token', data.token);
         setIsAuthenticated(true);
+        setFormData(prev => ({
+          ...prev,
+          contact_first_name: formData.name?.split(' ')[0] || prev.contact_first_name,
+          contact_last_name: formData.name?.split(' ').slice(1).join(' ') || prev.contact_last_name
+        }));
         setStep(2);
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Error al registrarse');
     } finally {
       setLoading(false);
     }
