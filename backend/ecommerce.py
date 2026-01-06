@@ -1037,14 +1037,22 @@ async def calculate_delivery(data: DeliveryCalculation):
         except Exception:
             distance_km = haversine_distance(STORE_LAT, STORE_LNG, data.lat, data.lng)
     
-    delivery_cost = distance_km * DELIVERY_PRICE_PER_KM
+    # Round distance to nearest whole km (standard rounding)
+    # e.g., 10.2 km -> 10 km, 10.5 km -> 11 km (Python rounds 10.5 to 10, use manual rounding)
+    rounded_distance_km = round(distance_km)
+    
+    # Calculate delivery cost: 2,500 Gs per km, always in multiples of 2,500
+    delivery_cost = rounded_distance_km * DELIVERY_PRICE_PER_KM
+    
+    # Apply minimum delivery cost of 20,000 Gs
     delivery_cost = max(delivery_cost, DELIVERY_MIN_PRICE)
     
     return {
         "distance_km": round(distance_km, 2),
-        "delivery_cost": round(delivery_cost),
-        "price_per_km": DELIVERY_PRICE_PER_KM,
-        "min_price": DELIVERY_MIN_PRICE
+        "rounded_distance_km": rounded_distance_km,
+        "delivery_cost": int(delivery_cost),
+        "price_per_km": int(DELIVERY_PRICE_PER_KM),
+        "min_price": int(DELIVERY_MIN_PRICE)
     }
 
 def haversine_distance(lat1, lon1, lat2, lon2):
