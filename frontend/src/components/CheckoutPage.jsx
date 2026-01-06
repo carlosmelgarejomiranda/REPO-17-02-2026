@@ -13,9 +13,10 @@ const mapContainerStyle = {
   height: '300px'
 };
 
+// AVENUE store location - Paseo Los Árboles, Asunción
 const defaultCenter = {
-  lat: -25.2867,
-  lng: -57.6474
+  lat: -25.2921064,
+  lng: -57.5738759
 };
 
 // Helper to resolve image URLs
