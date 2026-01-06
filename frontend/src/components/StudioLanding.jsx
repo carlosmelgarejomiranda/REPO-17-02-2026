@@ -153,8 +153,8 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
             </div>
             <div className="w-px h-12 bg-white/20"></div>
             <div className="text-center">
-              <div className="text-4xl font-light text-[#d4a968]">6</div>
-              <div className="text-sm text-gray-400 uppercase tracking-wider">Luces Godox</div>
+              <div className="text-4xl font-light text-[#d4a968]">2</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wider">Equipos Godox</div>
             </div>
             <div className="w-px h-12 bg-white/20"></div>
             <div className="text-center">
