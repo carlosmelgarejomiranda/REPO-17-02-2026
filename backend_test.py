@@ -6590,8 +6590,8 @@ def test_ugc_application_status_update():
         return False
 
 def run_ugc_tests():
-    """Run Sprint 5 UGC Metrics & AI Backend tests"""
-    print(f"{Colors.BOLD}{Colors.BLUE}Sprint 5: UGC Metrics & AI Backend Tests{Colors.ENDC}")
+    """Run Sprint 6 UGC Reputation & Gamification Backend tests"""
+    print(f"{Colors.BOLD}{Colors.BLUE}Sprint 6: UGC Reputation & Gamification Backend Tests{Colors.ENDC}")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 60)
     
@@ -6602,11 +6602,13 @@ def run_ugc_tests():
         return False
     
     tests = [
-        # SPRINT 5: UGC METRICS ENDPOINTS
-        ("Test UGC Metrics Submit", test_ugc_metrics_submit),
-        ("Test UGC Metrics Pending Verification", test_ugc_metrics_pending_verification),
-        ("Test UGC Metrics Verify", test_ugc_metrics_verify),
-        ("Test UGC Campaign Metrics Report", test_ugc_campaign_metrics_report),
+        # SPRINT 6: UGC REPUTATION ENDPOINTS
+        ("Test UGC Reputation Levels", test_ugc_reputation_levels),
+        ("Test UGC Reputation Leaderboard", test_ugc_reputation_leaderboard),
+        ("Test UGC Reputation Leaderboard Filters", test_ugc_reputation_leaderboard_with_filters),
+        ("Test UGC Reputation Creator Profile", test_ugc_reputation_creator_profile),
+        ("Test UGC Reputation My Progress", test_ugc_reputation_my_progress),
+        ("Test UGC Reputation Rate Creator", test_ugc_reputation_rate_creator),
     ]
     
     results = []
