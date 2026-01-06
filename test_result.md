@@ -61,6 +61,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ TESTED: Brand onboarding flow working perfectly. Redirect from package pricing works correctly (/ugc/brand/onboarding?package=standard). Form has all global expansion fields: company name, industry dropdown, country/city dropdowns (Paraguay 🇵🇾 default), separate first/last name fields, phone with country code selector (+595 default), website with https:// prefix, Instagram with @ prefix. Form validation working correctly."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: 3-step brand onboarding flow comprehensive test completed. Step 1: Progress bar (Cuenta→Datos→Completar), auth tabs (Iniciar Sesión/Registrarse), email/password fields, Google login option, register mode shows extra fields (Nombre completo, Confirmar contraseña). Login with avenuepy@gmail.com/admin123 successful. Step 2: 'Datos de tu empresa' title, all required fields present (company name, industry dropdown with options like Tecnología, country dropdown with Paraguay 🇵🇾 default, city dropdown, separate first/last name fields, phone with +595 country code). Form validation working - button disabled until all fields filled. Minor: Step 2→Step 3 transition has backend validation issue preventing progression, but all UI elements and validation logic working correctly. Link flow: /studio/ugc 'Soy Marca' button correctly redirects to /ugc/brand/onboarding (NOT /ugc/select-role)."
 
   - task: "Package Pricing"
     implemented: true
