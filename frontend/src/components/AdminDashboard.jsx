@@ -555,7 +555,7 @@ export const AdminDashboard = ({ user }) => {
     { id: 'images', label: 'Imágenes', icon: Image, permission: 'images' },
     { id: 'coupons', label: 'Cupones', icon: Tag, permission: 'orders' },
     { id: 'reservations', label: 'Reservas', icon: Calendar, permission: 'reservations' },
-    { id: 'ugc', label: 'UGC', icon: Instagram, permission: 'ugc' },
+    { id: 'ugc', label: 'UGC Platform', icon: Sparkles, permission: 'ugc' },
     { id: 'brands', label: 'Marcas', icon: Building, permission: 'brands' },
     { id: 'security', label: 'Seguridad', icon: Shield, permission: 'security' },
     { id: 'audit', label: 'Auditoría', icon: FileText, permission: 'audit' },
