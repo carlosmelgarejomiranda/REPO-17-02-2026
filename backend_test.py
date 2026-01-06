@@ -1484,6 +1484,7 @@ def test_admin_top_products():
     
     if not admin_token:
         print_error("No admin token available")
+        add_test_result("Admin Top Products", "FAIL", "No admin token")
         return False
     
     try:
@@ -1525,23 +1526,244 @@ def test_admin_top_products():
                             size_str = f" ({size})" if size else ""
                             print_info(f"#{i}: {name}{size_str} - {quantity} sold, {revenue:,} Gs")
                         
+                        add_test_result("Admin Top Products", "PASS")
                         return True
                     else:
                         missing = [f for f in required_fields if f not in first_product]
                         print_error(f"Top products missing required fields: {missing}")
+                        add_test_result("Admin Top Products", "FAIL", f"Missing fields: {missing}")
                         return False
                 else:
                     print_warning("No top products data available")
+                    add_test_result("Admin Top Products", "PASS")
                     return True
             else:
                 print_error("Response missing 'top_products' field")
+                add_test_result("Admin Top Products", "FAIL", "Missing top_products field")
                 return False
         else:
             print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("Admin Top Products", "FAIL", f"HTTP {response.status_code}")
             return False
             
     except Exception as e:
         print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Admin Top Products", "FAIL", f"Exception: {str(e)}")
+        return False
+
+# ==================== UGC PLATFORM TESTS ====================
+
+def test_ugc_packages_pricing():
+    """Test UGC Packages Pricing: GET /api/ugc/packages/pricing"""
+    print_test_header("Test UGC Packages Pricing")
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/packages/pricing"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["packages", "promo_active"]
+            if all(field in data for field in required_fields):
+                packages = data.get("packages", [])
+                promo_active = data.get("promo_active", False)
+                
+                print_success(f"UGC packages pricing endpoint working correctly")
+                print_success(f"Packages available: {len(packages)}")
+                print_success(f"Promo active: {promo_active}")
+                
+                if packages:
+                    # Check structure of first package
+                    first_package = packages[0]
+                    package_fields = ["type", "name", "deliveries", "price", "description", "features"]
+                    
+                    if all(field in first_package for field in package_fields):
+                        print_success(f"Package structure correct")
+                        
+                        # Show package details
+                        for package in packages:
+                            name = package.get("name", "Unknown")
+                            deliveries = package.get("deliveries", 0)
+                            price = package.get("price", 0)
+                            promo_price = package.get("promo_price")
+                            
+                            price_str = f"{price:,} Gs"
+                            if promo_price:
+                                price_str = f"{promo_price:,} Gs (was {price:,} Gs)"
+                            
+                            print_info(f"Package: {name} - {deliveries} deliveries - {price_str}")
+                        
+                        add_test_result("UGC Packages Pricing", "PASS")
+                        return True
+                    else:
+                        missing = [f for f in package_fields if f not in first_package]
+                        print_error(f"Package missing required fields: {missing}")
+                        add_test_result("UGC Packages Pricing", "FAIL", f"Missing fields: {missing}")
+                        return False
+                else:
+                    print_warning("No packages available")
+                    add_test_result("UGC Packages Pricing", "PASS")
+                    return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                add_test_result("UGC Packages Pricing", "FAIL", f"Missing fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Packages Pricing", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Packages Pricing", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_campaigns_available():
+    """Test UGC Campaigns Available: GET /api/ugc/campaigns/available"""
+    print_test_header("Test UGC Campaigns Available")
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/campaigns/available"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["campaigns", "total", "skip", "limit"]
+            if all(field in data for field in required_fields):
+                campaigns = data.get("campaigns", [])
+                total = data.get("total", 0)
+                
+                print_success(f"UGC campaigns available endpoint working correctly")
+                print_success(f"Total campaigns: {total}")
+                print_success(f"Campaigns in response: {len(campaigns)}")
+                
+                if campaigns:
+                    # Check structure of first campaign
+                    first_campaign = campaigns[0]
+                    campaign_fields = ["id", "name", "description", "brand_id", "status", "slots"]
+                    
+                    if all(field in first_campaign for field in campaign_fields):
+                        print_success(f"Campaign structure correct")
+                        
+                        # Show campaign details
+                        for i, campaign in enumerate(campaigns[:3], 1):
+                            name = campaign.get("name", "Unknown")
+                            brand = campaign.get("brand", {})
+                            brand_name = brand.get("company_name", "Unknown Brand")
+                            slots = campaign.get("slots", 0)
+                            slots_available = campaign.get("slots_available", 0)
+                            
+                            print_info(f"Campaign {i}: {name} by {brand_name} - {slots_available}/{slots} slots available")
+                        
+                        add_test_result("UGC Campaigns Available", "PASS")
+                        return True
+                    else:
+                        missing = [f for f in campaign_fields if f not in first_campaign]
+                        print_error(f"Campaign missing required fields: {missing}")
+                        add_test_result("UGC Campaigns Available", "FAIL", f"Missing fields: {missing}")
+                        return False
+                else:
+                    print_info("No campaigns available (this is normal for a new platform)")
+                    add_test_result("UGC Campaigns Available", "PASS")
+                    return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                add_test_result("UGC Campaigns Available", "FAIL", f"Missing fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Campaigns Available", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Campaigns Available", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_enterprise_quote():
+    """Test UGC Enterprise Quote: POST /api/ugc/packages/enterprise/quote"""
+    print_test_header("Test UGC Enterprise Quote")
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/packages/enterprise/quote"
+        payload = {
+            "duration_months": 6,
+            "deliveries_per_month": 16
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            required_fields = ["duration_months", "deliveries_per_month", "total_deliveries", "price_per_delivery", "total_price", "monthly_payment"]
+            if all(field in data for field in required_fields):
+                duration = data.get("duration_months")
+                deliveries_per_month = data.get("deliveries_per_month")
+                total_deliveries = data.get("total_deliveries")
+                price_per_delivery = data.get("price_per_delivery")
+                total_price = data.get("total_price")
+                monthly_payment = data.get("monthly_payment")
+                
+                print_success(f"UGC enterprise quote endpoint working correctly")
+                print_success(f"Duration: {duration} months")
+                print_success(f"Deliveries per month: {deliveries_per_month}")
+                print_success(f"Total deliveries: {total_deliveries}")
+                print_success(f"Price per delivery: {price_per_delivery:,} Gs")
+                print_success(f"Total price: {total_price:,} Gs")
+                print_success(f"Monthly payment: {monthly_payment:,} Gs")
+                
+                # Validate calculations
+                expected_total_deliveries = duration * deliveries_per_month
+                expected_total_price = expected_total_deliveries * price_per_delivery
+                expected_monthly_payment = expected_total_price // duration
+                
+                if (total_deliveries == expected_total_deliveries and 
+                    total_price == expected_total_price and 
+                    monthly_payment == expected_monthly_payment):
+                    print_success("✅ Quote calculations are correct")
+                    add_test_result("UGC Enterprise Quote", "PASS")
+                    return True
+                else:
+                    print_error("Quote calculations are incorrect")
+                    print_error(f"Expected: {expected_total_deliveries} deliveries, {expected_total_price:,} Gs total, {expected_monthly_payment:,} Gs monthly")
+                    add_test_result("UGC Enterprise Quote", "FAIL", "Incorrect calculations")
+                    return False
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                add_test_result("UGC Enterprise Quote", "FAIL", f"Missing fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Enterprise Quote", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Enterprise Quote", "FAIL", f"Exception: {str(e)}")
         return False
 
 # ==================== SEO IMPLEMENTATION TESTS ====================
