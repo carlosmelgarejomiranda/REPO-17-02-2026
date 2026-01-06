@@ -133,7 +133,7 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                         → Soy Creator
                       </a>
                       <a
-                        href="/ugc/marcas"
+                        href="/ugc/brand/onboarding"
                         className="block py-3 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] bg-black hover:bg-[#111] hover:text-[#d4a968] transition-colors"
                         style={{ backgroundColor: '#000', textDecoration: 'none' }}
                         onClick={() => setShowMenu(false)}
