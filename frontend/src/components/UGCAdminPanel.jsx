@@ -734,19 +734,175 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
 
       {/* Metrics Tab */}
       {activeSubTab === 'metrics' && (
-        <div className="space-y-6">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-            <TrendingUp className="w-16 h-16 text-[#d4a968] mx-auto mb-4" />
-            <h4 className="text-xl text-white mb-2">Verificación de Métricas</h4>
-            <p className="text-gray-500 mb-4">
-              Aquí podrás verificar las métricas subidas por los creators via screenshots
-            </p>
-            <p className="text-xs text-gray-600">
-              {dashboard?.pending_actions?.metrics_verification || 0} métricas pendientes de verificación
-            </p>
+        <MetricsPanel />
+      )}
+    </div>
+  );
+};
+
+// Metrics Panel Component
+const MetricsPanel = () => {
+  const [metrics, setMetrics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [campaignStats, setCampaignStats] = useState(null);
+  
+  useEffect(() => {
+    fetchAllMetrics();
+  }, []);
+  
+  const fetchAllMetrics = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+      
+      // Fetch all metrics
+      const res = await fetch(`${API_URL}/api/ugc/metrics/all`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        setMetrics(data.metrics || []);
+        
+        // Calculate stats
+        const totalViews = data.metrics?.reduce((sum, m) => sum + (m.views || 0), 0) || 0;
+        const totalLikes = data.metrics?.reduce((sum, m) => sum + (m.likes || 0), 0) || 0;
+        const totalEngagement = data.metrics?.reduce((sum, m) => sum + (m.total_interactions || 0), 0) || 0;
+        const avgEngRate = data.metrics?.length > 0 
+          ? data.metrics.reduce((sum, m) => sum + (m.engagement_rate || 0), 0) / data.metrics.length 
+          : 0;
+        
+        setCampaignStats({
+          totalViews,
+          totalLikes,
+          totalEngagement,
+          avgEngRate: avgEngRate.toFixed(2),
+          count: data.metrics?.length || 0
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching metrics:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const formatNumber = (num) => {
+    if (!num) return '0';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toLocaleString();
+  };
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
+      </div>
+    );
+  }
+  
+  return (
+    <div className="space-y-6">
+      {/* Summary Stats */}
+      {campaignStats && (
+        <div className="grid grid-cols-5 gap-4">
+          <div className="p-4 bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/30 rounded-xl text-center">
+            <Eye className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-white">{formatNumber(campaignStats.totalViews)}</p>
+            <p className="text-xs text-gray-400">Total Views</p>
+          </div>
+          <div className="p-4 bg-gradient-to-br from-pink-500/20 to-pink-600/10 border border-pink-500/30 rounded-xl text-center">
+            <Heart className="w-6 h-6 text-pink-400 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-white">{formatNumber(campaignStats.totalLikes)}</p>
+            <p className="text-xs text-gray-400">Total Likes</p>
+          </div>
+          <div className="p-4 bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 rounded-xl text-center">
+            <TrendingUp className="w-6 h-6 text-blue-400 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-white">{formatNumber(campaignStats.totalEngagement)}</p>
+            <p className="text-xs text-gray-400">Interacciones</p>
+          </div>
+          <div className="p-4 bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/30 rounded-xl text-center">
+            <BarChart3 className="w-6 h-6 text-green-400 mx-auto mb-2" />
+            <p className="text-2xl font-bold text-white">{campaignStats.avgEngRate}%</p>
+            <p className="text-xs text-gray-400">Eng. Rate Prom.</p>
+          </div>
+          <div className="p-4 bg-gradient-to-br from-[#d4a968]/20 to-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl text-center">
+            <FileCheck className="w-6 h-6 text-[#d4a968] mx-auto mb-2" />
+            <p className="text-2xl font-bold text-white">{campaignStats.count}</p>
+            <p className="text-xs text-gray-400">Entregas c/ Métricas</p>
           </div>
         </div>
       )}
+      
+      {/* Metrics Table */}
+      <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-white/10">
+          <h3 className="text-lg font-medium text-white">Métricas de Entregas</h3>
+          <p className="text-sm text-gray-400">Todas las métricas reportadas por creators</p>
+        </div>
+        
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-white/10 bg-white/5">
+              <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Creator</th>
+              <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Campaña</th>
+              <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Views</th>
+              <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Reach</th>
+              <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Likes</th>
+              <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Comments</th>
+              <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Shares</th>
+              <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Eng. Rate</th>
+              <th className="text-center p-4 text-[#d4a968] text-sm font-medium">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {metrics.length === 0 ? (
+              <tr>
+                <td colSpan={9} className="p-8 text-center text-gray-500">
+                  <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  No hay métricas registradas aún
+                </td>
+              </tr>
+            ) : (
+              metrics.map((metric) => (
+                <tr key={metric.id} className="border-b border-white/5 hover:bg-white/5">
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                        <span className="text-purple-400 text-sm">{metric.creator?.name?.charAt(0) || 'C'}</span>
+                      </div>
+                      <span className="text-white">{metric.creator?.name || 'Creator'}</span>
+                    </div>
+                  </td>
+                  <td className="p-4 text-gray-300 text-sm">{metric.campaign?.name || '-'}</td>
+                  <td className="p-4 text-right text-white font-medium">{formatNumber(metric.views)}</td>
+                  <td className="p-4 text-right text-gray-300">{formatNumber(metric.reach)}</td>
+                  <td className="p-4 text-right text-pink-400">{formatNumber(metric.likes)}</td>
+                  <td className="p-4 text-right text-blue-400">{formatNumber(metric.comments)}</td>
+                  <td className="p-4 text-right text-green-400">{formatNumber(metric.shares)}</td>
+                  <td className="p-4 text-right">
+                    <span className={`font-bold ${
+                      metric.engagement_rate >= 8 ? 'text-green-400' :
+                      metric.engagement_rate >= 5 ? 'text-yellow-400' :
+                      'text-orange-400'
+                    }`}>
+                      {metric.engagement_rate?.toFixed(1)}%
+                    </span>
+                  </td>
+                  <td className="p-4 text-center">
+                    {metric.manually_verified ? (
+                      <span className="px-2 py-1 rounded-full text-xs bg-green-500/20 text-green-400">Verificado</span>
+                    ) : (
+                      <span className="px-2 py-1 rounded-full text-xs bg-yellow-500/20 text-yellow-400">AI</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
