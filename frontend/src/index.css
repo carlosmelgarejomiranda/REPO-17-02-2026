@@ -125,3 +125,24 @@ nav[data-studio-nav="true"] {
     background-color: #000000 !important;
 }
 
+/* Force pure black background for dropdown menus */
+[data-radix-popper-content-wrapper] > div,
+[role="menu"],
+[data-state="open"][data-side] {
+    background-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Dropdown menu items styling */
+[role="menuitem"],
+[data-radix-menu-content] > div,
+.dropdown-menu-content {
+    background-color: #000000 !important;
+}
+
+/* Ensure popover content is pure black */
+.bg-popover,
+[data-slot="content"] {
+    background-color: #000000 !important;
+}
+
