@@ -423,7 +423,7 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
                   </div>
                   <div>
                     <h3 className="text-xl text-white mb-2">Equipamiento Profesional</h3>
-                    <p className="text-gray-400">Luces Godox de última generación, fondos infinitos en múltiples colores y accesorios premium.</p>
+                    <p className="text-gray-400">Luz Godox SL100 Bicolor, flash AD200 II, fondos infinitos y accesorios premium.</p>
                   </div>
                 </div>
 
