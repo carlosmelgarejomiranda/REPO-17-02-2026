@@ -133,8 +133,9 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
   const fetchDashboard = async () => {
     setError(null);
     try {
+      const headers = getHeaders();
       const res = await fetch(`${API_URL}/api/ugc/admin/dashboard`, {
-        headers: getHeaders(),
+        headers: headers,
         credentials: 'include'
       });
       if (res.ok) {
@@ -142,6 +143,8 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
         setDashboard(data);
       } else if (res.status === 403) {
         setError('No tienes permisos para acceder al panel UGC');
+      } else if (res.status === 401) {
+        setError('Sesión expirada. Por favor vuelve a iniciar sesión.');
       } else {
         const errData = await res.json().catch(() => ({}));
         setError(errData.detail || 'Error al cargar el dashboard');
