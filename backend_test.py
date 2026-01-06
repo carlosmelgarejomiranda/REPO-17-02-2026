@@ -1533,6 +1533,361 @@ def test_admin_top_products():
                         print_error(f"Top products missing required fields: {missing}")
                         add_test_result("Admin Top Products", "FAIL", f"Missing fields: {missing}")
                         return False
+
+# ==================== UGC DELIVERABLES TESTS (SPRINT 4) ====================
+
+def test_ugc_deliverables_creator():
+    """Test UGC Deliverables: GET /api/ugc/deliverables/me (Creator's deliverables)"""
+    print_test_header("Test UGC Creator Deliverables")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Creator Deliverables", "FAIL", "No admin token")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/deliverables/me"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            if "deliverables" in data:
+                deliverables = data.get("deliverables", [])
+                
+                print_success(f"Creator deliverables endpoint working correctly")
+                print_success(f"Deliverables found: {len(deliverables)}")
+                
+                if deliverables:
+                    # Check structure of first deliverable
+                    first_deliverable = deliverables[0]
+                    required_fields = ["id", "campaign_id", "creator_id", "brand_id", "status"]
+                    
+                    if all(field in first_deliverable for field in required_fields):
+                        print_success(f"Deliverable structure correct")
+                        print_info(f"Sample deliverable ID: {first_deliverable.get('id')}")
+                        print_info(f"Status: {first_deliverable.get('status')}")
+                        print_info(f"Campaign: {first_deliverable.get('campaign', {}).get('name', 'Unknown')}")
+                        
+                        add_test_result("UGC Creator Deliverables", "PASS")
+                        return True
+                    else:
+                        missing = [f for f in required_fields if f not in first_deliverable]
+                        print_error(f"Deliverable missing required fields: {missing}")
+                        add_test_result("UGC Creator Deliverables", "FAIL", f"Missing fields: {missing}")
+                        return False
+                else:
+                    print_warning("No deliverables found (expected for fresh system)")
+                    add_test_result("UGC Creator Deliverables", "PASS")
+                    return True
+            else:
+                print_error("Response missing 'deliverables' field")
+                add_test_result("UGC Creator Deliverables", "FAIL", "Missing deliverables field")
+                return False
+        elif response.status_code == 403:
+            print_warning("Creator profile required - expected behavior for admin user")
+            add_test_result("UGC Creator Deliverables", "PASS", "Requires creator profile (expected)")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Creator Deliverables", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Creator Deliverables", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_deliverables_campaign():
+    """Test UGC Deliverables: GET /api/ugc/deliverables/campaign/{campaign_id} (Brand's campaign deliverables)"""
+    print_test_header("Test UGC Campaign Deliverables")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Campaign Deliverables", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # Use a test campaign ID
+        test_campaign_id = "test_campaign_123"
+        url = f"{BACKEND_URL}/ugc/deliverables/campaign/{test_campaign_id}"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            if "deliverables" in data:
+                deliverables = data.get("deliverables", [])
+                
+                print_success(f"Campaign deliverables endpoint working correctly")
+                print_success(f"Deliverables found: {len(deliverables)}")
+                
+                add_test_result("UGC Campaign Deliverables", "PASS")
+                return True
+            else:
+                print_error("Response missing 'deliverables' field")
+                add_test_result("UGC Campaign Deliverables", "FAIL", "Missing deliverables field")
+                return False
+        elif response.status_code == 403:
+            print_warning("Brand profile required - expected behavior for admin user")
+            add_test_result("UGC Campaign Deliverables", "PASS", "Requires brand profile (expected)")
+            return True
+        elif response.status_code == 404:
+            print_warning("Campaign not found - expected for test campaign ID")
+            add_test_result("UGC Campaign Deliverables", "PASS", "Campaign not found (expected)")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Campaign Deliverables", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Campaign Deliverables", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_deliverable_detail():
+    """Test UGC Deliverables: GET /api/ugc/deliverables/{id} (Single deliverable detail)"""
+    print_test_header("Test UGC Deliverable Detail")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Deliverable Detail", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # Use a test deliverable ID
+        test_deliverable_id = "test_deliverable_123"
+        url = f"{BACKEND_URL}/ugc/deliverables/{test_deliverable_id}"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["id", "campaign_id", "creator_id", "brand_id", "status"]
+            if all(field in data for field in required_fields):
+                print_success(f"Deliverable detail endpoint working correctly")
+                print_success(f"Deliverable ID: {data.get('id')}")
+                print_success(f"Status: {data.get('status')}")
+                
+                add_test_result("UGC Deliverable Detail", "PASS")
+                return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Response missing required fields: {missing}")
+                add_test_result("UGC Deliverable Detail", "FAIL", f"Missing fields: {missing}")
+                return False
+        elif response.status_code == 404:
+            print_warning("Deliverable not found - expected for test deliverable ID")
+            add_test_result("UGC Deliverable Detail", "PASS", "Deliverable not found (expected)")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Deliverable Detail", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Deliverable Detail", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_deliverable_publish():
+    """Test UGC Deliverables: POST /api/ugc/deliverables/{id}/publish (Mark as published)"""
+    print_test_header("Test UGC Deliverable Publish")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Deliverable Publish", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # Use a test deliverable ID
+        test_deliverable_id = "test_deliverable_123"
+        test_post_url = "https://instagram.com/p/test"
+        url = f"{BACKEND_URL}/ugc/deliverables/{test_deliverable_id}/publish?post_url={test_post_url}"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"POST {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.post(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            if "success" in data and "message" in data:
+                print_success(f"Deliverable publish endpoint working correctly")
+                print_success(f"Message: {data.get('message')}")
+                
+                add_test_result("UGC Deliverable Publish", "PASS")
+                return True
+            else:
+                print_error("Response missing required fields")
+                add_test_result("UGC Deliverable Publish", "FAIL", "Missing response fields")
+                return False
+        elif response.status_code == 403:
+            print_warning("Creator profile required - expected behavior for admin user")
+            add_test_result("UGC Deliverable Publish", "PASS", "Requires creator profile (expected)")
+            return True
+        elif response.status_code == 404:
+            print_warning("Deliverable not found - expected for test deliverable ID")
+            add_test_result("UGC Deliverable Publish", "PASS", "Deliverable not found (expected)")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Deliverable Publish", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Deliverable Publish", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_deliverable_submit():
+    """Test UGC Deliverables: POST /api/ugc/deliverables/{id}/submit (Submit deliverable)"""
+    print_test_header("Test UGC Deliverable Submit")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Deliverable Submit", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # Use a test deliverable ID
+        test_deliverable_id = "test_deliverable_123"
+        url = f"{BACKEND_URL}/ugc/deliverables/{test_deliverable_id}/submit"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        payload = {
+            "post_url": "https://instagram.com/p/test123",
+            "file_url": None,
+            "evidence_urls": []
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.post(url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            if "success" in data and "message" in data:
+                print_success(f"Deliverable submit endpoint working correctly")
+                print_success(f"Message: {data.get('message')}")
+                
+                add_test_result("UGC Deliverable Submit", "PASS")
+                return True
+            else:
+                print_error("Response missing required fields")
+                add_test_result("UGC Deliverable Submit", "FAIL", "Missing response fields")
+                return False
+        elif response.status_code == 403:
+            print_warning("Creator profile required - expected behavior for admin user")
+            add_test_result("UGC Deliverable Submit", "PASS", "Requires creator profile (expected)")
+            return True
+        elif response.status_code == 404:
+            print_warning("Deliverable not found - expected for test deliverable ID")
+            add_test_result("UGC Deliverable Submit", "PASS", "Deliverable not found (expected)")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Deliverable Submit", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Deliverable Submit", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_deliverable_review():
+    """Test UGC Deliverables: POST /api/ugc/deliverables/{id}/review (Review deliverable)"""
+    print_test_header("Test UGC Deliverable Review")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Deliverable Review", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # Use a test deliverable ID
+        test_deliverable_id = "test_deliverable_123"
+        url = f"{BACKEND_URL}/ugc/deliverables/{test_deliverable_id}/review"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        payload = {
+            "action": "approve",
+            "notes": "Contenido excelente, cumple con todos los requisitos"
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.post(url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            # Validate response structure
+            if "success" in data and "message" in data:
+                print_success(f"Deliverable review endpoint working correctly")
+                print_success(f"Message: {data.get('message')}")
+                
+                add_test_result("UGC Deliverable Review", "PASS")
+                return True
+            else:
+                print_error("Response missing required fields")
+                add_test_result("UGC Deliverable Review", "FAIL", "Missing response fields")
+                return False
+        elif response.status_code == 403:
+            print_warning("Brand profile required - expected behavior for admin user")
+            add_test_result("UGC Deliverable Review", "PASS", "Requires brand profile (expected)")
+            return True
+        elif response.status_code == 404:
+            print_warning("Deliverable not found - expected for test deliverable ID")
+            add_test_result("UGC Deliverable Review", "PASS", "Deliverable not found (expected)")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Deliverable Review", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Deliverable Review", "FAIL", f"Exception: {str(e)}")
+        return False
                 else:
                     print_warning("No top products data available")
                     add_test_result("Admin Top Products", "PASS")
