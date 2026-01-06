@@ -48,19 +48,24 @@ async def complete_brand_onboarding(
     
     now = datetime.now(timezone.utc).isoformat()
     
-    # Create brand profile
+    # Create brand profile with new global fields
     brand_profile = {
         "id": str(uuid.uuid4()),
         "user_id": user["user_id"],
         "email": user["email"],
         "company_name": data.company_name,
         "industry": data.industry,
+        "country": data.country,
         "city": data.city,
         "contact_name": data.contact_name,
+        "contact_first_name": data.contact_first_name,
+        "contact_last_name": data.contact_last_name,
         "contact_phone": data.contact_phone,
+        "phone_country_code": data.phone_country_code,
         "logo_url": None,
         "website": data.website,
         "instagram_url": data.instagram_url,
+        "instagram_handle": data.instagram_handle,
         "description": data.description,
         "is_verified": False,
         "is_active": True,
@@ -71,11 +76,12 @@ async def complete_brand_onboarding(
     
     await db.ugc_brands.insert_one(brand_profile)
     
-    # Update user role to brand
-    await db.users.update_one(
-        {"user_id": user["user_id"]},
-        {"$set": {"role": "brand", "updated_at": now}}
-    )
+    # Update user role to brand (but don't change if superadmin)
+    if user.get("role") not in ["superadmin", "admin"]:
+        await db.users.update_one(
+            {"user_id": user["user_id"]},
+            {"$set": {"role": "brand", "updated_at": now}}
+        )
     
     return {"success": True, "brand_id": brand_profile["id"], "message": "Brand profile created"}
 
