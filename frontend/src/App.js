@@ -38,6 +38,15 @@ import {
   PrivacySEO, TermsSEO, StudioTermsSEO, CheckoutSEO, CartSEO, AdminSEO 
 } from "./components/SEOHead";
 
+// UGC Platform Pages
+import RoleSelector from "./pages/ugc/RoleSelector";
+import CreatorOnboarding from "./pages/ugc/CreatorOnboarding";
+import BrandOnboarding from "./pages/ugc/BrandOnboarding";
+import PackagePricing from "./pages/ugc/PackagePricing";
+import CampaignsList from "./pages/ugc/CampaignsList";
+import CreatorDashboard from "./pages/ugc/CreatorDashboard";
+import BrandDashboard from "./pages/ugc/BrandDashboard";
+
 // Auth context helper
 const useAuth = () => {
   const [user, setUser] = useState(null);
