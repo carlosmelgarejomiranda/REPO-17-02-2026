@@ -51,8 +51,8 @@ LEVEL_BENEFITS = {
 # ==================== HELPER FUNCTIONS ====================
 
 async def get_db():
-    from server import db
-    return db
+    from server import get_database
+    return await get_database()
 
 async def require_auth(request: Request):
     from server import require_auth as auth
