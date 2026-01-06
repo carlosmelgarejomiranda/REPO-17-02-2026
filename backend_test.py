@@ -1701,8 +1701,8 @@ def test_ugc_deliverable_review_endpoint():
         url = f"{BACKEND_URL}/ugc/deliverables/{test_deliverable_id}/review"
         headers = {"Authorization": f"Bearer {admin_token}"}
         payload = {
-            "status": "approved",
-            "feedback": "Great work!"
+            "action": "approve",
+            "notes": "Great work!"
         }
         
         print_info(f"POST {url}")
