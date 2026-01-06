@@ -1533,6 +1533,23 @@ def test_admin_top_products():
                         print_error(f"Top products missing required fields: {missing}")
                         add_test_result("Admin Top Products", "FAIL", f"Missing fields: {missing}")
                         return False
+                else:
+                    print_warning("No top products data available")
+                    add_test_result("Admin Top Products", "PASS")
+                    return True
+            else:
+                print_error("Response missing 'top_products' field")
+                add_test_result("Admin Top Products", "FAIL", "Missing top_products field")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("Admin Top Products", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("Admin Top Products", "FAIL", f"Exception: {str(e)}")
+        return False
 
 # ==================== UGC DELIVERABLES TESTS (SPRINT 4) ====================
 
