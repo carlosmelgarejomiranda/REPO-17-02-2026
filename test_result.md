@@ -69,6 +69,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ TESTED: Package pricing page loads correctly with 3 packages (Starter, Standard, Pro), promotional banner, 'MÁS POPULAR' badge on Standard package, and crossed-out original prices showing promotional pricing"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Updated package pricing working perfectly. 4 packages displayed (Starter, Standard, Pro, Enterprise). Pro package shows ~~2.390.000~~ → 1.990.000 Gs (Ahorrás 400.000 Gs). Enterprise has calculator with duration and deliveries options. Standard package redirect to brand onboarding works correctly."
 
   - task: "Campaign Builder"
     implemented: true
