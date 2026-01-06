@@ -171,13 +171,18 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
 
   const fetchCreators = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+      
       let query = new URLSearchParams();
       if (creatorFilter.level) query.append('level', creatorFilter.level);
       if (creatorFilter.city) query.append('city', creatorFilter.city);
       
       const res = await fetch(`${API_URL}/api/ugc/admin/creators?${query}`, {
-        headers: getHeaders(),
-        credentials: 'include'
+        headers: headers
       });
       if (res.ok) {
         const data = await res.json();
@@ -190,9 +195,14 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
 
   const fetchBrands = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+      
       const res = await fetch(`${API_URL}/api/ugc/admin/brands`, {
-        headers: getHeaders(),
-        credentials: 'include'
+        headers: headers
       });
       if (res.ok) {
         const data = await res.json();
@@ -205,12 +215,17 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
 
   const fetchCampaigns = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+      
       let query = new URLSearchParams();
       if (campaignFilter.status) query.append('status', campaignFilter.status);
       
       const res = await fetch(`${API_URL}/api/ugc/admin/campaigns?${query}`, {
-        headers: getHeaders(),
-        credentials: 'include'
+        headers: headers
       });
       if (res.ok) {
         const data = await res.json();
@@ -223,9 +238,14 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
 
   const fetchDeliverables = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+      
       const res = await fetch(`${API_URL}/api/ugc/admin/deliverables?status=pending_review`, {
-        headers: getHeaders(),
-        credentials: 'include'
+        headers: headers
       });
       if (res.ok) {
         const data = await res.json();
