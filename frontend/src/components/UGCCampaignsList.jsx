@@ -116,7 +116,7 @@ export const UGCCampaignsList = ({ t }) => {
             <div className="w-px h-12 bg-white/20"></div>
             <div className="text-center">
               <div className="text-4xl font-light text-white">100<span className="text-[#d4a968]">%</span></div>
-              <div className="text-xs text-gray-300 tracking-[0.2em] uppercase mt-2">Gratis</div>
+              <div className="text-xs text-gray-300 tracking-[0.2em] uppercase mt-2">Auténtico</div>
             </div>
           </div>
         </div>
@@ -171,8 +171,8 @@ export const UGCCampaignsList = ({ t }) => {
                 <div className="space-y-4 pt-12">
                   <div className="bg-[#1a1a1a] border border-white/25 p-6">
                     <Star className="w-6 h-6 text-[#d4a968] mb-4" />
-                    <p className="text-white text-lg mb-1">100% Gratis</p>
-                    <p className="text-gray-300 text-sm">Sin costos ocultos</p>
+                    <p className="text-white text-lg mb-1">Experiencia Única</p>
+                    <p className="text-gray-300 text-sm">Colaborá con marcas premium</p>
                   </div>
                   <img 
                     src={UGC_IMAGES.creator2}
