@@ -451,3 +451,86 @@ async def get_audit_logs(
     ).sort("timestamp", -1).skip(skip).limit(limit).to_list(limit)
     
     return {"logs": logs}
+
+
+
+# ==================== DELIVERABLES MANAGEMENT ====================
+
+@router.get("/deliverables", response_model=dict)
+async def get_all_deliverables(
+    request: Request,
+    status: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50
+):
+    """Get all deliverables with optional status filter"""
+    await require_admin(request)
+    db = await get_db()
+    
+    query = {}
+    if status:
+        if status == "pending_review":
+            query["status"] = {"$in": [DeliverableStatus.SUBMITTED, DeliverableStatus.RESUBMITTED]}
+        else:
+            query["status"] = status
+    
+    deliverables = await db.ugc_deliverables.find(
+        query,
+        {"_id": 0}
+    ).sort("updated_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    # Enrich with creator and campaign info
+    for del_item in deliverables:
+        creator = await db.ugc_creators.find_one(
+            {"id": del_item.get("creator_id")},
+            {"_id": 0, "name": 1, "email": 1}
+        )
+        campaign = await db.ugc_campaigns.find_one(
+            {"id": del_item.get("campaign_id")},
+            {"_id": 0, "name": 1, "brand_id": 1}
+        )
+        del_item["creator"] = creator
+        del_item["campaign"] = campaign
+    
+    total = await db.ugc_deliverables.count_documents(query)
+    
+    return {"deliverables": deliverables, "total": total}
+
+@router.put("/deliverables/{deliverable_id}/review", response_model=dict)
+async def admin_review_deliverable(
+    deliverable_id: str,
+    action: str,  # "approve" or "request_changes"
+    feedback: Optional[str] = None,
+    request: Request = None
+):
+    """Admin reviews a deliverable"""
+    await require_admin(request)
+    db = await get_db()
+    
+    deliverable = await db.ugc_deliverables.find_one({"id": deliverable_id})
+    if not deliverable:
+        raise HTTPException(status_code=404, detail="Deliverable not found")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    if action == "approve":
+        new_status = DeliverableStatus.APPROVED
+    elif action == "request_changes":
+        new_status = DeliverableStatus.CHANGES_REQUESTED
+    else:
+        raise HTTPException(status_code=400, detail="Invalid action")
+    
+    update_data = {
+        "status": new_status,
+        "updated_at": now
+    }
+    
+    if feedback:
+        update_data["admin_feedback"] = feedback
+    
+    await db.ugc_deliverables.update_one(
+        {"id": deliverable_id},
+        {"$set": update_data}
+    )
+    
+    return {"success": True, "message": f"Deliverable {action}d"}
