@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Check, Sparkles, ArrowRight, Calculator, Loader2 } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Check, Sparkles, ArrowRight, Calculator, Loader2, Crown, Star, Building2, ArrowLeft } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 const PackagePricing = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
-  const [showEnterprise, setShowEnterprise] = useState(false);
+  const [hasBrandProfile, setHasBrandProfile] = useState(false);
+  const [checkingProfile, setCheckingProfile] = useState(true);
+  
+  // Enterprise calculator
   const [enterpriseForm, setEnterpriseForm] = useState({
     duration_months: 6,
     deliveries_per_month: 16
@@ -17,13 +23,32 @@ const PackagePricing = () => {
 
   useEffect(() => {
     fetchPackages();
+    checkBrandProfile();
   }, []);
+
+  useEffect(() => {
+    fetchEnterpriseQuote();
+  }, [enterpriseForm]);
+
+  const checkBrandProfile = async () => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/brands/me`, {
+        credentials: 'include'
+      });
+      setHasBrandProfile(res.ok);
+    } catch (err) {
+      setHasBrandProfile(false);
+    } finally {
+      setCheckingProfile(false);
+    }
+  };
 
   const fetchPackages = async () => {
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/packages/pricing`);
       const data = await res.json();
-      setPackages(data.packages.filter(p => p.type !== 'enterprise'));
+      // Include all packages including enterprise
+      setPackages(data.packages || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -45,11 +70,16 @@ const PackagePricing = () => {
     }
   };
 
-  useEffect(() => {
-    if (showEnterprise) {
-      fetchEnterpriseQuote();
+  const handleSelectPackage = (packageType) => {
+    // If user doesn't have brand profile, redirect to onboarding with package selection
+    if (!hasBrandProfile) {
+      navigate(`/ugc/brand/onboarding?package=${packageType}`);
+      return;
     }
-  }, [enterpriseForm, showEnterprise]);
+    
+    // If has profile, proceed to purchase
+    handlePurchase(packageType);
+  };
 
   const handlePurchase = async (packageType, usePromo = true) => {
     setPurchasing(true);
@@ -89,7 +119,7 @@ const PackagePricing = () => {
     return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
   };
 
-  if (loading) {
+  if (loading || checkingProfile) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
@@ -97,14 +127,25 @@ const PackagePricing = () => {
     );
   }
 
+  // Separate standard packages from enterprise
+  const standardPackages = packages.filter(p => p.type !== 'enterprise');
+  const enterprisePackage = packages.find(p => p.type === 'enterprise');
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <div className="border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-6 py-6">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
           <a href="/" className="text-2xl font-light">
             <span className="text-[#d4a968] italic">Avenue</span> UGC
           </a>
+          <button 
+            onClick={() => navigate(-1)}
+            className="text-gray-400 hover:text-white flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Volver
+          </button>
         </div>
       </div>
 
@@ -118,197 +159,205 @@ const PackagePricing = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="text-center mb-16">
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-light mb-4">
             Elegí tu <span className="text-[#d4a968] italic">paquete</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Cada paquete incluye entregas de contenido UGC de creadores verificados, 
-            con métricas y reportes incluidos.
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Cada paquete incluye un número de entregas de contenido UGC. 
+            Una entrega = un creator publicando contenido para tu marca.
           </p>
         </div>
 
-        {/* Packages Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          {packages.map((pkg, idx) => {
+        {/* Packages Grid - 4 columns */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {standardPackages.map((pkg, idx) => {
             const isPopular = pkg.type === 'standard';
-            const hasPromo = pkg.promo_price;
+            const hasSavings = pkg.promo_price && pkg.promo_price < pkg.price;
             
             return (
-              <div
+              <div 
                 key={pkg.type}
-                className={`relative p-8 rounded-2xl border-2 transition-all ${
-                  selectedPackage === pkg.type
-                    ? 'border-[#d4a968] bg-[#d4a968]/5'
-                    : isPopular
-                    ? 'border-[#d4a968]/50 bg-[#d4a968]/5'
-                    : 'border-white/10 bg-white/5'
+                className={`relative bg-white/5 border rounded-2xl p-6 transition-all hover:border-[#d4a968]/50 ${
+                  isPopular ? 'border-[#d4a968] ring-1 ring-[#d4a968]/30' : 'border-white/10'
                 }`}
               >
-                {/* Popular Badge */}
                 {isPopular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-[#d4a968] text-black text-xs font-medium px-3 py-1 rounded-full">
-                      MÁS POPULAR
+                    <span className="bg-[#d4a968] text-black text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                      <Star className="w-3 h-3" /> MÁS POPULAR
                     </span>
                   </div>
                 )}
 
-                {/* Package Name */}
-                <h3 className="text-2xl font-medium mb-2">{pkg.name}</h3>
-                <p className="text-gray-400 text-sm mb-6">{pkg.description}</p>
-
-                {/* Deliveries */}
                 <div className="mb-6">
-                  <span className="text-5xl font-light text-[#d4a968]">{pkg.deliveries}</span>
-                  <span className="text-gray-400 ml-2">entregas</span>
+                  <h3 className="text-xl font-medium text-white mb-1">{pkg.name}</h3>
+                  <p className="text-gray-500 text-sm">{pkg.description}</p>
                 </div>
 
-                {/* Price */}
                 <div className="mb-6">
-                  {hasPromo ? (
-                    <>
-                      <span className="text-gray-500 line-through text-lg">
-                        {formatPrice(pkg.price)}
-                      </span>
-                      <div className="text-3xl font-medium text-white">
-                        {formatPrice(pkg.promo_price)}
-                      </div>
-                      <span className="text-[#d4a968] text-sm">
-                        Ahorro: {formatPrice(pkg.price - pkg.promo_price)}
-                      </span>
-                    </>
-                  ) : (
-                    <div className="text-3xl font-medium text-white">
-                      {formatPrice(pkg.price)}
-                    </div>
+                  <div className="flex items-baseline gap-2">
+                    {hasSavings ? (
+                      <>
+                        <span className="text-gray-500 line-through text-lg">{formatPrice(pkg.price)}</span>
+                        <span className="text-2xl font-light text-white">{formatPrice(pkg.promo_price)}</span>
+                      </>
+                    ) : (
+                      <span className="text-2xl font-light text-white">{formatPrice(pkg.price)}</span>
+                    )}
+                  </div>
+                  {hasSavings && (
+                    <p className="text-green-400 text-sm mt-1">
+                      Ahorrás {formatPrice(pkg.price - pkg.promo_price)}
+                    </p>
                   )}
+                  <p className="text-[#d4a968] font-medium mt-2">
+                    {pkg.deliveries} entregas
+                  </p>
                 </div>
 
-                {/* Features */}
                 <ul className="space-y-3 mb-8">
-                  {pkg.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Check className="w-5 h-5 text-[#d4a968] flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300 text-sm">{feature}</span>
+                  {pkg.features?.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                      <Check className="w-4 h-4 text-[#d4a968] mt-0.5 flex-shrink-0" />
+                      {feature}
                     </li>
                   ))}
                 </ul>
 
-                {/* CTA Button */}
                 <button
-                  onClick={() => handlePurchase(pkg.type, hasPromo)}
+                  onClick={() => handleSelectPackage(pkg.type)}
                   disabled={purchasing}
-                  className={`w-full py-3 rounded-lg font-medium transition-all ${
+                  className={`w-full py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
                     isPopular
                       ? 'bg-[#d4a968] text-black hover:bg-[#c49958]'
                       : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  {purchasing ? 'Procesando...' : 'Seleccionar'}
+                  {purchasing ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      Elegir {pkg.name}
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
               </div>
             );
           })}
-        </div>
 
-        {/* Enterprise Section */}
-        <div className="border-t border-white/10 pt-16">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-light mb-2">
-              ¿Necesitás más <span className="text-[#d4a968] italic">volumen</span>?
-            </h2>
-            <p className="text-gray-400">Armá tu paquete Enterprise a medida</p>
-          </div>
-
-          {!showEnterprise ? (
-            <div className="flex justify-center">
-              <button
-                onClick={() => setShowEnterprise(true)}
-                className="flex items-center gap-2 px-6 py-3 border border-[#d4a968]/50 rounded-lg text-[#d4a968] hover:bg-[#d4a968]/10 transition-all"
-              >
-                <Calculator className="w-5 h-5" />
-                Calcular cotización
-              </button>
-            </div>
-          ) : (
-            <div className="max-w-xl mx-auto p-8 bg-white/5 border border-white/10 rounded-2xl">
-              <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
-                <Calculator className="w-5 h-5 text-[#d4a968]" />
-                Cotizador Enterprise
-              </h3>
-
-              <div className="space-y-6 mb-8">
-                <div>
-                  <label className="block text-sm text-gray-400 mb-2">Duración del contrato</label>
-                  <select
-                    value={enterpriseForm.duration_months}
-                    onChange={(e) => setEnterpriseForm({...enterpriseForm, duration_months: parseInt(e.target.value)})}
-                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#d4a968] focus:outline-none"
-                  >
-                    {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
-                      <option key={m} value={m}>{m} meses</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm text-gray-400 mb-2">Entregas por mes</label>
-                  <select
-                    value={enterpriseForm.deliveries_per_month}
-                    onChange={(e) => setEnterpriseForm({...enterpriseForm, deliveries_per_month: parseInt(e.target.value)})}
-                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#d4a968] focus:outline-none"
-                  >
-                    <option value={16}>16 entregas/mes</option>
-                    <option value={24}>24 entregas/mes</option>
-                    <option value={30}>30 entregas/mes</option>
-                  </select>
-                </div>
+          {/* Enterprise Package */}
+          {enterprisePackage && (
+            <div className="relative bg-gradient-to-br from-purple-900/30 to-black border border-purple-500/30 rounded-2xl p-6 transition-all hover:border-purple-500/50">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                  <Crown className="w-3 h-3" /> ENTERPRISE
+                </span>
               </div>
 
-              {enterpriseQuote && (
-                <div className="p-6 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl mb-6">
-                  <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-                    <div>
-                      <span className="text-gray-400">Total entregas:</span>
-                      <span className="text-white ml-2 font-medium">{enterpriseQuote.total_deliveries}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-400">Precio/entrega:</span>
-                      <span className="text-white ml-2">{formatPrice(enterpriseQuote.price_per_delivery)}</span>
-                    </div>
-                  </div>
+              <div className="mb-6">
+                <h3 className="text-xl font-medium text-white mb-1">{enterprisePackage.name}</h3>
+                <p className="text-gray-500 text-sm">{enterprisePackage.description}</p>
+              </div>
 
-                  <div className="border-t border-[#d4a968]/30 pt-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-400">Valor total:</span>
-                      <span className="text-2xl font-medium text-white">{formatPrice(enterpriseQuote.total_price)}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400">Cuota mensual:</span>
-                      <span className="text-[#d4a968] font-medium">{formatPrice(enterpriseQuote.monthly_payment)}/mes</span>
-                    </div>
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Calculator className="w-5 h-5 text-purple-400" />
+                  <span className="text-purple-400 text-sm">Calculá tu plan</span>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Duración (meses)</label>
+                    <select
+                      value={enterpriseForm.duration_months}
+                      onChange={(e) => setEnterpriseForm({...enterpriseForm, duration_months: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+                    >
+                      {[3, 6, 9, 12].map(m => (
+                        <option key={m} value={m} className="bg-black">{m} meses</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Entregas/mes</label>
+                    <select
+                      value={enterpriseForm.deliveries_per_month}
+                      onChange={(e) => setEnterpriseForm({...enterpriseForm, deliveries_per_month: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+                    >
+                      {[16, 24, 30].map(d => (
+                        <option key={d} value={d} className="bg-black">{d} entregas</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-              )}
+
+                {enterpriseQuote && (
+                  <div className="mt-4 p-3 bg-purple-500/10 rounded-lg">
+                    <p className="text-purple-400 text-xs mb-1">Total estimado:</p>
+                    <p className="text-white font-medium">{formatPrice(enterpriseQuote.total_price)}</p>
+                    <p className="text-gray-500 text-xs">{enterpriseQuote.total_deliveries} entregas totales</p>
+                    <p className="text-gray-500 text-xs">{formatPrice(enterpriseQuote.monthly_payment)}/mes</p>
+                  </div>
+                )}
+              </div>
+
+              <ul className="space-y-3 mb-8">
+                {enterprisePackage.features?.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+                    <Check className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
 
               <button
-                onClick={() => handlePurchase('enterprise')}
+                onClick={() => handleSelectPackage('enterprise')}
                 disabled={purchasing}
-                className="w-full py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 bg-purple-600 text-white hover:bg-purple-700"
               >
-                {purchasing ? 'Procesando...' : <><span>Solicitar Enterprise</span><ArrowRight className="w-4 h-4" /></>}
+                {purchasing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    Solicitar Enterprise
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             </div>
           )}
         </div>
 
-        {/* FAQ */}
-        <div className="mt-16 text-center">
-          <p className="text-gray-400">
-            ¿Tenés preguntas? <a href="mailto:ugc@avenue.com.py" className="text-[#d4a968] hover:underline">Contactános</a>
-          </p>
+        {/* Info Section */}
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl font-light mb-4">¿Cómo funciona?</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="p-4">
+              <div className="w-10 h-10 rounded-full bg-[#d4a968]/20 flex items-center justify-center mx-auto mb-3">
+                <span className="text-[#d4a968] font-bold">1</span>
+              </div>
+              <h3 className="text-white font-medium mb-2">Elegí tu paquete</h3>
+              <p className="text-gray-500 text-sm">Seleccioná el plan que mejor se ajuste a tus necesidades</p>
+            </div>
+            <div className="p-4">
+              <div className="w-10 h-10 rounded-full bg-[#d4a968]/20 flex items-center justify-center mx-auto mb-3">
+                <span className="text-[#d4a968] font-bold">2</span>
+              </div>
+              <h3 className="text-white font-medium mb-2">Creá campañas</h3>
+              <p className="text-gray-500 text-sm">Definí qué tipo de contenido buscás y publicá tu campaña</p>
+            </div>
+            <div className="p-4">
+              <div className="w-10 h-10 rounded-full bg-[#d4a968]/20 flex items-center justify-center mx-auto mb-3">
+                <span className="text-[#d4a968] font-bold">3</span>
+              </div>
+              <h3 className="text-white font-medium mb-2">Recibí contenido</h3>
+              <p className="text-gray-500 text-sm">Creators aplicarán y publicarán contenido para tu marca</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
