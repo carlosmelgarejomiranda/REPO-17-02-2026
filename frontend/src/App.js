@@ -760,11 +760,14 @@ function AppRouter() {
           <Route path="/ugc/select-role" element={<RoleSelector />} />
           <Route path="/ugc/creator/onboarding" element={<CreatorOnboarding />} />
           <Route path="/ugc/creator/dashboard" element={<CreatorDashboard />} />
+          <Route path="/ugc/creator/workspace" element={<CreatorWorkspace />} />
+          <Route path="/ugc/creator/deliverable/:id" element={<DeliverableDetail />} />
           <Route path="/ugc/brand/onboarding" element={<BrandOnboarding onLoginClick={() => setShowAuthModal(true)} />} />
           <Route path="/ugc/brand/dashboard" element={<BrandDashboard />} />
           <Route path="/ugc/brand/packages" element={<PackagePricing />} />
           <Route path="/ugc/brand/campaigns/new" element={<CampaignBuilder />} />
           <Route path="/ugc/brand/campaigns" element={<BrandCampaigns />} />
+          <Route path="/ugc/brand/deliverables/:campaignId" element={<BrandDeliverables />} />
           <Route path="/ugc/campaigns" element={<CampaignsCatalog />} />
         </Routes>
       </div>
