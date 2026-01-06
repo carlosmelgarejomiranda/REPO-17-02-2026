@@ -318,6 +318,45 @@ const UGCCampaignPage = ({ t, language, setLanguage, user, onLoginClick, onLogou
   );
 };
 
+// Admin Route Component - handles auth state properly
+const AdminRoute = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
+  const isAdmin = ['admin', 'superadmin', 'staff', 'designer'].includes(user?.role);
+  
+  if (isAdmin) {
+    return (
+      <>
+        <AdminSEO />
+        <Navbar 
+          user={user}
+          onLoginClick={onLoginClick}
+          onLogout={onLogout}
+          language={language}
+          setLanguage={setLanguage}
+          t={t}
+        />
+        <div style={{ paddingTop: '64px' }}>
+          <AdminDashboard user={user} />
+        </div>
+      </>
+    );
+  }
+  
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
+      <div className="text-center">
+        <h1 className="text-2xl mb-4" style={{ color: '#f5ede4' }}>Acceso Restringido</h1>
+        <p className="mb-4" style={{ color: '#a8a8a8' }}>Necesitas iniciar sesión como administrador</p>
+        <Button 
+          onClick={onLoginClick}
+          style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+        >
+          Iniciar Sesión
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 // App Router component
 function AppRouter() {
   const location = useLocation();
