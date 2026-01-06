@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Loader2, Building2, Globe, Instagram, Phone, MapPin, User } from 'lucide-react';
+import { ArrowLeft, Loader2, Building2, Globe, Instagram, Phone, User, Mail, AlertCircle, LogIn } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 const INDUSTRIES = [
@@ -40,27 +40,66 @@ const CITIES_BY_COUNTRY = {
   OTHER: ['Otra']
 };
 
-const BrandOnboarding = () => {
+const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+const BrandOnboarding = ({ onLoginClick }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const selectedPackage = searchParams.get('package'); // Get package from URL if redirected from pricing
+  const selectedPackage = searchParams.get('package');
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [formData, setFormData] = useState({
+    // Account info (for new users)
+    email: '',
+    // Company info
     company_name: '',
     industry: '',
     country: 'PY',
     city: '',
-    contact_first_name: user?.name?.split(' ')[0] || '',
-    contact_last_name: user?.name?.split(' ').slice(1).join(' ') || '',
+    // Contact info
+    contact_first_name: '',
+    contact_last_name: '',
     phone_country_code: '+595',
     contact_phone: '',
+    // Online presence
     website: '',
     instagram: '',
     description: ''
   });
+
+  // Check if user is authenticated
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/me`, {
+        credentials: 'include'
+      });
+      if (res.ok) {
+        const userData = await res.json();
+        setIsAuthenticated(true);
+        // Pre-fill email and name if logged in
+        setFormData(prev => ({
+          ...prev,
+          email: userData.email || '',
+          contact_first_name: userData.name?.split(' ')[0] || '',
+          contact_last_name: userData.name?.split(' ').slice(1).join(' ') || ''
+        }));
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (err) {
+      setIsAuthenticated(false);
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
 
   const handleCountryChange = (countryCode) => {
     const country = COUNTRIES.find(c => c.code === countryCode);
@@ -68,12 +107,13 @@ const BrandOnboarding = () => {
       ...prev,
       country: countryCode,
       phone_country_code: country?.phoneCode || '',
-      city: '' // Reset city when country changes
+      city: ''
     }));
   };
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (error) setError('');
   };
 
   // Clean URL inputs - remove protocol and www
@@ -96,6 +136,7 @@ const BrandOnboarding = () => {
     try {
       // Prepare data for API
       const submitData = {
+        email: formData.email,
         company_name: formData.company_name,
         industry: formData.industry,
         country: formData.country,
@@ -111,21 +152,31 @@ const BrandOnboarding = () => {
         description: formData.description
       };
 
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/brands/onboarding`, {
+      const response = await fetch(`${API_URL}/api/ugc/brands/onboarding`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(submitData)
       });
 
-      const data = await response.json();
+      // Read the response text first to avoid "body stream already read" error
+      const responseText = await response.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        data = { detail: responseText || 'Error desconocido' };
+      }
 
       if (!response.ok) {
+        // Handle specific errors
+        if (response.status === 401) {
+          throw new Error('Necesitás iniciar sesión para continuar');
+        }
         throw new Error(data.detail || 'Error al crear perfil');
       }
 
-      // If came from package selection, go directly to that package checkout
-      // Otherwise go to packages page
+      // Success - redirect to packages
       if (selectedPackage) {
         navigate(`/ugc/brand/packages?select=${selectedPackage}`);
       } else {
@@ -140,9 +191,17 @@ const BrandOnboarding = () => {
 
   const isValid = formData.company_name && formData.industry && formData.country && 
                   formData.city && formData.contact_first_name && formData.contact_last_name && 
-                  formData.contact_phone;
+                  formData.contact_phone && (isAuthenticated || formData.email);
 
   const availableCities = CITIES_BY_COUNTRY[formData.country] || ['Otra'];
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -173,13 +232,72 @@ const BrandOnboarding = () => {
           )}
         </div>
 
+        {/* Login prompt if not authenticated */}
+        {!isAuthenticated && (
+          <div className="mb-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+            <div className="flex items-start gap-3">
+              <LogIn className="w-5 h-5 text-blue-400 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-blue-400 font-medium">¿Ya tenés cuenta?</p>
+                <p className="text-gray-400 text-sm mt-1">
+                  Si ya tenés cuenta en Avenue, iniciá sesión para un registro más rápido.
+                </p>
+                <button
+                  type="button"
+                  onClick={onLoginClick}
+                  className="mt-3 px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 text-sm transition-colors"
+                >
+                  Iniciar sesión
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
-            {error}
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400 mt-0.5" />
+            <div>
+              <p className="text-red-400">{error}</p>
+              {error.includes('sesión') && (
+                <button
+                  type="button"
+                  onClick={onLoginClick}
+                  className="mt-2 text-sm text-red-300 underline hover:no-underline"
+                >
+                  Iniciar sesión ahora
+                </button>
+              )}
+            </div>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Account Info - Only show if not authenticated */}
+          {!isAuthenticated && (
+            <div className="p-6 bg-white/5 border border-white/10 rounded-xl space-y-6">
+              <div className="flex items-center gap-3 mb-2">
+                <Mail className="w-5 h-5 text-[#d4a968]" />
+                <h2 className="text-lg">Tu cuenta</h2>
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">Email *</label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleChange('email', e.target.value)}
+                  placeholder="tu@email.com"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                  required={!isAuthenticated}
+                />
+                <p className="text-gray-600 text-xs mt-1">
+                  Usaremos este email para crear tu cuenta y enviarte notificaciones
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Company Info */}
           <div className="p-6 bg-white/5 border border-white/10 rounded-xl space-y-6">
             <div className="flex items-center gap-3 mb-2">
