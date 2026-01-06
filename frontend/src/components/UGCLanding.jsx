@@ -4,10 +4,17 @@ import { ArrowRight, Users, Building2, Sparkles, TrendingUp, Gift, BarChart3, Ch
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 
-const UGCLanding = () => {
+const UGCLanding = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navbar />
+      <Navbar 
+        user={user}
+        onLoginClick={onLoginClick}
+        onLogout={onLogout}
+        language={language}
+        setLanguage={setLanguage}
+        t={t}
+      />
       
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
@@ -241,7 +248,7 @@ const UGCLanding = () => {
         </div>
       </section>
 
-      <Footer />
+      <Footer t={t} />
     </div>
   );
 };
