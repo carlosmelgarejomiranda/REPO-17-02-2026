@@ -66,6 +66,9 @@ frontend:
     status_history:
       - working: true
         comment: "✅ Shows 3 packages with promo prices, Standard highlighted as popular"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Package pricing page loads correctly with 3 packages (Starter, Standard, Pro), promotional banner, 'MÁS POPULAR' badge on Standard package, and crossed-out original prices showing promotional pricing"
 
   - task: "Campaign Builder"
     implemented: true
@@ -74,14 +77,20 @@ frontend:
     status_history:
       - working: true
         comment: "✅ 5-step campaign creation wizard working"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: 5-step campaign wizard working perfectly - Info Básica, Requisitos, Canje, Fechas, Revisar. All form fields functional, platform selection (Instagram/TikTok), content types, date inputs, and summary review displaying entered data correctly"
 
   - task: "UGC Admin Panel"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/components/UGCAdminPanel.jsx"
     status_history:
       - working: true
         comment: "✅ Professional admin panel with sub-tabs, metrics cards, quick actions"
+      - working: false
+        agent: "testing"
+        comment: "❌ TESTED: UGC Platform tab not found in admin panel. Login successful (avenuepy@gmail.com/admin123) but UGC admin functionality not accessible. Admin panel shows 'Acceso Restringido' and UGC tab missing from navigation"
 
 testing_notes:
   last_updated: "2025-01-06"
