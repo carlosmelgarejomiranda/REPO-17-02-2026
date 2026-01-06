@@ -330,9 +330,7 @@ async def get_leaderboard(filters: LeaderboardFilters = None):
     # Build leaderboard
     leaderboard = []
     for i, creator in enumerate(creators):
-        # Get primary username
         primary_username = ""
-        avg_views = 0
         if creator.get("social_networks"):
             primary = creator["social_networks"][0]
             primary_username = primary.get("username", "")

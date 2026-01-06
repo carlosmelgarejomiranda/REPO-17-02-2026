@@ -209,7 +209,7 @@ async def confirm_package_payment(
 async def get_my_packages(request: Request):
     """Get current brand's packages"""
     db = await get_db()
-    user, brand = await require_brand(request)
+    _, brand = await require_brand(request)
     
     packages = await db.ugc_packages.find(
         {"brand_id": brand["id"]},

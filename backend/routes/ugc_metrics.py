@@ -357,7 +357,7 @@ async def get_campaign_metrics_report(
 ):
     """Get aggregated metrics report for a campaign"""
     db = await get_db()
-    user = await require_auth(request)
+    await require_auth(request)
     
     # Get all metrics for this campaign
     metrics = await db.ugc_metrics.find(

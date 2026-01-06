@@ -81,7 +81,7 @@ async def get_deliverable_detail(
 ):
     """Get deliverable detail"""
     db = await get_db()
-    user = await require_auth(request)
+    await require_auth(request)
     
     deliverable = await db.ugc_deliverables.find_one({"id": deliverable_id}, {"_id": 0})
     if not deliverable:

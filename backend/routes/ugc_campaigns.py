@@ -127,7 +127,7 @@ async def get_campaign_detail(campaign_id: str, request: Request = None):
                         {"campaign_id": campaign_id, "creator_id": creator["id"]},
                         {"_id": 0}
                     )
-        except:
+        except Exception:
             pass
     
     campaign["user_application"] = user_application
