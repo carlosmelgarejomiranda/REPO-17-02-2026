@@ -87,13 +87,22 @@ const BrandOnboarding = ({ onLoginClick }) => {
       if (res.ok) {
         const userData = await res.json();
         setIsAuthenticated(true);
-        setStep(2); // Skip to step 2 if already logged in
         setFormData(prev => ({
           ...prev,
           email: userData.email || '',
           contact_first_name: userData.name?.split(' ')[0] || '',
           contact_last_name: userData.name?.split(' ').slice(1).join(' ') || ''
         }));
+        
+        // Check if already has brand profile
+        const brandRes = await fetch(`${API_URL}/api/ugc/brands/me`, { credentials: 'include' });
+        if (brandRes.ok) {
+          // Already has brand profile, redirect to dashboard
+          navigate('/ugc/brand/dashboard');
+          return;
+        }
+        
+        setStep(2); // Skip to step 2 if logged in but no brand profile
       }
     } catch (err) {
       // Not authenticated
