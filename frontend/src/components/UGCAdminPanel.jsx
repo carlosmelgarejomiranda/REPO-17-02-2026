@@ -96,6 +96,7 @@ const StatusBadge = ({ status, type = 'campaign' }) => {
 const UGCAdminPanel = ({ getAuthHeaders }) => {
   const [activeSubTab, setActiveSubTab] = useState('overview');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [dashboard, setDashboard] = useState(null);
   const [creators, setCreators] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -105,6 +106,18 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
   // Filters
   const [creatorFilter, setCreatorFilter] = useState({ level: '', city: '', search: '' });
   const [campaignFilter, setCampaignFilter] = useState({ status: '', search: '' });
+
+  // Get auth headers with fallback
+  const getHeaders = () => {
+    if (getAuthHeaders) {
+      return getAuthHeaders();
+    }
+    const token = localStorage.getItem('auth_token');
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    };
+  };
 
   useEffect(() => {
     fetchDashboard();
@@ -118,16 +131,24 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
   }, [activeSubTab]);
 
   const fetchDashboard = async () => {
+    setError(null);
     try {
       const res = await fetch(`${API_URL}/api/ugc/admin/dashboard`, {
-        headers: getAuthHeaders()
+        headers: getHeaders(),
+        credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();
         setDashboard(data);
+      } else if (res.status === 403) {
+        setError('No tienes permisos para acceder al panel UGC');
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setError(errData.detail || 'Error al cargar el dashboard');
       }
     } catch (err) {
       console.error('Error fetching UGC dashboard:', err);
+      setError('Error de conexión al cargar el dashboard');
     } finally {
       setLoading(false);
     }
@@ -140,7 +161,8 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
       if (creatorFilter.city) query.append('city', creatorFilter.city);
       
       const res = await fetch(`${API_URL}/api/ugc/admin/creators?${query}`, {
-        headers: getAuthHeaders()
+        headers: getHeaders(),
+        credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();
@@ -154,7 +176,8 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
   const fetchBrands = async () => {
     try {
       const res = await fetch(`${API_URL}/api/ugc/admin/brands`, {
-        headers: getAuthHeaders()
+        headers: getHeaders(),
+        credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();
@@ -171,7 +194,8 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
       if (campaignFilter.status) query.append('status', campaignFilter.status);
       
       const res = await fetch(`${API_URL}/api/ugc/admin/campaigns?${query}`, {
-        headers: getAuthHeaders()
+        headers: getHeaders(),
+        credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();
@@ -185,7 +209,8 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
   const fetchDeliverables = async () => {
     try {
       const res = await fetch(`${API_URL}/api/ugc/admin/deliverables?status=pending_review`, {
-        headers: getAuthHeaders()
+        headers: getHeaders(),
+        credentials: 'include'
       });
       if (res.ok) {
         const data = await res.json();
