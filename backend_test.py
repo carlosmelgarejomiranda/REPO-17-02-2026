@@ -1905,23 +1905,6 @@ def test_ugc_deliverable_review():
         print_error(f"Exception occurred: {str(e)}")
         add_test_result("UGC Deliverable Review", "FAIL", f"Exception: {str(e)}")
         return False
-                else:
-                    print_warning("No top products data available")
-                    add_test_result("Admin Top Products", "PASS")
-                    return True
-            else:
-                print_error("Response missing 'top_products' field")
-                add_test_result("Admin Top Products", "FAIL", "Missing top_products field")
-                return False
-        else:
-            print_error(f"Failed with status {response.status_code}: {response.text}")
-            add_test_result("Admin Top Products", "FAIL", f"HTTP {response.status_code}")
-            return False
-            
-    except Exception as e:
-        print_error(f"Exception occurred: {str(e)}")
-        add_test_result("Admin Top Products", "FAIL", f"Exception: {str(e)}")
-        return False
 
 # ==================== UGC PLATFORM TESTS ====================
 
