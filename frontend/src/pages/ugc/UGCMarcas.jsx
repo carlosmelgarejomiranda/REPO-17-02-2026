@@ -127,7 +127,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
 
           <div className="flex flex-wrap gap-4">
             <Link 
-              to="/ugc/select-role"
+              to="/ugc/brand/onboarding"
               className="inline-flex items-center gap-3 px-8 py-4 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-all"
             >
               Registrar mi marca
