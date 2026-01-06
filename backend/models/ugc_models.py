@@ -153,22 +153,32 @@ class BrandProfile(BaseModel):
 class BrandProfileCreate(BaseModel):
     company_name: str
     industry: str
+    country: str = "PY"
     city: str
     contact_name: str
+    contact_first_name: Optional[str] = None
+    contact_last_name: Optional[str] = None
     contact_phone: Optional[str] = None
+    phone_country_code: Optional[str] = "+595"
     website: Optional[str] = None
     instagram_url: Optional[str] = None
+    instagram_handle: Optional[str] = None
     description: Optional[str] = None
 
 class BrandProfileUpdate(BaseModel):
     company_name: Optional[str] = None
     industry: Optional[str] = None
+    country: Optional[str] = None
     city: Optional[str] = None
     contact_name: Optional[str] = None
+    contact_first_name: Optional[str] = None
+    contact_last_name: Optional[str] = None
     contact_phone: Optional[str] = None
+    phone_country_code: Optional[str] = None
     logo_url: Optional[str] = None
     website: Optional[str] = None
     instagram_url: Optional[str] = None
+    instagram_handle: Optional[str] = None
     description: Optional[str] = None
 
 # ==================== PACKAGE MODELS ====================
