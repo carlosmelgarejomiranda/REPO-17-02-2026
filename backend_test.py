@@ -6622,7 +6622,7 @@ def run_ugc_tests():
             results.append((test_name, False))
     
     # Summary
-    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SPRINT 5 TEST SUMMARY ==={Colors.ENDC}")
+    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SPRINT 6 TEST SUMMARY ==={Colors.ENDC}")
     passed = 0
     failed = 0
     
@@ -6639,6 +6639,7 @@ def run_ugc_tests():
     print(f"{Colors.RED}Failed: {failed}{Colors.ENDC}")
     print(f"{Colors.BLUE}Success Rate: {passed}/{len(results)} ({passed/len(results)*100:.1f}%){Colors.ENDC}")
     
+    return failed == 0
 # ==================== UGC METRICS TESTS (SPRINT 5) ====================
 
 def test_ugc_metrics_submit():
