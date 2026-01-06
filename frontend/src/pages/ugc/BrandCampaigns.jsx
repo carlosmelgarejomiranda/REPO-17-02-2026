@@ -298,6 +298,15 @@ const BrandCampaigns = () => {
                             )}
                           </button>
                         )}
+                        {(campaign.slots_filled > 0 || ['in_production', 'completed'].includes(campaign.status)) && (
+                          <Link
+                            to={`/ugc/brand/deliverables/${campaign.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex-1 py-2 rounded-lg bg-purple-500/20 text-purple-400 text-sm hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-1"
+                          >
+                            <CheckCircle className="w-4 h-4" /> Ver Entregas
+                          </Link>
+                        )}
                         <button
                           onClick={(e) => { e.stopPropagation(); handleSelectCampaign(campaign); }}
                           className="flex-1 py-2 rounded-lg bg-white/10 text-white text-sm hover:bg-white/20 transition-colors"
