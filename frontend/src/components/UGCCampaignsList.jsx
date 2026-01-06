@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Users, ArrowRight, Gift, Star, Check, Instagram, TrendingUp, Sparkles, Heart, Play } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Users, ArrowRight, Gift, Star, Check, Instagram, TrendingUp, Sparkles, Heart, Play, Building2, Package, BarChart3 } from 'lucide-react';
 import { getActiveCampaigns } from '../data/campaigns';
 
 // UGC Creator images
