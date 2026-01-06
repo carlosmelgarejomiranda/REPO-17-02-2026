@@ -720,6 +720,9 @@ function AppRouter() {
           } />
 
           {/* UGC Platform Routes */}
+          <Route path="/studio/ugc" element={<UGCLanding />} />
+          <Route path="/ugc/marcas" element={<UGCMarcas />} />
+          <Route path="/ugc/creators" element={<UGCCreators />} />
           <Route path="/ugc/select-role" element={<RoleSelector />} />
           <Route path="/ugc/creator/onboarding" element={<CreatorOnboarding />} />
           <Route path="/ugc/creator/dashboard" element={<CreatorDashboard />} />
