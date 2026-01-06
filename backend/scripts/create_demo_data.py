@@ -354,8 +354,7 @@ async def create_demo_data():
                         }
                         await db.ugc_metrics.insert_one(metrics)
                         
-                        print(f"    📊 Metrics for {creator['name']}: {views:,} views, {likes:,} likes, {engagement_rate:.1f}% engagement".format(
-                            views=views, likes=likes, engagement_rate=metrics["engagement_rate"]))
+                        print(f"    📊 Metrics for {creator['name']}: {views:,} views, {likes:,} likes, {metrics['engagement_rate']:.1f}% engagement")
         
         # Update campaign counts
         await db.ugc_campaigns.update_one(
