@@ -252,7 +252,7 @@ def get_creator_badges(stats: dict, level: str) -> list:
 @router.post("/rate/{deliverable_id}", response_model=dict)
 async def rate_creator(
     deliverable_id: str,
-    data: RatingCreate,
+    data: ReviewCreate,
     request: Request
 ):
     """Brand rates a creator after deliverable completion"""
