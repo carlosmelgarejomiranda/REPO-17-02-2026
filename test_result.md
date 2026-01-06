@@ -208,7 +208,7 @@ testing_notes:
 
 test_plan:
   current_focus:
-    - "Sprint 5 Metrics & AI Backend - COMPLETED"
+    - "Sprint 6 Reputation & Gamification Backend - COMPLETED"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
