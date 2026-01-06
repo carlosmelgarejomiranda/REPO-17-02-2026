@@ -131,6 +131,11 @@ const BrandOnboarding = ({ onLoginClick }) => {
 
   // Step 1: Handle Login
   const handleLogin = async () => {
+    if (!formData.email || !formData.password) {
+      setError('Por favor ingresa email y contraseña');
+      return;
+    }
+    
     setLoading(true);
     setError('');
     try {
@@ -141,11 +146,12 @@ const BrandOnboarding = ({ onLoginClick }) => {
         body: JSON.stringify({ email: formData.email, password: formData.password })
       });
       
-      const data = await res.json();
-      
       if (!res.ok) {
+        const data = await res.json().catch(() => ({ detail: 'Error de conexión' }));
         throw new Error(data.detail || 'Error al iniciar sesión');
       }
+
+      const data = await res.json();
 
       if (data.token) {
         localStorage.setItem('auth_token', data.token);
@@ -155,12 +161,23 @@ const BrandOnboarding = ({ onLoginClick }) => {
           contact_first_name: data.name?.split(' ')[0] || prev.contact_first_name,
           contact_last_name: data.name?.split(' ').slice(1).join(' ') || prev.contact_last_name
         }));
+        
+        // Check if already has brand profile
+        const brandRes = await fetch(`${API_URL}/api/ugc/brands/me`, { 
+          credentials: 'include',
+          headers: { 'Authorization': `Bearer ${data.token}` }
+        });
+        if (brandRes.ok) {
+          navigate('/ugc/brand/dashboard');
+          return;
+        }
+        
         setStep(2);
       } else if (data.mfa_required) {
         throw new Error('MFA requerido. Por favor usa el botón de inicio de sesión principal.');
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
