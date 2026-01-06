@@ -132,14 +132,26 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
 
   const fetchDashboard = async () => {
     setError(null);
+    setLoading(true);
     try {
-      const headers = getHeaders();
+      const token = localStorage.getItem('auth_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+      
+      console.log('Fetching UGC dashboard with token:', token ? 'present' : 'missing');
+      
       const res = await fetch(`${API_URL}/api/ugc/admin/dashboard`, {
-        headers: headers,
-        credentials: 'include'
+        method: 'GET',
+        headers: headers
       });
+      
+      console.log('UGC dashboard response status:', res.status);
+      
       if (res.ok) {
         const data = await res.json();
+        console.log('UGC dashboard data:', data);
         setDashboard(data);
       } else if (res.status === 403) {
         setError('No tienes permisos para acceder al panel UGC');
