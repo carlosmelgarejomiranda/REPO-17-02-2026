@@ -360,6 +360,38 @@ const DeliverableDetail = () => {
           </div>
         )}
 
+        {/* Metrics Upload Section */}
+        {['approved', 'metrics_pending', 'metrics_submitted', 'completed'].includes(deliverable.status) && (
+          <div className="mt-8 p-5 bg-cyan-500/10 border border-cyan-500/30 rounded-xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium text-cyan-400 mb-1">Métricas de Rendimiento</h3>
+                <p className="text-sm text-gray-400">
+                  {deliverable.status === 'metrics_pending' 
+                    ? 'Sube las métricas de tu publicación'
+                    : deliverable.status === 'metrics_submitted'
+                    ? 'Métricas enviadas - en revisión'
+                    : 'Entrega completada'}
+                </p>
+              </div>
+              {deliverable.status === 'metrics_pending' && (
+                <Link
+                  to={`/ugc/creator/metrics/${id}`}
+                  className="px-4 py-2 bg-cyan-500 text-black rounded-lg text-sm hover:bg-cyan-400 flex items-center gap-2"
+                >
+                  <Upload className="w-4 h-4" />
+                  Subir Métricas
+                </Link>
+              )}
+              {deliverable.status === 'metrics_submitted' && (
+                <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm">
+                  ✓ Enviadas
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Timeline Info */}
         {deliverable.campaign?.timeline && (
           <div className="mt-8 p-4 bg-white/5 border border-white/10 rounded-lg">
