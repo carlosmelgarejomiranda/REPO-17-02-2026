@@ -371,7 +371,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                 )}
 
                 <Link
-                  to="/ugc/select-role"
+                  to="/ugc/brand/onboarding"
                   className="block text-center py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] transition-all"
                 >
                   Solicitar Enterprise
