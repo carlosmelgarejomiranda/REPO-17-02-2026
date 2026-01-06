@@ -761,7 +761,7 @@ function AppRouter() {
           <Route path="/ugc/brand/dashboard" element={<BrandDashboard />} />
           <Route path="/ugc/brand/packages" element={<PackagePricing />} />
           <Route path="/ugc/brand/campaigns/new" element={<CampaignBuilder />} />
-          <Route path="/ugc/brand/campaigns" element={<CampaignsList />} />
+          <Route path="/ugc/brand/campaigns" element={<BrandCampaigns />} />
           <Route path="/ugc/campaigns" element={<CampaignsCatalog />} />
         </Routes>
       </div>
