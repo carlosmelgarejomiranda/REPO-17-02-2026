@@ -52,6 +52,7 @@ import BrandCampaigns from "./pages/ugc/BrandCampaigns";
 import CreatorWorkspace from "./pages/ugc/CreatorWorkspace";
 import DeliverableDetail from "./pages/ugc/DeliverableDetail";
 import BrandDeliverables from "./pages/ugc/BrandDeliverables";
+import MetricsSubmit from "./pages/ugc/MetricsSubmit";
 import UGCMarcas from "./pages/ugc/UGCMarcas";
 import CreatorsPage from "./pages/ugc/CreatorsPage";
 import UGCLanding from "./components/UGCLanding";
