@@ -5560,8 +5560,8 @@ def run_all_tests():
         return False
 
 def run_ugc_tests():
-    """Run UGC platform tests specifically"""
-    print(f"{Colors.BOLD}{Colors.BLUE}Avenue UGC Platform Tests{Colors.ENDC}")
+    """Run Sprint 3 UGC Application System tests"""
+    print(f"{Colors.BOLD}{Colors.BLUE}Sprint 3: UGC Application System Tests{Colors.ENDC}")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 60)
     
@@ -5572,10 +5572,12 @@ def run_ugc_tests():
         return False
     
     tests = [
-        # UGC BACKEND ENDPOINTS
-        ("Test UGC Packages Pricing", test_ugc_packages_pricing),
+        # SPRINT 3: UGC APPLICATION SYSTEM ENDPOINTS
         ("Test UGC Campaigns Available", test_ugc_campaigns_available),
-        ("Test UGC Enterprise Quote", test_ugc_enterprise_quote),
+        ("Test UGC Application Flow", test_ugc_application_flow),
+        ("Test UGC Brand Applications", test_ugc_brand_applications),
+        ("Test UGC My Applications", test_ugc_my_applications),
+        ("Test UGC Application Status Update", test_ugc_application_status_update),
     ]
     
     results = []
@@ -5589,7 +5591,7 @@ def run_ugc_tests():
             results.append((test_name, False))
     
     # Summary
-    print(f"\n{Colors.BOLD}{Colors.BLUE}=== UGC TEST SUMMARY ==={Colors.ENDC}")
+    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SPRINT 3 TEST SUMMARY ==={Colors.ENDC}")
     passed = 0
     failed = 0
     
