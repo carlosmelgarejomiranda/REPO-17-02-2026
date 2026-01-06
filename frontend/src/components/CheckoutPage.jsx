@@ -619,6 +619,20 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
                   </button>
                 </div>
 
+                {/* Delivery Time Information */}
+                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                  <h3 className="text-sm font-medium text-amber-800 mb-2 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Tiempos de Entrega
+                  </h3>
+                  <div className="space-y-1 text-sm text-amber-700">
+                    <p><strong>Asunción:</strong> Entrega en el día o al día siguiente hábil</p>
+                    <p><strong>Interior del país:</strong> 3 a 5 días hábiles (vía encomienda)</p>
+                  </div>
+                </div>
+
                 {/* Map for delivery */}
                 {deliveryType === 'delivery' && (
                   <div className="space-y-4">
