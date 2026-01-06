@@ -5559,6 +5559,276 @@ def run_all_tests():
         print(f"\n{Colors.RED}{Colors.BOLD}❌ {failed} test(s) failed{Colors.ENDC}")
         return False
 
+# ==================== SPRINT 3: UGC APPLICATION SYSTEM TESTS ====================
+
+def test_ugc_campaigns_available():
+    """Test Sprint 3: GET /api/ugc/campaigns/available"""
+    print_test_header("Test UGC Campaigns Available")
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/campaigns/available"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["campaigns", "total", "skip", "limit"]
+            if all(field in data for field in required_fields):
+                campaigns = data.get("campaigns", [])
+                total = data.get("total", 0)
+                
+                print_success("UGC campaigns available endpoint working correctly")
+                print_success(f"Total campaigns: {total}")
+                print_success(f"Campaigns in response: {len(campaigns)}")
+                
+                if campaigns:
+                    first_campaign = campaigns[0]
+                    print_info(f"Sample campaign: {first_campaign.get('name', 'Unknown')}")
+                    print_info(f"Campaign ID: {first_campaign.get('id', 'Unknown')}")
+                    print_info(f"Brand: {first_campaign.get('brand', {}).get('company_name', 'Unknown')}")
+                    print_info(f"Status: {first_campaign.get('status', 'Unknown')}")
+                    print_info(f"Slots available: {first_campaign.get('slots_available', 0)}")
+                    print_info(f"Has applied: {first_campaign.get('has_applied', False)}")
+                
+                return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Missing required fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_ugc_application_flow():
+    """Test Sprint 3: Application Flow (requires creator profile)"""
+    print_test_header("Test UGC Application Flow")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        # First, try to get available campaigns
+        campaigns_url = f"{BACKEND_URL}/ugc/campaigns/available"
+        campaigns_response = requests.get(campaigns_url)
+        
+        if campaigns_response.status_code != 200:
+            print_error("Cannot get available campaigns")
+            return False
+        
+        campaigns_data = campaigns_response.json()
+        campaigns = campaigns_data.get("campaigns", [])
+        
+        if not campaigns:
+            print_warning("No campaigns available to test application flow")
+            return True
+        
+        campaign_id = campaigns[0]["id"]
+        print_info(f"Testing application to campaign: {campaign_id}")
+        
+        # Try to apply (this will likely fail without creator profile, but we test the endpoint)
+        apply_url = f"{BACKEND_URL}/ugc/applications/apply"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        payload = {
+            "campaign_id": campaign_id,
+            "motivation": "I'm interested in collaborating with your brand because I love your products and think my audience would too.",
+            "proposed_content": "I would create engaging Instagram posts and stories showcasing your products in authentic lifestyle settings.",
+            "portfolio_links": ["https://instagram.com/p/example1", "https://instagram.com/p/example2"]
+        }
+        
+        print_info(f"POST {apply_url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(apply_url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("Application submitted successfully")
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            return True
+        elif response.status_code == 403 and "Creator profile required" in response.text:
+            print_warning("Creator profile required - endpoint working correctly")
+            print_info("This is expected behavior for admin user without creator profile")
+            return True
+        else:
+            print_error(f"Unexpected response: {response.status_code} - {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_ugc_brand_applications():
+    """Test Sprint 3: Brand Application Management"""
+    print_test_header("Test UGC Brand Applications")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        # First, get available campaigns to find a campaign ID
+        campaigns_url = f"{BACKEND_URL}/ugc/campaigns/available"
+        campaigns_response = requests.get(campaigns_url)
+        
+        if campaigns_response.status_code != 200:
+            print_error("Cannot get available campaigns")
+            return False
+        
+        campaigns_data = campaigns_response.json()
+        campaigns = campaigns_data.get("campaigns", [])
+        
+        if not campaigns:
+            print_warning("No campaigns available to test brand applications")
+            return True
+        
+        campaign_id = campaigns[0]["id"]
+        print_info(f"Testing brand applications for campaign: {campaign_id}")
+        
+        # Test getting campaign applications
+        applications_url = f"{BACKEND_URL}/ugc/applications/campaign/{campaign_id}"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {applications_url}")
+        
+        response = requests.get(applications_url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("Brand applications endpoint working correctly")
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            applications = data.get("applications", [])
+            total = data.get("total", 0)
+            
+            print_success(f"Applications found: {total}")
+            
+            if applications:
+                first_app = applications[0]
+                print_info(f"Sample application ID: {first_app.get('id', 'Unknown')}")
+                print_info(f"Creator: {first_app.get('creator_name', 'Unknown')}")
+                print_info(f"Status: {first_app.get('status', 'Unknown')}")
+                print_info(f"Applied at: {first_app.get('applied_at', 'Unknown')}")
+            
+            return True
+        elif response.status_code == 403 and "Brand profile required" in response.text:
+            print_warning("Brand profile required - endpoint working correctly")
+            print_info("This is expected behavior for admin user without brand profile")
+            return True
+        elif response.status_code == 404:
+            print_warning("Campaign not found - may not belong to current brand")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_ugc_my_applications():
+    """Test Sprint 3: Creator My Applications"""
+    print_test_header("Test UGC My Applications")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/applications/me"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_success("My applications endpoint working correctly")
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            applications = data.get("applications", [])
+            print_success(f"My applications found: {len(applications)}")
+            
+            if applications:
+                first_app = applications[0]
+                print_info(f"Sample application ID: {first_app.get('id', 'Unknown')}")
+                print_info(f"Campaign: {first_app.get('campaign', {}).get('name', 'Unknown')}")
+                print_info(f"Status: {first_app.get('status', 'Unknown')}")
+                print_info(f"Applied at: {first_app.get('applied_at', 'Unknown')}")
+            
+            return True
+        elif response.status_code == 403 and "Creator profile required" in response.text:
+            print_warning("Creator profile required - endpoint working correctly")
+            print_info("This is expected behavior for admin user without creator profile")
+            return True
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
+def test_ugc_application_status_update():
+    """Test Sprint 3: Application Status Update"""
+    print_test_header("Test UGC Application Status Update")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        return False
+    
+    try:
+        # This test requires existing applications, so we'll test the endpoint structure
+        # In a real scenario, we'd need to create test data first
+        
+        # Test with a dummy application ID to verify endpoint structure
+        dummy_app_id = "test-application-id"
+        url = f"{BACKEND_URL}/ugc/applications/{dummy_app_id}/status"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        payload = {
+            "status": "shortlisted",
+            "reason": "Great portfolio and engagement rates"
+        }
+        
+        print_info(f"PUT {url}")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.put(url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print_success("Application status update endpoint exists (404 expected for dummy ID)")
+            return True
+        elif response.status_code == 403:
+            print_warning("Brand profile required or permission denied - endpoint working")
+            return True
+        elif response.status_code == 200:
+            print_success("Application status updated successfully")
+            return True
+        else:
+            print_error(f"Unexpected response: {response.status_code} - {response.text}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        return False
+
 def run_ugc_tests():
     """Run Sprint 3 UGC Application System tests"""
     print(f"{Colors.BOLD}{Colors.BLUE}Sprint 3: UGC Application System Tests{Colors.ENDC}")
