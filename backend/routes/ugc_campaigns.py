@@ -44,6 +44,7 @@ async def require_creator(request: Request):
 
 @router.get("/available", response_model=dict)
 async def get_available_campaigns(
+    request: Request,
     city: Optional[str] = None,
     category: Optional[str] = None,
     platform: Optional[ContentPlatform] = None,
@@ -80,7 +81,19 @@ async def get_available_campaigns(
         {"_id": 0}
     ).sort("published_at", -1).skip(skip).limit(limit).to_list(limit)
     
-    # Enrich with brand info
+    # Check if current user is a creator and has applied
+    creator_id = None
+    try:
+        from server import get_current_user
+        user = await get_current_user(request)
+        if user:
+            creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0, "id": 1})
+            if creator:
+                creator_id = creator["id"]
+    except Exception:
+        pass
+    
+    # Enrich with brand info and check if user applied
     for campaign in campaigns:
         brand = await db.ugc_brands.find_one(
             {"id": campaign["brand_id"]},
@@ -88,6 +101,16 @@ async def get_available_campaigns(
         )
         campaign["brand"] = brand
         campaign["slots_available"] = campaign["slots"] - campaign.get("slots_filled", 0)
+        
+        # Check if creator has applied
+        if creator_id:
+            application = await db.ugc_applications.find_one({
+                "campaign_id": campaign["id"],
+                "creator_id": creator_id
+            })
+            campaign["has_applied"] = application is not None
+        else:
+            campaign["has_applied"] = False
     
     total = await db.ugc_campaigns.count_documents(query)
     
