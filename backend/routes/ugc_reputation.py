@@ -287,7 +287,7 @@ async def rate_creator(
         "brand_id": brand["id"],
         "brand_name": brand.get("company_name"),
         "rating": data.rating,
-        "comment": data.comment,
+        "comment": data.public_comment,
         "created_at": now
     }
     
