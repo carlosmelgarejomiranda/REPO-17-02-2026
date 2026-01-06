@@ -105,6 +105,9 @@ async def apply_to_campaign(
     
     now = datetime.now(timezone.utc).isoformat()
     
+    # Use note if motivation is not provided
+    motivation_text = data.motivation or data.note or ""
+    
     application = {
         "id": str(uuid.uuid4()),
         "campaign_id": data.campaign_id,
@@ -114,7 +117,8 @@ async def apply_to_campaign(
         "creator_followers": primary_social.get("followers", 0),
         "creator_rating": creator.get("stats", {}).get("avg_rating", 0),
         "creator_level": creator.get("level", "rookie"),
-        "motivation": data.motivation,
+        "motivation": motivation_text,
+        "proposed_content": data.proposed_content,
         "portfolio_links": data.portfolio_links,
         "status": ApplicationStatus.APPLIED,
         "status_history": [{
