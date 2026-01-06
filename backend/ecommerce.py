@@ -1016,9 +1016,30 @@ async def get_featured_products():
 
 # ==================== DELIVERY CALCULATION ====================
 
+# Paraguay bounding box coordinates
+PARAGUAY_BOUNDS = {
+    "min_lat": -27.6,  # Southern border
+    "max_lat": -19.2,  # Northern border
+    "min_lng": -62.7,  # Western border
+    "max_lng": -54.2   # Eastern border
+}
+
+def is_within_paraguay(lat: float, lng: float) -> bool:
+    """Check if coordinates are within Paraguay's borders"""
+    return (PARAGUAY_BOUNDS["min_lat"] <= lat <= PARAGUAY_BOUNDS["max_lat"] and
+            PARAGUAY_BOUNDS["min_lng"] <= lng <= PARAGUAY_BOUNDS["max_lng"])
+
 @ecommerce_router.post("/calculate-delivery")
 async def calculate_delivery(data: DeliveryCalculation):
-    """Calculate delivery cost based on distance"""
+    """Calculate delivery cost based on distance - Only within Paraguay"""
+    
+    # Validate destination is within Paraguay
+    if not is_within_paraguay(data.lat, data.lng):
+        raise HTTPException(
+            status_code=400, 
+            detail="Lo sentimos, solo realizamos entregas dentro de Paraguay."
+        )
+    
     if not gmaps:
         distance_km = haversine_distance(STORE_LAT, STORE_LNG, data.lat, data.lng)
     else:
