@@ -6185,8 +6185,8 @@ def test_ugc_application_status_update():
         return False
 
 def run_ugc_tests():
-    """Run Sprint 3 UGC Application System tests"""
-    print(f"{Colors.BOLD}{Colors.BLUE}Sprint 3: UGC Application System Tests{Colors.ENDC}")
+    """Run Sprint 4 UGC Deliverables & Workflow Backend tests"""
+    print(f"{Colors.BOLD}{Colors.BLUE}Sprint 4: UGC Deliverables & Workflow Backend Tests{Colors.ENDC}")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 60)
     
@@ -6197,12 +6197,13 @@ def run_ugc_tests():
         return False
     
     tests = [
-        # SPRINT 3: UGC APPLICATION SYSTEM ENDPOINTS
-        ("Test UGC Campaigns Available", test_ugc_campaigns_available),
-        ("Test UGC Application Flow", test_ugc_application_flow),
-        ("Test UGC Brand Applications", test_ugc_brand_applications),
-        ("Test UGC My Applications", test_ugc_my_applications),
-        ("Test UGC Application Status Update", test_ugc_application_status_update),
+        # SPRINT 4: UGC DELIVERABLES ENDPOINTS
+        ("Test UGC Creator Deliverables", test_ugc_deliverables_creator),
+        ("Test UGC Campaign Deliverables", test_ugc_deliverables_campaign),
+        ("Test UGC Deliverable Detail", test_ugc_deliverable_detail),
+        ("Test UGC Deliverable Publish", test_ugc_deliverable_publish),
+        ("Test UGC Deliverable Submit", test_ugc_deliverable_submit),
+        ("Test UGC Deliverable Review", test_ugc_deliverable_review),
     ]
     
     results = []
