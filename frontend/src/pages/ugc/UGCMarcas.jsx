@@ -276,7 +276,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                   </ul>
 
                   <Link
-                    to="/ugc/select-role"
+                    to="/ugc/brand/onboarding"
                     className={`block text-center py-3 rounded-lg font-medium transition-all ${
                       isPopular
                         ? 'bg-[#d4a968] text-black hover:bg-[#c49958]'
