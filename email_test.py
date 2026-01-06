@@ -11,7 +11,7 @@ import os
 from datetime import datetime, timedelta
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://ugc-marketplace-5.preview.emergentagent.com/api"
+BACKEND_URL = "https://creator-match-16.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
