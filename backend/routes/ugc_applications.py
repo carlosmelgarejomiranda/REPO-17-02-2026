@@ -6,11 +6,14 @@ from fastapi import APIRouter, HTTPException, Request
 from typing import List, Optional
 from datetime import datetime, timezone
 import uuid
+import logging
 
 from models.ugc_models import (
     Application, ApplicationCreate, ApplicationStatus, ApplicationStatusUpdate,
     CampaignStatus, DeliverableStatus, ContentPlatform
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/ugc/applications", tags=["UGC Applications"])
 
