@@ -58,6 +58,9 @@ frontend:
     status_history:
       - working: true
         comment: "✅ Company info form working"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Brand onboarding flow working perfectly. Redirect from package pricing works correctly (/ugc/brand/onboarding?package=standard). Form has all global expansion fields: company name, industry dropdown, country/city dropdowns (Paraguay 🇵🇾 default), separate first/last name fields, phone with country code selector (+595 default), website with https:// prefix, Instagram with @ prefix. Form validation working correctly."
 
   - task: "Package Pricing"
     implemented: true
