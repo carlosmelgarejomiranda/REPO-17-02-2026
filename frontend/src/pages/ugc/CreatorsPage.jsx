@@ -7,7 +7,7 @@ import {
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 
-const UGCCreators = () => {
+const CreatorsPage = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -333,4 +333,4 @@ const UGCCreators = () => {
   );
 };
 
-export default UGCCreators;
+export default CreatorsPage;
