@@ -46,6 +46,9 @@ import PackagePricing from "./pages/ugc/PackagePricing";
 import CampaignsList from "./pages/ugc/CampaignsList";
 import CreatorDashboard from "./pages/ugc/CreatorDashboard";
 import BrandDashboard from "./pages/ugc/BrandDashboard";
+import UGCMarcas from "./pages/ugc/UGCMarcas";
+import UGCCreators from "./pages/ugc/UGCCreators";
+import UGCLanding from "./components/UGCLanding";
 
 // Auth context helper
 const useAuth = () => {
