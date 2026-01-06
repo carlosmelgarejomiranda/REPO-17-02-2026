@@ -48,32 +48,38 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    // Fallback for components not wrapped in AuthProvider
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  
+  // Always declare hooks at top level
+  const [fallbackUser, setFallbackUser] = useState(null);
+  const [fallbackLoading, setFallbackLoading] = useState(true);
+  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
-    useEffect(() => {
-      const checkAuth = async () => {
-        try {
-          const res = await fetch(`${API_URL}/api/auth/me`, {
-            credentials: 'include'
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setUser(data);
-          }
-        } catch (err) {
-          console.error('Auth check failed:', err);
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    // Only run if no context (not wrapped in AuthProvider)
+    if (context) return;
+    
+    const checkAuth = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/auth/me`, {
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setFallbackUser(data);
         }
-      };
-      checkAuth();
-    }, []);
+      } catch (err) {
+        console.error('Auth check failed:', err);
+      } finally {
+        setFallbackLoading(false);
+      }
+    };
+    checkAuth();
+  }, [context, API_URL]);
 
-    return { user, loading, setUser };
+  // Return context if available, otherwise fallback
+  if (context) {
+    return context;
   }
-  return context;
+  
+  return { user: fallbackUser, loading: fallbackLoading, setUser: setFallbackUser };
 };
