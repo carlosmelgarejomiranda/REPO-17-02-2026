@@ -91,14 +91,23 @@ export const UGCCampaignsList = ({ t }) => {
               Creá contenido auténtico y recibí productos exclusivos a cambio.
             </p>
 
-            {/* CTA */}
-            <a 
-              href="#campaigns"
-              className="group inline-flex items-center gap-4 px-8 py-4 bg-[#d4a968] text-black font-medium tracking-wide hover:bg-[#c49958] transition-all duration-300"
-            >
-              <span>Ver Campañas</span>
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </a>
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-4">
+              <Link 
+                to="/ugc/campaigns"
+                className="group inline-flex items-center gap-4 px-8 py-4 bg-[#d4a968] text-black font-medium tracking-wide hover:bg-[#c49958] transition-all duration-300"
+              >
+                <span>Ver Campañas</span>
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link 
+                to="/ugc/select-role"
+                className="group inline-flex items-center gap-4 px-8 py-4 border border-white/30 text-white font-medium tracking-wide hover:border-[#d4a968] hover:text-[#d4a968] transition-all duration-300"
+              >
+                <span>Unirme</span>
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
           </div>
         </div>
 
