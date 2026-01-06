@@ -6185,8 +6185,8 @@ def test_ugc_application_status_update():
         return False
 
 def run_ugc_tests():
-    """Run Sprint 4 UGC Deliverables & Workflow Backend tests"""
-    print(f"{Colors.BOLD}{Colors.BLUE}Sprint 4: UGC Deliverables & Workflow Backend Tests{Colors.ENDC}")
+    """Run Sprint 5 UGC Metrics & AI Backend tests"""
+    print(f"{Colors.BOLD}{Colors.BLUE}Sprint 5: UGC Metrics & AI Backend Tests{Colors.ENDC}")
     print(f"Backend URL: {BACKEND_URL}")
     print("=" * 60)
     
@@ -6197,13 +6197,11 @@ def run_ugc_tests():
         return False
     
     tests = [
-        # SPRINT 4: UGC DELIVERABLES ENDPOINTS
-        ("Test UGC Creator Deliverables", test_ugc_deliverables_creator),
-        ("Test UGC Campaign Deliverables", test_ugc_deliverables_campaign),
-        ("Test UGC Deliverable Detail", test_ugc_deliverable_detail),
-        ("Test UGC Deliverable Publish", test_ugc_deliverable_publish),
-        ("Test UGC Deliverable Submit", test_ugc_deliverable_submit),
-        ("Test UGC Deliverable Review", test_ugc_deliverable_review),
+        # SPRINT 5: UGC METRICS ENDPOINTS
+        ("Test UGC Metrics Submit", test_ugc_metrics_submit),
+        ("Test UGC Metrics Pending Verification", test_ugc_metrics_pending_verification),
+        ("Test UGC Metrics Verify", test_ugc_metrics_verify),
+        ("Test UGC Campaign Metrics Report", test_ugc_campaign_metrics_report),
     ]
     
     results = []
@@ -6217,7 +6215,7 @@ def run_ugc_tests():
             results.append((test_name, False))
     
     # Summary
-    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SPRINT 4 TEST SUMMARY ==={Colors.ENDC}")
+    print(f"\n{Colors.BOLD}{Colors.BLUE}=== SPRINT 5 TEST SUMMARY ==={Colors.ENDC}")
     passed = 0
     failed = 0
     
