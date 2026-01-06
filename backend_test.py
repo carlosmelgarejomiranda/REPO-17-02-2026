@@ -1551,6 +1551,411 @@ def test_admin_top_products():
         add_test_result("Admin Top Products", "FAIL", f"Exception: {str(e)}")
         return False
 
+# ==================== UGC REPUTATION TESTS (SPRINT 6) ====================
+
+def test_ugc_reputation_levels():
+    """Test UGC Reputation: GET /api/ugc/reputation/levels"""
+    print_test_header("Test UGC Reputation Levels")
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/reputation/levels"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            if "levels" in data:
+                levels = data.get("levels", [])
+                
+                print_success(f"UGC reputation levels endpoint working correctly")
+                print_success(f"Levels returned: {len(levels)}")
+                
+                expected_levels = ["rookie", "trusted", "pro", "elite"]
+                found_levels = [level.get("id") for level in levels]
+                
+                if all(level in found_levels for level in expected_levels):
+                    print_success(f"All expected levels found: {found_levels}")
+                    
+                    # Check structure of first level
+                    if levels:
+                        first_level = levels[0]
+                        required_fields = ["id", "name", "thresholds", "benefits"]
+                        
+                        if all(field in first_level for field in required_fields):
+                            print_success(f"Level structure correct")
+                            print_info(f"Sample level: {first_level['name']} - {first_level['id']}")
+                            
+                            # Check thresholds structure
+                            thresholds = first_level.get("thresholds", {})
+                            threshold_fields = ["min_deliveries", "min_rating", "min_on_time"]
+                            if all(field in thresholds for field in threshold_fields):
+                                print_success(f"Thresholds structure correct")
+                                
+                                # Check benefits structure
+                                benefits = first_level.get("benefits", {})
+                                benefit_fields = ["badge_color", "priority_applications", "featured_in_catalog", "max_active_campaigns"]
+                                if all(field in benefits for field in benefit_fields):
+                                    print_success(f"Benefits structure correct")
+                                    add_test_result("UGC Reputation Levels", "PASS")
+                                    return True
+                                else:
+                                    missing = [f for f in benefit_fields if f not in benefits]
+                                    print_error(f"Benefits missing fields: {missing}")
+                                    add_test_result("UGC Reputation Levels", "FAIL", f"Missing benefit fields: {missing}")
+                                    return False
+                            else:
+                                missing = [f for f in threshold_fields if f not in thresholds]
+                                print_error(f"Thresholds missing fields: {missing}")
+                                add_test_result("UGC Reputation Levels", "FAIL", f"Missing threshold fields: {missing}")
+                                return False
+                        else:
+                            missing = [f for f in required_fields if f not in first_level]
+                            print_error(f"Level missing fields: {missing}")
+                            add_test_result("UGC Reputation Levels", "FAIL", f"Missing level fields: {missing}")
+                            return False
+                else:
+                    missing = [level for level in expected_levels if level not in found_levels]
+                    print_error(f"Missing expected levels: {missing}")
+                    add_test_result("UGC Reputation Levels", "FAIL", f"Missing levels: {missing}")
+                    return False
+            else:
+                print_error("Response missing 'levels' field")
+                add_test_result("UGC Reputation Levels", "FAIL", "Missing levels field")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Reputation Levels", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Reputation Levels", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_reputation_leaderboard():
+    """Test UGC Reputation: GET /api/ugc/reputation/leaderboard"""
+    print_test_header("Test UGC Reputation Leaderboard")
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/reputation/leaderboard"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            if "leaderboard" in data:
+                leaderboard = data.get("leaderboard", [])
+                
+                print_success(f"UGC reputation leaderboard endpoint working correctly")
+                print_success(f"Creators in leaderboard: {len(leaderboard)}")
+                
+                if leaderboard:
+                    # Check structure of first creator
+                    first_creator = leaderboard[0]
+                    required_fields = ["rank", "creator_id", "name", "level", "avg_rating", "total_completed"]
+                    
+                    if all(field in first_creator for field in required_fields):
+                        print_success(f"Leaderboard structure correct")
+                        print_info(f"Top creator: {first_creator.get('name')} - Level {first_creator.get('level')} - Rating {first_creator.get('avg_rating')}")
+                        
+                        # Show top 3 creators
+                        for i, creator in enumerate(leaderboard[:3]):
+                            name = creator.get("name", "Unknown")
+                            level = creator.get("level", "rookie")
+                            rating = creator.get("avg_rating", 0)
+                            completed = creator.get("total_completed", 0)
+                            city = creator.get("city", "Unknown")
+                            
+                            print_info(f"#{creator.get('rank', i+1)}: {name} ({city}) - {level} - {rating}⭐ - {completed} completadas")
+                        
+                        add_test_result("UGC Reputation Leaderboard", "PASS")
+                        return True
+                    else:
+                        missing = [f for f in required_fields if f not in first_creator]
+                        print_error(f"Leaderboard creator missing fields: {missing}")
+                        add_test_result("UGC Reputation Leaderboard", "FAIL", f"Missing creator fields: {missing}")
+                        return False
+                else:
+                    print_warning("No creators in leaderboard (expected for fresh system)")
+                    add_test_result("UGC Reputation Leaderboard", "PASS")
+                    return True
+            else:
+                print_error("Response missing 'leaderboard' field")
+                add_test_result("UGC Reputation Leaderboard", "FAIL", "Missing leaderboard field")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Reputation Leaderboard", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Reputation Leaderboard", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_reputation_leaderboard_with_filters():
+    """Test UGC Reputation: GET /api/ugc/reputation/leaderboard with filters"""
+    print_test_header("Test UGC Reputation Leaderboard with Filters")
+    
+    try:
+        # Test with category filter
+        url = f"{BACKEND_URL}/ugc/reputation/leaderboard?category=moda&city=Asunción&platform=instagram"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            if "leaderboard" in data:
+                leaderboard = data.get("leaderboard", [])
+                
+                print_success(f"UGC reputation leaderboard with filters working correctly")
+                print_success(f"Filtered creators: {len(leaderboard)}")
+                
+                if leaderboard:
+                    print_info(f"Sample filtered creator: {leaderboard[0].get('name')} from {leaderboard[0].get('city')}")
+                else:
+                    print_info("No creators match the filter criteria (expected for fresh system)")
+                
+                add_test_result("UGC Reputation Leaderboard Filters", "PASS")
+                return True
+            else:
+                print_error("Response missing 'leaderboard' field")
+                add_test_result("UGC Reputation Leaderboard Filters", "FAIL", "Missing leaderboard field")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Reputation Leaderboard Filters", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Reputation Leaderboard Filters", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_reputation_creator_profile():
+    """Test UGC Reputation: GET /api/ugc/reputation/creator/{creator_id}"""
+    print_test_header("Test UGC Reputation Creator Profile")
+    
+    try:
+        # Use a test creator ID - this will return 404 for non-existent creator
+        test_creator_id = "creator_test123456"
+        url = f"{BACKEND_URL}/ugc/reputation/creator/{test_creator_id}"
+        
+        print_info(f"GET {url}")
+        
+        response = requests.get(url)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print_success(f"Creator profile endpoint working correctly (404 for non-existent creator)")
+            print_info("Response: Creator not found (expected for test ID)")
+            add_test_result("UGC Reputation Creator Profile", "PASS")
+            return True
+        elif response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_sections = ["profile", "reputation", "performance", "badges"]
+            if all(section in data for section in required_sections):
+                print_success(f"Creator profile structure correct")
+                
+                profile = data.get("profile", {})
+                reputation = data.get("reputation", {})
+                performance = data.get("performance", {})
+                badges = data.get("badges", [])
+                
+                # Check profile structure
+                profile_fields = ["id", "name", "level", "level_progress", "level_benefits"]
+                if all(field in profile for field in profile_fields):
+                    print_success(f"Profile section correct")
+                    print_info(f"Creator: {profile.get('name')} - Level: {profile.get('level')}")
+                    
+                    # Check reputation structure
+                    reputation_fields = ["total_ratings", "avg_rating", "rating_breakdown"]
+                    if all(field in reputation for field in reputation_fields):
+                        print_success(f"Reputation section correct")
+                        print_info(f"Rating: {reputation.get('avg_rating')} ({reputation.get('total_ratings')} reviews)")
+                        
+                        # Check performance structure
+                        performance_fields = ["total_collaborations", "avg_rating", "on_time_rate"]
+                        if all(field in performance for field in performance_fields):
+                            print_success(f"Performance section correct")
+                            print_info(f"Collaborations: {performance.get('total_collaborations')}")
+                            
+                            print_success(f"Badges: {len(badges)} badges")
+                            add_test_result("UGC Reputation Creator Profile", "PASS")
+                            return True
+                        else:
+                            missing = [f for f in performance_fields if f not in performance]
+                            print_error(f"Performance missing fields: {missing}")
+                            add_test_result("UGC Reputation Creator Profile", "FAIL", f"Missing performance fields: {missing}")
+                            return False
+                    else:
+                        missing = [f for f in reputation_fields if f not in reputation]
+                        print_error(f"Reputation missing fields: {missing}")
+                        add_test_result("UGC Reputation Creator Profile", "FAIL", f"Missing reputation fields: {missing}")
+                        return False
+                else:
+                    missing = [f for f in profile_fields if f not in profile]
+                    print_error(f"Profile missing fields: {missing}")
+                    add_test_result("UGC Reputation Creator Profile", "FAIL", f"Missing profile fields: {missing}")
+                    return False
+            else:
+                missing = [s for s in required_sections if s not in data]
+                print_error(f"Response missing sections: {missing}")
+                add_test_result("UGC Reputation Creator Profile", "FAIL", f"Missing sections: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Reputation Creator Profile", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Reputation Creator Profile", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_reputation_my_progress():
+    """Test UGC Reputation: GET /api/ugc/reputation/my-progress (requires creator profile)"""
+    print_test_header("Test UGC Reputation My Progress")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Reputation My Progress", "FAIL", "No admin token")
+        return False
+    
+    try:
+        url = f"{BACKEND_URL}/ugc/reputation/my-progress"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        
+        print_info(f"GET {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        
+        response = requests.get(url, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 404:
+            print_success(f"My progress endpoint working correctly (404 for non-creator user)")
+            print_info("Response: Creator profile not found (expected for admin user)")
+            add_test_result("UGC Reputation My Progress", "PASS")
+            return True
+        elif response.status_code == 200:
+            data = response.json()
+            print_info(f"Response structure: {list(data.keys())}")
+            
+            # Validate response structure
+            required_fields = ["current_level", "progress", "current_benefits", "stats"]
+            if all(field in data for field in required_fields):
+                print_success(f"My progress structure correct")
+                
+                current_level = data.get("current_level")
+                progress = data.get("progress")
+                stats = data.get("stats", {})
+                next_level = data.get("next_level")
+                badges = data.get("badges", [])
+                
+                print_info(f"Current level: {current_level} ({progress}% progress)")
+                print_info(f"Stats: {stats.get('total_completed', 0)} completed, {stats.get('avg_rating', 0)} rating")
+                print_info(f"Badges: {len(badges)} badges")
+                
+                if next_level:
+                    print_info(f"Next level: {next_level.get('level')}")
+                
+                add_test_result("UGC Reputation My Progress", "PASS")
+                return True
+            else:
+                missing = [f for f in required_fields if f not in data]
+                print_error(f"Response missing fields: {missing}")
+                add_test_result("UGC Reputation My Progress", "FAIL", f"Missing fields: {missing}")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Reputation My Progress", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Reputation My Progress", "FAIL", f"Exception: {str(e)}")
+        return False
+
+def test_ugc_reputation_rate_creator():
+    """Test UGC Reputation: POST /api/ugc/reputation/rate/{deliverable_id} (requires brand profile)"""
+    print_test_header("Test UGC Reputation Rate Creator")
+    
+    if not admin_token:
+        print_error("No admin token available")
+        add_test_result("UGC Reputation Rate Creator", "FAIL", "No admin token")
+        return False
+    
+    try:
+        # Use a test deliverable ID - this will return 403 for non-brand user
+        test_deliverable_id = "deliverable_test123456"
+        url = f"{BACKEND_URL}/ugc/reputation/rate/{test_deliverable_id}"
+        headers = {"Authorization": f"Bearer {admin_token}"}
+        payload = {
+            "rating": 5,
+            "public_comment": "Excelente trabajo!"
+        }
+        
+        print_info(f"POST {url}")
+        print_info(f"Headers: Authorization: Bearer {admin_token[:20]}...")
+        print_info(f"Payload: {json.dumps(payload, indent=2)}")
+        
+        response = requests.post(url, json=payload, headers=headers)
+        print_info(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 403:
+            print_success(f"Rate creator endpoint working correctly (403 for non-brand user)")
+            print_info("Response: Brand profile required (expected for admin user)")
+            add_test_result("UGC Reputation Rate Creator", "PASS")
+            return True
+        elif response.status_code == 404:
+            print_success(f"Rate creator endpoint working correctly (404 for non-existent deliverable)")
+            print_info("Response: Deliverable not found (expected for test ID)")
+            add_test_result("UGC Reputation Rate Creator", "PASS")
+            return True
+        elif response.status_code == 200:
+            data = response.json()
+            print_info(f"Response: {json.dumps(data, indent=2)}")
+            
+            if "success" in data and "message" in data:
+                print_success(f"Rate creator successful")
+                print_info(f"Message: {data.get('message')}")
+                add_test_result("UGC Reputation Rate Creator", "PASS")
+                return True
+            else:
+                print_error("Response missing success/message fields")
+                add_test_result("UGC Reputation Rate Creator", "FAIL", "Missing response fields")
+                return False
+        else:
+            print_error(f"Failed with status {response.status_code}: {response.text}")
+            add_test_result("UGC Reputation Rate Creator", "FAIL", f"HTTP {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print_error(f"Exception occurred: {str(e)}")
+        add_test_result("UGC Reputation Rate Creator", "FAIL", f"Exception: {str(e)}")
+        return False
+
 # ==================== UGC DELIVERABLES TESTS (SPRINT 4) ====================
 
 def test_ugc_deliverables_creator():
