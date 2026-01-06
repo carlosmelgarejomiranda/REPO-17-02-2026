@@ -16,10 +16,6 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
   });
   const [enterpriseQuote, setEnterpriseQuote] = useState(null);
 
-  useEffect(() => {
-    fetchPackages();
-  }, []);
-
   const fetchPackages = async () => {
     try {
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/packages/pricing`);
@@ -29,6 +25,10 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    fetchPackages();
+  }, []);
 
   const fetchEnterpriseQuote = async () => {
     try {
