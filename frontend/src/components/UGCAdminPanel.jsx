@@ -3,7 +3,7 @@ import {
   Users, Building2, Briefcase, Package, FileCheck, BarChart3, 
   TrendingUp, DollarSign, Clock, CheckCircle, AlertCircle, Eye,
   Star, Award, ArrowUpRight, ArrowDownRight, Loader2, RefreshCw,
-  Filter, Search, ChevronDown, MoreVertical, ExternalLink
+  Filter, Search, ChevronDown, MoreVertical, ExternalLink, Heart
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
