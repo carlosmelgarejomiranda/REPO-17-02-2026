@@ -5559,7 +5559,56 @@ def run_all_tests():
         print(f"\n{Colors.RED}{Colors.BOLD}❌ {failed} test(s) failed{Colors.ENDC}")
         return False
 
+def run_ugc_tests():
+    """Run UGC platform tests specifically"""
+    print(f"{Colors.BOLD}{Colors.BLUE}Avenue UGC Platform Tests{Colors.ENDC}")
+    print(f"Backend URL: {BACKEND_URL}")
+    print("=" * 60)
+    
+    # First authenticate as admin
+    print_test_header("Authentication Setup")
+    if not test_admin_authentication():
+        print_error("Failed to authenticate as admin - stopping tests")
+        return False
+    
+    tests = [
+        # UGC BACKEND ENDPOINTS
+        ("Test UGC Packages Pricing", test_ugc_packages_pricing),
+        ("Test UGC Campaigns Available", test_ugc_campaigns_available),
+        ("Test UGC Enterprise Quote", test_ugc_enterprise_quote),
+    ]
+    
+    results = []
+    
+    for test_name, test_func in tests:
+        try:
+            result = test_func()
+            results.append((test_name, result))
+        except Exception as e:
+            print_error(f"Test {test_name} crashed: {str(e)}")
+            results.append((test_name, False))
+    
+    # Summary
+    print(f"\n{Colors.BOLD}{Colors.BLUE}=== UGC TEST SUMMARY ==={Colors.ENDC}")
+    passed = 0
+    failed = 0
+    
+    for test_name, result in results:
+        if result:
+            print_success(f"{test_name}")
+            passed += 1
+        else:
+            print_error(f"{test_name}")
+            failed += 1
+    
+    print(f"\n{Colors.BLUE}Total Tests: {len(results)}{Colors.ENDC}")
+    print(f"{Colors.GREEN}Passed: {passed}{Colors.ENDC}")
+    print(f"{Colors.RED}Failed: {failed}{Colors.ENDC}")
+    print(f"{Colors.BLUE}Success Rate: {passed}/{len(results)} ({passed/len(results)*100:.1f}%){Colors.ENDC}")
+    
+    return failed == 0
+
 if __name__ == "__main__":
-    # Run SEO tests for this review request
-    success = run_seo_tests()
+    # Run UGC tests for this review request
+    success = run_ugc_tests()
     sys.exit(0 if success else 1)
