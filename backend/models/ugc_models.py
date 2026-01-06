@@ -206,8 +206,8 @@ PACKAGE_CONFIGS = {
         type=PackageType.PRO,
         name="Pro",
         deliveries=12,
-        price=1990000,
-        promo_price=None,
+        price=2390000,
+        promo_price=1990000,
         description="Para marcas con alto volumen",
         features=["12 entregas de contenido", "Soporte prioritario", "Dashboard avanzado", "Reportes detallados", "Acceso a creadores premium"]
     ),
