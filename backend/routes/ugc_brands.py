@@ -185,13 +185,38 @@ async def get_brand_dashboard(request: Request):
     # Get campaigns list for reports access
     campaigns = await db.ugc_campaigns.find(
         {"brand_id": brand_id},
-        {"_id": 0, "id": 1, "name": 1, "status": 1, "slots": 1, "slots_filled": 1, "category": 1}
+        {"_id": 0, "id": 1, "name": 1, "status": 1, "slots": 1, "slots_filled": 1, "category": 1, "city": 1, "created_at": 1}
     ).sort("created_at", -1).limit(10).to_list(10)
     
-    # Add metrics count for each campaign
+    # Add detailed stats for each campaign
     for campaign in campaigns:
-        metrics_count = await db.ugc_metrics.count_documents({"campaign_id": campaign["id"]})
+        campaign_id = campaign["id"]
+        total_deliverables = campaign.get("slots", 0)  # materiales a entregar = slots
+        
+        # Aplicaciones count
+        applications_count = await db.ugc_applications.count_documents({"campaign_id": campaign_id})
+        campaign["applications_count"] = applications_count
+        
+        # Confirmados count (creators with status confirmed)
+        confirmed_count = await db.ugc_applications.count_documents({
+            "campaign_id": campaign_id, 
+            "status": "confirmed"
+        })
+        campaign["confirmed_count"] = confirmed_count
+        
+        # Posteos count (deliverables with status approved or submitted)
+        posteos_count = await db.ugc_deliverables.count_documents({
+            "campaign_id": campaign_id,
+            "status": {"$in": ["approved", "submitted", "completed"]}
+        })
+        campaign["posteos_count"] = posteos_count
+        
+        # Métricas count (metrics submitted for this campaign)
+        metrics_count = await db.ugc_metrics.count_documents({"campaign_id": campaign_id})
         campaign["metrics_count"] = metrics_count
+        
+        # Total deliverables expected
+        campaign["total_deliverables"] = total_deliverables
     
     return {
         "profile": profile,
