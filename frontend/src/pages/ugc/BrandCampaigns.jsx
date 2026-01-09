@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
   Plus, MoreVertical, Users, Eye, Play, Pause, CheckCircle, 
   Clock, ArrowRight, Loader2, Building2, ChevronDown,
-  Instagram, Music2, MapPin, Calendar, AlertCircle
+  Instagram, Music2, MapPin, Calendar, AlertCircle, BarChart3
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
@@ -299,13 +299,23 @@ const BrandCampaigns = () => {
                           </button>
                         )}
                         {(campaign.slots_filled > 0 || ['in_production', 'completed'].includes(campaign.status)) && (
-                          <Link
-                            to={`/ugc/brand/deliverables/${campaign.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex-1 py-2 rounded-lg bg-purple-500/20 text-purple-400 text-sm hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-1"
-                          >
-                            <CheckCircle className="w-4 h-4" /> Ver Entregas
-                          </Link>
+                          <>
+                            <Link
+                              to={`/ugc/brand/deliverables/${campaign.id}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex-1 py-2 rounded-lg bg-purple-500/20 text-purple-400 text-sm hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-1"
+                            >
+                              <CheckCircle className="w-4 h-4" /> Entregas
+                            </Link>
+                            <Link
+                              to={`/ugc/brand/campaigns/${campaign.id}/reports`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex-1 py-2 rounded-lg bg-[#d4a968]/20 text-[#d4a968] text-sm hover:bg-[#d4a968]/30 transition-colors flex items-center justify-center gap-1"
+                              data-testid={`reports-btn-${campaign.id}`}
+                            >
+                              <BarChart3 className="w-4 h-4" /> Reportes
+                            </Link>
+                          </>
                         )}
                         <button
                           onClick={(e) => { e.stopPropagation(); handleSelectCampaign(campaign); }}
