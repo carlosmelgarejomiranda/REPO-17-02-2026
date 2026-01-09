@@ -2294,8 +2294,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Import contract jobs
+# Import contract jobs and scheduler
 from services.contract_jobs import run_all_contract_jobs
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+
+# Initialize scheduler
+scheduler = AsyncIOScheduler()
+
+async def scheduled_contract_jobs():
+    """Wrapper for scheduled execution"""
+    logger.info("Running scheduled contract jobs...")
+    try:
+        result = await run_all_contract_jobs()
+        logger.info(f"Scheduled contract jobs completed: {result}")
+    except Exception as e:
+        logger.error(f"Scheduled contract jobs failed: {e}")
 
 @app.on_event("startup")
 async def startup_event():
@@ -2303,14 +2317,25 @@ async def startup_event():
     logger.info("Starting e-commerce product sync...")
     await start_sync_on_startup()
     
-    # Run contract jobs (slot reload, auto-reject expired applications)
+    # Run contract jobs immediately on startup
     logger.info("Running UGC contract jobs...")
     try:
         result = await run_all_contract_jobs()
         logger.info(f"Contract jobs completed: {result}")
     except Exception as e:
         logger.error(f"Contract jobs failed: {e}")
+    
+    # Schedule daily contract jobs at 6:00 AM (Paraguay time, UTC-3)
+    scheduler.add_job(
+        scheduled_contract_jobs,
+        CronTrigger(hour=9, minute=0),  # 9:00 UTC = 6:00 AM Paraguay
+        id="contract_jobs",
+        replace_existing=True
+    )
+    scheduler.start()
+    logger.info("Scheduler started - Contract jobs will run daily at 6:00 AM Paraguay time")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    scheduler.shutdown()
     client.close()
