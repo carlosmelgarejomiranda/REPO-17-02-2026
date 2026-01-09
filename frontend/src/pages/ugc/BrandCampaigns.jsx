@@ -294,20 +294,7 @@ const BrandCampaigns = () => {
                             )}
                           </button>
                         )}
-                        {campaign.status === 'live' && (
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleCloseCampaign(campaign.id); }}
-                            disabled={actionLoading === campaign.id}
-                            className="flex-1 py-2 rounded-lg bg-yellow-500/20 text-yellow-400 text-sm hover:bg-yellow-500/30 transition-colors flex items-center justify-center gap-1"
-                          >
-                            {actionLoading === campaign.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <><Pause className="w-4 h-4" /> Cerrar</>
-                            )}
-                          </button>
-                        )}
-                        {(campaign.slots_filled > 0 || ['in_production', 'completed'].includes(campaign.status)) && (
+                        {(campaign.slots_filled > 0 || ['live', 'in_production', 'completed'].includes(campaign.status)) && (
                           <>
                             <Link
                               to={`/ugc/brand/deliverables/${campaign.id}`}
