@@ -302,48 +302,85 @@ class CampaignTimeline(BaseModel):
     publish_end: str  # ISO date - deadline to publish
     delivery_sla_hours: int = 48  # Hours after publish to submit in platform
 
+# Contract configuration for campaigns
+class CampaignContract(BaseModel):
+    monthly_deliverables: int  # Number of slots to load each month (e.g., 4)
+    duration_months: int  # Contract duration in months (e.g., 3)
+    start_date: str  # ISO date - when contract starts
+    end_date: str  # ISO date - when contract expires
+    next_reload_date: Optional[str] = None  # ISO date - next slot reload date
+    total_slots_loaded: int = 0  # Total slots loaded so far
+    is_active: bool = True  # Whether contract is active
+    renewed_at: Optional[str] = None  # ISO date - last renewal date
+    renewal_count: int = 0  # Number of times renewed
+
 class Campaign(BaseModel):
     id: str
     brand_id: str
-    package_id: str
+    package_id: Optional[str] = None  # Made optional - admin manages this
     name: str
     description: str
     category: str
     city: str
-    slots: int  # Number of creators needed
-    slots_filled: int = 0
+    # Slot management - now based on contract
+    available_slots: int = 0  # Currently available slots for confirmation
+    total_slots_loaded: int = 0  # Total slots loaded from contract
+    slots_filled: int = 0  # Confirmed creators
+    # Legacy field for backwards compatibility
+    slots: int = 0  # Will be calculated from contract
+    # Contract configuration
+    contract: Optional[CampaignContract] = None
     requirements: CampaignRequirements
     canje: CampaignCanje
     timeline: CampaignTimeline
     assets: Dict[str, Any] = {}  # logo, photos, info
     status: CampaignStatus = CampaignStatus.DRAFT
+    # Visibility for creators
+    visible_to_creators: bool = True
     created_at: str
     updated_at: str
     published_at: Optional[str] = None
     completed_at: Optional[str] = None
+    # Admin notes
+    admin_notes: Optional[str] = None
+    created_by_admin: Optional[str] = None  # Admin user_id who created
 
 class CampaignCreate(BaseModel):
+    brand_id: str  # Admin selects the brand
     name: str
     description: str
     category: str
     city: str
-    slots: int
+    # Contract configuration
+    monthly_deliverables: int  # Slots per month
+    contract_duration_months: int  # Duration in months
+    contract_start_date: str  # ISO date
+    # Requirements and content
     requirements: CampaignRequirements
     canje: CampaignCanje
     timeline: CampaignTimeline
     assets: Dict[str, Any] = {}
+    admin_notes: Optional[str] = None
 
 class CampaignUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     category: Optional[str] = None
     city: Optional[str] = None
-    slots: Optional[int] = None
     requirements: Optional[CampaignRequirements] = None
     canje: Optional[CampaignCanje] = None
     timeline: Optional[CampaignTimeline] = None
     assets: Optional[Dict[str, Any]] = None
     status: Optional[CampaignStatus] = None
+    admin_notes: Optional[str] = None
+    visible_to_creators: Optional[bool] = None
+
+# Contract renewal by admin
+class CampaignContractRenewal(BaseModel):
+    monthly_deliverables: int
+    duration_months: int
+    start_date: str  # New contract start date
+    notes: Optional[str] = None
 
 # ==================== APPLICATION MODELS ====================
 
