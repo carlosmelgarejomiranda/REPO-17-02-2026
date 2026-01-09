@@ -83,21 +83,11 @@ const BrandDashboard = () => {
 
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Page Header */}
-        <div className="flex items-center justify-between mb-10">
-          <div>
-            <h1 className="text-3xl font-light mb-2">
-              Mis <span className="text-[#d4a968] italic">Campañas</span>
-            </h1>
-            <p className="text-gray-400">Accede a los reportes y métricas de tus campañas</p>
-          </div>
-          <Link
-            to="/ugc/brand/campaigns/new"
-            className="flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] transition-colors font-medium"
-            data-testid="new-campaign-btn"
-          >
-            <Plus className="w-5 h-5" />
-            Nueva Campaña
-          </Link>
+        <div className="mb-10">
+          <h1 className="text-3xl font-light mb-2">
+            Mis <span className="text-[#d4a968] italic">Campañas</span>
+          </h1>
+          <p className="text-gray-400">Accede a los reportes y métricas de tus campañas</p>
         </div>
 
         {/* Campaigns Grid */}
