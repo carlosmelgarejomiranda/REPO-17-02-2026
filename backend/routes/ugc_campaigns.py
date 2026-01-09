@@ -57,8 +57,11 @@ async def get_available_campaigns(
     """Get available campaigns for creators to apply"""
     db = await get_db()
     
-    # Build query - only live campaigns
-    query = {"status": CampaignStatus.LIVE}
+    # Build query - only live campaigns visible to creators
+    query = {
+        "status": CampaignStatus.LIVE,
+        "visible_to_creators": {"$ne": False}  # Include campaigns without this field or with True
+    }
     
     if city:
         query["city"] = city
