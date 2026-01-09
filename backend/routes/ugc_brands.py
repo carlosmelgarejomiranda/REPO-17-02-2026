@@ -182,6 +182,17 @@ async def get_brand_dashboard(request: Request):
         {"_id": 0}
     ).sort("applied_at", -1).limit(5).to_list(5)
     
+    # Get campaigns list for reports access
+    campaigns = await db.ugc_campaigns.find(
+        {"brand_id": brand_id},
+        {"_id": 0, "id": 1, "name": 1, "status": 1, "slots": 1, "slots_filled": 1, "category": 1}
+    ).sort("created_at", -1).limit(10).to_list(10)
+    
+    # Add metrics count for each campaign
+    for campaign in campaigns:
+        metrics_count = await db.ugc_metrics.count_documents({"campaign_id": campaign["id"]})
+        campaign["metrics_count"] = metrics_count
+    
     return {
         "profile": profile,
         "active_package": active_package,
@@ -191,7 +202,8 @@ async def get_brand_dashboard(request: Request):
             "pending_reviews": pending_reviews,
             "deliveries_remaining": active_package["deliveries_remaining"] if active_package else 0
         },
-        "recent_applications": recent_applications
+        "recent_applications": recent_applications,
+        "campaigns": campaigns
     }
 
 # ==================== CREATORS WORKED WITH ====================
