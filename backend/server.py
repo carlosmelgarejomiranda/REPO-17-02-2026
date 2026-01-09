@@ -2294,11 +2294,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Import contract jobs
+from services.contract_jobs import run_all_contract_jobs
+
 @app.on_event("startup")
 async def startup_event():
-    """Initialize e-commerce product sync"""
+    """Initialize services on startup"""
     logger.info("Starting e-commerce product sync...")
     await start_sync_on_startup()
+    
+    # Run contract jobs (slot reload, auto-reject expired applications)
+    logger.info("Running UGC contract jobs...")
+    try:
+        result = await run_all_contract_jobs()
+        logger.info(f"Contract jobs completed: {result}")
+    except Exception as e:
+        logger.error(f"Contract jobs failed: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
