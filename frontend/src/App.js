@@ -774,6 +774,7 @@ function AppRouter() {
           <Route path="/ugc/brand/campaigns/new" element={<CampaignBuilder />} />
           <Route path="/ugc/brand/campaigns" element={<BrandCampaigns />} />
           <Route path="/ugc/brand/deliverables/:campaignId" element={<BrandDeliverables />} />
+          <Route path="/ugc/brand/campaigns/:campaignId/reports" element={<BrandCampaignReports />} />
           <Route path="/ugc/campaigns" element={<CampaignsCatalog />} />
         </Routes>
       </div>

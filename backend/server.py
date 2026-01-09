@@ -2273,6 +2273,7 @@ from routes.ugc_deliverables import router as ugc_deliverables_router
 from routes.ugc_metrics import router as ugc_metrics_router
 from routes.ugc_admin import router as ugc_admin_router
 from routes.ugc_reputation import router as ugc_reputation_router
+from routes.ugc_brand_reports import router as ugc_brand_reports_router
 
 app.include_router(ugc_creators_router)
 app.include_router(ugc_brands_router)
@@ -2283,6 +2284,7 @@ app.include_router(ugc_deliverables_router)
 app.include_router(ugc_metrics_router)
 app.include_router(ugc_admin_router)
 app.include_router(ugc_reputation_router)
+app.include_router(ugc_brand_reports_router)
 
 app.add_middleware(
     CORSMiddleware,
