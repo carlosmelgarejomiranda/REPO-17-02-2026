@@ -134,27 +134,38 @@ const BrandDashboard = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="space-y-3 mb-5">
+                <div className="space-y-2.5 mb-5">
+                  {/* Aplicaciones */}
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400 flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      Creadores
-                    </span>
+                    <span className="text-gray-400">Aplicaciones</span>
                     <span className="text-white font-medium">
-                      {campaign.slots_filled || 0} / {campaign.slots}
+                      {campaign.applications_count || 0}
                     </span>
                   </div>
-                  {campaign.metrics_count > 0 && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-400 flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4" />
-                        Métricas
-                      </span>
-                      <span className="text-[#d4a968] font-medium">
-                        {campaign.metrics_count}
-                      </span>
-                    </div>
-                  )}
+                  
+                  {/* Confirmados */}
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">Confirmados</span>
+                    <span className="text-white font-medium">
+                      {campaign.confirmed_count || 0} / {campaign.total_deliverables || campaign.slots || 0}
+                    </span>
+                  </div>
+                  
+                  {/* Posteos */}
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">Posteos</span>
+                    <span className="text-white font-medium">
+                      {campaign.posteos_count || 0} / {campaign.total_deliverables || campaign.slots || 0}
+                    </span>
+                  </div>
+                  
+                  {/* Métricas */}
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">Métricas</span>
+                    <span className="text-[#d4a968] font-medium">
+                      {campaign.metrics_count || 0} / {campaign.total_deliverables || campaign.slots || 0}
+                    </span>
+                  </div>
                 </div>
 
                 {/* CTA */}
