@@ -63,6 +63,11 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
 - [x] Brand-only access to reports and deliverable ratings (no campaign management)
 - [x] Campaign renewal by admin
 - [x] New campaign stats: Aplicaciones, Confirmados, Posteos, Métricas
+- [x] **APScheduler** configured for daily job execution at 6:00 AM Paraguay time
+- [x] **Email notifications**:
+  - Brand: Informativo cuando se recargan cupos ("Nuestro equipo seleccionará creadores")
+  - Admin: Resumen con acción requerida ("X campañas con cupos para confirmar")
+  - Creadores: Notificación cuando su aplicación es cerrada por vencimiento
 
 ## Architecture
 
