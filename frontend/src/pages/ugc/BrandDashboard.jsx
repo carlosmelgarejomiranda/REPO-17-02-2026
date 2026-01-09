@@ -18,9 +18,10 @@ const BrandDashboard = () => {
 
   const fetchDashboard = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/ugc/brands/me/dashboard`,
-        { credentials: 'include' }
+        { headers: { 'Authorization': `Bearer ${token}` } }
       );
       if (res.ok) {
         const data = await res.json();
