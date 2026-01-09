@@ -65,9 +65,10 @@ const BrandCampaigns = () => {
   const handlePublishCampaign = async (campaignId) => {
     setActionLoading(campaignId);
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(`${API_URL}/api/ugc/campaigns/${campaignId}/publish`, {
         method: 'POST',
-        credentials: 'include'
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         fetchCampaigns();
@@ -85,9 +86,10 @@ const BrandCampaigns = () => {
   const handleCloseCampaign = async (campaignId) => {
     setActionLoading(campaignId);
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(`${API_URL}/api/ugc/campaigns/${campaignId}/close`, {
         method: 'POST',
-        credentials: 'include'
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         fetchCampaigns();
@@ -105,10 +107,13 @@ const BrandCampaigns = () => {
   const handleUpdateApplicationStatus = async (applicationId, newStatus, reason = null) => {
     setActionLoading(applicationId);
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(`${API_URL}/api/ugc/applications/${applicationId}/status`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ status: newStatus, reason })
       });
       if (res.ok) {
