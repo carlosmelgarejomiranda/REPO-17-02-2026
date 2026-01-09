@@ -203,9 +203,15 @@ async def get_campaign_applicants_report(
     }, {"_id": 0}).to_list(500)
     
     applicants_report = []
+    processed_creators = set()  # Track unique creators
     
     for app in applications:
         creator_id = app["creator_id"]
+        
+        # Skip if already processed (deduplicate)
+        if creator_id in processed_creators:
+            continue
+        processed_creators.add(creator_id)
         
         # Get creator info
         creator = await db.ugc_creators.find_one(
