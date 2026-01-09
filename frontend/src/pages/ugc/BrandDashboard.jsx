@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Building2, Package, Users, FileCheck, BarChart3, Plus,
-  ArrowRight, Clock, CheckCircle, AlertCircle, Loader2,
-  Eye, TrendingUp, Globe
+  Plus, Users, BarChart3, Loader2, AlertCircle, TrendingUp, Calendar, Building2
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 const BrandDashboard = () => {
   const { user } = useAuth();
@@ -19,10 +19,9 @@ const BrandDashboard = () => {
   const fetchDashboard = async () => {
     try {
       const token = localStorage.getItem('auth_token');
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/ugc/brands/me/dashboard`,
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
+      const res = await fetch(`${API_URL}/api/ugc/brands/me/dashboard`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         setDashboard(data);
@@ -34,8 +33,21 @@ const BrandDashboard = () => {
     }
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
+  const getStatusBadge = (status) => {
+    const badges = {
+      draft: { color: 'bg-gray-500/20 text-gray-400', label: 'Borrador' },
+      live: { color: 'bg-green-500/20 text-green-400', label: 'Activa' },
+      closed: { color: 'bg-yellow-500/20 text-yellow-400', label: 'Cerrada' },
+      in_production: { color: 'bg-purple-500/20 text-purple-400', label: 'En Producción' },
+      completed: { color: 'bg-blue-500/20 text-blue-400', label: 'Completada' }
+    };
+    const badge = badges[status] || badges.draft;
+    return <span className={`px-3 py-1 rounded-full text-xs font-medium ${badge.color}`}>{badge.label}</span>;
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '-';
+    return new Date(dateStr).toLocaleDateString('es-PY', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
   if (loading) {
@@ -46,297 +58,114 @@ const BrandDashboard = () => {
     );
   }
 
-  const stats = dashboard?.stats || {};
-  const activePackage = dashboard?.active_package;
+  const campaigns = dashboard?.campaigns || [];
+  const profile = dashboard?.profile;
 
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <div className="border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="/" className="text-xl font-light">
+          <Link to="/" className="text-xl font-light">
             <span className="text-[#d4a968] italic">Avenue</span> UGC
-          </a>
+          </Link>
           <div className="flex items-center gap-4">
-            <Link to="/ugc/brand/campaigns" className="text-gray-400 hover:text-white transition-colors">
-              Mis Campañas
+            <Link to="/ugc/brand/packages" className="text-gray-400 hover:text-white transition-colors">
+              Mi Paquete
             </Link>
-            <Link to="/ugc/brand/profile" className="flex items-center gap-2 text-gray-400 hover:text-white">
+            <div className="flex items-center gap-2 text-gray-400">
               <Building2 className="w-5 h-5" />
-              {dashboard?.profile?.company_name}
-            </Link>
+              {profile?.company_name}
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Welcome Section */}
+        {/* Page Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
             <h1 className="text-3xl font-light mb-2">
-              Hola, <span className="text-[#d4a968] italic">{dashboard?.profile?.contact_name || user?.name}</span>
+              Mis <span className="text-[#d4a968] italic">Campañas</span>
             </h1>
-            <p className="text-gray-400">Panel de control de {dashboard?.profile?.company_name}</p>
+            <p className="text-gray-400">Accede a los reportes y métricas de tus campañas</p>
           </div>
           <Link
             to="/ugc/brand/campaigns/new"
-            className="flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] transition-all"
+            className="flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] transition-colors font-medium"
+            data-testid="new-campaign-btn"
           >
             <Plus className="w-5 h-5" />
             Nueva Campaña
           </Link>
         </div>
 
-        {/* Package Alert */}
-        {!activePackage && (
-          <div className="mb-8 p-6 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <AlertCircle className="w-8 h-8 text-[#d4a968]" />
-              <div>
-                <p className="font-medium">No tenés un paquete activo</p>
-                <p className="text-sm text-gray-400">Necesitás un paquete para crear campañas</p>
-              </div>
-            </div>
+        {/* Campaigns Grid */}
+        {campaigns.length === 0 ? (
+          <div className="p-12 bg-white/5 border border-white/10 rounded-2xl text-center max-w-lg mx-auto">
+            <AlertCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl font-medium mb-2">No tenés campañas</h3>
+            <p className="text-gray-400 mb-6">Creá tu primera campaña para empezar a trabajar con creadores UGC</p>
             <Link
-              to="/ugc/brand/packages"
-              className="px-4 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958]"
+              to="/ugc/brand/campaigns/new"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] font-medium"
             >
-              Ver Paquetes
+              <Plus className="w-5 h-5" /> Crear Campaña
             </Link>
           </div>
-        )}
-
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-4 mb-10">
-          {/* Package Card */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className="w-12 h-12 rounded-xl bg-[#d4a968]/20 flex items-center justify-center mb-4">
-              <Package className="w-6 h-6 text-[#d4a968]" />
-            </div>
-            <p className="text-gray-400 text-sm mb-1">Entregas Disponibles</p>
-            <p className="text-3xl font-medium">{stats.deliveries_remaining || 0}</p>
-            {activePackage && (
-              <p className="text-xs text-gray-500 mt-1">Paquete {activePackage.type}</p>
-            )}
-          </div>
-
-          {/* Active Campaigns */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4">
-              <BarChart3 className="w-6 h-6 text-purple-500" />
-            </div>
-            <p className="text-gray-400 text-sm mb-1">Campañas Activas</p>
-            <p className="text-3xl font-medium">{stats.active_campaigns || 0}</p>
-            <p className="text-xs text-gray-500 mt-1">de {stats.total_campaigns || 0} total</p>
-          </div>
-
-          {/* Pending Reviews */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center mb-4">
-              <FileCheck className="w-6 h-6 text-orange-500" />
-            </div>
-            <p className="text-gray-400 text-sm mb-1">Por Revisar</p>
-            <p className="text-3xl font-medium">{stats.pending_reviews || 0}</p>
-            <p className="text-xs text-gray-500 mt-1">entregas pendientes</p>
-          </div>
-
-          {/* Quick Action */}
-          <Link
-            to="/ugc/brand/deliverables"
-            className="p-6 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all group"
-          >
-            <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-4">
-              <CheckCircle className="w-6 h-6 text-green-500" />
-            </div>
-            <p className="text-gray-400 text-sm mb-1">Revisar Entregas</p>
-            <p className="text-lg font-medium group-hover:text-[#d4a968] transition-colors flex items-center gap-2">
-              Ver todas <ArrowRight className="w-4 h-4" />
-            </p>
-          </Link>
-        </div>
-
-        {/* Two Columns */}
-        <div className="grid md:grid-cols-2 gap-8 mb-10">
-          {/* Recent Applications */}
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-medium">Aplicaciones Recientes</h2>
-              <Link to="/ugc/brand/campaigns" className="text-[#d4a968] text-sm hover:underline flex items-center gap-1">
-                Ver todas <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {dashboard?.recent_applications?.length > 0 ? (
-              <div className="space-y-3">
-                {dashboard.recent_applications.map((app) => (
-                  <div
-                    key={app.id}
-                    className="p-4 bg-white/5 border border-white/10 rounded-xl"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#d4a968]/20 flex items-center justify-center">
-                          <Users className="w-5 h-5 text-[#d4a968]" />
-                        </div>
-                        <div>
-                          <p className="font-medium">@{app.creator_username}</p>
-                          <p className="text-sm text-gray-500">{app.creator_name}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-[#d4a968]">
-                          {app.creator_followers?.toLocaleString() || 0} seg.
-                        </p>
-                        <div className="flex items-center gap-1 text-yellow-500">
-                          <span className="text-xs">★</span>
-                          <span className="text-xs">{app.creator_rating?.toFixed(1) || 'N/A'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="p-8 bg-white/5 border border-white/10 rounded-xl text-center">
-                <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">No hay aplicaciones recientes</p>
-              </div>
-            )}
-          </div>
-
-          {/* Quick Actions */}
-          <div>
-            <h2 className="text-xl font-medium mb-6">Acciones Rápidas</h2>
-            <div className="space-y-3">
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {campaigns.map(campaign => (
               <Link
-                to="/ugc/brand/campaigns/new"
-                className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all group"
+                key={campaign.id}
+                to={`/ugc/brand/campaigns/${campaign.id}/reports`}
+                className="group p-6 bg-white/5 border border-white/10 rounded-2xl hover:border-[#d4a968]/50 hover:bg-white/[0.07] transition-all"
+                data-testid={`campaign-card-${campaign.id}`}
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#d4a968]/20 flex items-center justify-center">
-                    <Plus className="w-5 h-5 text-[#d4a968]" />
+                {/* Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-white text-lg mb-1 truncate group-hover:text-[#d4a968] transition-colors">
+                      {campaign.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">{campaign.category} • {campaign.city}</p>
                   </div>
-                  <span>Crear nueva campaña</span>
+                  {getStatusBadge(campaign.status)}
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-[#d4a968]" />
-              </Link>
 
-              <Link
-                to="/ugc/brand/campaigns"
-                className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                    <FileCheck className="w-5 h-5 text-purple-500" />
+                {/* Stats */}
+                <div className="space-y-3 mb-5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400 flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      Creadores
+                    </span>
+                    <span className="text-white font-medium">
+                      {campaign.slots_filled || 0} / {campaign.slots}
+                    </span>
                   </div>
-                  <span>Gestionar campañas</span>
-                </div>
-                <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-[#d4a968]" />
-              </Link>
-
-              <Link
-                to="/ugc/brand/packages"
-                className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                    <Package className="w-5 h-5 text-green-500" />
-                  </div>
-                  <span>{activePackage ? 'Ver mi paquete' : 'Comprar paquete'}</span>
-                </div>
-                <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-[#d4a968]" />
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Campaign Reports Section */}
-        {dashboard?.campaigns?.length > 0 && (
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-medium">Reportes de Campañas</h2>
-                <p className="text-sm text-gray-400">Accede a métricas, demografía y postulantes de cada campaña</p>
-              </div>
-              <Link to="/ugc/brand/campaigns" className="text-[#d4a968] text-sm hover:underline flex items-center gap-1">
-                Ver todas <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {dashboard.campaigns.map((campaign) => {
-                const statusColors = {
-                  draft: 'bg-gray-500/20 text-gray-400',
-                  live: 'bg-green-500/20 text-green-400',
-                  closed: 'bg-yellow-500/20 text-yellow-400',
-                  in_production: 'bg-purple-500/20 text-purple-400',
-                  completed: 'bg-blue-500/20 text-blue-400'
-                };
-                const statusLabels = {
-                  draft: 'Borrador',
-                  live: 'Activa',
-                  closed: 'Cerrada',
-                  in_production: 'En Producción',
-                  completed: 'Completada'
-                };
-                
-                return (
-                  <div
-                    key={campaign.id}
-                    className="p-5 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-medium text-white mb-1">{campaign.name}</h3>
-                        <p className="text-xs text-gray-500">{campaign.category}</p>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs ${statusColors[campaign.status] || statusColors.draft}`}>
-                        {statusLabels[campaign.status] || campaign.status}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
-                      <span className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {campaign.slots_filled || 0}/{campaign.slots} creadores
-                      </span>
-                      {campaign.metrics_count > 0 && (
-                        <span className="flex items-center gap-1 text-[#d4a968]">
-                          <TrendingUp className="w-4 h-4" />
-                          {campaign.metrics_count} métricas
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Report Buttons */}
-                    <div className="flex gap-2">
-                      <Link
-                        to={`/ugc/brand/campaigns/${campaign.id}/reports`}
-                        className="flex-1 py-2 rounded-lg bg-[#d4a968]/20 text-[#d4a968] text-sm hover:bg-[#d4a968]/30 transition-colors flex items-center justify-center gap-1"
-                        data-testid={`campaign-reports-${campaign.id}`}
-                      >
-                        <BarChart3 className="w-4 h-4" />
+                  {campaign.metrics_count > 0 && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-400 flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4" />
                         Métricas
-                      </Link>
-                      <Link
-                        to={`/ugc/brand/campaigns/${campaign.id}/reports`}
-                        onClick={() => localStorage.setItem('default_report_tab', 'demografia')}
-                        className="flex-1 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 text-sm hover:bg-cyan-500/30 transition-colors flex items-center justify-center gap-1"
-                      >
-                        <Globe className="w-4 h-4" />
-                        Demografía
-                      </Link>
-                      <Link
-                        to={`/ugc/brand/deliverables/${campaign.id}`}
-                        className="py-2 px-3 rounded-lg bg-white/10 text-gray-300 text-sm hover:bg-white/20 transition-colors flex items-center justify-center"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Link>
+                      </span>
+                      <span className="text-[#d4a968] font-medium">
+                        {campaign.metrics_count}
+                      </span>
                     </div>
+                  )}
+                </div>
+
+                {/* CTA */}
+                <div className="pt-4 border-t border-white/10">
+                  <div className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[#d4a968]/10 text-[#d4a968] text-sm font-medium group-hover:bg-[#d4a968]/20 transition-colors">
+                    <BarChart3 className="w-4 h-4" />
+                    Ver Reportes
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </div>
