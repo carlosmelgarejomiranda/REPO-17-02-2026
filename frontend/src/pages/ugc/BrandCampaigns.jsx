@@ -24,7 +24,10 @@ const BrandCampaigns = () => {
 
   const fetchCampaigns = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ugc/campaigns/me/all`, { credentials: 'include' });
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/api/ugc/campaigns/me/all`, { 
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         setCampaigns(data.campaigns || []);
@@ -39,8 +42,9 @@ const BrandCampaigns = () => {
   const fetchApplications = async (campaignId) => {
     setLoadingApplications(true);
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(`${API_URL}/api/ugc/applications/campaign/${campaignId}`, { 
-        credentials: 'include' 
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         const data = await res.json();
