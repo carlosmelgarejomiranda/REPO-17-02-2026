@@ -176,10 +176,30 @@ const BrandCampaignReports = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Campaign Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-light mb-2">{campaign?.name}</h1>
-          <p className="text-gray-400">{campaign?.category} • {campaign?.city}</p>
+        {/* Campaign Title & Action Buttons */}
+        <div className="flex items-start justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-light mb-2">{campaign?.name}</h1>
+            <p className="text-gray-400">{campaign?.category} • {campaign?.city}</p>
+          </div>
+          <div className="flex gap-3">
+            <Link
+              to={`/ugc/brand/deliverables/${campaignId}`}
+              className="flex items-center gap-2 px-5 py-2.5 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors"
+              data-testid="deliverables-btn"
+            >
+              <FileCheck className="w-4 h-4" />
+              Entregas
+            </Link>
+            <Link
+              to={`/ugc/brand/campaigns/${campaignId}/applications`}
+              className="flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
+              data-testid="applications-btn"
+            >
+              <ClipboardList className="w-4 h-4" />
+              Ver Aplicaciones
+            </Link>
+          </div>
         </div>
 
         {/* Report Type Buttons */}
