@@ -156,7 +156,7 @@ const BrandDashboard = () => {
         </div>
 
         {/* Two Columns */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 mb-10">
           {/* Recent Applications */}
           <div>
             <div className="flex items-center justify-between mb-6">
@@ -222,27 +222,14 @@ const BrandDashboard = () => {
               </Link>
 
               <Link
-                to="/ugc/brand/deliverables"
+                to="/ugc/brand/campaigns"
                 className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all group"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
                     <FileCheck className="w-5 h-5 text-purple-500" />
                   </div>
-                  <span>Revisar entregas</span>
-                </div>
-                <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-[#d4a968]" />
-              </Link>
-
-              <Link
-                to="/ugc/brand/reports"
-                className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-                    <BarChart3 className="w-5 h-5 text-cyan-500" />
-                  </div>
-                  <span>Ver reportes</span>
+                  <span>Gestionar campañas</span>
                 </div>
                 <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-[#d4a968]" />
               </Link>
@@ -262,6 +249,96 @@ const BrandDashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* Campaign Reports Section */}
+        {dashboard?.campaigns?.length > 0 && (
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-medium">Reportes de Campañas</h2>
+                <p className="text-sm text-gray-400">Accede a métricas, demografía y postulantes de cada campaña</p>
+              </div>
+              <Link to="/ugc/brand/campaigns" className="text-[#d4a968] text-sm hover:underline flex items-center gap-1">
+                Ver todas <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {dashboard.campaigns.map((campaign) => {
+                const statusColors = {
+                  draft: 'bg-gray-500/20 text-gray-400',
+                  live: 'bg-green-500/20 text-green-400',
+                  closed: 'bg-yellow-500/20 text-yellow-400',
+                  in_production: 'bg-purple-500/20 text-purple-400',
+                  completed: 'bg-blue-500/20 text-blue-400'
+                };
+                const statusLabels = {
+                  draft: 'Borrador',
+                  live: 'Activa',
+                  closed: 'Cerrada',
+                  in_production: 'En Producción',
+                  completed: 'Completada'
+                };
+                
+                return (
+                  <div
+                    key={campaign.id}
+                    className="p-5 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-medium text-white mb-1">{campaign.name}</h3>
+                        <p className="text-xs text-gray-500">{campaign.category}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs ${statusColors[campaign.status] || statusColors.draft}`}>
+                        {statusLabels[campaign.status] || campaign.status}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
+                      <span className="flex items-center gap-1">
+                        <Users className="w-4 h-4" />
+                        {campaign.slots_filled || 0}/{campaign.slots} creadores
+                      </span>
+                      {campaign.metrics_count > 0 && (
+                        <span className="flex items-center gap-1 text-[#d4a968]">
+                          <TrendingUp className="w-4 h-4" />
+                          {campaign.metrics_count} métricas
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Report Buttons */}
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/ugc/brand/campaigns/${campaign.id}/reports`}
+                        className="flex-1 py-2 rounded-lg bg-[#d4a968]/20 text-[#d4a968] text-sm hover:bg-[#d4a968]/30 transition-colors flex items-center justify-center gap-1"
+                        data-testid={`campaign-reports-${campaign.id}`}
+                      >
+                        <BarChart3 className="w-4 h-4" />
+                        Métricas
+                      </Link>
+                      <Link
+                        to={`/ugc/brand/campaigns/${campaign.id}/reports`}
+                        onClick={() => localStorage.setItem('default_report_tab', 'demografia')}
+                        className="flex-1 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 text-sm hover:bg-cyan-500/30 transition-colors flex items-center justify-center gap-1"
+                      >
+                        <Globe className="w-4 h-4" />
+                        Demografía
+                      </Link>
+                      <Link
+                        to={`/ugc/brand/deliverables/${campaign.id}`}
+                        className="py-2 px-3 rounded-lg bg-white/10 text-gray-300 text-sm hover:bg-white/20 transition-colors flex items-center justify-center"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
