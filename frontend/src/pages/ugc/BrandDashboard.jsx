@@ -94,14 +94,8 @@ const BrandDashboard = () => {
         {campaigns.length === 0 ? (
           <div className="p-12 bg-white/5 border border-white/10 rounded-2xl text-center max-w-lg mx-auto">
             <AlertCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium mb-2">No tenés campañas</h3>
-            <p className="text-gray-400 mb-6">Creá tu primera campaña para empezar a trabajar con creadores UGC</p>
-            <Link
-              to="/ugc/brand/campaigns/new"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] font-medium"
-            >
-              <Plus className="w-5 h-5" /> Crear Campaña
-            </Link>
+            <h3 className="text-xl font-medium mb-2">No tenés campañas activas</h3>
+            <p className="text-gray-400">Contactá con Avenue para activar tu primera campaña</p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
