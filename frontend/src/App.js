@@ -58,6 +58,7 @@ import Leaderboard from "./pages/ugc/Leaderboard";
 import UGCMarcas from "./pages/ugc/UGCMarcas";
 import CreatorsPage from "./pages/ugc/CreatorsPage";
 import UGCLanding from "./components/UGCLanding";
+import BrandCampaignReports from "./pages/ugc/BrandCampaignReports";
 
 // Auth context helper
 const useAuth = () => {
