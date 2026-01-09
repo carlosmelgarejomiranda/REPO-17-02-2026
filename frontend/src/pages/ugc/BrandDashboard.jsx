@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Building2, Package, Users, FileCheck, BarChart3, Plus,
-  ArrowRight, Clock, CheckCircle, AlertCircle, Loader2
+  ArrowRight, Clock, CheckCircle, AlertCircle, Loader2,
+  Eye, TrendingUp, Globe
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
