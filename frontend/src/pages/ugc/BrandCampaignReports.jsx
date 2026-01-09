@@ -4,7 +4,7 @@ import {
   ArrowLeft, BarChart3, Users, Globe, Filter, Calendar, Instagram, 
   Music2, Eye, Heart, MessageCircle, Share2, Bookmark, Clock, 
   TrendingUp, Star, Loader2, ChevronDown, Award, AlertCircle,
-  CheckCircle, XCircle
+  CheckCircle, XCircle, FileCheck, ClipboardList
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
