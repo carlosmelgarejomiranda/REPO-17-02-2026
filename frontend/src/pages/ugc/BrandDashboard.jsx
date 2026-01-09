@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Plus, Users, BarChart3, Loader2, AlertCircle, TrendingUp, Calendar, Building2
+  Plus, BarChart3, Loader2, AlertCircle, Building2
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
