@@ -54,6 +54,16 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
 - [x] **NEW**: Direct access from BrandDashboard with campaign cards showing "Métricas" and "Demografía" buttons
 - [x] **NEW**: Dashboard endpoint returns campaigns list with metrics count
 
+### Campaign Contract System (NEW - Jan 2026)
+- [x] Contract-based campaigns with monthly deliverable quotas
+- [x] Automatic slot reloading based on contract activation date (same day each month)
+- [x] Contract expiration handling (campaign becomes invisible to creators)
+- [x] Auto-rejection of pending applications 30 days after contract expiration
+- [x] Admin-only campaign creation and management
+- [x] Brand-only access to reports and deliverable ratings (no campaign management)
+- [x] Campaign renewal by admin
+- [x] New campaign stats: Aplicaciones, Confirmados, Posteos, Métricas
+
 ## Architecture
 
 ### Frontend Routes (React)
