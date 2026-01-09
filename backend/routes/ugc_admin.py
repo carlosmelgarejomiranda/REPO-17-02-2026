@@ -353,6 +353,230 @@ async def get_all_campaigns(
     
     return {"campaigns": campaigns, "total": total}
 
+from models.ugc_models import CampaignCreate, CampaignContractRenewal, CampaignContract
+
+@router.post("/campaigns", response_model=dict)
+async def admin_create_campaign(
+    data: CampaignCreate,
+    request: Request
+):
+    """Admin creates a campaign for a brand with contract configuration"""
+    user = await require_admin(request)
+    db = await get_db()
+    
+    # Verify brand exists
+    brand = await db.ugc_brands.find_one({"id": data.brand_id}, {"_id": 0})
+    if not brand:
+        raise HTTPException(status_code=404, detail="Brand not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    # Calculate contract dates
+    start_date = datetime.fromisoformat(data.contract_start_date.replace('Z', '+00:00'))
+    end_date = start_date
+    for _ in range(data.contract_duration_months):
+        month = end_date.month + 1
+        year = end_date.year
+        if month > 12:
+            month = 1
+            year += 1
+        import calendar
+        max_day = calendar.monthrange(year, month)[1]
+        day = min(end_date.day, max_day)
+        end_date = end_date.replace(year=year, month=month, day=day)
+    
+    # First reload is one month after start
+    first_reload = start_date
+    month = first_reload.month + 1
+    year = first_reload.year
+    if month > 12:
+        month = 1
+        year += 1
+    import calendar
+    max_day = calendar.monthrange(year, month)[1]
+    day = min(first_reload.day, max_day)
+    next_reload = first_reload.replace(year=year, month=month, day=day)
+    
+    # Create contract
+    contract = {
+        "monthly_deliverables": data.monthly_deliverables,
+        "duration_months": data.contract_duration_months,
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "next_reload_date": next_reload.isoformat(),
+        "total_slots_loaded": data.monthly_deliverables,  # First month's slots
+        "is_active": True,
+        "renewed_at": None,
+        "renewal_count": 0
+    }
+    
+    campaign_id = str(uuid.uuid4())
+    
+    campaign = {
+        "id": campaign_id,
+        "brand_id": data.brand_id,
+        "package_id": None,
+        "name": data.name,
+        "description": data.description,
+        "category": data.category,
+        "city": data.city,
+        "available_slots": data.monthly_deliverables,  # First month's slots available
+        "total_slots_loaded": data.monthly_deliverables,
+        "slots_filled": 0,
+        "slots": data.monthly_deliverables,  # For backwards compat
+        "contract": contract,
+        "requirements": data.requirements.model_dump(),
+        "canje": data.canje.model_dump(),
+        "timeline": data.timeline.model_dump(),
+        "assets": data.assets,
+        "status": CampaignStatus.LIVE,
+        "visible_to_creators": True,
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+        "published_at": now.isoformat(),
+        "completed_at": None,
+        "admin_notes": data.admin_notes,
+        "created_by_admin": user["user_id"]
+    }
+    
+    await db.ugc_campaigns.insert_one(campaign)
+    
+    return {
+        "success": True,
+        "campaign_id": campaign_id,
+        "message": f"Campaña creada con {data.monthly_deliverables} cupos iniciales. Próxima recarga: {next_reload.strftime('%d/%m/%Y')}"
+    }
+
+@router.post("/campaigns/{campaign_id}/renew", response_model=dict)
+async def admin_renew_campaign(
+    campaign_id: str,
+    data: CampaignContractRenewal,
+    request: Request
+):
+    """Admin renews a campaign contract"""
+    await require_admin(request)
+    db = await get_db()
+    
+    campaign = await db.ugc_campaigns.find_one({"id": campaign_id})
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    # Calculate new contract dates
+    start_date = datetime.fromisoformat(data.start_date.replace('Z', '+00:00'))
+    end_date = start_date
+    for _ in range(data.duration_months):
+        month = end_date.month + 1
+        year = end_date.year
+        if month > 12:
+            month = 1
+            year += 1
+        import calendar
+        max_day = calendar.monthrange(year, month)[1]
+        day = min(end_date.day, max_day)
+        end_date = end_date.replace(year=year, month=month, day=day)
+    
+    # Calculate next reload (one month from start)
+    next_reload = start_date
+    month = next_reload.month + 1
+    year = next_reload.year
+    if month > 12:
+        month = 1
+        year += 1
+    import calendar
+    max_day = calendar.monthrange(year, month)[1]
+    day = min(next_reload.day, max_day)
+    next_reload = next_reload.replace(year=year, month=month, day=day)
+    
+    current_contract = campaign.get("contract", {})
+    current_total = campaign.get("total_slots_loaded", 0)
+    current_available = campaign.get("available_slots", 0)
+    
+    # Update with renewal data
+    await db.ugc_campaigns.update_one(
+        {"id": campaign_id},
+        {
+            "$set": {
+                "contract.monthly_deliverables": data.monthly_deliverables,
+                "contract.duration_months": data.duration_months,
+                "contract.start_date": start_date.isoformat(),
+                "contract.end_date": end_date.isoformat(),
+                "contract.next_reload_date": next_reload.isoformat(),
+                "contract.is_active": True,
+                "contract.renewed_at": now.isoformat(),
+                "contract.renewal_count": current_contract.get("renewal_count", 0) + 1,
+                "available_slots": current_available + data.monthly_deliverables,
+                "total_slots_loaded": current_total + data.monthly_deliverables,
+                "slots": current_total + data.monthly_deliverables,
+                "visible_to_creators": True,
+                "status": CampaignStatus.LIVE,
+                "updated_at": now.isoformat()
+            }
+        }
+    )
+    
+    return {
+        "success": True,
+        "message": f"Contrato renovado. {data.monthly_deliverables} cupos añadidos. Próxima recarga: {next_reload.strftime('%d/%m/%Y')}"
+    }
+
+@router.put("/campaigns/{campaign_id}/add-slots", response_model=dict)
+async def admin_add_slots(
+    campaign_id: str,
+    slots: int,
+    request: Request
+):
+    """Admin manually adds slots to a campaign"""
+    await require_admin(request)
+    db = await get_db()
+    
+    campaign = await db.ugc_campaigns.find_one({"id": campaign_id})
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    current_available = campaign.get("available_slots", 0)
+    current_total = campaign.get("total_slots_loaded", 0)
+    
+    await db.ugc_campaigns.update_one(
+        {"id": campaign_id},
+        {
+            "$set": {
+                "available_slots": current_available + slots,
+                "total_slots_loaded": current_total + slots,
+                "slots": current_total + slots,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    return {"success": True, "message": f"{slots} cupos añadidos a la campaña"}
+
+@router.put("/campaigns/{campaign_id}/visibility", response_model=dict)
+async def admin_toggle_campaign_visibility(
+    campaign_id: str,
+    visible: bool,
+    request: Request
+):
+    """Admin toggles campaign visibility for creators"""
+    await require_admin(request)
+    db = await get_db()
+    
+    result = await db.ugc_campaigns.update_one(
+        {"id": campaign_id},
+        {
+            "$set": {
+                "visible_to_creators": visible,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    return {"success": True, "message": f"Visibilidad actualizada a {visible}"}
+
 # ==================== REVIEWS MODERATION ====================
 
 @router.get("/reviews", response_model=dict)
