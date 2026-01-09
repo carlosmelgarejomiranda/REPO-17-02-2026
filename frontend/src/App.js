@@ -59,6 +59,7 @@ import UGCMarcas from "./pages/ugc/UGCMarcas";
 import CreatorsPage from "./pages/ugc/CreatorsPage";
 import UGCLanding from "./components/UGCLanding";
 import BrandCampaignReports from "./pages/ugc/BrandCampaignReports";
+import CampaignApplications from "./pages/ugc/CampaignApplications";
 
 // Auth context helper
 const useAuth = () => {
