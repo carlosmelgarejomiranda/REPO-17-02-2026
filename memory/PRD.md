@@ -51,6 +51,8 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
 - [x] Platform filter (TikTok, Instagram, or both)
 - [x] Date filter (All-time vs monthly)
 - [x] Navigation from BrandCampaigns to Reports
+- [x] **NEW**: Direct access from BrandDashboard with campaign cards showing "Métricas" and "Demografía" buttons
+- [x] **NEW**: Dashboard endpoint returns campaigns list with metrics count
 
 ## Architecture
 
