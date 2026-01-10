@@ -176,11 +176,11 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
         <div className="max-w-5xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             {/* Left - Image */}
-            <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+            <div className="relative aspect-[3/4] rounded-lg overflow-hidden max-h-[400px] lg:max-h-[450px]">
               <img 
                 src="https://customer-assets.emergentagent.com/job_one-account/artifacts/6frwfbef_fachada%20avenue.jpg"
                 alt="Avenue"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
             </div>
 
