@@ -498,7 +498,7 @@ const MetricsSubmit = () => {
             
             <div>
               <p className="text-white font-medium mb-1">👥 Screenshot de Demografía:</p>
-              <p>En la misma sección de estadísticas, busca "Audiencia" o "Seguidores" → Captura donde aparece distribución por género, edad y ubicación.</p>
+              <p>En la misma sección de estadísticas, busca &quot;Audiencia&quot; o &quot;Seguidores&quot; → Captura donde aparece distribución por género, edad y ubicación.</p>
             </div>
             
             <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
