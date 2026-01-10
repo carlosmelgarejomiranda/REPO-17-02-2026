@@ -23,16 +23,21 @@ const BrandDeliverables = () => {
   }, [campaignId]);
 
   const fetchData = async () => {
+    const token = localStorage.getItem('auth_token');
     try {
       // Fetch campaign details
-      const campaignRes = await fetch(`${API_URL}/api/ugc/campaigns/${campaignId}`, { credentials: 'include' });
+      const campaignRes = await fetch(`${API_URL}/api/ugc/campaigns/${campaignId}`, { 
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (campaignRes.ok) {
         const campaignData = await campaignRes.json();
         setCampaign(campaignData);
       }
 
       // Fetch deliverables
-      const delRes = await fetch(`${API_URL}/api/ugc/deliverables/campaign/${campaignId}`, { credentials: 'include' });
+      const delRes = await fetch(`${API_URL}/api/ugc/deliverables/campaign/${campaignId}`, { 
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (delRes.ok) {
         const delData = await delRes.json();
         setDeliverables(delData.deliverables || []);
@@ -46,11 +51,14 @@ const BrandDeliverables = () => {
 
   const handleReview = async (deliverableId, action) => {
     setActionLoading(deliverableId);
+    const token = localStorage.getItem('auth_token');
     try {
       const res = await fetch(`${API_URL}/api/ugc/deliverables/${deliverableId}/review`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           action,
           notes: reviewNotes || null
