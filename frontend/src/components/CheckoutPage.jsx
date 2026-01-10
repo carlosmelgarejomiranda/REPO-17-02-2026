@@ -154,6 +154,47 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
       .catch(console.error);
   }, []);
 
+  // Check for first purchase discount when user is logged in
+  const checkFirstPurchaseDiscount = useCallback(async () => {
+    if (!user) return;
+    
+    setCheckingDiscount(true);
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${API_URL}/api/shop/first-purchase-discount`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (data.eligible && data.coupon) {
+        setFirstPurchaseDiscount(data);
+        
+        // Auto-apply if no coupon is already applied
+        if (!appliedCoupon) {
+          // Calculate discount
+          const discountAmount = subtotal * (data.coupon.discount_value / 100);
+          setAppliedCoupon(data.coupon);
+          setCouponDiscount(discountAmount);
+          setCouponCode(data.coupon.code);
+        }
+      }
+    } catch (err) {
+      console.error('Error checking first purchase discount:', err);
+    } finally {
+      setCheckingDiscount(false);
+    }
+  }, [user, subtotal, appliedCoupon]);
+
+  // Check first purchase discount when user changes (e.g., after login)
+  useEffect(() => {
+    if (user && !appliedCoupon) {
+      checkFirstPurchaseDiscount();
+    }
+  }, [user, checkFirstPurchaseDiscount, appliedCoupon]);
+
   const calculateDelivery = useCallback(async (lat, lng) => {
     try {
       const response = await fetch(`${API_URL}/api/shop/calculate-delivery`, {
