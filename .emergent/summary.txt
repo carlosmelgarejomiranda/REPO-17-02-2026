@@ -1,160 +1,165 @@
 <analysis>original_problem_statement:
-The user wants to build a comprehensive SaaS platform for connecting brands with UGC (User-Generated Content) creators. The initial phase involved building the core platform functionality through a series of sprints. After completing all sprints, the user requested the creation of a large set of demo data to populate the entire platform and visualize all its features.
+The user wants to build a comprehensive SaaS platform for connecting brands with UGC (User-Generated Content) creators. The initial phase involved building the core platform functionality. After completing that, the user requested a detailed **Brand Campaign Dashboard**.
 
-Most recently, the user has requested a major new feature: a detailed **Brand Dashboard** for campaign reporting.
+Based on iterative feedback, the project has pivoted to a model where an **Admin** user creates and manages all campaigns through a dedicated admin panel, and **Brand** users primarily view reports and provide feedback on deliverables.
+
+The most recent requests focus on refining the admin and brand experience by adding a UI for campaign management, a rating system, image uploads, and enhancing user profiles with performance data.
 
 **PRODUCT REQUIREMENTS (Latest):**
--   **Brand Campaign Dashboard:**
-    -   When a brand user views their campaigns, they should be able to click into a campaign to see a new reporting panel.
-    -   The panel should have button-based navigation for three reports: **Metrics**, **Demographics**, and **Applicants**.
-    -   It needs global filters for date (all-time vs. monthly) and social media platform (TikTok, Instagram, or both).
--   **Metrics Report:**
-    -   Display a table of metrics for each creator's content in the campaign.
-    -   Columns: , , , , , , , , , .
-    -   Some metrics are calculated:
-        -    = (Likes + Comments + Shares + Saves) / Reach
-        -    = Average Playback Time / Video Length
--   **Demographics Report:**
-    -   Display graphs showing audience distribution by Sex, Age Range, and Country.
--   **Applicants Report:**
-    -   Display a table of creators who applied to the campaign.
-    -   Columns: , , , , , , , , , , .
-    -   : A complex calculation based on the timely submission of content URLs and performance metric screenshots.
--   **Demo Data Specifics:**
-    -   The brand AVENUE MALL EAS should have infinite credits.
-    -   Two specific campaigns (AVENUE Summer Collection and SANTAL Refresh Challenge) should be activated.
-    -   Test creators should apply to these campaigns with varying application statuses and deliverable progress to showcase the full workflow.
-    -   Metrics data must be invented/seeded to populate the new reports.
+-   **Admin Campaign Management UI:**
+    -   A new section in the Admin Panel to create, view, and manage campaigns.
+    -   The creation form must include fields for selecting a parent company/brand, campaign details, cover image, and contract terms (deliveries per month, contract duration, start date).
+    -   It must also include detailed creator requirements (gender, age, followers, country, residence).
+    -   The admin must be able to view all applications for a campaign and confirm/reject creators from this interface.
+-   **Deliverable Rating System:**
+    -   Brands must be able to rate (1-5 stars) and leave a private comment on approved deliverables.
+    -   The rating should contribute to the creator's public average rating.
+    -   The comment must be private, visible only to the creator and admins.
+-   **Image Upload Functionality:**
+    -   The Create Campaign form in the admin panel must support uploading a cover image for the campaign.
+-   **Enhanced Creator Profiles & Notifications:**
+    -   Public creator profiles must display their average rating.
+    -   Creators must be able to view the private comments left by brands on their deliverables.
+    -   A new statistics dashboard should be created for the admin.
+    -   An email notification should be sent to the creator when a brand rates their deliverable.
 
 **User's preferred language**: Spanish
 
 **what currently exists?**
-The agent has successfully completed all 8 planned sprints for the UGC platform, building out the entire core functionality from the ground up. This includes:
--   Brand and Creator onboarding.
--   Package purchasing and campaign creation.
--   A complete application system for creators to apply to campaigns.
--   A deliverables workflow for content submission and review.
--   A metrics submission and AI processing system (placeholder for AI).
--   A reputation and gamification system (levels, ratings).
--   Automated email notifications via Resend for key events.
--   A fully functional and data-rich UGC Admin Panel.
+The platform is a full-stack application with distinct roles for Admins, Brands, and Creators. A comprehensive demo data set exists.
 
-A comprehensive seed script () has been created and executed, populating the entire platform with realistic demo data, including users, brands, campaigns, applications, and metrics. All major pages (Leaderboard, Campaign Catalog, Admin Panel) are now displaying this data correctly. Two major bugs ( on brand onboarding and an inaccessible Admin Panel tab) were also resolved in this session.
+Key completed features include:
+-   **Contract-Based Campaign Model:** The backend logic has been refactored. Admins create campaigns with contract terms (e.g., monthly deliverable quotas, duration).
+-   **Automated Background Jobs:** An  job runs daily to automatically recharge campaign slots (deliverable quotas) and handle the lifecycle of expired applications. It also sends email notifications (via Resend) to admins and brands upon slot recharge.
+-   **Admin Campaign Management UI:** A new Gestión Campañas tab in the Admin Panel allows admins to create detailed campaigns, view all existing campaigns, and manage applications (confirm/reject) from a dedicated modal.
+-   **Brand Reporting Dashboard:** A functional and simplified dashboard for brands to view reports (Metrics, Demographics, Applicants) for their campaigns. The UI has been refined multiple times based on user feedback.
+-   **Deliverable Rating System:** Brands can rate and leave private comments on approved deliverables via a modal in the deliverables review page.
+-   **File Upload Endpoint:** A placeholder endpoint () has been created to accept image uploads from the admin UI.
 
 **Last working item**:
-- Last item agent was working: The agent was starting the implementation of the new **Brand Campaign Reports** feature as per the user's latest detailed request. The agent analyzed the provided design images, created the main placeholder file for the frontend component (), and was about to begin creating the necessary backend models and endpoints to support the complex reporting requirements.
+- Last item agent was working: The agent was beginning the implementation of the user's latest batch of requests, starting with displaying creator ratings on their public profiles. The agent had just started analyzing the relevant frontend file.
 - Status: **NOT STARTED**
 - Agent Testing Done: N
-- Which testing method agent to use? This is a large feature. The agent should use **both** the backend and frontend testing agents to ensure e2e correctness of the data aggregation, calculations, and UI presentation.
+- Which testing method agent to use? **both**. These changes require backend data to be correctly fetched and displayed on the frontend, plus a new backend email notification trigger.
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-  - **Issue 1:** Production Twilio Setup Required (Priority: P3)
+  - Issue 1: Production Twilio Setup Required (Priority: P3)
+  - Issue 2: Image Upload Endpoint is a Placeholder (Priority: P2)
 
 **Issues Detail:**
   - **Issue 1: Production Twilio Setup Required**
-     - **Attempted fixes:** None. Functionality is implemented but not active.
+     - **Attempted fixes:** None. Functionality is implemented but inactive.
      - **Next debug checklist:** Await user's confirmation of WhatsApp number approval by Meta.
-     - **Why fix this issue and what will be achieved with the fix?** Will enable production-ready WhatsApp notifications for events like application acceptance, which is part of the original PRD.
+     - **Why fix this issue and what will be achieved with the fix?** Will enable production-ready WhatsApp notifications.
      - **Status:** BLOCKED
      - **Is recurring issue?** N
      - **Should Test frontend/backend/both after fix?** Backend
      - **Blocked on other issue:** User dependency (Meta approval).
+  - **Issue 2: Image Upload Endpoint is a Placeholder**
+     - **Attempted fixes:** None.
+     - **Next debug checklist:**
+        1.  In , modify the  endpoint.
+        2.  Use  to write the uploaded  object to a persistent directory (e.g., ).
+        3.  Ensure the directory exists.
+        4.  Return the path or URL to the saved file.
+     - **Why fix this issue and what will be achieved with the fix?** To complete the Create Campaign feature by allowing admins to upload and save a cover image for each campaign.
+     - **Status:** NOT STARTED
+     - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Backend
+     - **Blocked on other issue:** None.
 
 **In progress Task List**:
-  - **Task 1: Implement Brand Campaign Reports Dashboard (Priority: P0)**
-     - **Where to resume:** Start by defining the backend models and database queries needed for the three reports (Metrics, Demographics, Applicants). The Pydantic models in  will need new fields for calculated metrics like , , etc. Then, create new endpoints in a dedicated backend route file (e.g., ). Finally, build out the frontend component in , implementing the tabbed navigation, filters, and data visualizations (tables and graphs).
-     - **What will be achieved with this?** This will complete a major user requirement, providing significant value to the Brand user role by giving them powerful, actionable insights into their campaign performance.
-     - **Status:** NOT STARTED
-     - **Should Test frontend/backend/both after fix?** Both
-     - **Blocked on something:** None.
+  - None.
 
 **Upcoming and Future Tasks**
     **Upcoming Tasks:**
-    - **P1: Implement Bancard Payment Gateway:** This is a future task from the original PRD, currently blocked pending user credentials.
-    - **P2: Sprint 8 (Admin Features):** While the admin panel is functional, the original PRD mentioned more advanced features like approving creators, deep-diving into stats, etc. This can be considered the next phase of admin development.
+    - **P0: Implement Creator Profile Enhancements & Admin Stats:**
+        - **Task 1: Show Ratings on Creator Profile:** Modify  to include review data in the profile endpoint. Update  to display the average rating and a list of recent ratings/comments.
+        - **Task 2: Creator Feedback View:** Create a new component or section within the Creator Workspace () for creators to view private feedback from brands on their deliverables.
+        - **Task 3: Admin Statistics Dashboard:** Enhance the main Dashboard tab in  to show more meaningful platform-wide statistics.
+        - **Task 4: Rating Notification Email:** In , within the rating endpoint, add a call to the  service to send an email to the creator after their work is rated.
     **Future Tasks:**
-    - Refactor  &  for code cleanup.
-    - Allow editing product details directly from the Website Builder interface.
+    - **P1: Implement Bancard Payment Gateway:** Blocked pending user credentials.
+    - **P2: Refactor :** The main admin panel component is very large. It should be broken down into smaller sub-components for better maintainability.
 
 **Completed work in this session**
-- **Sprint 3 (Application System) Completed:** Built the , integrated it, and tested the full creator application flow.
-- **Sprint 4 (Deliverables & Workflow) Completed:** Created , , and  to manage the content submission and review process.
-- **Sprint 5 (Metrics & AI) Completed:** Created  page for creators to upload performance screenshots and the corresponding backend infrastructure.
-- **Sprint 6 (Reputation & Gamification) Completed:** Implemented backend routes and frontend pages (, ) for a public reputation and leveling system.
-- **Sprint 7 (Automated Emails) Completed:** Integrated the Resend API via  and added email notifications for key events like application status changes and deliverable reviews.
-- **Critical Bug Fixes:**
-    - Resolved the recurring  error on the brand onboarding page.
-    - Fixed the inaccessible UGC Platform tab in the , making the panel fully usable.
-- **Demo Data Population:**
-    - Created and executed a comprehensive seed script () to populate the entire UGC platform with realistic brands, creators, live campaigns, applications, and performance metrics as per user's detailed request.
-    - Granted special infinite credits status to the AVENUE MALL EAS brand for demo purposes.
-- **Admin Panel Enhancements:**
-    - Created a new, detailed Metrics panel within  that shows a full table of all submitted metrics, not just pending ones.
-    - Debugged and fixed all data fetching issues, ensuring the admin panel now correctly displays all the seeded data.
+- **Implemented Full Admin Campaign Management UI:**
+  - Created  and integrated it as a new Gestión Campañas tab in the .
+  - The UI allows admins to create campaigns with contract details and specific creator requirements.
+  - Implemented a modal for admins to view and manage all applications for a campaign (Confirm/Reject).
+- **Implemented Deliverable Rating System:**
+  - Added a backend endpoint for brands to submit a star rating and a private comment on approved deliverables.
+  - Integrated a Calificar entrega button and modal on the  page.
+- **Implemented Contract-Based Campaign Logic:**
+  - Overhauled the campaign model to be based on contracts managed by an Admin.
+  - Created a background job service () with  to automatically manage monthly slot recharges and application expiry.
+  - Implemented automated email notifications for slot recharges.
+- **Major UX/UI Simplification:**
+  - Based on user feedback, heavily refactored the Brand Dashboard () and Campaigns page () to be simple, report-focused views, removing all management actions.
+- **Fixed Authentication Issues:** Replaced  with JWT Bearer token authentication in multiple frontend components.
+- **Resolved Bugs:** Fixed an issue causing duplicate applicants in campaign reports.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Full-Stack Feature Development:** Completed multiple end-to-end features (Sprints 3-7), involving new database models, FastAPI routes, and React components.
-- **Third-Party API Integration:** Successfully integrated the **Resend** API for transactional emails using the integration playbook.
-- **Complex Database Seeding:** Wrote and executed sophisticated Python scripts () to create a rich, interconnected dataset for demonstration, handling relationships between users, brands, campaigns, applications, and deliverables.
-- **Data Aggregation and Display:** Built multiple dashboards (Leaderboard, Admin Panel) that fetch, aggregate, and display complex data from the database, including calculated stats.
+- **Background Job Scheduling:** Using  within FastAPI to run recurring tasks (monthly contract updates).
+- **Role-Based Feature Segregation:** A major pivot to separate campaign management (Admin) from reporting and feedback (Brand).
+- **Complex UI State Management:** Extensive use of React state, props, and modals to build the multi-faceted Admin Campaign Manager.
+- **Iterative Development:** The project's direction has evolved significantly through rapid, iterative feedback loops with the user.
+- **File Uploads with FastAPI:** Implemented the basic structure for handling multipart file uploads.
 
 **key DB schema**
-- **ugc_creators:** Now includes  (Rookie, Pro, etc.),  (avg rating, on-time delivery %), and .
-- **ugc_deliverables:** Includes  sub-documents and status changes to track the review process.
-- **ugc_metrics:** Now stores detailed performance data like , , , , , , and .
-- **ugc_brands:** The brand profile for 'AVENUE MALL EAS' has a special field  and effectively infinite credits for testing.
-- **New Collections:**  and  might exist to support the new features.
+- **ugc_campaigns:** Now contains a  object (, , , etc.), , , and .
+- **ugc_deliverables:** The  sub-document now includes  and  fields.
 
 **All files of reference**
-- **Primary Files for Next Task:**
-  -  (New file to build out)
-  -  (Will need new calculated fields)
-  -  (A new file, e.g., , should be created)
-- **Recently Created/Modified:**
-  -  (Source of truth for all demo data)
-  -  (Heavily modified to show all seeded data)
-  - All files related to Sprints 3-7 (see architecture).
+-  (Logic for automated campaign management)
+-  (Primary UI for the new admin workflow)
+-  (Where brands rate content)
+-  (Target for the next task)
+-  (Backend logic for admin actions)
+-  (Backend logic for ratings)
+-  (Scheduler setup and upload endpoint)
 
 **Areas that need refactoring**:
-- The  component has grown very large (>800 lines). Although it's now functional, breaking its sub-panels (Dashboard, Creators, Brands, Campaigns, Metrics) into separate components would significantly improve maintainability. The new  should be designed modularly from the start to avoid this.
+-  is still a very large component (>800 lines). While a separate component was created for campaign management, the main panel itself could be broken down further to improve maintainability.
 
 **key api endpoints**
-- : GET a list of top creators.
-- : GET all submitted metrics for the admin panel.
-- : GET aggregated stats for the admin dashboard.
-- **(To be created):** Endpoints to provide data for the brand reports, e.g., , .
+- : (Admin) Creates a new campaign with contract details.
+- : (Admin) Gets all applications for a campaign.
+- : (Admin) Confirms or rejects an application.
+- : (Brand) Submits a rating and private comment for a deliverable.
+- : (Admin) Placeholder endpoint for uploading campaign cover images.
+- : (Brand) Gets data for the three brand reports.
 
 **Critical Info for New Agent**
-- **The project is in demo mode.** The primary goal is to visualize the platform's capabilities using the seeded data. All new features should be built with this rich dataset in mind.
-- **Use  for reference.** This script is the source of truth for all demo data structures, statuses, and relationships. It is designed to be run on an empty database.
-- **The database is **. The agent previously ran into issues by seeding the wrong database. Ensure all operations target the correct DB name defined in .
-- **User  is special.** This brand has enterprise-level access with infinite credits and should be used for testing brand-side features.
-- The user's request for the brand dashboard is highly detailed and includes specific calculation formulas. Adhere to these requirements precisely.
+- **The Core Logic Has Changed:** Do not assume brands manage their own campaigns. The **Admin** now creates, staffs, and manages all campaigns. Brands are primarily consumers of data and providers of feedback.
+- **Admin Panel is Central:** The most complex and recent logic resides in the  component and its corresponding backend endpoints in .
+- **Background Jobs are Live:** The  is configured in  to run daily. Be aware of the  service, as it modifies campaign data automatically.
+- **User is Very Engaged:** The user provides frequent, detailed, and iterative feedback. Plan to implement features in small, verifiable chunks and present them for review.
 
 **documents and test reports created in this job**
 - 
 - 
 
 **Last 10 User Messages and any pending HUMAN messages**
-- **10. **: The user provided a very detailed, multi-part feature request for a new Brand Campaign Reports dashboard, including specs for three separate reports (Metrics, Demographics, Applicants), specific calculation formulas, and UI mockups. (IN PROGRESS)
-- **9. **: User requested to invent metrics for the demo, give the admin brand infinite tokens, activate specific campaigns, and have test creators apply to them to see the full workflow. (RESOLVED)
-- **8. **: User reported that the seeded data was not visible in the admin panel. (RESOLVED)
-- **7. **: User requested the agent to generate a large amount of test data for brands and creators to visualize all platform functionalities. (RESOLVED)
-- **6. **: User approved continuing to Sprint 7 (Automated Emails). (RESOLVED)
-- **5. **: User approved continuing to Sprint 6 (Reputation & Gamification). (RESOLVED)
-- **4. **: User approved continuing to Sprint 5 (Metrics & AI). (RESOLVED)
-- **3. **: User approved continuing to Sprint 4 (Deliverables & Workflow). (RESOLVED)
-- **2. **: User deprioritized the Twilio issue and asked the agent to fix the two main pending bugs. (RESOLVED)
-- **1. **: User asked for an explanation of the pending issues. (RESOLVED)
+10. ****: User approved implementing all proposed next actions: showing ratings on creator profiles, letting creators see private feedback, building an admin stats dashboard, and adding rating notifications. (PENDING IMPLEMENTATION)
+9.  ****: User asked for clarification on the proposed Next Action Items. (RESOLVED)
+8.  ****: User approved implementing the Admin Campaign Manager UI and provided very detailed field requirements for the Create Campaign form, including requirements, company selection, and image upload. (RESOLVED)
+7.  ****: User asked for an explanation of the task to create a UI for the new contract system. (RESOLVED)
+6.  ****: User asked for clarification on the cron job and email notification backlog items. (RESOLVED)
+5.  ****: User approved implementing the background job scheduler and email notifications, clarifying that admins (Avenue), not brands, confirm creators. (RESOLVED)
+4.  ****: User approved the major refactor to a contract-based campaign model managed by the admin. (RESOLVED)
+3.  **User provides detailed answers to agent's clarifying questions** about the new contract-based campaign model. (RESOLVED)
+2.  ****: User initiated a major feature pivot, describing a new contract-based system where campaigns have monthly renewable slots and are managed by the admin, not the brand. (IN PROGRESS - Led to contract system implementation)
+1.  **User requests changes to campaign card stats** on the Brand Dashboard. (RESOLVED)
 
 **Project Health Check:**
 - **Broken**: Nothing is broken.
 - **Mocked**:
-  - The AI processing of metric screenshots is mocked (data is extracted directly from the database).
+  - The  endpoint receives a file but does not save it to persistent storage.
 - **Partially Broken/Unreliable**: None.
 - **Blocked**:
   - Twilio/WhatsApp integration is blocked pending Meta approval.
@@ -162,22 +167,22 @@ A comprehensive seed script () has been created and executed, populating the ent
 
 **3rd Party Integrations**
 - **Resend**: Integrated and working for transactional emails.
+- **APScheduler**: Integrated and working for background job scheduling.
 - **Twilio**: Implemented but BLOCKED for WhatsApp notifications.
 - **Google Analytics (GA4)**: Implemented for analytics.
 - **Bancard (Payments)**: Planned but BLOCKED.
 - **Google Maps API**: Implemented for delivery cost calculation.
 - **Emergent-managed Google Auth**: Implemented for user login.
-- **Google Generative AI (Gemini Vision)**: Planned for processing creator metric screenshots, currently mocked.
 
 **Testing status**
-  - Testing agent used after significant changes: YES
+  - Testing agent used after significant changes: YES (After the initial brand reports dashboard was built).
   - Troubleshoot agent used after agent stuck in loop: NO
   - Test files created: None.
   - Known regressions: None.
 
 **Credentials to test flow:**
-- **Admin User**: Email: , Password: 
-- **Brand User (for new reports)**: The user account associated with the AVENUE MALL EAS brand profile should be used. Log in as this user to test the new dashboard.
+- **Admin User**: Email: , Password:  (Use this for the Admin Panel)
+- **Brand User**: Log in as the user associated with the AVENUE MALL EAS brand to test brand-side dashboards and rating functionality.
 
 **What agent forgot to execute**
-The agent has not forgotten anything. It has just received a major new feature request and was at the very beginning of the implementation process (creating placeholder files) when the session ended. The next agent's top priority is to pick up this task.</analysis>
+The agent has not forgotten to execute any tasks. It successfully implemented a large set of features based on user requests and was about to start the next batch when the session ended. The implementation of the image upload endpoint remains incomplete (placeholder), which is correctly identified as a pending issue.</analysis>
