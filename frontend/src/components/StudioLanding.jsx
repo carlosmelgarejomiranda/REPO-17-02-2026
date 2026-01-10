@@ -69,7 +69,7 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
               data-testid="card-ugc"
             >
               <img 
-                src="https://images.pexels.com/photos/7676484/pexels-photo-7676484.jpeg?auto=compress&cs=tinysrgb&w=600"
+                src="https://customer-assets.emergentagent.com/job_one-account/artifacts/tk0opl7n_influencer%20ugc%201.webp"
                 alt="Plataforma UGC"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -179,7 +179,7 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
             {/* Right - Image */}
             <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
               <img 
-                src="https://images.pexels.com/photos/7676484/pexels-photo-7676484.jpeg?auto=compress&cs=tinysrgb&w=800"
+                src="https://customer-assets.emergentagent.com/job_one-account/artifacts/e9d2076s_bastante-joven-morena-de-pelo-corto-en-vestido-rojo-de-lino-con-cinturon-negro-sonrie-toma-selfie-muestra-el-signo-de-la-paz-y-posa-en-la-oficina-del-disenador-de-moda.jpg"
                 alt="UGC Creators"
                 className="w-full h-full object-cover"
               />
