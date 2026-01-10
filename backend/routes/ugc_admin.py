@@ -676,6 +676,180 @@ async def get_audit_logs(
     
     return {"logs": logs}
 
+# ==================== DETAILED STATS ====================
+
+@router.get("/stats", response_model=dict)
+async def get_detailed_stats(
+    request: Request,
+    period: str = "30d"  # 7d, 30d, 90d, all
+):
+    """Get detailed platform statistics"""
+    await require_admin(request)
+    db = await get_db()
+    
+    # Calculate date range
+    now = datetime.now(timezone.utc)
+    if period == "7d":
+        start_date = now - timedelta(days=7)
+    elif period == "30d":
+        start_date = now - timedelta(days=30)
+    elif period == "90d":
+        start_date = now - timedelta(days=90)
+    else:
+        start_date = None
+    
+    start_date_str = start_date.isoformat() if start_date else None
+    
+    # Users stats
+    total_creators = await db.ugc_creators.count_documents({})
+    active_creators = await db.ugc_creators.count_documents({"is_active": True})
+    total_brands = await db.ugc_brands.count_documents({})
+    active_brands = await db.ugc_brands.count_documents({"is_active": True})
+    
+    # Creators by level
+    creators_by_level = {
+        "rookie": await db.ugc_creators.count_documents({"level": "rookie"}),
+        "trusted": await db.ugc_creators.count_documents({"level": "trusted"}),
+        "pro": await db.ugc_creators.count_documents({"level": "pro"}),
+        "elite": await db.ugc_creators.count_documents({"level": "elite"})
+    }
+    
+    # Campaign stats
+    total_campaigns = await db.ugc_campaigns.count_documents({})
+    live_campaigns = await db.ugc_campaigns.count_documents({"status": CampaignStatus.LIVE})
+    in_production = await db.ugc_campaigns.count_documents({"status": CampaignStatus.IN_PRODUCTION})
+    
+    # Application stats
+    app_query = {}
+    if start_date_str:
+        app_query["applied_at"] = {"$gte": start_date_str}
+    total_applications = await db.ugc_applications.count_documents(app_query)
+    pending_applications = await db.ugc_applications.count_documents({**app_query, "status": ApplicationStatus.APPLIED})
+    confirmed_applications = await db.ugc_applications.count_documents({**app_query, "status": ApplicationStatus.CONFIRMED})
+    
+    # Deliverable stats with breakdown
+    del_query = {}
+    if start_date_str:
+        del_query["created_at"] = {"$gte": start_date_str}
+    
+    total_deliverables = await db.ugc_deliverables.count_documents(del_query)
+    deliverables_breakdown = {
+        "pending_review": await db.ugc_deliverables.count_documents({
+            **del_query, 
+            "status": {"$in": [DeliverableStatus.SUBMITTED, DeliverableStatus.RESUBMITTED]}
+        }),
+        "submitted": await db.ugc_deliverables.count_documents({**del_query, "status": DeliverableStatus.SUBMITTED}),
+        "approved": await db.ugc_deliverables.count_documents({**del_query, "status": DeliverableStatus.APPROVED}),
+        "changes_requested": await db.ugc_deliverables.count_documents({**del_query, "status": DeliverableStatus.CHANGES_REQUESTED}),
+        "completed": await db.ugc_deliverables.count_documents({**del_query, "status": DeliverableStatus.COMPLETED}),
+        "rejected": await db.ugc_deliverables.count_documents({**del_query, "status": DeliverableStatus.REJECTED})
+    }
+    
+    # Metrics stats
+    metrics_query = {}
+    if start_date_str:
+        metrics_query["submitted_at"] = {"$gte": start_date_str}
+    
+    all_metrics = await db.ugc_metrics.find(metrics_query, {"_id": 0}).to_list(1000)
+    
+    total_views = sum(m.get("views", 0) or 0 for m in all_metrics)
+    total_likes = sum(m.get("likes", 0) or 0 for m in all_metrics)
+    total_engagement = sum(m.get("total_interactions", 0) or 0 for m in all_metrics)
+    avg_engagement = sum(m.get("engagement_rate", 0) or 0 for m in all_metrics) / len(all_metrics) if all_metrics else 0
+    
+    # Rating stats
+    all_rated_deliverables = await db.ugc_deliverables.find(
+        {"brand_rating.rating": {"$exists": True}},
+        {"_id": 0, "brand_rating.rating": 1}
+    ).to_list(1000)
+    
+    avg_rating = 0
+    if all_rated_deliverables:
+        ratings = [d["brand_rating"]["rating"] for d in all_rated_deliverables if d.get("brand_rating", {}).get("rating")]
+        avg_rating = sum(ratings) / len(ratings) if ratings else 0
+    
+    # On-time rate
+    on_time_deliverables = await db.ugc_deliverables.count_documents({"is_on_time": True})
+    total_delivered = await db.ugc_deliverables.count_documents({"is_on_time": {"$exists": True}})
+    on_time_rate = (on_time_deliverables / total_delivered * 100) if total_delivered > 0 else 0
+    
+    # Revenue
+    packages = await db.ugc_packages.find(
+        {"status": {"$in": ["active", "exhausted"]}},
+        {"_id": 0, "price_paid": 1}
+    ).to_list(1000)
+    total_revenue = sum(p.get("price_paid", 0) for p in packages)
+    
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    monthly_packages = await db.ugc_packages.find(
+        {
+            "status": {"$in": ["active", "exhausted"]},
+            "purchased_at": {"$gte": month_start.isoformat()}
+        },
+        {"_id": 0, "price_paid": 1}
+    ).to_list(100)
+    monthly_revenue = sum(p.get("price_paid", 0) for p in monthly_packages)
+    packages_sold = len(packages)
+    
+    # Top creators
+    top_creators = await db.ugc_creators.find(
+        {"is_active": True},
+        {"_id": 0, "id": 1, "name": 1, "level": 1, "stats": 1}
+    ).sort([
+        ("stats.avg_rating", -1),
+        ("stats.total_completed", -1)
+    ]).limit(10).to_list(10)
+    
+    top_creators_formatted = []
+    for c in top_creators:
+        stats = c.get("stats", {})
+        top_creators_formatted.append({
+            "id": c["id"],
+            "name": c.get("name"),
+            "level": c.get("level", "rookie"),
+            "avg_rating": stats.get("avg_rating", 0),
+            "total_deliveries": stats.get("total_completed", 0)
+        })
+    
+    return {
+        "users": {
+            "total_creators": total_creators,
+            "active_creators": active_creators,
+            "total_brands": total_brands,
+            "active_brands": active_brands
+        },
+        "creators_by_level": creators_by_level,
+        "campaigns": {
+            "total": total_campaigns,
+            "live": live_campaigns,
+            "in_production": in_production
+        },
+        "applications": {
+            "total": total_applications,
+            "pending": pending_applications,
+            "confirmed": confirmed_applications
+        },
+        "deliverables": {
+            "total": total_deliverables,
+            **deliverables_breakdown
+        },
+        "metrics": {
+            "total_views": total_views,
+            "total_likes": total_likes,
+            "total_engagement": total_engagement,
+            "avg_engagement": round(avg_engagement, 2),
+            "avg_rating": round(avg_rating, 2),
+            "on_time_rate": round(on_time_rate, 1)
+        },
+        "revenue": {
+            "total": total_revenue,
+            "monthly": monthly_revenue,
+            "packages_sold": packages_sold
+        },
+        "top_creators": top_creators_formatted,
+        "period": period
+    }
+
 
 
 # ==================== DELIVERABLES MANAGEMENT ====================
