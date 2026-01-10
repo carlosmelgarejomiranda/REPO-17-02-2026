@@ -418,6 +418,92 @@ const BrandDeliverables = () => {
           </div>
         )}
       </div>
+
+      {/* Rating Modal */}
+      {showRatingModal && ratingDeliverable && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-md">
+            <div className="p-6 border-b border-white/10">
+              <h3 className="text-xl font-medium">Calificar Entrega</h3>
+              <p className="text-sm text-gray-400 mt-1">
+                Calificá la entrega de {ratingDeliverable.creator?.name}
+              </p>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Star Rating */}
+              <div>
+                <label className="block text-sm text-gray-400 mb-3">Calificación</label>
+                <div className="flex items-center justify-center gap-2">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      onClick={() => setRatingValue(star)}
+                      className="p-1 transition-transform hover:scale-110"
+                    >
+                      <Star 
+                        className={`w-10 h-10 transition-colors ${
+                          star <= (hoverRating || ratingValue) 
+                            ? 'text-yellow-400 fill-current' 
+                            : 'text-gray-600'
+                        }`} 
+                      />
+                    </button>
+                  ))}
+                </div>
+                <p className="text-center text-sm text-gray-500 mt-2">
+                  {ratingValue === 1 && 'Malo'}
+                  {ratingValue === 2 && 'Regular'}
+                  {ratingValue === 3 && 'Bueno'}
+                  {ratingValue === 4 && 'Muy bueno'}
+                  {ratingValue === 5 && 'Excelente'}
+                </p>
+              </div>
+
+              {/* Comment */}
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">
+                  Comentario privado <span className="text-gray-500">(opcional)</span>
+                </label>
+                <textarea
+                  value={ratingComment}
+                  onChange={(e) => setRatingComment(e.target.value)}
+                  placeholder="Solo visible para vos, Avenue y el creador..."
+                  rows={3}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d4a968] focus:outline-none resize-none"
+                />
+                <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  Este comentario es privado, solo lo ven Avenue y el creador
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-white/10">
+              <button
+                onClick={() => { setShowRatingModal(false); setRatingDeliverable(null); setRatingValue(0); setRatingComment(''); }}
+                className="px-5 py-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleRate}
+                disabled={ratingValue < 1 || actionLoading === ratingDeliverable?.id}
+                className="px-5 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
+              >
+                {actionLoading === ratingDeliverable?.id ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Star className="w-5 h-5" />
+                )}
+                Guardar Calificación
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
