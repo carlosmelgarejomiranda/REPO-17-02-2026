@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowLeft, Camera, Clock, CheckCircle, AlertCircle, ExternalLink,
-  Instagram, Music2, Upload, Eye, Loader2, RefreshCw, ChevronRight
+  Instagram, Music2, Upload, Eye, Loader2, RefreshCw, ChevronRight,
+  Star, MessageSquare
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
