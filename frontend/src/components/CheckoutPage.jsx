@@ -497,14 +497,15 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
                 <Gift className="w-7 h-7 text-black" />
               </div>
               <div>
-                <p className="text-black font-semibold text-lg">¡10% OFF en tu primera compra!</p>
-                <p className="text-black/80 text-sm">Iniciá sesión o creá tu cuenta ahora y el descuento se aplica automáticamente</p>
+                <p className="text-black font-semibold text-lg">¡10% OFF en ESTA compra!</p>
+                <p className="text-black/80 text-sm">Iniciá sesión o creá tu cuenta ahora y el descuento se aplica automáticamente a tu carrito</p>
               </div>
             </div>
             <button
               type="button"
               onClick={onLoginClick}
               className="flex items-center gap-2 px-6 py-3 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap"
+              data-testid="checkout-login-btn"
             >
               <UserPlus className="w-4 h-4" />
               Obtener 10% OFF
@@ -512,16 +513,49 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
           </div>
         )}
 
-        {/* Welcome back message for logged in users */}
+        {/* Welcome message for logged in users - show discount if applied */}
         {user && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-8 flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <Tag className="w-5 h-5 text-green-600" />
+          <div className={`rounded-xl p-4 mb-8 flex items-center gap-3 ${
+            appliedCoupon && firstPurchaseDiscount?.eligible
+              ? 'bg-green-50 border border-green-200'
+              : 'bg-gray-50 border border-gray-200'
+          }`}>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              appliedCoupon && firstPurchaseDiscount?.eligible
+                ? 'bg-green-100'
+                : 'bg-gray-100'
+            }`}>
+              {checkingDiscount ? (
+                <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+              ) : appliedCoupon && firstPurchaseDiscount?.eligible ? (
+                <Gift className="w-5 h-5 text-green-600" />
+              ) : (
+                <Tag className="w-5 h-5 text-gray-600" />
+              )}
             </div>
-            <div>
-              <p className="text-green-800 font-medium">¡Hola {user.name?.split(' ')[0]}!</p>
-              <p className="text-green-600 text-sm">Tus datos de facturación están guardados. Checkout más rápido.</p>
+            <div className="flex-1">
+              <p className={`font-medium ${
+                appliedCoupon && firstPurchaseDiscount?.eligible
+                  ? 'text-green-800'
+                  : 'text-gray-800'
+              }`}>
+                ¡Hola {user.name?.split(' ')[0]}!
+              </p>
+              {appliedCoupon && firstPurchaseDiscount?.eligible ? (
+                <p className="text-green-600 text-sm">
+                  🎉 ¡Tu 10% de descuento de primera compra se aplicó automáticamente!
+                </p>
+              ) : checkingDiscount ? (
+                <p className="text-gray-500 text-sm">Verificando descuentos disponibles...</p>
+              ) : (
+                <p className="text-gray-600 text-sm">Tus datos de facturación están guardados. Checkout más rápido.</p>
+              )}
             </div>
+            {appliedCoupon && firstPurchaseDiscount?.eligible && (
+              <div className="text-right">
+                <p className="text-green-700 font-bold text-lg">-{formatPrice(couponDiscount)}</p>
+              </div>
+            )}
           </div>
         )}
 
