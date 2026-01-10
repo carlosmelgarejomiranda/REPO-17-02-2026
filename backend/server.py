@@ -2263,6 +2263,74 @@ app.include_router(builder_router)
 from seo import seo_router
 app.include_router(seo_router)
 
+# ==================== FILE UPLOAD ====================
+from fastapi import UploadFile, File
+import base64
+import hashlib
+
+# Create uploads directory
+UPLOAD_DIR = Path("/app/backend/uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+@api_router.post("/upload")
+async def upload_file(
+    request: Request,
+    file: UploadFile = File(...)
+):
+    """Upload a file and return its URL"""
+    user = await require_auth(request)
+    
+    # Validate file type
+    allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Solo imágenes.")
+    
+    # Validate file size (max 5MB)
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Archivo demasiado grande. Máximo 5MB.")
+    
+    # Generate unique filename
+    file_hash = hashlib.md5(contents).hexdigest()[:8]
+    ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    filename = f"{uuid.uuid4().hex[:12]}_{file_hash}.{ext}"
+    
+    # Save file
+    file_path = UPLOAD_DIR / filename
+    with open(file_path, "wb") as f:
+        f.write(contents)
+    
+    # Return URL
+    base_url = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
+    file_url = f"{base_url}/api/uploads/{filename}"
+    
+    return {"url": file_url, "filename": filename}
+
+@api_router.get("/uploads/{filename}")
+async def serve_upload(filename: str):
+    """Serve uploaded files"""
+    from fastapi.responses import FileResponse
+    
+    # Sanitize filename
+    safe_filename = Path(filename).name
+    file_path = UPLOAD_DIR / safe_filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Archivo no encontrado")
+    
+    # Determine content type
+    ext = safe_filename.split(".")[-1].lower()
+    content_types = {
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
+        "gif": "image/gif",
+        "webp": "image/webp"
+    }
+    content_type = content_types.get(ext, "application/octet-stream")
+    
+    return FileResponse(file_path, media_type=content_type)
+
 # Include UGC Platform routers
 from routes.ugc_creators import router as ugc_creators_router
 from routes.ugc_brands import router as ugc_brands_router
