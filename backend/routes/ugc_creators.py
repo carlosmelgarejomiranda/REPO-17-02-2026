@@ -376,3 +376,60 @@ async def get_my_stats(request: Request):
         "level_progress": profile.get("level_progress", 0),
         "reviews": reviews
     }
+
+# ==================== FEEDBACK (Private Comments from Brands) ====================
+
+@router.get("/me/feedback", response_model=dict)
+async def get_my_feedback(request: Request):
+    """Get all private feedback/ratings from brands on creator's deliverables"""
+    db = await get_db()
+    user = await require_auth(request)
+    
+    profile = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0})
+    if not profile:
+        raise HTTPException(status_code=404, detail="Creator profile not found")
+    
+    # Get all deliverables with brand ratings for this creator
+    deliverables = await db.ugc_deliverables.find(
+        {
+            "creator_id": profile["id"],
+            "brand_rating": {"$exists": True}
+        },
+        {"_id": 0, "id": 1, "campaign_id": 1, "brand_id": 1, "brand_rating": 1}
+    ).sort("brand_rating.rated_at", -1).to_list(100)
+    
+    feedback = []
+    total_rating = 0
+    
+    for d in deliverables:
+        rating_data = d.get("brand_rating", {})
+        
+        # Get campaign and brand info
+        campaign = await db.ugc_campaigns.find_one(
+            {"id": d["campaign_id"]},
+            {"_id": 0, "name": 1}
+        )
+        brand = await db.ugc_brands.find_one(
+            {"id": d["brand_id"]},
+            {"_id": 0, "company_name": 1}
+        )
+        
+        feedback.append({
+            "deliverable_id": d["id"],
+            "campaign_name": campaign.get("name") if campaign else None,
+            "brand_name": brand.get("company_name") if brand else None,
+            "rating": rating_data.get("rating"),
+            "comment": rating_data.get("comment"),
+            "rated_at": rating_data.get("rated_at")
+        })
+        
+        if rating_data.get("rating"):
+            total_rating += rating_data["rating"]
+    
+    avg_rating = total_rating / len(feedback) if feedback else 0
+    
+    return {
+        "feedback": feedback,
+        "total_ratings": len(feedback),
+        "avg_rating": round(avg_rating, 2)
+    }
