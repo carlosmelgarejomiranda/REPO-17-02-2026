@@ -1053,9 +1053,127 @@ async def logout(response: Response):
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
 
+# ==================== USER PROFILE ROUTES ====================
+
+@api_router.get("/user/profile")
+async def get_user_profile(request: Request):
+    """Get complete user profile with billing and addresses"""
+    user = await require_auth(request)
+    
+    user_data = await db.users.find_one(
+        {"user_id": user["user_id"]}, 
+        {"_id": 0, "password": 0, "password_hash": 0}
+    )
+    
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Check for UGC profiles
+    has_creator_profile = await db.ugc_creators.find_one({"user_id": user["user_id"]}) is not None
+    has_brand_profile = await db.ugc_brands.find_one({"user_id": user["user_id"]}) is not None
+    
+    return {
+        **user_data,
+        "billing_info": user_data.get("billing_info", {}),
+        "shipping_addresses": user_data.get("shipping_addresses", []),
+        "has_creator_profile": has_creator_profile,
+        "has_brand_profile": has_brand_profile
+    }
+
+@api_router.put("/user/profile")
+async def update_user_profile(request: Request):
+    """Update user profile with billing info"""
+    user = await require_auth(request)
+    updates = await request.json()
+    
+    # Allowed fields to update
+    allowed_fields = ["name", "phone", "city", "billing_info"]
+    update_data = {}
+    
+    for field in allowed_fields:
+        if field in updates:
+            update_data[field] = updates[field]
+    
+    if update_data:
+        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        await db.users.update_one(
+            {"user_id": user["user_id"]},
+            {"$set": update_data}
+        )
+    
+    return {"success": True, "message": "Profile updated"}
+
+@api_router.get("/user/addresses")
+async def get_user_addresses(request: Request):
+    """Get user's shipping addresses"""
+    user = await require_auth(request)
+    
+    user_data = await db.users.find_one(
+        {"user_id": user["user_id"]}, 
+        {"_id": 0, "shipping_addresses": 1}
+    )
+    
+    return {"addresses": user_data.get("shipping_addresses", [])}
+
+@api_router.post("/user/addresses")
+async def add_user_address(request: Request):
+    """Add a new shipping address"""
+    user = await require_auth(request)
+    address_data = await request.json()
+    
+    # Create address with ID
+    address = {
+        "id": str(uuid.uuid4()),
+        "alias": address_data.get("alias", ""),
+        "direccion": address_data.get("direccion", ""),
+        "ciudad": address_data.get("ciudad", ""),
+        "referencia": address_data.get("referencia", ""),
+        "is_default": address_data.get("is_default", False),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # If this is set as default, unset other defaults
+    if address["is_default"]:
+        await db.users.update_one(
+            {"user_id": user["user_id"]},
+            {"$set": {"shipping_addresses.$[].is_default": False}}
+        )
+    
+    # Add new address
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$push": {"shipping_addresses": address}}
+    )
+    
+    return {"success": True, "address": address}
+
+@api_router.delete("/user/addresses/{address_id}")
+async def delete_user_address(address_id: str, request: Request):
+    """Delete a shipping address"""
+    user = await require_auth(request)
+    
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$pull": {"shipping_addresses": {"id": address_id}}}
+    )
+    
+    return {"success": True}
+
+@api_router.get("/user/orders")
+async def get_user_orders(request: Request):
+    """Get user's order history"""
+    user = await require_auth(request)
+    
+    orders = await db.orders.find(
+        {"user_id": user["user_id"]},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(50).to_list(50)
+    
+    return {"orders": orders}
+
 @api_router.put("/auth/profile")
 async def update_profile(request: Request, updates: dict):
-    """Update user profile"""
+    """Update user profile (legacy endpoint)"""
     user = await require_auth(request)
     
     # Only allow updating certain fields
