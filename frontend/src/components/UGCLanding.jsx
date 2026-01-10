@@ -47,7 +47,7 @@ const UGCLanding = ({ user, onLoginClick, onLogout, language, setLanguage, t }) 
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link 
-              to="/ugc/brand/onboarding"
+              to="/ugc/marcas"
               className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#d4a968] text-black font-medium tracking-wide hover:bg-[#c49958] transition-all rounded-lg"
             >
               <Building2 className="w-5 h-5" />
