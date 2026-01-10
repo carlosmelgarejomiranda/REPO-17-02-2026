@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, Building2, Users, BarChart3, CheckCircle, Sparkles,
-  ArrowLeft, Heart, TrendingUp, MessageCircle, UserPlus, Shield,
-  Package, Zap, FileCheck, X, Check
+  ArrowLeft, Heart, TrendingUp, MessageCircle, Shield,
+  Package, Zap, FileCheck, Check, Star
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
@@ -12,10 +12,28 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [packages, setPackages] = useState([]);
+  const [promoActive, setPromoActive] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
+    fetchPackages();
   }, []);
+
+  const fetchPackages = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/ugc/packages/pricing`);
+      const data = await res.json();
+      setPackages(data.packages || []);
+      setPromoActive(data.promo_active || false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -29,7 +47,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
       />
 
       {/* ============== HERO SECTION ============== */}
-      <section className="relative min-h-[60vh] flex items-center justify-center pt-16">
+      <section className="relative min-h-[50vh] flex items-center justify-center pt-16">
         {/* Background */}
         <div className="absolute inset-0">
           <img
@@ -61,102 +79,141 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
 
           {/* Main Headline */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-4 leading-[1.1]">
-            Contenido que <span className="italic text-[#d4a968]">conecta</span>,<br className="hidden sm:block" /> 
-            no que interrumpe
+            Contenido de <span className="italic text-[#d4a968]">creadores reales</span><br className="hidden sm:block" /> 
+            para tu marca
           </h1>
 
           {/* Subheadline */}
           <p className="text-base md:text-lg text-white/60 mb-8 max-w-xl mx-auto">
-            UGC auténtico que despierta interés y posiciona 
-            tu marca en la mente de tu audiencia.
+            UGC gestionado de principio a fin. Vos ponés el producto, 
+            nosotros te entregamos contenido listo para usar.
           </p>
 
           {/* CTA */}
-          <Link
-            to="/ugc/brand/onboarding"
+          <a
+            href="#planes"
             className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
             data-testid="hero-cta"
           >
-            Empezar ahora
+            Ver planes
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
         </div>
       </section>
 
-      {/* ============== THE PROBLEM vs SOLUTION ============== */}
-      <section className="py-12 md:py-16 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* The Problem */}
-            <div className="p-6 md:p-8 rounded-lg bg-[#121212] border border-red-500/20">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
-                  <X className="w-5 h-5 text-red-400" />
-                </div>
-                <div>
-                  <span className="text-red-400 text-[10px] tracking-[0.15em] uppercase font-medium">El problema</span>
-                  <h3 className="text-lg font-light text-white">Contenido promocional</h3>
-                </div>
+      {/* ============== PLANES Y PRECIOS ============== */}
+      <section id="planes" className="py-12 md:py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
+              Planes UGC
+            </span>
+            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+              Elegí tu <span className="italic text-[#d4a968]">plan</span>
+            </h2>
+            {promoActive && (
+              <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-full">
+                <Sparkles className="w-3.5 h-3.5 text-green-400" />
+                <span className="text-xs font-medium text-green-400">Promoción activa</span>
               </div>
+            )}
+          </div>
 
-              <ul className="space-y-3">
-                {[
-                  'Se siente scripted y forzado',
-                  'La audiencia lo ignora',
-                  'No genera confianza',
-                  'Parece "publicidad actuada"',
-                  'Bajo engagement'
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-3 text-sm text-white/60">
-                    <X className="w-4 h-4 text-red-400/60 flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Plans Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {packages.map((pkg, idx) => (
+              <div 
+                key={pkg.type}
+                className={`relative p-6 rounded-lg transition-all ${
+                  pkg.type === 'standard' 
+                    ? 'bg-[#121212] border-2 border-[#d4a968]/50 hover:border-[#d4a968]' 
+                    : 'bg-[#121212] border border-white/5 hover:border-white/20'
+                }`}
+                data-testid={`plan-${pkg.type}`}
+              >
+                {pkg.type === 'standard' && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-[#d4a968] text-black text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+                      Popular
+                    </span>
+                  </div>
+                )}
 
-            {/* The Solution */}
-            <div className="p-6 md:p-8 rounded-lg bg-[#121212] border border-[#d4a968]/30">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center">
-                  <Check className="w-5 h-5 text-[#d4a968]" />
+                <div className="mb-4">
+                  <h3 className="text-lg font-medium text-white">{pkg.name}</h3>
+                  <p className="text-white/50 text-xs mt-1">{pkg.description}</p>
                 </div>
-                <div>
-                  <span className="text-[#d4a968] text-[10px] tracking-[0.15em] uppercase font-medium">La solución</span>
-                  <h3 className="text-lg font-light text-white">Contenido UGC</h3>
+
+                {/* Deliveries highlight */}
+                {pkg.deliveries > 0 && (
+                  <div className="mb-4 p-3 bg-[#d4a968]/10 rounded-lg text-center">
+                    <span className="text-2xl font-light text-[#d4a968]">{pkg.deliveries}</span>
+                    <span className="text-white/60 text-sm ml-2">entregas UGC</span>
+                  </div>
+                )}
+
+                {/* Price */}
+                <div className="mb-4">
+                  {pkg.type !== 'enterprise' ? (
+                    <>
+                      {pkg.is_promo_active && pkg.promo_price ? (
+                        <div>
+                          <span className="text-white/40 line-through text-sm">{formatPrice(pkg.price)}</span>
+                          <div className="text-2xl font-light text-white">{formatPrice(pkg.promo_price)}</div>
+                        </div>
+                      ) : (
+                        <div className="text-2xl font-light text-white">{formatPrice(pkg.price)}</div>
+                      )}
+                      <span className="text-white/40 text-xs">por campaña</span>
+                    </>
+                  ) : (
+                    <div className="text-xl font-light text-white">Consultar</div>
+                  )}
                 </div>
+
+                {/* Features */}
+                <ul className="space-y-2 mb-6">
+                  {pkg.features.map((feature, fidx) => (
+                    <li key={fidx} className="flex items-start gap-2 text-xs text-white/60">
+                      <Check className="w-3.5 h-3.5 text-[#d4a968] mt-0.5 flex-shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA */}
+                <Link
+                  to="/ugc/brand/onboarding"
+                  className={`block w-full text-center py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg ${
+                    pkg.type === 'standard'
+                      ? 'bg-[#d4a968] text-black hover:bg-[#e8c891]'
+                      : 'border border-white/20 text-white hover:bg-white/5'
+                  }`}
+                >
+                  {pkg.type === 'enterprise' ? 'Contactar' : 'Elegir plan'}
+                </Link>
               </div>
-
-              <ul className="space-y-3">
-                {[
-                  'Se siente real y auténtico',
-                  'La audiencia se identifica',
-                  'Genera confianza real',
-                  'Experiencias genuinas',
-                  'Alto engagement'
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-3 text-sm text-white/70">
-                    <Check className="w-4 h-4 text-[#d4a968] flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ============== WHY UGC WORKS ============== */}
+      {/* ============== ¿QUÉ ES UGC? ============== */}
       <section className="py-12 md:py-16 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-10">
             <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
-              Por qué funciona
+              ¿Qué es UGC?
             </span>
-            <h2 className="text-2xl md:text-3xl font-light text-white">
-              El poder del contenido <span className="italic text-[#d4a968]">auténtico</span>
+            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+              Contenido creado por <span className="italic text-[#d4a968]">personas reales</span>
             </h2>
+            <p className="text-white/50 text-sm max-w-lg mx-auto">
+              Creadores usando tu producto de forma auténtica. 
+              Contenido relatable que genera confianza y conecta con tu audiencia.
+            </p>
           </div>
 
           {/* 4 Benefits */}
@@ -164,30 +221,30 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
             {[
               {
                 icon: Shield,
-                title: 'Aumenta la confianza',
-                desc: 'Prueba social real: uso genuino, reviews y testimonios que eliminan dudas.'
+                title: 'Genera confianza',
+                desc: 'Prueba social real: uso genuino y testimonios que eliminan dudas.'
               },
               {
                 icon: TrendingUp,
-                title: 'Amplifica el alcance',
-                desc: 'El contenido se comparte y viaja más allá de la audiencia del creador.'
+                title: 'Amplifica alcance',
+                desc: 'El contenido se comparte y viaja más allá de tu audiencia actual.'
               },
               {
                 icon: MessageCircle,
-                title: 'Mejora el engagement',
-                desc: 'La gente comenta, guarda y manda DM porque se identifica con lo que ve.'
+                title: 'Mejor engagement',
+                desc: 'La gente interactúa más porque se identifica con lo que ve.'
               },
               {
                 icon: Heart,
                 title: 'Construye comunidad',
-                desc: 'Cuando reposteás a clientes/creadores, generás pertenencia y embajadores.'
+                desc: 'Generás pertenencia y convertís clientes en embajadores.'
               }
             ].map((item, idx) => (
               <div key={idx} className="p-5 bg-[#121212] rounded-lg border border-white/5">
                 <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center mb-4">
                   <item.icon className="w-5 h-5 text-[#d4a968]" />
                 </div>
-                <h4 className="text-white font-medium mb-2">{item.title}</h4>
+                <h4 className="text-white font-medium mb-2 text-sm">{item.title}</h4>
                 <p className="text-white/50 text-xs leading-relaxed">{item.desc}</p>
               </div>
             ))}
@@ -195,23 +252,23 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
         </div>
       </section>
 
-      {/* ============== WE HANDLE EVERYTHING ============== */}
+      {/* ============== NOSOTROS GESTIONAMOS TODO ============== */}
       <section className="py-12 md:py-16 px-6 bg-[#0d0d0d]">
         <div className="max-w-5xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left - Content */}
             <div>
               <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-4 block">
-                Diferencial Avenue
+                Servicio completo
               </span>
               
               <h2 className="text-2xl md:text-3xl font-light text-white mb-4 leading-tight">
-                Un productazo <span className="italic text-[#d4a968]">llave en mano</span>
+                Nosotros <span className="italic text-[#d4a968]">gestionamos</span> todo
               </h2>
               
               <p className="text-white/60 mb-6 text-sm leading-relaxed">
-                No solo te conectamos con creadores. Gestionamos absolutamente 
-                todo el proceso para que vos solo recibas contenido listo para usar.
+                No solo te conectamos con creadores. Nos encargamos de cada detalle 
+                para que vos solo recibas el contenido listo.
               </p>
 
               <ul className="space-y-4">
@@ -244,74 +301,26 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
         </div>
       </section>
 
-      {/* ============== HOW IT WORKS ============== */}
-      <section className="py-12 md:py-16 px-6 border-t border-white/5">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
-              Proceso simple
-            </span>
-            <h2 className="text-2xl md:text-3xl font-light text-white">
-              ¿Cómo <span className="italic text-[#d4a968]">funciona</span>?
-            </h2>
-          </div>
-
-          {/* 3 Steps */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                step: '01',
-                icon: FileCheck,
-                title: 'Creás tu campaña',
-                desc: 'Definís el producto, tipo de contenido y requisitos. Nosotros lo publicamos.'
-              },
-              {
-                step: '02',
-                icon: Sparkles,
-                title: 'Recibís contenido',
-                desc: 'Los creadores aplican, seleccionamos los mejores y te entregan contenido.'
-              },
-              {
-                step: '03',
-                icon: BarChart3,
-                title: 'Medís resultados',
-                desc: 'Accedés a métricas reales de cada publicación y el impacto generado.'
-              }
-            ].map((item, idx) => (
-              <div key={idx} className="p-6 bg-[#121212] rounded-lg border border-white/5 text-center">
-                <div className="text-[#d4a968]/30 text-4xl font-light mb-4">{item.step}</div>
-                <div className="w-12 h-12 rounded-full bg-[#d4a968]/10 flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="w-6 h-6 text-[#d4a968]" />
-                </div>
-                <h3 className="text-white font-medium mb-2">{item.title}</h3>
-                <p className="text-white/50 text-sm">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ============== CTA FINAL ============== */}
       <section className="py-12 md:py-16 px-6 border-t border-white/5">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
-            Empezá a generar contenido que <span className="italic text-[#d4a968]">convierte</span>
+            Empezá con tu primera <span className="italic text-[#d4a968]">campaña</span>
           </h2>
           <p className="text-white/50 mb-6 text-sm max-w-lg mx-auto">
-            Dejá de invertir en contenido que nadie mira. 
-            El UGC auténtico conecta, genera confianza y vende.
+            Elegí un plan, creá tu campaña y empezá a recibir 
+            contenido auténtico de creadores reales.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              to="/ugc/brand/onboarding"
+            <a
+              href="#planes"
               className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
-              data-testid="cta-register"
+              data-testid="cta-plans"
             >
-              Registrar mi marca
+              Ver planes
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
             <a
               href="https://wa.me/595971000000"
               target="_blank"
