@@ -958,6 +958,179 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
           })
         )}
       </div>
+
+      {/* Applications Modal */}
+      {showApplications && selectedCampaign && (
+        <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 overflow-y-auto py-10">
+          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-4xl mx-4">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div>
+                <h3 className="text-xl font-medium">Aplicaciones</h3>
+                <p className="text-sm text-gray-400 mt-1">
+                  {selectedCampaign.name} • {applications.length} aplicaciones
+                </p>
+              </div>
+              <button 
+                onClick={() => { setShowApplications(false); setSelectedCampaign(null); }} 
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Slots Info */}
+            <div className="px-6 py-4 bg-white/5 border-b border-white/10">
+              <div className="flex items-center gap-6 text-sm">
+                <span className="text-gray-400">
+                  <span className="text-gray-500">Cupos disponibles:</span>{' '}
+                  <span className="text-green-400 font-medium">{selectedCampaign.available_slots || 0}</span>
+                </span>
+                <span className="text-gray-400">
+                  <span className="text-gray-500">Confirmados:</span>{' '}
+                  <span className="text-white font-medium">{selectedCampaign.slots_filled || 0}</span>
+                </span>
+                <span className="text-gray-400">
+                  <span className="text-gray-500">Total cargados:</span>{' '}
+                  <span className="text-white font-medium">{selectedCampaign.total_slots_loaded || selectedCampaign.slots || 0}</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              {loadingApplications ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
+                </div>
+              ) : applications.length === 0 ? (
+                <div className="text-center py-12">
+                  <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-400">No hay aplicaciones para esta campaña</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {applications.map(app => {
+                    const canConfirm = (selectedCampaign.available_slots || 0) > (selectedCampaign.slots_filled || 0);
+                    
+                    return (
+                      <div 
+                        key={app.id}
+                        className="p-4 bg-white/5 border border-white/10 rounded-xl hover:border-white/20 transition-all"
+                      >
+                        <div className="flex items-start justify-between">
+                          {/* Creator Info */}
+                          <div className="flex items-start gap-4">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-lg">
+                              {app.creator_name?.charAt(0) || 'C'}
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-white">{app.creator_name}</h4>
+                              <p className="text-sm text-gray-400">@{app.creator_username}</p>
+                              
+                              <div className="flex items-center gap-4 mt-2 text-sm">
+                                <span className="text-gray-400 flex items-center gap-1">
+                                  <Users className="w-3.5 h-3.5" />
+                                  {(app.creator_followers || 0).toLocaleString()}
+                                </span>
+                                <span className="flex items-center gap-1 text-yellow-400">
+                                  <Star className="w-3.5 h-3.5 fill-current" />
+                                  {app.creator_rating?.toFixed(1) || '0.0'}
+                                </span>
+                                <span className="px-2 py-0.5 rounded bg-white/10 text-xs capitalize">
+                                  {app.creator_level || 'rookie'}
+                                </span>
+                              </div>
+
+                              {app.motivation && (
+                                <p className="mt-2 text-sm text-gray-300 italic max-w-md">
+                                  "{app.motivation}"
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Status & Actions */}
+                          <div className="flex flex-col items-end gap-3">
+                            {getApplicationStatusBadge(app.status)}
+
+                            {/* Action Buttons */}
+                            {actionLoading === app.id ? (
+                              <Loader2 className="w-5 h-5 animate-spin text-[#d4a968]" />
+                            ) : (
+                              <>
+                                {app.status === 'applied' && (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => handleUpdateApplicationStatus(app.id, 'shortlisted')}
+                                      className="px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition-colors"
+                                    >
+                                      Preseleccionar
+                                    </button>
+                                    <button
+                                      onClick={() => handleUpdateApplicationStatus(app.id, 'confirmed')}
+                                      disabled={!canConfirm}
+                                      className="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-400 text-xs hover:bg-green-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                      title={!canConfirm ? 'No hay cupos disponibles' : ''}
+                                    >
+                                      Confirmar
+                                    </button>
+                                    <button
+                                      onClick={() => handleUpdateApplicationStatus(app.id, 'rejected')}
+                                      className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs hover:bg-red-500/30 transition-colors"
+                                    >
+                                      Rechazar
+                                    </button>
+                                  </div>
+                                )}
+
+                                {app.status === 'shortlisted' && (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => handleUpdateApplicationStatus(app.id, 'confirmed')}
+                                      disabled={!canConfirm}
+                                      className="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-400 text-xs hover:bg-green-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                      title={!canConfirm ? 'No hay cupos disponibles' : ''}
+                                    >
+                                      Confirmar
+                                    </button>
+                                    <button
+                                      onClick={() => handleUpdateApplicationStatus(app.id, 'rejected')}
+                                      className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs hover:bg-red-500/30 transition-colors"
+                                    >
+                                      Rechazar
+                                    </button>
+                                  </div>
+                                )}
+
+                                {app.status === 'confirmed' && (
+                                  <span className="text-xs text-green-400 flex items-center gap-1">
+                                    <CheckCircle className="w-3.5 h-3.5" /> Creador confirmado
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-end p-6 border-t border-white/10">
+              <button
+                onClick={() => { setShowApplications(false); setSelectedCampaign(null); }}
+                className="px-6 py-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
