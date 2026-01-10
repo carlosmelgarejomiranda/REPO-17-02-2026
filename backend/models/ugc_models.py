@@ -275,6 +275,10 @@ class PackagePurchase(BaseModel):
 class CampaignRequirements(BaseModel):
     min_followers: Optional[int] = None
     min_avg_views: Optional[int] = None
+    min_age: Optional[int] = 18
+    gender: Optional[str] = "all"  # all, male, female
+    country: Optional[str] = "Paraguay"
+    residence: Optional[str] = None  # "Asunción y Gran Asunción" or other
     platforms: List[ContentPlatform] = [ContentPlatform.INSTAGRAM]
     mandatory_tag: Optional[str] = None
     mandatory_mention: Optional[str] = None
