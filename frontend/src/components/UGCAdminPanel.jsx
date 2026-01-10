@@ -7,6 +7,7 @@ import {
   Settings
 } from 'lucide-react';
 import AdminCampaignManager from './AdminCampaignManager';
+import AdminStatsDashboard from './AdminStatsDashboard';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
