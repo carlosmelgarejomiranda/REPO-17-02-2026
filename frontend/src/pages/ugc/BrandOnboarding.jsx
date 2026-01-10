@@ -77,6 +77,13 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
     checkAuth();
   }, []);
 
+  // Re-check auth when user prop changes (after modal login)
+  useEffect(() => {
+    if (propUser && !isAuthenticated) {
+      checkAuth();
+    }
+  }, [propUser]);
+
   const checkAuth = async () => {
     try {
       const res = await fetch(`${API_URL}/api/auth/me`, { credentials: 'include' });
