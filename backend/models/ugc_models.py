@@ -479,11 +479,18 @@ class ContentMetrics(BaseModel):
     comments: Optional[int] = None
     shares: Optional[int] = None
     saves: Optional[int] = None  # IG specific
+    # Video metrics
+    watch_time_seconds: Optional[int] = None  # Average watch time
+    video_length_seconds: Optional[int] = None  # Total video duration
+    retention_rate: Optional[float] = None  # % of video watched
     # Calculated
     total_interactions: int = 0
     engagement_rate: Optional[float] = None
+    # Demographics (AI extracted)
+    demographics: Optional[Dict[str, Any]] = None  # {gender, countries, age_ranges}
     # Screenshot/evidence
     screenshot_url: str
+    demographics_screenshot_url: Optional[str] = None
     screenshot_day: int  # Day since publish (should be 7-14)
     # AI Processing
     ai_extracted: bool = False
@@ -498,6 +505,7 @@ class ContentMetrics(BaseModel):
 
 class MetricsSubmit(BaseModel):
     screenshot_url: str
+    demographics_screenshot_url: Optional[str] = None  # Optional second screenshot for demographics
     # Optional manual input (if AI fails)
     views: Optional[int] = None
     reach: Optional[int] = None
@@ -505,6 +513,8 @@ class MetricsSubmit(BaseModel):
     comments: Optional[int] = None
     shares: Optional[int] = None
     saves: Optional[int] = None
+    watch_time_seconds: Optional[int] = None
+    video_length_seconds: Optional[int] = None
 
 class MetricsVerify(BaseModel):
     views: int
@@ -513,6 +523,8 @@ class MetricsVerify(BaseModel):
     comments: int
     shares: int
     saves: Optional[int] = None
+    watch_time_seconds: Optional[int] = None
+    video_length_seconds: Optional[int] = None
 
 # ==================== REVIEW MODELS ====================
 
