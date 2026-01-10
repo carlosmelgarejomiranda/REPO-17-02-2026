@@ -743,6 +743,14 @@ function AppRouter() {
             </>
           } />
 
+          {/* My Profile Route */}
+          <Route path="/mi-perfil" element={
+            <MyProfile 
+              user={user}
+              onLogout={logout}
+            />
+          } />
+
           {/* UGC Platform Routes */}
           <Route path="/ugc/marcas" element={
             <UGCMarcas 
