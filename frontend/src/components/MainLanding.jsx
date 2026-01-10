@@ -88,7 +88,7 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
               data-testid="card-ecommerce"
             >
               <img 
-                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+                src="https://images.unsplash.com/photo-1586880825830-efb7c7549b77?w=600&q=80"
                 alt="Avenue Online"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -117,7 +117,7 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
               data-testid="card-studio"
             >
               <img 
-                src="https://images.pexels.com/photos/35465931/pexels-photo-35465931.jpeg?auto=compress&cs=tinysrgb&w=600"
+                src="https://images.unsplash.com/photo-1758613653843-87c253aea8cd?w=600&q=80"
                 alt="Avenue Studio"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -178,7 +178,7 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
             {/* Left - Image */}
             <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
               <img 
-                src="https://images.pexels.com/photos/7676484/pexels-photo-7676484.jpeg?auto=compress&cs=tinysrgb&w=800"
+                src="https://images.unsplash.com/photo-1758613654785-78b5de6dfd16?w=800&q=80"
                 alt="Avenue"
                 className="w-full h-full object-cover"
               />
