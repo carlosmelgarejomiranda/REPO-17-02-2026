@@ -138,6 +138,20 @@ async def apply_to_campaign(
     
     await db.ugc_applications.insert_one(application)
     
+    # Send WhatsApp notification to admin
+    try:
+        brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1})
+        from services.ugc_emails import notify_new_campaign_application
+        await notify_new_campaign_application(
+            campaign_name=campaign["name"],
+            brand_name=brand.get("company_name", "Marca") if brand else "Marca",
+            creator_name=creator["name"],
+            creator_level=creator.get("level", "rookie"),
+            creator_followers=primary_social.get("followers", 0)
+        )
+    except Exception as e:
+        logger.error(f"Failed to send application notification: {e}")
+    
     return {"success": True, "application_id": application["id"], "message": "Aplicación enviada"}
 
 @router.delete("/{application_id}", response_model=dict)
