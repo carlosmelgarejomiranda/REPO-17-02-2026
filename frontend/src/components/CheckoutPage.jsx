@@ -156,7 +156,7 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
 
   // Check for first purchase discount when user is logged in
   const checkFirstPurchaseDiscount = useCallback(async () => {
-    if (!user) return;
+    if (!user || !cart || cart.length === 0) return;
     
     setCheckingDiscount(true);
     try {
@@ -174,8 +174,9 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
         
         // Auto-apply if no coupon is already applied
         if (!appliedCoupon) {
-          // Calculate discount
-          const discountAmount = subtotal * (data.coupon.discount_value / 100);
+          // Calculate subtotal and discount
+          const currentSubtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+          const discountAmount = currentSubtotal * (data.coupon.discount_value / 100);
           setAppliedCoupon(data.coupon);
           setCouponDiscount(discountAmount);
           setCouponCode(data.coupon.code);
@@ -186,7 +187,7 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
     } finally {
       setCheckingDiscount(false);
     }
-  }, [user, subtotal, appliedCoupon]);
+  }, [user, cart, appliedCoupon]);
 
   // Check first purchase discount when user changes (e.g., after login)
   useEffect(() => {
