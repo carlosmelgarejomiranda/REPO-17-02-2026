@@ -781,7 +781,7 @@ function AppRouter() {
           <Route path="/ugc/creator/metrics/:deliverableId" element={<MetricsSubmit />} />
           <Route path="/ugc/creator/:creatorId" element={<CreatorProfile />} />
           <Route path="/ugc/leaderboard" element={<Leaderboard />} />
-          <Route path="/ugc/brand/onboarding" element={<BrandOnboarding onLoginClick={() => setShowAuthModal(true)} />} />
+          <Route path="/ugc/brand/onboarding" element={<BrandOnboarding user={user} onLoginClick={() => setShowAuthModal(true)} />} />
           <Route path="/ugc/brand/dashboard" element={<BrandDashboard />} />
           <Route path="/ugc/brand/packages" element={<PackagePricing />} />
           <Route path="/ugc/brand/campaigns/new" element={<CampaignBuilder />} />
