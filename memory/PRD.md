@@ -170,6 +170,12 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
   - Video metrics: watch_time_seconds, video_length_seconds, retention_rate
   - Demographics: gender distribution, countries, cities, age ranges
 - [x] **WhatsApp Notifications (Backend Ready)** - All notification functions implemented, pending Meta approval for production
+- [x] **First Purchase Discount System (NEW)** - 10% OFF para primera compra en checkout:
+  - Banner "¡10% OFF en ESTA compra!" para usuarios no logueados
+  - Botón "Obtener 10% OFF" que abre modal de login
+  - Auto-aplicación del cupón BIENVENIDO{random} al loguearse
+  - Endpoints: GET /api/shop/first-purchase-discount, POST /api/shop/auto-apply-first-purchase
+  - Cupones con 30 días de validez y un solo uso
 
 ## Known Limitations
 1. Demographics data in brand reports is MOCKED/simulated based on campaign category
