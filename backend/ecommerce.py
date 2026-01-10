@@ -2595,3 +2595,170 @@ async def delete_temp_batch(batch_id: str):
     
     return {"message": "Batch eliminado correctamente"}
 
+
+
+# ==================== FIRST PURCHASE DISCOUNT ====================
+
+@ecommerce_router.get("/first-purchase-discount")
+async def get_first_purchase_discount(request: Request):
+    """
+    Check if user is eligible for first purchase discount.
+    Returns existing coupon if available, or creates one if eligible.
+    """
+    from server import get_current_user
+    
+    user = await get_current_user(request)
+    if not user:
+        return {"eligible": False, "reason": "not_logged_in"}
+    
+    user_id = user.get("user_id")
+    email = user.get("email")
+    
+    # Check if user has made any previous purchases
+    previous_orders = await db.orders.count_documents({
+        "$or": [
+            {"user_id": user_id},
+            {"customer_email": email}
+        ],
+        "payment_status": {"$in": ["paid", "completed"]}
+    })
+    
+    if previous_orders > 0:
+        return {"eligible": False, "reason": "has_previous_purchases"}
+    
+    # Check if user already has an active welcome coupon
+    existing_coupon = await db.shop_coupons.find_one({
+        "user_id": user_id,
+        "is_active": True,
+        "current_uses": {"$lt": 1}  # Not used yet
+    }, {"_id": 0})
+    
+    if existing_coupon:
+        # Check if not expired
+        if existing_coupon.get("expires_at"):
+            expires = datetime.fromisoformat(existing_coupon["expires_at"].replace("Z", "+00:00"))
+            if datetime.now(timezone.utc) > expires:
+                return {"eligible": False, "reason": "coupon_expired"}
+        
+        return {
+            "eligible": True,
+            "coupon": {
+                "code": existing_coupon["code"],
+                "discount_type": existing_coupon["discount_type"],
+                "discount_value": existing_coupon["discount_value"],
+                "description": existing_coupon.get("description", "Descuento primera compra")
+            },
+            "message": "¡Tienes 10% de descuento en tu primera compra!"
+        }
+    
+    # Create a new welcome coupon if none exists
+    welcome_coupon_code = f"BIENVENIDO{uuid.uuid4().hex[:6].upper()}"
+    welcome_coupon = {
+        "id": str(uuid.uuid4()),
+        "code": welcome_coupon_code,
+        "discount_type": "percentage",
+        "discount_value": 10,
+        "min_purchase": None,
+        "max_uses": 1,
+        "current_uses": 0,
+        "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+        "is_active": True,
+        "description": f"Cupón de bienvenida para {email}",
+        "user_id": user_id,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.shop_coupons.insert_one(welcome_coupon)
+    
+    return {
+        "eligible": True,
+        "coupon": {
+            "code": welcome_coupon_code,
+            "discount_type": "percentage",
+            "discount_value": 10,
+            "description": "Cupón de bienvenida - 10% OFF"
+        },
+        "message": "¡Tienes 10% de descuento en tu primera compra!"
+    }
+
+
+@ecommerce_router.post("/auto-apply-first-purchase")
+async def auto_apply_first_purchase(request: Request):
+    """
+    Auto-apply first purchase discount.
+    Called when user logs in during checkout.
+    Returns the discount details to apply automatically.
+    """
+    from server import get_current_user
+    
+    body = await request.json()
+    subtotal = body.get("subtotal", 0)
+    
+    user = await get_current_user(request)
+    if not user:
+        return {"applied": False, "reason": "not_logged_in"}
+    
+    # Get first purchase discount eligibility
+    user_id = user.get("user_id")
+    email = user.get("email")
+    
+    # Check for previous purchases
+    previous_orders = await db.orders.count_documents({
+        "$or": [
+            {"user_id": user_id},
+            {"customer_email": email}
+        ],
+        "payment_status": {"$in": ["paid", "completed"]}
+    })
+    
+    if previous_orders > 0:
+        return {"applied": False, "reason": "has_previous_purchases"}
+    
+    # Find or create welcome coupon
+    coupon = await db.shop_coupons.find_one({
+        "user_id": user_id,
+        "is_active": True,
+        "current_uses": {"$lt": 1}
+    }, {"_id": 0})
+    
+    if not coupon:
+        # Create new coupon
+        welcome_coupon_code = f"BIENVENIDO{uuid.uuid4().hex[:6].upper()}"
+        coupon = {
+            "id": str(uuid.uuid4()),
+            "code": welcome_coupon_code,
+            "discount_type": "percentage",
+            "discount_value": 10,
+            "min_purchase": None,
+            "max_uses": 1,
+            "current_uses": 0,
+            "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+            "is_active": True,
+            "description": f"Cupón de bienvenida para {email}",
+            "user_id": user_id,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.shop_coupons.insert_one(coupon)
+    
+    # Check expiration
+    if coupon.get("expires_at"):
+        expires = datetime.fromisoformat(coupon["expires_at"].replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > expires:
+            return {"applied": False, "reason": "coupon_expired"}
+    
+    # Calculate discount
+    discount_amount = subtotal * (coupon["discount_value"] / 100)
+    discount_amount = min(discount_amount, subtotal)
+    
+    return {
+        "applied": True,
+        "coupon": {
+            "code": coupon["code"],
+            "discount_type": coupon["discount_type"],
+            "discount_value": coupon["discount_value"],
+            "description": coupon.get("description", "Descuento primera compra")
+        },
+        "discount_amount": discount_amount,
+        "new_subtotal": subtotal - discount_amount,
+        "message": "¡10% de descuento aplicado automáticamente!"
+    }
+
