@@ -335,22 +335,28 @@ async def update_application_status(
     
     # Send email notification to creator
     try:
-        from services.ugc_emails import send_application_confirmed, send_application_rejected
+        from services.ugc_emails import (
+            send_application_confirmed, send_application_rejected,
+            notify_creator_application_confirmed, notify_creator_application_rejected
+        )
         creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
         if creator and creator.get("email"):
             if data.status == ApplicationStatus.CONFIRMED:
-                await send_application_confirmed(
-                    to_email=creator["email"],
+                # Send email + WhatsApp notification
+                deadline = campaign.get("timeline", {}).get("publish_deadline", "A definir")
+                await notify_creator_application_confirmed(
+                    creator_email=creator["email"],
                     creator_name=creator.get("name", "Creator"),
+                    creator_phone=creator.get("phone"),
                     campaign_name=campaign.get("name", ""),
-                    brand_name=brand.get("company_name", "")
+                    brand_name=brand.get("company_name", ""),
+                    deadline=deadline
                 )
             elif data.status == ApplicationStatus.REJECTED:
-                await send_application_rejected(
-                    to_email=creator["email"],
+                await notify_creator_application_rejected(
+                    creator_email=creator["email"],
                     creator_name=creator.get("name", "Creator"),
-                    campaign_name=campaign.get("name", ""),
-                    reason=data.reason
+                    campaign_name=campaign.get("name", "")
                 )
     except Exception as e:
         logger.error(f"Failed to send email notification: {e}")
