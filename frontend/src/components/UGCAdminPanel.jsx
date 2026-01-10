@@ -332,239 +332,61 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
 
       {/* Creators Tab */}
       {activeSubTab === 'creators' && (
-        <div className="space-y-6">
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4 items-center">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Buscar creator..."
-                value={creatorFilter.search}
-                onChange={(e) => setCreatorFilter({...creatorFilter, search: e.target.value})}
-                className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-[#d4a968] focus:outline-none"
-              />
-            </div>
-            <select
-              value={creatorFilter.level}
-              onChange={(e) => { setCreatorFilter({...creatorFilter, level: e.target.value}); fetchCreators(); }}
-              className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
-            >
-              <option value="">Todos los niveles</option>
-              <option value="rookie">Rookie</option>
-              <option value="trusted">Trusted</option>
-              <option value="pro">Pro</option>
-              <option value="elite">Elite</option>
-            </select>
-            <button 
-              onClick={fetchCreators}
-              className="p-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Creators Table */}
-          <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Creator</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Nivel</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Ciudad</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Rating</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Campañas</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Registro</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {creators.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="p-8 text-center text-gray-500">
-                      <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                      No hay creators registrados
-                    </td>
-                  </tr>
-                ) : (
-                  creators.map((creator) => (
-                    <tr key={creator.id} className="border-b border-white/5 hover:bg-white/5">
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                            <span className="text-purple-400 font-medium">
-                              {creator.name?.charAt(0) || 'C'}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="text-white font-medium">{creator.name}</p>
-                            <p className="text-gray-500 text-xs">{creator.email}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <LevelBadge level={creator.level} />
-                      </td>
-                      <td className="p-4 text-gray-300">{creator.city}</td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-[#d4a968]" />
-                          <span className="text-white">{creator.reputation?.avg_rating?.toFixed(1) || '-'}</span>
-                        </div>
-                      </td>
-                      <td className="p-4 text-gray-300">{creator.reputation?.total_campaigns || 0}</td>
-                      <td className="p-4 text-gray-500 text-sm">{formatDate(creator.created_at)}</td>
-                      <td className="p-4">
-                        <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-                          <MoreVertical className="w-4 h-4 text-gray-400" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <AdminCreatorsTab
+          creators={creators}
+          creatorFilter={creatorFilter}
+          setCreatorFilter={setCreatorFilter}
+          fetchCreators={fetchCreators}
+          handleVerifyCreator={async (id) => {
+            try {
+              const token = localStorage.getItem('auth_token');
+              const res = await fetch(`${API_URL}/api/ugc/admin/creators/${id}/verify`, {
+                method: 'POST',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                }
+              });
+              if (res.ok) fetchCreators();
+            } catch (err) {
+              console.error(err);
+            }
+          }}
+          handleToggleCreatorStatus={async (id, status) => {
+            try {
+              const token = localStorage.getItem('auth_token');
+              const res = await fetch(`${API_URL}/api/ugc/admin/creators/${id}/status`, {
+                method: 'POST',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({ is_active: status })
+              });
+              if (res.ok) fetchCreators();
+            } catch (err) {
+              console.error(err);
+            }
+          }}
+        />
       )}
 
       {/* Brands Tab */}
       {activeSubTab === 'brands' && (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium text-white">Marcas Registradas</h3>
-            <button 
-              onClick={fetchBrands}
-              className="p-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Empresa</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Rubro</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Ciudad</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Paquete</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Créditos</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Registro</th>
-                </tr>
-              </thead>
-              <tbody>
-                {brands.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="p-8 text-center text-gray-500">
-                      <Building2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                      No hay marcas registradas
-                    </td>
-                  </tr>
-                ) : (
-                  brands.map((brand) => (
-                    <tr key={brand.id} className="border-b border-white/5 hover:bg-white/5">
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-[#d4a968]/20 flex items-center justify-center">
-                            <Building2 className="w-5 h-5 text-[#d4a968]" />
-                          </div>
-                          <div>
-                            <p className="text-white font-medium">{brand.company_name}</p>
-                            <p className="text-gray-500 text-xs">{brand.contact_name}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-4 text-gray-300">{brand.industry}</td>
-                      <td className="p-4 text-gray-300">{brand.city}</td>
-                      <td className="p-4">
-                        {brand.active_package ? (
-                          <span className="px-2 py-1 rounded-full text-xs bg-green-500/20 text-green-400">
-                            {brand.active_package.type}
-                          </span>
-                        ) : (
-                          <span className="text-gray-500 text-sm">Sin paquete</span>
-                        )}
-                      </td>
-                      <td className="p-4 text-white">{brand.remaining_credits || 0}</td>
-                      <td className="p-4 text-gray-500 text-sm">{formatDate(brand.created_at)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <AdminBrandsTab
+          brands={brands}
+          fetchBrands={fetchBrands}
+        />
       )}
 
       {/* Campaigns Tab */}
       {activeSubTab === 'campaigns' && (
-        <div className="space-y-6">
-          <div className="flex flex-wrap gap-4 items-center justify-between">
-            <div className="flex gap-4">
-              <select
-                value={campaignFilter.status}
-                onChange={(e) => { setCampaignFilter({...campaignFilter, status: e.target.value}); fetchCampaigns(); }}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
-              >
-                <option value="">Todos los estados</option>
-                <option value="draft">Borrador</option>
-                <option value="live">Live</option>
-                <option value="in_production">En Producción</option>
-                <option value="completed">Completadas</option>
-              </select>
-            </div>
-            <button 
-              onClick={fetchCampaigns}
-              className="p-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Campaña</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Marca</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Estado</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Slots</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Valor Canje</th>
-                  <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Creación</th>
-                </tr>
-              </thead>
-              <tbody>
-                {campaigns.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="p-8 text-center text-gray-500">
-                      <Briefcase className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                      No hay campañas creadas
-                    </td>
-                  </tr>
-                ) : (
-                  campaigns.map((campaign) => (
-                    <tr key={campaign.id} className="border-b border-white/5 hover:bg-white/5">
-                      <td className="p-4">
-                        <p className="text-white font-medium">{campaign.name}</p>
-                        <p className="text-gray-500 text-xs">{campaign.category}</p>
-                      </td>
-                      <td className="p-4 text-gray-300">{campaign.brand?.company_name}</td>
-                      <td className="p-4">
-                        <StatusBadge status={campaign.status} type="campaign" />
-                      </td>
-                      <td className="p-4 text-gray-300">
-                        {campaign.slots_filled || 0}/{campaign.slots}
-                      </td>
-                      <td className="p-4 text-white">{formatPrice(campaign.canje?.value || 0)}</td>
-                      <td className="p-4 text-gray-500 text-sm">{formatDate(campaign.created_at)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <AdminCampaignsTab
+          campaigns={campaigns}
+          campaignFilter={campaignFilter}
+          setCampaignFilter={setCampaignFilter}
+          fetchCampaigns={fetchCampaigns}
+        />
       )}
 
       {/* Deliverables Tab */}
