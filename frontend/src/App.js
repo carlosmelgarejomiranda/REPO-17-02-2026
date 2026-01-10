@@ -563,6 +563,16 @@ function AppRouter() {
           } />
 
           {/* UGC Landing Page */}
+          <Route path="/ugc" element={
+            <UGCLanding 
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+              language={language}
+              setLanguage={setLanguage}
+              t={t}
+            />
+          } />
           <Route path="/studio/ugc" element={
             <UGCLanding 
               user={user}
