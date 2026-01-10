@@ -946,12 +946,18 @@ async def login(credentials: UserLogin, request: Request, response: Response):
         ip_address, user_agent, {}
     )
     
+    # Check for UGC profiles
+    has_creator_profile = await db.ugc_creators.find_one({"user_id": user["user_id"]}) is not None
+    has_brand_profile = await db.ugc_brands.find_one({"user_id": user["user_id"]}) is not None
+    
     return {
         "user_id": user["user_id"],
         "email": user["email"],
         "name": user["name"],
         "role": role,
-        "token": token
+        "token": token,
+        "has_creator_profile": has_creator_profile,
+        "has_brand_profile": has_brand_profile
     }
 
 @api_router.post("/auth/google/callback")
