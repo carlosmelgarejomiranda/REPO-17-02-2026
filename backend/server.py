@@ -1038,13 +1038,21 @@ async def google_callback(request: Request, response: Response):
 
 @api_router.get("/auth/me")
 async def get_me(request: Request):
-    """Get current authenticated user"""
+    """Get current authenticated user with UGC profile info"""
     user = await get_current_user(request)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     # Remove password from response
-    user_response = {k: v for k, v in user.items() if k != "password"}
+    user_response = {k: v for k, v in user.items() if k not in ["password", "password_hash"]}
+    
+    # Check for UGC profiles
+    has_creator_profile = await db.ugc_creators.find_one({"user_id": user["user_id"]}) is not None
+    has_brand_profile = await db.ugc_brands.find_one({"user_id": user["user_id"]}) is not None
+    
+    user_response["has_creator_profile"] = has_creator_profile
+    user_response["has_brand_profile"] = has_brand_profile
+    
     return user_response
 
 @api_router.post("/auth/logout")
