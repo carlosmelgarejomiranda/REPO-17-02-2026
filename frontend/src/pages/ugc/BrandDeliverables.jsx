@@ -17,6 +17,12 @@ const BrandDeliverables = () => {
   const [reviewNotes, setReviewNotes] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
   const [activeFilter, setActiveFilter] = useState('pending');
+  // Rating state
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [ratingDeliverable, setRatingDeliverable] = useState(null);
+  const [ratingValue, setRatingValue] = useState(0);
+  const [ratingComment, setRatingComment] = useState('');
+  const [hoverRating, setHoverRating] = useState(0);
 
   useEffect(() => {
     fetchData();
