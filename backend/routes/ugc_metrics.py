@@ -206,6 +206,21 @@ async def submit_metrics(
     # Update creator stats
     await update_creator_stats(db, creator["id"])
     
+    # Send WhatsApp notification to admin
+    try:
+        from services.ugc_emails import notify_metrics_submitted
+        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1})
+        await notify_metrics_submitted(
+            campaign_name=campaign.get("name", "Campaña") if campaign else "Campaña",
+            creator_name=creator.get("name", "Creator"),
+            platform=deliverable.get("platform", "instagram"),
+            views=views or 0,
+            likes=likes or 0
+        )
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Failed to send metrics notification: {e}")
+    
     return {
         "success": True,
         "metrics_id": metrics["id"],
