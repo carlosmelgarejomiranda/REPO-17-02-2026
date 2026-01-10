@@ -91,7 +91,7 @@ async def send_application_confirmed(
     brand_name: str
 ):
     """Send when creator's application is confirmed"""
-    subject = f"🎉 ¡Felicitaciones! Tu aplicación fue confirmada"
+    subject = "🎉 ¡Felicitaciones! Tu aplicación fue confirmada"
     content = f"""
         <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
             ¡Felicitaciones, {creator_name}!
@@ -117,7 +117,7 @@ async def send_application_rejected(
     reason: Optional[str] = None
 ):
     """Send when creator's application is rejected"""
-    subject = f"Actualización sobre tu aplicación"
+    subject = "Actualización sobre tu aplicación"
     reason_text = f"<p style='color: #999999; font-size: 14px; margin: 20px 0;'>Motivo: {reason}</p>" if reason else ""
     content = f"""
         <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
@@ -144,7 +144,7 @@ async def send_deliverable_approved(
     campaign_name: str
 ):
     """Send when deliverable is approved"""
-    subject = f"✅ Tu entrega fue aprobada"
+    subject = "✅ Tu entrega fue aprobada"
     content = f"""
         <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
             ¡Excelente trabajo, {creator_name}!
@@ -170,7 +170,7 @@ async def send_changes_requested(
     feedback: Optional[str] = None
 ):
     """Send when brand requests changes"""
-    subject = f"📝 Cambios solicitados en tu entrega"
+    subject = "📝 Cambios solicitados en tu entrega"
     feedback_text = f"""
         <div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 20px 0;">
             <p style="color: #f59e0b; font-size: 14px; margin: 0 0 10px 0; font-weight: 600;">Feedback de la marca:</p>
