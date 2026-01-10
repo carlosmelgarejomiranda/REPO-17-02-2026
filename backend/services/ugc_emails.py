@@ -480,3 +480,297 @@ async def send_deliverable_rated(
         </a>
     """
     return await send_email(to_email, subject, content)
+
+
+# ==================== WHATSAPP NOTIFICATIONS ====================
+# Import WhatsApp service for dual notifications
+
+async def send_whatsapp_ugc_notification(message: str, notification_type: str = 'ugc'):
+    """Send WhatsApp notification to UGC admin"""
+    try:
+        from whatsapp_service import send_admin_notification
+        return await send_admin_notification(message, notification_type)
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp notification: {e}")
+        return {"success": False, "error": str(e)}
+
+
+async def notify_creator_application_confirmed(
+    creator_email: str,
+    creator_name: str,
+    creator_phone: Optional[str],
+    campaign_name: str,
+    brand_name: str,
+    deadline: str
+):
+    """Notify creator when their application is confirmed - Email + WhatsApp"""
+    # Send Email
+    subject = f"🎉 ¡Felicitaciones! Fuiste seleccionado - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            ¡Felicitaciones {creator_name}!
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            <strong style="color: #d4a968;">{brand_name}</strong> te ha seleccionado para participar en la campaña 
+            <strong style="color: #d4a968;">{campaign_name}</strong>.
+        </p>
+        <div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p style="color: #d4a968; font-size: 14px; margin: 0 0 10px 0;">📅 Fecha límite de entrega:</p>
+            <p style="color: #ffffff; font-size: 18px; margin: 0; font-weight: 600;">{deadline}</p>
+        </div>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+            Ingresá a tu workspace para ver los detalles de la campaña y comenzar a crear contenido.
+        </p>
+        <a href="https://avenue.com.py/ugc/creator/workspace" 
+           style="display: inline-block; padding: 14px 28px; background-color: #d4a968; color: #000000; text-decoration: none; border-radius: 8px; font-weight: 600;">
+            Ir a mi Workspace
+        </a>
+    """
+    email_result = await send_email(creator_email, subject, content)
+    
+    # Send WhatsApp to creator
+    if creator_phone:
+        try:
+            from whatsapp_service import send_whatsapp_message
+            wa_message = f"""🎉 *¡FELICITACIONES {creator_name.upper()}!*
+
+Fuiste seleccionado para la campaña:
+📸 *{campaign_name}*
+🏢 Marca: {brand_name}
+
+📅 *Fecha límite:* {deadline}
+
+Ingresá a tu workspace para ver los detalles:
+👉 avenue.com.py/ugc/creator/workspace"""
+            await send_whatsapp_message(creator_phone, wa_message)
+        except Exception as e:
+            logger.error(f"WhatsApp to creator failed: {e}")
+    
+    return email_result
+
+
+async def notify_creator_application_rejected(
+    creator_email: str,
+    creator_name: str,
+    campaign_name: str
+):
+    """Notify creator when their application is rejected - Email only"""
+    subject = f"Actualización sobre tu aplicación - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            Hola {creator_name}
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            Gracias por tu interés en la campaña <strong style="color: #d4a968;">{campaign_name}</strong>.
+        </p>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            En esta ocasión, la marca ha decidido avanzar con otros perfiles que se ajustan mejor a sus necesidades actuales.
+        </p>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+            ¡No te desanimes! Hay muchas más oportunidades esperándote. Seguí aplicando a campañas y mejorando tu perfil.
+        </p>
+        <a href="https://avenue.com.py/ugc/campaigns" 
+           style="display: inline-block; padding: 14px 28px; background-color: #d4a968; color: #000000; text-decoration: none; border-radius: 8px; font-weight: 600;">
+            Ver otras campañas
+        </a>
+    """
+    return await send_email(creator_email, subject, content)
+
+
+async def notify_deliverable_submitted(
+    campaign_name: str,
+    creator_name: str,
+    delivery_number: int,
+    content_url: str
+):
+    """Notify admin when creator submits a deliverable - WhatsApp"""
+    wa_message = f"""📤 *NUEVA ENTREGA RECIBIDA*
+
+📸 *Campaña:* {campaign_name}
+👤 *Creator:* {creator_name}
+🔢 *Entrega #:* {delivery_number}
+
+🔗 Contenido: {content_url}
+
+Revisá en el panel de admin."""
+    
+    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
+
+
+async def notify_deliverable_approved(
+    creator_email: str,
+    creator_name: str,
+    creator_phone: Optional[str],
+    campaign_name: str,
+    brand_name: str
+):
+    """Notify creator when deliverable is approved - Email + WhatsApp"""
+    subject = f"✅ Tu entrega fue aprobada - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            ¡Excelente trabajo {creator_name}!
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            <strong style="color: #d4a968;">{brand_name}</strong> ha aprobado tu entrega para la campaña 
+            <strong style="color: #d4a968;">{campaign_name}</strong>.
+        </p>
+        <div style="background-color: #22c55e20; padding: 20px; border-radius: 8px; border-left: 4px solid #22c55e; margin: 20px 0;">
+            <p style="color: #22c55e; font-size: 16px; margin: 0;">✅ Entrega aprobada exitosamente</p>
+        </div>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+            Ahora podés publicar el contenido en tus redes y subir las métricas una vez que tengas resultados.
+        </p>
+        <a href="https://avenue.com.py/ugc/creator/workspace" 
+           style="display: inline-block; padding: 14px 28px; background-color: #d4a968; color: #000000; text-decoration: none; border-radius: 8px; font-weight: 600;">
+            Ver mi Workspace
+        </a>
+    """
+    email_result = await send_email(creator_email, subject, content)
+    
+    # Send WhatsApp to creator
+    if creator_phone:
+        try:
+            from whatsapp_service import send_whatsapp_message
+            wa_message = f"""✅ *¡ENTREGA APROBADA!*
+
+Tu contenido para *{campaign_name}* fue aprobado por {brand_name}.
+
+📤 Ahora podés publicarlo en tus redes.
+📊 No olvides subir las métricas después.
+
+👉 avenue.com.py/ugc/creator/workspace"""
+            await send_whatsapp_message(creator_phone, wa_message)
+        except Exception as e:
+            logger.error(f"WhatsApp to creator failed: {e}")
+    
+    return email_result
+
+
+async def notify_deliverable_changes_requested(
+    creator_email: str,
+    creator_name: str,
+    creator_phone: Optional[str],
+    campaign_name: str,
+    feedback: str
+):
+    """Notify creator when changes are requested - Email + WhatsApp"""
+    subject = f"📝 Cambios solicitados - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            Hola {creator_name}
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            La marca ha revisado tu entrega para <strong style="color: #d4a968;">{campaign_name}</strong> y solicita algunos ajustes.
+        </p>
+        <div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 20px 0;">
+            <p style="color: #f59e0b; font-size: 14px; margin: 0 0 10px 0;">📝 Feedback de la marca:</p>
+            <p style="color: #cccccc; font-size: 14px; margin: 0; font-style: italic;">"{feedback}"</p>
+        </div>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+            Por favor revisá los comentarios y volvé a subir tu contenido actualizado.
+        </p>
+        <a href="https://avenue.com.py/ugc/creator/workspace" 
+           style="display: inline-block; padding: 14px 28px; background-color: #d4a968; color: #000000; text-decoration: none; border-radius: 8px; font-weight: 600;">
+            Revisar y reenviar
+        </a>
+    """
+    email_result = await send_email(creator_email, subject, content)
+    
+    # Send WhatsApp to creator
+    if creator_phone:
+        try:
+            from whatsapp_service import send_whatsapp_message
+            wa_message = f"""📝 *CAMBIOS SOLICITADOS*
+
+Tu entrega para *{campaign_name}* necesita ajustes.
+
+💬 Feedback: "{feedback[:100]}{'...' if len(feedback) > 100 else ''}"
+
+Por favor revisá y reenviá tu contenido.
+👉 avenue.com.py/ugc/creator/workspace"""
+            await send_whatsapp_message(creator_phone, wa_message)
+        except Exception as e:
+            logger.error(f"WhatsApp to creator failed: {e}")
+    
+    return email_result
+
+
+async def notify_metrics_submitted(
+    campaign_name: str,
+    creator_name: str,
+    platform: str,
+    views: int,
+    likes: int
+):
+    """Notify admin when metrics are submitted - WhatsApp"""
+    wa_message = f"""📊 *MÉTRICAS ENVIADAS*
+
+📸 *Campaña:* {campaign_name}
+👤 *Creator:* {creator_name}
+📱 *Plataforma:* {platform}
+
+📈 Views: {views:,}
+❤️ Likes: {likes:,}
+
+Verificá en el panel de admin."""
+    
+    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
+
+
+async def notify_new_campaign_application(
+    campaign_name: str,
+    brand_name: str,
+    creator_name: str,
+    creator_level: str,
+    creator_followers: int
+):
+    """Notify admin when new application is received - WhatsApp"""
+    wa_message = f"""👤 *NUEVA APLICACIÓN*
+
+📸 *Campaña:* {campaign_name}
+🏢 *Marca:* {brand_name}
+
+*Aplicante:*
+👤 {creator_name}
+⭐ Nivel: {creator_level}
+👥 Seguidores: {creator_followers:,}
+
+Revisá en el panel de admin."""
+    
+    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
+
+
+async def notify_deliverable_rated_whatsapp(
+    creator_phone: str,
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str,
+    rating: int,
+    comment: Optional[str] = None
+):
+    """Send WhatsApp notification when deliverable is rated"""
+    if not creator_phone:
+        return {"success": False, "error": "No phone number"}
+    
+    stars = "⭐" * rating + "☆" * (5 - rating)
+    
+    comment_text = ""
+    if comment:
+        comment_text = f'\n\n💬 Comentario: "{comment[:80]}{"..." if len(comment) > 80 else ""}"'
+    
+    wa_message = f"""⭐ *NUEVA CALIFICACIÓN*
+
+{brand_name} calificó tu trabajo en:
+📸 *{campaign_name}*
+
+{stars} ({rating}/5){comment_text}
+
+Ver todas tus calificaciones:
+👉 avenue.com.py/ugc/creator/feedback"""
+    
+    try:
+        from whatsapp_service import send_whatsapp_message
+        return await send_whatsapp_message(creator_phone, wa_message)
+    except Exception as e:
+        logger.error(f"WhatsApp rating notification failed: {e}")
+        return {"success": False, "error": str(e)}
