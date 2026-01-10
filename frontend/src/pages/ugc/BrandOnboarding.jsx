@@ -42,7 +42,7 @@ const CITIES_BY_COUNTRY = {
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
-const BrandOnboarding = ({ onLoginClick }) => {
+const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedPackage = searchParams.get('package');
@@ -53,14 +53,10 @@ const BrandOnboarding = ({ onLoginClick }) => {
   const [error, setError] = useState('');
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authMode, setAuthMode] = useState('login'); // 'login' or 'register'
-  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     // Auth (Step 1)
     email: '',
-    password: '',
-    confirmPassword: '',
     name: '',
     // Required (Step 2)
     company_name: '',
