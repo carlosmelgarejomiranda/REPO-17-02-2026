@@ -440,6 +440,11 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
         </div>
       )}
 
+      {/* Campaign Manager Tab */}
+      {activeSubTab === 'campaign-manager' && (
+        <AdminCampaignManager getAuthHeaders={getHeaders} />
+      )}
+
       {/* Creators Tab */}
       {activeSubTab === 'creators' && (
         <div className="space-y-6">
