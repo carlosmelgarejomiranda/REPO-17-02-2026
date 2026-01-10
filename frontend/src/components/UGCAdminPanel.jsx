@@ -8,6 +8,10 @@ import {
 } from 'lucide-react';
 import AdminCampaignManager from './AdminCampaignManager';
 import AdminStatsDashboard from './AdminStatsDashboard';
+import AdminCreatorsTab from './admin/AdminCreatorsTab';
+import AdminBrandsTab from './admin/AdminBrandsTab';
+import AdminCampaignsTab from './admin/AdminCampaignsTab';
+import AdminDeliverablesTab from './admin/AdminDeliverablesTab';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -26,7 +30,7 @@ const formatDate = (dateStr) => {
   });
 };
 
-// Stat Card Component
+// Stat Card Component - kept for other parts of the panel
 const StatCard = ({ icon: Icon, label, value, subValue, trend, trendUp, color = 'text-[#d4a968]' }) => (
   <div className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-white/20 transition-all">
     <div className="flex items-start justify-between">
