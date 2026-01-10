@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   ArrowLeft, ArrowRight, Loader2, Building2, Globe, Instagram, Phone, User, Mail, 
-  AlertCircle, LogIn, Check, Lock, Eye, EyeOff
+  AlertCircle, LogIn, Check, Lock, Eye, EyeOff, Users, CheckCircle
 } from 'lucide-react';
 
 const INDUSTRIES = [
