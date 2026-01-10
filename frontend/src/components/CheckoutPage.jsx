@@ -446,24 +446,37 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Registration Banner - Show only if user is not logged in */}
         {!user && (
-          <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-6 mb-8 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-[#d4a968] to-[#c49958] rounded-xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4" data-testid="register-discount-banner">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#d4a968]/20 rounded-full flex items-center justify-center">
-                <Gift className="w-6 h-6 text-[#d4a968]" />
+              <div className="w-14 h-14 bg-black/20 rounded-full flex items-center justify-center">
+                <Gift className="w-7 h-7 text-black" />
               </div>
               <div>
-                <p className="text-white font-medium">¿Todavía no tenés cuenta?</p>
-                <p className="text-gray-300 text-sm">Creá tu cuenta ahora y ganá un cupón de <span className="text-[#d4a968] font-semibold">10% de descuento</span> en tu próxima compra</p>
+                <p className="text-black font-semibold text-lg">¡10% OFF en tu primera compra!</p>
+                <p className="text-black/80 text-sm">Iniciá sesión o creá tu cuenta ahora y el descuento se aplica automáticamente</p>
               </div>
             </div>
             <button
               type="button"
               onClick={onLoginClick}
-              className="flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black text-sm font-medium rounded-lg hover:bg-[#c99a58] transition-colors whitespace-nowrap"
+              className="flex items-center gap-2 px-6 py-3 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors whitespace-nowrap"
             >
               <UserPlus className="w-4 h-4" />
-              Crear cuenta
+              Obtener 10% OFF
             </button>
+          </div>
+        )}
+
+        {/* Welcome back message for logged in users */}
+        {user && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-8 flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <Tag className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-green-800 font-medium">¡Hola {user.name?.split(' ')[0]}!</p>
+              <p className="text-green-600 text-sm">Tus datos de facturación están guardados. Checkout más rápido.</p>
+            </div>
           </div>
         )}
 
