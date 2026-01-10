@@ -108,6 +108,7 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
 /ugc/creator/onboarding - Creator onboarding
 /ugc/creator/dashboard - Creator dashboard
 /ugc/creator/workspace - Active deliverables
+/ugc/creator/feedback - Private feedback from brands (NEW)
 /ugc/creator/deliverable/:id - Deliverable detail
 /ugc/creator/metrics/:deliverableId - Metrics submission
 /ugc/creator/:creatorId - Public creator profile
@@ -117,7 +118,7 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
 /ugc/brand/packages - Package pricing
 /ugc/brand/campaigns - Campaign management
 /ugc/brand/campaigns/new - Campaign builder
-/ugc/brand/campaigns/:campaignId/reports - Campaign reports (NEW)
+/ugc/brand/campaigns/:campaignId/reports - Campaign reports
 /ugc/brand/deliverables/:campaignId - Brand deliverables review
 /ugc/campaigns - Public campaign catalog
 ```
@@ -125,17 +126,19 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
 ### Backend Routes (FastAPI)
 ```
 /api/ugc/creators/* - Creator management
+/api/ugc/creators/me/feedback - Creator's private feedback from brands (NEW)
 /api/ugc/brands/* - Brand management
 /api/ugc/campaigns/* - Campaign management
 /api/ugc/packages/* - Package purchasing
 /api/ugc/applications/* - Application handling
 /api/ugc/deliverables/* - Deliverable workflow
+/api/ugc/deliverables/{id}/rate - Rate a deliverable (brand)
 /api/ugc/metrics/* - Metrics submission and processing
 /api/ugc/reputation/* - Leaderboard and profiles
 /api/ugc/admin/* - Admin dashboard endpoints
-/api/ugc/metrics/campaign/{id}/detailed - Detailed metrics report (NEW)
-/api/ugc/metrics/campaign/{id}/demographics - Demographics report (NEW)
-/api/ugc/campaigns/{id}/applicants-report - Applicants report (NEW)
+/api/ugc/admin/stats - Detailed platform statistics (NEW)
+/api/upload - File upload endpoint (NEW)
+/api/uploads/{filename} - Serve uploaded files (NEW)
 ```
 
 ## Test Credentials
