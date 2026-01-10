@@ -420,3 +420,63 @@ async def send_brand_welcome(to_email: str, brand_name: str):
         </a>
     """
     return await send_email(to_email, subject, content)
+
+# ==================== RATING NOTIFICATION ====================
+
+async def send_deliverable_rated(
+    to_email: str,
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str,
+    rating: int,
+    comment: Optional[str] = None
+):
+    """Send notification to creator when their deliverable is rated by a brand"""
+    subject = f"⭐ Tu entrega fue calificada - {campaign_name}"
+    
+    # Generate star display
+    stars_html = ""
+    for i in range(5):
+        if i < rating:
+            stars_html += '<span style="color: #f59e0b; font-size: 24px;">★</span>'
+        else:
+            stars_html += '<span style="color: #666666; font-size: 24px;">☆</span>'
+    
+    comment_html = ""
+    if comment:
+        comment_html = f"""
+        <div style="background-color: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 4px solid #d4a968; margin: 20px 0;">
+            <p style="color: #d4a968; font-size: 14px; margin: 0 0 10px 0; font-weight: 600;">Comentario de la marca:</p>
+            <p style="color: #cccccc; font-size: 14px; margin: 0; font-style: italic;">"{comment}"</p>
+        </div>
+        """
+    
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            ¡Hola {creator_name}!
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            <strong style="color: #d4a968;">{brand_name}</strong> ha calificado tu entrega para la campaña 
+            <strong style="color: #d4a968;">{campaign_name}</strong>.
+        </p>
+        
+        <div style="text-align: center; padding: 30px 0;">
+            <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">Tu calificación:</p>
+            <div style="margin-bottom: 10px;">
+                {stars_html}
+            </div>
+            <p style="color: #d4a968; font-size: 32px; font-weight: bold; margin: 0;">{rating}/5</p>
+        </div>
+        
+        {comment_html}
+        
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 20px 0 30px 0;">
+            Esta calificación se suma a tu perfil y ayuda a construir tu reputación en la plataforma.
+        </p>
+        
+        <a href="https://avenue.com.py/ugc/creator/feedback" 
+           style="display: inline-block; padding: 14px 28px; background-color: #d4a968; color: #000000; text-decoration: none; border-radius: 8px; font-weight: 600;">
+            Ver todas mis calificaciones
+        </a>
+    """
+    return await send_email(to_email, subject, content)
