@@ -194,4 +194,10 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
 - `ugc_packages` - Brand package purchases
 
 ## Last Updated
-January 10, 2026 - Implemented Admin Stats Dashboard, Creator Feedback Page, Rating Notifications, Fixed Upload Endpoint, Refactored Admin Panel
+January 10, 2026 - Implemented First Purchase Discount System (10% OFF banner in checkout, auto-apply after login)
+
+## Unified User Experience (P0 - In Progress)
+- [x] **First Purchase Discount** - 10% descuento automático en checkout para nuevos usuarios
+- [ ] **Creator Progressive Onboarding** - Flujo de onboarding al aplicar a campaña
+- [ ] **Brand Progressive Onboarding** - Flujo simplificado para marcas
+- [ ] **Guest Checkout for Studio** - Reservas de estudio sin requerir login
