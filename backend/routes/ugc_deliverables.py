@@ -413,27 +413,32 @@ async def review_deliverable(
     else:
         raise HTTPException(status_code=400, detail="Acción inválida")
     
-    # Send email notification to creator
+    # Send email + WhatsApp notification to creator
     try:
-        from services.ugc_emails import send_deliverable_approved, send_changes_requested
+        from services.ugc_emails import (
+            notify_deliverable_approved, notify_deliverable_changes_requested
+        )
         creator = await db.ugc_creators.find_one({"id": deliverable["creator_id"]})
         campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]})
         if creator and creator.get("email") and campaign:
             if data.action == "approve":
-                await send_deliverable_approved(
-                    to_email=creator["email"],
+                await notify_deliverable_approved(
+                    creator_email=creator["email"],
                     creator_name=creator.get("name", "Creator"),
-                    campaign_name=campaign.get("name", "")
+                    creator_phone=creator.get("phone"),
+                    campaign_name=campaign.get("name", ""),
+                    brand_name=brand.get("company_name", "")
                 )
             elif data.action == "request_changes":
-                await send_changes_requested(
-                    to_email=creator["email"],
+                await notify_deliverable_changes_requested(
+                    creator_email=creator["email"],
                     creator_name=creator.get("name", "Creator"),
+                    creator_phone=creator.get("phone"),
                     campaign_name=campaign.get("name", ""),
-                    feedback=data.notes
+                    feedback=data.notes or "Sin comentarios adicionales"
                 )
     except Exception as e:
-        logger.error(f"Failed to send email notification: {e}")
+        logger.error(f"Failed to send notification: {e}")
     
     return {"success": True, "message": message}
 
