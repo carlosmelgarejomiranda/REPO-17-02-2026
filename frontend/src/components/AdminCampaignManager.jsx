@@ -344,6 +344,76 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
     }
   };
 
+  const handleViewApplications = async (campaign) => {
+    setSelectedCampaign(campaign);
+    setShowApplications(true);
+    setLoadingApplications(true);
+    
+    const token = localStorage.getItem('auth_token');
+    try {
+      const res = await fetch(`${API_URL}/api/ugc/applications/campaign/${campaign.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setApplications(data.applications || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingApplications(false);
+    }
+  };
+
+  const handleUpdateApplicationStatus = async (applicationId, newStatus) => {
+    setActionLoading(applicationId);
+    const token = localStorage.getItem('auth_token');
+    
+    try {
+      const res = await fetch(`${API_URL}/api/ugc/applications/${applicationId}/status`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          status: newStatus, 
+          reason: newStatus === 'rejected' ? 'No seleccionado por Avenue' : null 
+        })
+      });
+      
+      if (res.ok) {
+        // Refresh applications and campaigns
+        handleViewApplications(selectedCampaign);
+        fetchData();
+      } else {
+        const error = await res.json();
+        alert(error.detail || 'Error al actualizar');
+      }
+    } catch (err) {
+      alert('Error de conexión');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const getApplicationStatusBadge = (status) => {
+    const badges = {
+      applied: { color: 'bg-blue-500/20 text-blue-400', label: 'Pendiente', icon: Clock },
+      shortlisted: { color: 'bg-purple-500/20 text-purple-400', label: 'Preseleccionado', icon: UserCheck },
+      confirmed: { color: 'bg-green-500/20 text-green-400', label: 'Confirmado', icon: CheckCircle },
+      rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado', icon: XCircle }
+    };
+    const badge = badges[status] || badges.applied;
+    const Icon = badge.icon;
+    return (
+      <span className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${badge.color}`}>
+        <Icon className="w-3 h-3" />
+        {badge.label}
+      </span>
+    );
+  };
+
   const formatDate = (dateStr) => {
     if (!dateStr) return '-';
     return new Date(dateStr).toLocaleDateString('es-PY', { day: '2-digit', month: 'short', year: 'numeric' });
