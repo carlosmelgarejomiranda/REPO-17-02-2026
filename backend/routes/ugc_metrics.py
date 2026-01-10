@@ -404,7 +404,7 @@ async def submit_metrics(
     return {
         "success": True,
         "metrics_id": metrics["id"],
-        "ai_confidence": ai_data.get("confidence", 0),
+        "ai_confidence": ai_result.get("overall_confidence", 0),
         "is_late": is_late,
         "message": "Métricas enviadas" + (" (tarde)" if is_late else "")
     }
