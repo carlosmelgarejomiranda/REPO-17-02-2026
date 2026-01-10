@@ -38,41 +38,74 @@ async def require_admin(request: Request):
 
 # ==================== AI METRICS EXTRACTION ====================
 
+import logging
+ai_logger = logging.getLogger("ai_metrics")
+
 async def extract_metrics_from_screenshot(screenshot_url: str, platform: str) -> dict:
     """
-    Use AI (Gemini Vision) to extract metrics from screenshot
-    Returns: {views, reach, likes, comments, shares, saves, confidence}
+    Use AI (Gemini Vision) to extract basic metrics from screenshot
+    Returns: {views, reach, likes, comments, shares, saves, watch_time_seconds, video_length_seconds, confidence}
     """
     try:
         from emergentintegrations.llm.gemini import GeminiClient, GeminiConfig, Message
         
         api_key = os.environ.get('EMERGENT_LLM_KEY')
         if not api_key:
+            ai_logger.warning("EMERGENT_LLM_KEY not configured")
             return {"error": "AI not configured", "confidence": 0}
         
         client = GeminiClient(GeminiConfig(api_key=api_key))
         
-        prompt = f"""
-        Analyze this {platform} analytics screenshot and extract the following metrics.
-        Return ONLY a JSON object with these fields (use null if not visible):
-        {{
-            "views": <number or null>,
-            "reach": <number or null>,
-            "likes": <number or null>,
-            "comments": <number or null>,
-            "shares": <number or null>,
-            "saves": <number or null>,
-            "confidence": <0.0 to 1.0>
-        }}
+        platform_hints = {
+            "instagram": """
+            - "Reproducciones" or "Plays" = views
+            - "Alcance" or "Reach" = reach  
+            - "Me gusta" or "Likes" = likes
+            - "Comentarios" or "Comments" = comments
+            - "Compartidos" or "Shares" = shares
+            - "Guardados" or "Saves" = saves
+            - "Tiempo de visualización promedio" or "Avg watch time" = watch_time
+            - "Duración" or "Duration" = video_length
+            """,
+            "tiktok": """
+            - "Visualizaciones" or "Views" = views
+            - "Me gusta" or "Likes" = likes
+            - "Comentarios" or "Comments" = comments
+            - "Compartidos" or "Shares" = shares
+            - "Guardados" or "Saves" = saves (if visible)
+            - "Tiempo de reproducción promedio" or "Avg watch time" = watch_time
+            - "Duración del video" = video_length
+            """
+        }
         
-        Important:
-        - Convert K to thousands (10.5K = 10500)
-        - Convert M to millions (1.2M = 1200000)
-        - For Instagram: look for "Plays", "Reach", "Likes", "Comments", "Shares", "Saves"
-        - For TikTok: look for "Views", "Likes", "Comments", "Shares"
-        - Confidence should reflect how certain you are about the extracted numbers
-        """
-        
+        prompt = f"""Analyze this {platform.upper()} analytics screenshot and extract metrics.
+
+PLATFORM SPECIFIC LABELS ({platform}):
+{platform_hints.get(platform, platform_hints['instagram'])}
+
+Return ONLY a valid JSON object with these exact fields (use null if not visible):
+{{
+    "views": <integer or null>,
+    "reach": <integer or null>,
+    "likes": <integer or null>,
+    "comments": <integer or null>,
+    "shares": <integer or null>,
+    "saves": <integer or null>,
+    "watch_time_seconds": <integer in seconds or null>,
+    "video_length_seconds": <integer in seconds or null>,
+    "retention_rate": <float percentage or null>,
+    "confidence": <float 0.0 to 1.0>
+}}
+
+IMPORTANT CONVERSION RULES:
+- K = thousands (10.5K = 10500, 1.2K = 1200)
+- M = millions (1.2M = 1200000)
+- mil = thousands in Spanish (10.5 mil = 10500)
+- Time formats: "1:30" = 90 seconds, "2m 15s" = 135 seconds, "45s" = 45 seconds
+- Percentage: "45%" retention = 45.0
+
+Return ONLY the JSON, no explanation."""
+
         response = await client.send_message(
             messages=[Message(role="user", content=prompt)],
             image_url=screenshot_url
@@ -83,15 +116,135 @@ async def extract_metrics_from_screenshot(screenshot_url: str, platform: str) ->
         import re
         
         # Try to extract JSON from response
-        json_match = re.search(r'\{[^}]+\}', response.content)
+        response_text = response.content if hasattr(response, 'content') else str(response)
+        
+        # Clean markdown code blocks if present
+        response_text = re.sub(r'```json\s*', '', response_text)
+        response_text = re.sub(r'```\s*', '', response_text)
+        
+        json_match = re.search(r'\{[^{}]*\}', response_text, re.DOTALL)
         if json_match:
             data = json.loads(json_match.group())
+            ai_logger.info(f"AI extracted metrics: {data}")
+            return data
+        
+        ai_logger.warning(f"Could not parse AI response: {response_text[:200]}")
+        return {"error": "Could not parse AI response", "confidence": 0}
+        
+    except Exception as e:
+        ai_logger.error(f"AI metrics extraction failed: {e}")
+        return {"error": str(e), "confidence": 0}
+
+
+async def extract_demographics_from_screenshot(screenshot_url: str, platform: str) -> dict:
+    """
+    Use AI (Gemini Vision) to extract demographics from analytics screenshot
+    Returns: {gender, countries, age_ranges, confidence}
+    """
+    try:
+        from emergentintegrations.llm.gemini import GeminiClient, GeminiConfig, Message
+        
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            return {"error": "AI not configured", "confidence": 0}
+        
+        client = GeminiClient(GeminiConfig(api_key=api_key))
+        
+        prompt = f"""Analyze this {platform.upper()} analytics demographics screenshot.
+
+Extract audience demographics data and return ONLY a valid JSON object:
+{{
+    "gender": {{
+        "male": <percentage as float or null>,
+        "female": <percentage as float or null>,
+        "other": <percentage as float or null>
+    }},
+    "countries": [
+        {{"country": "<country name>", "percentage": <float>}},
+        ...
+    ],
+    "age_ranges": [
+        {{"range": "13-17", "percentage": <float or null>}},
+        {{"range": "18-24", "percentage": <float or null>}},
+        {{"range": "25-34", "percentage": <float or null>}},
+        {{"range": "35-44", "percentage": <float or null>}},
+        {{"range": "45-54", "percentage": <float or null>}},
+        {{"range": "55-64", "percentage": <float or null>}},
+        {{"range": "65+", "percentage": <float or null>}}
+    ],
+    "top_cities": [
+        {{"city": "<city name>", "percentage": <float>}},
+        ...
+    ],
+    "confidence": <float 0.0 to 1.0>
+}}
+
+IMPORTANT:
+- Extract percentages as floats (e.g., 45.5 not "45.5%")
+- Include top 5 countries/cities if visible
+- Age ranges may vary by platform, normalize to the ranges above
+- If data is not visible, use null for that field
+- Spanish labels: "Hombres"=male, "Mujeres"=female, "Edad"=age
+
+Return ONLY the JSON, no explanation."""
+
+        response = await client.send_message(
+            messages=[Message(role="user", content=prompt)],
+            image_url=screenshot_url
+        )
+        
+        import json
+        import re
+        
+        response_text = response.content if hasattr(response, 'content') else str(response)
+        response_text = re.sub(r'```json\s*', '', response_text)
+        response_text = re.sub(r'```\s*', '', response_text)
+        
+        # Find JSON object (may be nested)
+        json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if json_match:
+            data = json.loads(json_match.group())
+            ai_logger.info(f"AI extracted demographics: {list(data.keys())}")
             return data
         
         return {"error": "Could not parse AI response", "confidence": 0}
         
     except Exception as e:
+        ai_logger.error(f"AI demographics extraction failed: {e}")
         return {"error": str(e), "confidence": 0}
+
+
+async def extract_all_metrics(
+    metrics_screenshot_url: str,
+    demographics_screenshot_url: str = None,
+    platform: str = "instagram"
+) -> dict:
+    """
+    Extract both metrics and demographics from screenshots
+    """
+    result = {
+        "metrics": {},
+        "demographics": {},
+        "overall_confidence": 0
+    }
+    
+    # Extract basic metrics
+    metrics_data = await extract_metrics_from_screenshot(metrics_screenshot_url, platform)
+    result["metrics"] = metrics_data
+    
+    # Extract demographics if screenshot provided
+    if demographics_screenshot_url:
+        demo_data = await extract_demographics_from_screenshot(demographics_screenshot_url, platform)
+        result["demographics"] = demo_data
+        
+        # Calculate overall confidence
+        metrics_conf = metrics_data.get("confidence", 0)
+        demo_conf = demo_data.get("confidence", 0)
+        result["overall_confidence"] = (metrics_conf + demo_conf) / 2
+    else:
+        result["overall_confidence"] = metrics_data.get("confidence", 0)
+    
+    return result
 
 # ==================== CREATOR: SUBMIT METRICS ====================
 
