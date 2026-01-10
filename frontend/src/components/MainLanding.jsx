@@ -174,9 +174,9 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
       {/* ============== ABOUT AVENUE - COMPACT ============== */}
       <section className="py-12 md:py-16 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            {/* Left - Image */}
-            <div className="relative aspect-[3/4] rounded-lg overflow-hidden max-h-[400px] lg:max-h-[450px]">
+          <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-center">
+            {/* Left - Image (2 cols) */}
+            <div className="lg:col-span-2 relative aspect-[3/4] rounded-lg overflow-hidden max-h-[420px] mx-auto lg:mx-0">
               <img 
                 src="https://customer-assets.emergentagent.com/job_one-account/artifacts/6frwfbef_fachada%20avenue.jpg"
                 alt="Avenue"
@@ -184,34 +184,41 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
               />
             </div>
 
-            {/* Right - Text */}
-            <div>
-              <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium">
+            {/* Right - Text (3 cols) */}
+            <div className="lg:col-span-3 flex flex-col justify-center">
+              <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-4">
                 Quiénes somos
               </span>
               
-              <h2 className="text-2xl md:text-3xl font-light text-white mt-3 mb-4 leading-tight">
-                Agencia de <span className="italic text-[#d4a968]">posicionamiento</span> con plataforma comercial
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-white mb-4 leading-tight">
+                Agencia de <span className="italic text-[#d4a968]">posicionamiento</span><br className="hidden md:block" /> 
+                con plataforma comercial
               </h2>
               
-              <p className="text-white/60 mb-6 text-sm leading-relaxed">
+              <p className="text-white/60 mb-8 text-sm leading-relaxed max-w-lg">
                 Ayudamos a marcas a construir visibilidad a través de contenido estratégico, 
                 producción profesional y acceso a una plataforma comercial real con showroom 
                 físico y tienda online.
               </p>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-3 bg-white/5 rounded-lg">
-                  <Camera className="w-5 h-5 text-[#d4a968] mx-auto mb-2" />
-                  <span className="text-white/70 text-[11px]">Estudio</span>
+              <div className="flex flex-wrap gap-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center">
+                    <Camera className="w-5 h-5 text-[#d4a968]" />
+                  </div>
+                  <span className="text-white/70 text-sm">Estudio</span>
                 </div>
-                <div className="text-center p-3 bg-white/5 rounded-lg">
-                  <Users className="w-5 h-5 text-[#d4a968] mx-auto mb-2" />
-                  <span className="text-white/70 text-[11px]">UGC</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center">
+                    <Users className="w-5 h-5 text-[#d4a968]" />
+                  </div>
+                  <span className="text-white/70 text-sm">UGC</span>
                 </div>
-                <div className="text-center p-3 bg-white/5 rounded-lg">
-                  <Store className="w-5 h-5 text-[#d4a968] mx-auto mb-2" />
-                  <span className="text-white/70 text-[11px]">Showroom</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center">
+                    <Store className="w-5 h-5 text-[#d4a968]" />
+                  </div>
+                  <span className="text-white/70 text-sm">Showroom</span>
                 </div>
               </div>
             </div>
