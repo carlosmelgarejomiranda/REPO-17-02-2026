@@ -260,6 +260,7 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
 
   const subTabs = [
     { id: 'overview', label: 'Dashboard', icon: BarChart3 },
+    { id: 'campaign-manager', label: 'Gestión Campañas', icon: Settings },
     { id: 'creators', label: 'Creators', icon: Users },
     { id: 'brands', label: 'Marcas', icon: Building2 },
     { id: 'campaigns', label: 'Campañas', icon: Briefcase },
