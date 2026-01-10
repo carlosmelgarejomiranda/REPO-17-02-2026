@@ -2,93 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, Building2, Users, BarChart3, CheckCircle, Sparkles,
-  FileCheck, Clock, Shield, Package, Calculator, Check, Star
+  ArrowLeft, Heart, TrendingUp, MessageCircle, UserPlus, Shield,
+  Package, Zap, FileCheck, X, Check
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 
-const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
-  const [packages, setPackages] = useState([]);
-  const [showEnterprise, setShowEnterprise] = useState(false);
-  const [enterpriseForm, setEnterpriseForm] = useState({
-    duration_months: 6,
-    deliveries_per_month: 16
-  });
-  const [enterpriseQuote, setEnterpriseQuote] = useState(null);
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-  const fetchPackages = async () => {
-    try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/packages/pricing`);
-      const data = await res.json();
-      setPackages(data.packages.filter(p => p.type !== 'enterprise'));
-    } catch (err) {
-      console.error(err);
-    }
-  };
+const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    fetchPackages();
+    setIsLoaded(true);
   }, []);
 
-  const fetchEnterpriseQuote = async () => {
-    try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/packages/enterprise/quote`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(enterpriseForm)
-      });
-      const data = await res.json();
-      setEnterpriseQuote(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    if (showEnterprise) {
-      fetchEnterpriseQuote();
-    }
-  }, [enterpriseForm, showEnterprise]);
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
-  };
-
-  const benefits = [
-    {
-      icon: Users,
-      title: 'Creadores Verificados',
-      desc: 'Red de +50 creadores con métricas y reputación pública'
-    },
-    {
-      icon: FileCheck,
-      title: 'Gestión End-to-End',
-      desc: 'Desde la publicación hasta las métricas, todo en un solo lugar'
-    },
-    {
-      icon: BarChart3,
-      title: 'Métricas Reales',
-      desc: 'Reportes de performance con views, reach e interacciones'
-    },
-    {
-      icon: Clock,
-      title: 'Control de Entregas',
-      desc: 'SLAs definidos, tracking de puntualidad y 2 rondas de revisión'
-    },
-    {
-      icon: Shield,
-      title: 'Cumplimiento Garantizado',
-      desc: 'Verificamos tags, menciones y requisitos mínimos'
-    },
-    {
-      icon: Sparkles,
-      title: 'Contenido Auténtico',
-      desc: 'UGC real que conecta con tu audiencia'
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
       <Navbar 
         user={user}
         onLoginClick={onLoginClick}
@@ -97,308 +27,301 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
         setLanguage={setLanguage}
         t={t}
       />
-      
-      {/* Hero */}
-      <section className="relative pt-32 pb-24 px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#d4a968]/20 via-black to-black" />
-        
-        <div className="relative max-w-5xl mx-auto">
-          <Link to="/studio/ugc" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
-            <ArrowRight className="w-4 h-4 rotate-180" />
+
+      {/* ============== HERO SECTION ============== */}
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-16">
+        {/* Background */}
+        <div className="absolute inset-0">
+          <img
+            src="https://customer-assets.emergentagent.com/job_one-account/artifacts/tk0opl7n_influencer%20ugc%201.webp"
+            alt="UGC Content"
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/80 via-[#0a0a0a]/70 to-[#0a0a0a]" />
+        </div>
+
+        {/* Content */}
+        <div className={`relative z-10 max-w-4xl mx-auto px-6 text-center transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          {/* Back link */}
+          <Link 
+            to="/ugc" 
+            className="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
             Volver a UGC
           </Link>
 
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-[#d4a968] rounded-xl flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-black" />
-            </div>
-            <p className="text-[#d4a968] text-sm font-medium tracking-[0.2em] uppercase">Para Marcas</p>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 border border-[#d4a968]/30 bg-[#d4a968]/10 px-3 py-1.5 rounded-full mb-6">
+            <Building2 className="w-3.5 h-3.5 text-[#d4a968]" />
+            <span className="text-[10px] font-medium text-[#d4a968] tracking-[0.15em] uppercase">
+              Para Marcas
+            </span>
           </div>
-          
-          <h1 className="text-4xl md:text-6xl font-light mb-6 leading-tight">
-            Lanzá campañas UGC<br />
-            <span className="italic text-[#d4a968]">sin fricción</span>
+
+          {/* Main Headline */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-4 leading-[1.1]">
+            Contenido que <span className="italic text-[#d4a968]">conecta</span>,<br className="hidden sm:block" /> 
+            no que interrumpe
           </h1>
-          
-          <p className="text-xl text-gray-300 mb-10 max-w-2xl leading-relaxed">
-            Publicá tu campaña, recibí postulaciones de creadores verificados, 
-            gestioná entregas y obtené métricas. Todo desde una plataforma.
+
+          {/* Subheadline */}
+          <p className="text-base md:text-lg text-white/60 mb-8 max-w-xl mx-auto">
+            UGC auténtico que despierta interés y posiciona 
+            tu marca en la mente de tu audiencia.
           </p>
 
-          <div className="flex flex-wrap gap-4">
-            <Link 
-              to="/ugc/brand/onboarding"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-all"
-            >
-              Registrar mi marca
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <a 
-              href="#paquetes"
-              className="inline-flex items-center gap-3 px-8 py-4 border border-white/30 text-white font-medium rounded-lg hover:border-[#d4a968] hover:text-[#d4a968] transition-all"
-            >
-              Ver paquetes
-            </a>
-          </div>
+          {/* CTA */}
+          <Link
+            to="/ugc/brand/onboarding"
+            className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
+            data-testid="hero-cta"
+          >
+            Empezar ahora
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
-      {/* Benefits */}
-      <section className="py-24 px-6 border-t border-white/10">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-light text-center mb-4">
-            ¿Por qué elegir <span className="italic text-[#d4a968]">Avenue UGC</span>?
-          </h2>
-          <p className="text-gray-400 text-center mb-16 max-w-2xl mx-auto">
-            No somos una agencia. Somos una plataforma que te da control total sobre tus campañas.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {benefits.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <div key={idx} className="p-6 bg-white/5 border border-white/10 rounded-xl">
-                  <div className="w-12 h-12 bg-[#d4a968]/20 rounded-lg flex items-center justify-center mb-4">
-                    <Icon className="w-6 h-6 text-[#d4a968]" />
-                  </div>
-                  <h3 className="text-lg font-medium mb-2">{item.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="py-24 px-6 bg-[#0a0a0a]">
+      {/* ============== THE PROBLEM vs SOLUTION ============== */}
+      <section className="py-12 md:py-16 px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-light text-center mb-16">
-            Cómo <span className="italic text-[#d4a968]">funciona</span>
-          </h2>
-
-          <div className="space-y-6">
-            {[
-              { num: '01', title: 'Comprá tu paquete', desc: 'Elegí la cantidad de entregas que necesitás' },
-              { num: '02', title: 'Creá tu campaña', desc: 'Definí el canje, requisitos de contenido y plazos' },
-              { num: '03', title: 'Recibí postulaciones', desc: 'Creadores verificados aplican a tu campaña' },
-              { num: '04', title: 'Seleccioná perfiles', desc: 'Revisá métricas, rating y portfolio de cada creador' },
-              { num: '05', title: 'Gestioná entregas', desc: '2 rondas de revisión para asegurar cumplimiento' },
-              { num: '06', title: 'Recibí métricas', desc: 'Reporte final con views, reach e interacciones' }
-            ].map((step, idx) => (
-              <div key={idx} className="flex gap-6 items-start p-6 bg-white/5 rounded-xl">
-                <span className="text-3xl font-light text-[#d4a968]">{step.num}</span>
-                <div>
-                  <h3 className="text-lg font-medium mb-1">{step.title}</h3>
-                  <p className="text-gray-400">{step.desc}</p>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* The Problem */}
+            <div className="p-6 md:p-8 rounded-lg bg-[#121212] border border-red-500/20">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                  <X className="w-5 h-5 text-red-400" />
                 </div>
+                <div>
+                  <span className="text-red-400 text-[10px] tracking-[0.15em] uppercase font-medium">El problema</span>
+                  <h3 className="text-lg font-light text-white">Contenido promocional</h3>
+                </div>
+              </div>
+
+              <ul className="space-y-3">
+                {[
+                  'Se siente scripted y forzado',
+                  'La audiencia lo ignora',
+                  'No genera confianza',
+                  'Parece "publicidad actuada"',
+                  'Bajo engagement'
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-sm text-white/60">
+                    <X className="w-4 h-4 text-red-400/60 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* The Solution */}
+            <div className="p-6 md:p-8 rounded-lg bg-[#121212] border border-[#d4a968]/30">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center">
+                  <Check className="w-5 h-5 text-[#d4a968]" />
+                </div>
+                <div>
+                  <span className="text-[#d4a968] text-[10px] tracking-[0.15em] uppercase font-medium">La solución</span>
+                  <h3 className="text-lg font-light text-white">Contenido UGC</h3>
+                </div>
+              </div>
+
+              <ul className="space-y-3">
+                {[
+                  'Se siente real y auténtico',
+                  'La audiencia se identifica',
+                  'Genera confianza real',
+                  'Experiencias genuinas',
+                  'Alto engagement'
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-sm text-white/70">
+                    <Check className="w-4 h-4 text-[#d4a968] flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============== WHY UGC WORKS ============== */}
+      <section className="py-12 md:py-16 px-6 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
+              Por qué funciona
+            </span>
+            <h2 className="text-2xl md:text-3xl font-light text-white">
+              El poder del contenido <span className="italic text-[#d4a968]">auténtico</span>
+            </h2>
+          </div>
+
+          {/* 4 Benefits */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                icon: Shield,
+                title: 'Aumenta la confianza',
+                desc: 'Prueba social real: uso genuino, reviews y testimonios que eliminan dudas.'
+              },
+              {
+                icon: TrendingUp,
+                title: 'Amplifica el alcance',
+                desc: 'El contenido se comparte y viaja más allá de la audiencia del creador.'
+              },
+              {
+                icon: MessageCircle,
+                title: 'Mejora el engagement',
+                desc: 'La gente comenta, guarda y manda DM porque se identifica con lo que ve.'
+              },
+              {
+                icon: Heart,
+                title: 'Construye comunidad',
+                desc: 'Cuando reposteás a clientes/creadores, generás pertenencia y embajadores.'
+              }
+            ].map((item, idx) => (
+              <div key={idx} className="p-5 bg-[#121212] rounded-lg border border-white/5">
+                <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center mb-4">
+                  <item.icon className="w-5 h-5 text-[#d4a968]" />
+                </div>
+                <h4 className="text-white font-medium mb-2">{item.title}</h4>
+                <p className="text-white/50 text-xs leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Packages */}
-      <section id="paquetes" className="py-24 px-6 border-t border-white/10">
-        <div className="max-w-6xl mx-auto">
-          {/* Promo Banner */}
-          <div className="mb-12 p-4 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl text-center">
-            <Sparkles className="w-5 h-5 text-[#d4a968] inline mr-2" />
-            <span className="text-[#d4a968] font-medium">¡Promoción de Lanzamiento!</span>
-            <span className="text-gray-400 ml-2">Precios especiales por tiempo limitado</span>
-          </div>
-
-          <h2 className="text-3xl font-light text-center mb-4">
-            Elegí tu <span className="italic text-[#d4a968]">paquete</span>
-          </h2>
-          <p className="text-gray-400 text-center mb-16 max-w-2xl mx-auto">
-            Cada paquete incluye entregas de contenido UGC con proceso de revisión y métricas.
-          </p>
-
-          {/* Packages Grid */}
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            {packages.map((pkg) => {
-              const isPopular = pkg.type === 'standard';
-              const hasPromo = pkg.promo_price;
+      {/* ============== WE HANDLE EVERYTHING ============== */}
+      <section className="py-12 md:py-16 px-6 bg-[#0d0d0d]">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left - Content */}
+            <div>
+              <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-4 block">
+                Diferencial Avenue
+              </span>
               
-              return (
-                <div
-                  key={pkg.type}
-                  className={`relative p-8 rounded-2xl border-2 transition-all ${
-                    isPopular
-                      ? 'border-[#d4a968]/50 bg-[#d4a968]/5'
-                      : 'border-white/10 bg-white/5'
-                  }`}
-                >
-                  {isPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="bg-[#d4a968] text-black text-xs font-medium px-3 py-1 rounded-full">
-                        MÁS POPULAR
-                      </span>
+              <h2 className="text-2xl md:text-3xl font-light text-white mb-4 leading-tight">
+                Un productazo <span className="italic text-[#d4a968]">llave en mano</span>
+              </h2>
+              
+              <p className="text-white/60 mb-6 text-sm leading-relaxed">
+                No solo te conectamos con creadores. Gestionamos absolutamente 
+                todo el proceso para que vos solo recibas contenido listo para usar.
+              </p>
+
+              <ul className="space-y-4">
+                {[
+                  { icon: Users, text: 'Selección y coordinación de creadores' },
+                  { icon: Package, text: 'Logística de envío de productos' },
+                  { icon: FileCheck, text: 'Recopilación y entrega de contenidos' },
+                  { icon: BarChart3, text: 'Métricas verificadas y reportes' },
+                  { icon: Shield, text: 'Control de calidad y cumplimiento' }
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-sm text-white/70">
+                    <div className="w-8 h-8 rounded-full bg-[#d4a968]/10 flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-4 h-4 text-[#d4a968]" />
                     </div>
-                  )}
-
-                  <h3 className="text-2xl font-medium mb-2">{pkg.name}</h3>
-                  <p className="text-gray-400 text-sm mb-6">{pkg.description}</p>
-
-                  <div className="mb-6">
-                    <span className="text-5xl font-light text-[#d4a968]">{pkg.deliveries}</span>
-                    <span className="text-gray-400 ml-2">entregas</span>
-                  </div>
-
-                  <div className="mb-6">
-                    {hasPromo ? (
-                      <>
-                        <span className="text-gray-500 line-through text-lg">
-                          {formatPrice(pkg.price)}
-                        </span>
-                        <div className="text-3xl font-medium text-white">
-                          {formatPrice(pkg.promo_price)}
-                        </div>
-                        <span className="text-[#d4a968] text-sm">
-                          Ahorro: {formatPrice(pkg.price - pkg.promo_price)}
-                        </span>
-                      </>
-                    ) : (
-                      <div className="text-3xl font-medium text-white">
-                        {formatPrice(pkg.price)}
-                      </div>
-                    )}
-                  </div>
-
-                  <ul className="space-y-3 mb-8">
-                    {pkg.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <Check className="w-5 h-5 text-[#d4a968] flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-300 text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
-                    to="/ugc/brand/onboarding"
-                    className={`block text-center py-3 rounded-lg font-medium transition-all ${
-                      isPopular
-                        ? 'bg-[#d4a968] text-black hover:bg-[#c49958]'
-                        : 'bg-white/10 text-white hover:bg-white/20'
-                    }`}
-                  >
-                    Seleccionar
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Enterprise */}
-          <div className="border-t border-white/10 pt-16">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-light mb-2">
-                ¿Necesitás más <span className="text-[#d4a968] italic">volumen</span>?
-              </h3>
-              <p className="text-gray-400">Armá tu paquete Enterprise a medida</p>
+                    {item.text}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {!showEnterprise ? (
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setShowEnterprise(true)}
-                  className="flex items-center gap-2 px-6 py-3 border border-[#d4a968]/50 rounded-lg text-[#d4a968] hover:bg-[#d4a968]/10 transition-all"
-                >
-                  <Calculator className="w-5 h-5" />
-                  Calcular cotización
-                </button>
-              </div>
-            ) : (
-              <div className="max-w-xl mx-auto p-8 bg-white/5 border border-white/10 rounded-2xl">
-                <h4 className="text-xl font-medium mb-6 flex items-center gap-2">
-                  <Calculator className="w-5 h-5 text-[#d4a968]" />
-                  Cotizador Enterprise
-                </h4>
-
-                <div className="space-y-6 mb-8">
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2">Duración del contrato</label>
-                    <select
-                      value={enterpriseForm.duration_months}
-                      onChange={(e) => setEnterpriseForm({...enterpriseForm, duration_months: parseInt(e.target.value)})}
-                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#d4a968] focus:outline-none"
-                    >
-                      {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
-                        <option key={m} value={m}>{m} meses</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2">Entregas por mes</label>
-                    <select
-                      value={enterpriseForm.deliveries_per_month}
-                      onChange={(e) => setEnterpriseForm({...enterpriseForm, deliveries_per_month: parseInt(e.target.value)})}
-                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#d4a968] focus:outline-none"
-                    >
-                      <option value={16}>16 entregas/mes</option>
-                      <option value={24}>24 entregas/mes</option>
-                      <option value={30}>30 entregas/mes</option>
-                    </select>
-                  </div>
-                </div>
-
-                {enterpriseQuote && (
-                  <div className="p-6 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl mb-6">
-                    <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-                      <div>
-                        <span className="text-gray-400">Total entregas:</span>
-                        <span className="text-white ml-2 font-medium">{enterpriseQuote.total_deliveries}</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-400">Precio/entrega:</span>
-                        <span className="text-white ml-2">{formatPrice(enterpriseQuote.price_per_delivery)}</span>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-[#d4a968]/30 pt-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-400">Valor total:</span>
-                        <span className="text-2xl font-medium text-white">{formatPrice(enterpriseQuote.total_price)}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-400">Cuota mensual:</span>
-                        <span className="text-[#d4a968] font-medium">{formatPrice(enterpriseQuote.monthly_payment)}/mes</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <Link
-                  to="/ugc/brand/onboarding"
-                  className="block text-center py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] transition-all"
-                >
-                  Solicitar Enterprise
-                </Link>
-              </div>
-            )}
+            {/* Right - Image */}
+            <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_one-account/artifacts/e9d2076s_bastante-joven-morena-de-pelo-corto-en-vestido-rojo-de-lino-con-cinturon-negro-sonrie-toma-selfie-muestra-el-signo-de-la-paz-y-posa-en-la-oficina-del-disenador-de-moda.jpg"
+                alt="UGC Creator"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-6 bg-[#0a0a0a]">
+      {/* ============== HOW IT WORKS ============== */}
+      <section className="py-12 md:py-16 px-6 border-t border-white/5">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
+              Proceso simple
+            </span>
+            <h2 className="text-2xl md:text-3xl font-light text-white">
+              ¿Cómo <span className="italic text-[#d4a968]">funciona</span>?
+            </h2>
+          </div>
+
+          {/* 3 Steps */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                step: '01',
+                icon: FileCheck,
+                title: 'Creás tu campaña',
+                desc: 'Definís el producto, tipo de contenido y requisitos. Nosotros lo publicamos.'
+              },
+              {
+                step: '02',
+                icon: Sparkles,
+                title: 'Recibís contenido',
+                desc: 'Los creadores aplican, seleccionamos los mejores y te entregan contenido.'
+              },
+              {
+                step: '03',
+                icon: BarChart3,
+                title: 'Medís resultados',
+                desc: 'Accedés a métricas reales de cada publicación y el impacto generado.'
+              }
+            ].map((item, idx) => (
+              <div key={idx} className="p-6 bg-[#121212] rounded-lg border border-white/5 text-center">
+                <div className="text-[#d4a968]/30 text-4xl font-light mb-4">{item.step}</div>
+                <div className="w-12 h-12 rounded-full bg-[#d4a968]/10 flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-6 h-6 text-[#d4a968]" />
+                </div>
+                <h3 className="text-white font-medium mb-2">{item.title}</h3>
+                <p className="text-white/50 text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============== CTA FINAL ============== */}
+      <section className="py-12 md:py-16 px-6 border-t border-white/5">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-light mb-6">
-            ¿Listo para <span className="italic text-[#d4a968]">empezar</span>?
+          <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+            Empezá a generar contenido que <span className="italic text-[#d4a968]">convierte</span>
           </h2>
-          <p className="text-gray-400 mb-10">
-            Registrá tu marca y lanzá tu primera campaña UGC
+          <p className="text-white/50 mb-6 text-sm max-w-lg mx-auto">
+            Dejá de invertir en contenido que nadie mira. 
+            El UGC auténtico conecta, genera confianza y vende.
           </p>
-          
-          <Link 
-            to="/ugc/brand/onboarding"
-            className="inline-flex items-center gap-3 px-10 py-5 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-all"
-          >
-            Registrar mi marca
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/ugc/brand/onboarding"
+              className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
+              data-testid="cta-register"
+            >
+              Registrar mi marca
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a
+              href="https://wa.me/595971000000"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-white/5 transition-all rounded-lg"
+              data-testid="cta-contact"
+            >
+              Contactar
+            </a>
+          </div>
         </div>
       </section>
 
