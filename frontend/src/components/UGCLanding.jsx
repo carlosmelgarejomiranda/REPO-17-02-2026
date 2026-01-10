@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Users, Building2, Sparkles, TrendingUp, Gift, BarChart3, CheckCircle, Star } from 'lucide-react';
+import { 
+  ArrowRight, Sparkles, Users, Building2, Check, Heart, 
+  TrendingUp, MessageCircle, Shield, Package, BarChart3, Zap
+} from 'lucide-react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 
-const UGCLanding = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
+const UGCLanding = ({ t, user, onLoginClick, onLogout, language, setLanguage }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
       <Navbar 
         user={user}
         onLoginClick={onLoginClick}
@@ -15,233 +24,271 @@ const UGCLanding = ({ user, onLoginClick, onLogout, language, setLanguage, t }) 
         setLanguage={setLanguage}
         t={t}
       />
-      
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+
+      {/* ============== HERO SECTION ============== */}
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-16">
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-[#d4a968]/10" />
-        
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <p className="text-[#d4a968] text-sm font-medium tracking-[0.3em] uppercase mb-6">
-            Avenue UGC Platform
-          </p>
-          
-          <h1 className="text-5xl md:text-7xl font-light mb-6 leading-tight">
-            Contenido <span className="italic text-[#d4a968]">auténtico</span><br />
-            que conecta
+        <div className="absolute inset-0">
+          <img
+            src="https://customer-assets.emergentagent.com/job_one-account/artifacts/tk0opl7n_influencer%20ugc%201.webp"
+            alt="UGC Creator"
+            className="w-full h-full object-cover opacity-25"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/80 via-[#0a0a0a]/70 to-[#0a0a0a]" />
+        </div>
+
+        {/* Content */}
+        <div className={`relative z-10 max-w-4xl mx-auto px-6 text-center transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 border border-[#d4a968]/30 bg-[#d4a968]/10 px-3 py-1.5 rounded-full mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-[#d4a968]" />
+            <span className="text-[10px] font-medium text-[#d4a968] tracking-[0.15em] uppercase">
+              Plataforma UGC
+            </span>
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-4 leading-[1.1]">
+            Contenido <span className="italic text-[#d4a968]">auténtico</span><br className="hidden sm:block" /> que conecta
           </h1>
-          
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-            La plataforma que une creadores de contenido con marcas premium. 
-            Campañas UGC sin fricción, con métricas reales.
+
+          {/* Subheadline */}
+          <p className="text-base md:text-lg text-white/60 mb-8 max-w-xl mx-auto">
+            La plataforma que une marcas con creadores de contenido. 
+            UGC que genera confianza y convierte.
           </p>
 
-          {/* Dual CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
               to="/ugc/creators"
-              className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium tracking-wide hover:opacity-90 transition-all rounded-lg"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:opacity-90 transition-all rounded-lg"
+              data-testid="hero-cta-creator"
             >
-              <Users className="w-5 h-5" />
-              <span>Soy Creador</span>
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link 
-              to="/ugc/marcas"
-              className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#d4a968] text-black font-medium tracking-wide hover:bg-[#c49958] transition-all rounded-lg"
-            >
-              <Building2 className="w-5 h-5" />
-              <span>Soy Marca</span>
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
-            <div className="w-1 h-2 bg-[#d4a968] rounded-full" />
-          </div>
-        </div>
-      </section>
-
-      {/* What is UGC - Brief */}
-      <section className="py-24 px-6 border-t border-white/10">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-light mb-6">
-            ¿Qué es <span className="italic text-[#d4a968]">UGC</span>?
-          </h2>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
-            User Generated Content es contenido auténtico creado por personas reales, no por agencias. 
-            Es más creíble, más cercano y <span className="text-white">convierte mejor</span>.
-          </p>
-        </div>
-      </section>
-
-      {/* Two Audiences */}
-      <section className="py-24 px-6 bg-[#0a0a0a]">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8">
-            
-            {/* For Creators */}
-            <Link 
-              to="/ugc/creators"
-              className="group relative p-10 bg-gradient-to-br from-purple-900/30 to-pink-900/20 border border-purple-500/20 rounded-2xl hover:border-purple-500/50 transition-all overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl" />
-              
-              <div className="relative">
-                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6">
-                  <Users className="w-7 h-7 text-white" />
-                </div>
-                
-                <h3 className="text-2xl font-medium mb-3 group-hover:text-purple-400 transition-colors">
-                  Para Creadores
-                </h3>
-                
-                <p className="text-gray-400 mb-6 leading-relaxed">
-                  Accedé a campañas de marcas premium, creá contenido auténtico y recibí canjes exclusivos.
-                </p>
-
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-3 text-sm text-gray-300">
-                    <Gift className="w-4 h-4 text-purple-400" />
-                    Canjes de hasta Gs. 1.000.000
-                  </li>
-                  <li className="flex items-center gap-3 text-sm text-gray-300">
-                    <Star className="w-4 h-4 text-purple-400" />
-                    Sistema de reputación
-                  </li>
-                  <li className="flex items-center gap-3 text-sm text-gray-300">
-                    <TrendingUp className="w-4 h-4 text-purple-400" />
-                    Crecé como creador UGC
-                  </li>
-                </ul>
-
-                <span className="inline-flex items-center gap-2 text-purple-400 font-medium group-hover:gap-3 transition-all">
-                  Conocer más <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
-            </Link>
-
-            {/* For Brands */}
-            <Link 
-              to="/ugc/marcas"
-              className="group relative p-10 bg-gradient-to-br from-[#d4a968]/20 to-amber-900/20 border border-[#d4a968]/20 rounded-2xl hover:border-[#d4a968]/50 transition-all overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4a968]/10 rounded-full blur-3xl" />
-              
-              <div className="relative">
-                <div className="w-14 h-14 bg-gradient-to-br from-[#d4a968] to-amber-600 rounded-xl flex items-center justify-center mb-6">
-                  <Building2 className="w-7 h-7 text-black" />
-                </div>
-                
-                <h3 className="text-2xl font-medium mb-3 group-hover:text-[#d4a968] transition-colors">
-                  Para Marcas
-                </h3>
-                
-                <p className="text-gray-400 mb-6 leading-relaxed">
-                  Lanzá campañas UGC, conectá con creadores verificados y recibí contenido + métricas.
-                </p>
-
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-3 text-sm text-gray-300">
-                    <Users className="w-4 h-4 text-[#d4a968]" />
-                    +50 creadores verificados
-                  </li>
-                  <li className="flex items-center gap-3 text-sm text-gray-300">
-                    <BarChart3 className="w-4 h-4 text-[#d4a968]" />
-                    Métricas y reportes
-                  </li>
-                  <li className="flex items-center gap-3 text-sm text-gray-300">
-                    <Sparkles className="w-4 h-4 text-[#d4a968]" />
-                    Desde Gs. 790.000
-                  </li>
-                </ul>
-
-                <span className="inline-flex items-center gap-2 text-[#d4a968] font-medium group-hover:gap-3 transition-all">
-                  Conocer más <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works - Brief */}
-      <section className="py-24 px-6 border-t border-white/10">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-light text-center mb-16">
-            Así <span className="italic text-[#d4a968]">funciona</span>
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#d4a968]/20 flex items-center justify-center">
-                <span className="text-[#d4a968] font-medium">1</span>
-              </div>
-              <h3 className="text-lg font-medium mb-2">Marca publica campaña</h3>
-              <p className="text-gray-500 text-sm">Define el canje, requisitos y plazos</p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#d4a968]/20 flex items-center justify-center">
-                <span className="text-[#d4a968] font-medium">2</span>
-              </div>
-              <h3 className="text-lg font-medium mb-2">Creadores aplican</h3>
-              <p className="text-gray-500 text-sm">La marca selecciona los perfiles</p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[#d4a968]/20 flex items-center justify-center">
-                <span className="text-[#d4a968] font-medium">3</span>
-              </div>
-              <h3 className="text-lg font-medium mb-2">Contenido + Métricas</h3>
-              <p className="text-gray-500 text-sm">Entregas verificadas con performance</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="py-16 px-6 bg-[#0a0a0a] border-y border-white/10">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-3 gap-8 text-center">
-            <div>
-              <p className="text-4xl font-light text-[#d4a968]">50+</p>
-              <p className="text-sm text-gray-500 mt-1">Creadores</p>
-            </div>
-            <div>
-              <p className="text-4xl font-light text-[#d4a968]">20+</p>
-              <p className="text-sm text-gray-500 mt-1">Marcas</p>
-            </div>
-            <div>
-              <p className="text-4xl font-light text-[#d4a968]">100%</p>
-              <p className="text-sm text-gray-500 mt-1">Auténtico</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-24 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-light mb-6">
-            ¿Listo para <span className="italic text-[#d4a968]">empezar</span>?
-          </h2>
-          <p className="text-gray-400 mb-10">
-            Elegí tu camino y comenzá a crear conexiones auténticas
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              to="/ugc/creators"
-              className="px-8 py-4 bg-white/10 text-white font-medium rounded-lg hover:bg-white/20 transition-all"
-            >
+              <Users className="w-4 h-4" />
               Soy Creador
             </Link>
-            <Link 
+            <Link
               to="/ugc/marcas"
-              className="px-8 py-4 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-all"
+              className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
+              data-testid="hero-cta-brand"
             >
+              <Building2 className="w-4 h-4" />
+              Soy Marca
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ============== TWO CARDS - FOR WHO ============== */}
+      <section className="py-12 md:py-16 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Card: Creators */}
+            <div className="p-6 md:p-8 rounded-lg bg-[#121212] border border-white/5 hover:border-purple-500/30 transition-all group">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600/20 to-pink-600/20 flex items-center justify-center flex-shrink-0">
+                  <Users className="w-6 h-6 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-light text-white mb-1">
+                    Para <span className="italic text-purple-400">Creadores</span>
+                  </h3>
+                  <p className="text-white/50 text-sm">Oportunidades reales con marcas</p>
+                </div>
+              </div>
+
+              <ul className="space-y-3 mb-6">
+                {[
+                  'Colaborá con marcas reales',
+                  'Construí tu track record público',
+                  'Obtené beneficios por canjes',
+                  'Crecé tu marca personal',
+                  'Acceso a campañas exclusivas'
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-sm text-white/70">
+                    <Check className="w-4 h-4 text-purple-400 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                to="/ugc/creators"
+                className="inline-flex items-center gap-2 text-purple-400 text-sm font-medium hover:gap-3 transition-all"
+              >
+                Quiero ser creator <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Card: Brands */}
+            <div className="p-6 md:p-8 rounded-lg bg-[#121212] border border-white/5 hover:border-[#d4a968]/30 transition-all group">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-12 h-12 rounded-full bg-[#d4a968]/10 flex items-center justify-center flex-shrink-0">
+                  <Building2 className="w-6 h-6 text-[#d4a968]" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-light text-white mb-1">
+                    Para <span className="italic text-[#d4a968]">Marcas</span>
+                  </h3>
+                  <p className="text-white/50 text-sm">Contenido que convierte</p>
+                </div>
+              </div>
+
+              <ul className="space-y-3 mb-6">
+                {[
+                  'Contenido auténtico que conecta',
+                  'Red de +50 creadores verificados',
+                  'Gestión completa de campañas',
+                  'Métricas y reportes detallados',
+                  'Contenido por canjes o pago'
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-sm text-white/70">
+                    <Check className="w-4 h-4 text-[#d4a968] flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                to="/ugc/marcas"
+                className="inline-flex items-center gap-2 text-[#d4a968] text-sm font-medium hover:gap-3 transition-all"
+              >
+                Quiero contenido UGC <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============== WHY UGC? ============== */}
+      <section className="py-12 md:py-16 px-6 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
+              El poder del contenido real
+            </span>
+            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+              ¿Por qué <span className="italic text-[#d4a968]">UGC</span>?
+            </h2>
+            <p className="text-white/50 text-sm max-w-lg mx-auto">
+              El contenido promocional tradicional ya no conecta. 
+              Los consumidores quieren ver experiencias reales.
+            </p>
+          </div>
+
+          {/* 4 Benefits Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                icon: Heart,
+                title: 'Autenticidad',
+                desc: 'Contenido orgánico que refleja experiencias reales, no guiones promocionales.'
+              },
+              {
+                icon: Shield,
+                title: 'Confianza',
+                desc: 'Cuando la gente ve personas reales usando un producto, confía más en la marca.'
+              },
+              {
+                icon: TrendingUp,
+                title: 'Alcance',
+                desc: 'El UGC se comparte naturalmente, amplificando el reach más allá de tus seguidores.'
+              },
+              {
+                icon: MessageCircle,
+                title: 'Engagement',
+                desc: 'La audiencia interactúa más con contenido con el que se puede identificar.'
+              }
+            ].map((item, idx) => (
+              <div key={idx} className="p-5 bg-[#121212] rounded-lg border border-white/5">
+                <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center mb-4">
+                  <item.icon className="w-5 h-5 text-[#d4a968]" />
+                </div>
+                <h4 className="text-white font-medium mb-2">{item.title}</h4>
+                <p className="text-white/50 text-xs leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============== WE HANDLE EVERYTHING ============== */}
+      <section className="py-12 md:py-16 px-6 bg-[#0d0d0d]">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left - Image */}
+            <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_one-account/artifacts/e9d2076s_bastante-joven-morena-de-pelo-corto-en-vestido-rojo-de-lino-con-cinturon-negro-sonrie-toma-selfie-muestra-el-signo-de-la-paz-y-posa-en-la-oficina-del-disenador-de-moda.jpg"
+                alt="UGC Creator"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Right - Content */}
+            <div>
+              <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-4 block">
+                Diferencial Avenue
+              </span>
+              
+              <h2 className="text-2xl md:text-3xl font-light text-white mb-4 leading-tight">
+                Nosotros nos <span className="italic text-[#d4a968]">encargamos</span> de todo
+              </h2>
+              
+              <p className="text-white/60 mb-6 text-sm leading-relaxed">
+                No solo conectamos marcas con creadores. Gestionamos cada detalle 
+                del proceso para que vos te enfoques en lo que importa.
+              </p>
+
+              <ul className="space-y-4 mb-6">
+                {[
+                  { icon: Users, text: 'Coordinación marca-creador' },
+                  { icon: Package, text: 'Logística de productos' },
+                  { icon: Zap, text: 'Recopilación de contenidos' },
+                  { icon: BarChart3, text: 'Métricas verificadas' },
+                  { icon: Shield, text: 'Control de calidad' }
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-sm text-white/70">
+                    <div className="w-8 h-8 rounded-full bg-[#d4a968]/10 flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-4 h-4 text-[#d4a968]" />
+                    </div>
+                    {item.text}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============== CTA FINAL ============== */}
+      <section className="py-12 md:py-16 px-6 border-t border-white/5">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+            Empezá a crear <span className="italic text-[#d4a968]">conexiones reales</span>
+          </h2>
+          <p className="text-white/50 mb-6 text-sm max-w-lg mx-auto">
+            Ya sea que busques contenido auténtico para tu marca o quieras 
+            colaborar con marcas como creador, Avenue UGC es tu plataforma.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/ugc/creators"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:opacity-90 transition-all rounded-lg"
+              data-testid="cta-creator"
+            >
+              <Users className="w-4 h-4" />
+              Soy Creador
+            </Link>
+            <Link
+              to="/ugc/marcas"
+              className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
+              data-testid="cta-brand"
+            >
+              <Building2 className="w-4 h-4" />
               Soy Marca
             </Link>
           </div>
