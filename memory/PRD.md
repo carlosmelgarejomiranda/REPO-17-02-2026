@@ -82,6 +82,23 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
   - Admin notes (private)
 - [x] Campaign list with contract info (cupos, reload date, expiration)
 - [x] Actions: Add slots (+), Renew contract, Toggle visibility
+- [x] **View Applications Modal** - See and manage all applicants per campaign
+- [x] **Confirm/Reject Applications** - Admin can confirm or reject creators directly
+
+### Deliverable Rating System (NEW - Jan 2026)
+- [x] Brand can rate approved deliverables (1-5 stars)
+- [x] Rating modal with star selector and labels (Malo, Regular, Bueno, Muy bueno, Excelente)
+- [x] Private comments visible only to Brand, Avenue admin, and Creator
+- [x] Ratings update creator's public average rating
+- [x] Edit rating functionality
+- [x] Rating button appears on approved/completed deliverables
+
+### File Upload System (NEW - Jan 2026)
+- [x] POST /api/upload endpoint for image uploads
+- [x] GET /api/uploads/{filename} to serve uploaded files
+- [x] File validation (type, size)
+- [x] Unique filename generation
+- [x] Support for campaign cover images
 
 ## Architecture
 
