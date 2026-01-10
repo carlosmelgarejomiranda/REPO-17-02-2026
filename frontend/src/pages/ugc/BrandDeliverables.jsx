@@ -86,6 +86,53 @@ const BrandDeliverables = () => {
     }
   };
 
+  const openRatingModal = (deliverable) => {
+    setRatingDeliverable(deliverable);
+    setRatingValue(deliverable.brand_rating?.rating || 0);
+    setRatingComment(deliverable.brand_rating?.comment || '');
+    setShowRatingModal(true);
+  };
+
+  const handleRate = async () => {
+    if (ratingValue < 1 || ratingValue > 5) {
+      alert('Seleccioná una calificación de 1 a 5 estrellas');
+      return;
+    }
+
+    setActionLoading(ratingDeliverable.id);
+    const token = localStorage.getItem('auth_token');
+    
+    try {
+      const res = await fetch(`${API_URL}/api/ugc/deliverables/${ratingDeliverable.id}/rate`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          rating: ratingValue,
+          comment: ratingComment || null
+        })
+      });
+
+      if (res.ok) {
+        setShowRatingModal(false);
+        setRatingDeliverable(null);
+        setRatingValue(0);
+        setRatingComment('');
+        fetchData();
+        alert('Calificación guardada');
+      } else {
+        const data = await res.json();
+        alert(data.detail || 'Error al calificar');
+      }
+    } catch (err) {
+      alert('Error de conexión');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const getStatusConfig = (status) => {
     const configs = {
       awaiting_publish: { color: 'bg-gray-500/20 text-gray-400', label: 'Esperando publicación' },
