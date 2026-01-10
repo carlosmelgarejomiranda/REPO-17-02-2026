@@ -82,7 +82,7 @@ const CreatorWorkspace = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-4 gap-4 mb-8">
           <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-center">
             <p className="text-2xl font-light text-yellow-400">{pendingCount}</p>
             <p className="text-sm text-gray-400">Pendientes</p>
@@ -97,6 +97,17 @@ const CreatorWorkspace = () => {
             </p>
             <p className="text-sm text-gray-400">Completados</p>
           </div>
+          <Link 
+            to="/ugc/creator/feedback"
+            className="p-4 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl text-center hover:border-[#d4a968]/50 transition-all"
+            data-testid="feedback-link"
+          >
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Star className="w-5 h-5 text-[#d4a968]" />
+              <MessageSquare className="w-4 h-4 text-[#d4a968]" />
+            </div>
+            <p className="text-sm text-gray-400">Ver Feedback</p>
+          </Link>
         </div>
 
         {/* Filters */}
