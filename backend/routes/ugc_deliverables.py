@@ -422,3 +422,114 @@ async def review_deliverable(
         logger.error(f"Failed to send email notification: {e}")
     
     return {"success": True, "message": message}
+
+# ==================== BRAND: RATE DELIVERABLE ====================
+
+from pydantic import BaseModel as PydanticBaseModel
+
+class RatingInput(PydanticBaseModel):
+    rating: int  # 1-5
+    comment: Optional[str] = None
+
+@router.post("/{deliverable_id}/rate", response_model=dict)
+async def rate_deliverable(
+    deliverable_id: str,
+    data: RatingInput,
+    request: Request
+):
+    """Brand rates a deliverable (1-5 stars) with optional private comment"""
+    db = await get_db()
+    user, brand = await require_brand(request)
+    
+    # Validate rating
+    if data.rating < 1 or data.rating > 5:
+        raise HTTPException(status_code=400, detail="La calificación debe ser entre 1 y 5")
+    
+    deliverable = await db.ugc_deliverables.find_one({
+        "id": deliverable_id,
+        "brand_id": brand["id"]
+    })
+    
+    if not deliverable:
+        raise HTTPException(status_code=404, detail="Entrega no encontrada")
+    
+    # Only approved deliverables can be rated
+    if deliverable["status"] not in ["approved", "completed", "metrics_pending", "metrics_submitted"]:
+        raise HTTPException(status_code=400, detail="Solo se pueden calificar entregas aprobadas")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Save rating
+    rating_data = {
+        "rating": data.rating,
+        "comment": data.comment,
+        "rated_by": user["user_id"],
+        "rated_by_brand": brand["id"],
+        "rated_at": now
+    }
+    
+    await db.ugc_deliverables.update_one(
+        {"id": deliverable_id},
+        {
+            "$set": {
+                "brand_rating": rating_data,
+                "updated_at": now
+            }
+        }
+    )
+    
+    # Update creator's average rating
+    creator_id = deliverable["creator_id"]
+    
+    # Get all ratings for this creator
+    all_deliverables = await db.ugc_deliverables.find(
+        {"creator_id": creator_id, "brand_rating.rating": {"$exists": True}},
+        {"_id": 0, "brand_rating.rating": 1}
+    ).to_list(500)
+    
+    if all_deliverables:
+        total_ratings = sum(d["brand_rating"]["rating"] for d in all_deliverables)
+        avg_rating = total_ratings / len(all_deliverables)
+        
+        await db.ugc_creators.update_one(
+            {"id": creator_id},
+            {
+                "$set": {
+                    "stats.avg_rating": round(avg_rating, 2),
+                    "stats.total_ratings": len(all_deliverables)
+                }
+            }
+        )
+    
+    return {"success": True, "message": "Calificación guardada"}
+
+@router.get("/{deliverable_id}/rating", response_model=dict)
+async def get_deliverable_rating(
+    deliverable_id: str,
+    request: Request
+):
+    """Get rating for a deliverable (brand, admin, or creator can see)"""
+    db = await get_db()
+    user = await require_auth(request)
+    
+    deliverable = await db.ugc_deliverables.find_one(
+        {"id": deliverable_id},
+        {"_id": 0, "brand_rating": 1, "creator_id": 1, "brand_id": 1}
+    )
+    
+    if not deliverable:
+        raise HTTPException(status_code=404, detail="Entrega no encontrada")
+    
+    # Check permission: admin, brand owner, or creator
+    is_admin = user.get("role") in ["admin", "superadmin"]
+    
+    brand = await db.ugc_brands.find_one({"user_id": user["user_id"]}, {"_id": 0, "id": 1})
+    is_brand_owner = brand and brand["id"] == deliverable.get("brand_id")
+    
+    creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0, "id": 1})
+    is_creator = creator and creator["id"] == deliverable.get("creator_id")
+    
+    if not (is_admin or is_brand_owner or is_creator):
+        raise HTTPException(status_code=403, detail="No tenés permiso para ver esta calificación")
+    
+    return {"rating": deliverable.get("brand_rating")}
