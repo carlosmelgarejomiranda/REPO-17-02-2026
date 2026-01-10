@@ -69,6 +69,20 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
   - Admin: Resumen con acción requerida ("X campañas con cupos para confirmar")
   - Creadores: Notificación cuando su aplicación es cerrada por vencimiento
 
+### Admin Campaign Manager UI (NEW - Jan 2026)
+- [x] New "Gestión Campañas" tab in Admin Panel
+- [x] Create Campaign form with all fields:
+  - Company selection (Empresa) + Brand name for title
+  - Description, Category, Cover Image upload
+  - Contract: Monthly slots, Duration, Start date
+  - Requirements: Gender, Age, Min followers, Country, Residence
+  - Instagram/TikTok public profile notice (always required)
+  - Canje: Type, Value, Description
+  - Timeline: Applications deadline, Publish dates
+  - Admin notes (private)
+- [x] Campaign list with contract info (cupos, reload date, expiration)
+- [x] Actions: Add slots (+), Renew contract, Toggle visibility
+
 ## Architecture
 
 ### Frontend Routes (React)
