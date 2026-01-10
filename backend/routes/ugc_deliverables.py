@@ -501,6 +501,24 @@ async def rate_deliverable(
             }
         )
     
+    # Send email notification to creator
+    try:
+        from services.ugc_emails import send_deliverable_rated
+        creator = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0, "email": 1, "name": 1})
+        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1})
+        
+        if creator and creator.get("email"):
+            await send_deliverable_rated(
+                to_email=creator["email"],
+                creator_name=creator.get("name", "Creator"),
+                campaign_name=campaign.get("name", "Campaña") if campaign else "Campaña",
+                brand_name=brand.get("company_name", "Marca"),
+                rating=data.rating,
+                comment=data.comment
+            )
+    except Exception as e:
+        logger.error(f"Failed to send rating notification email: {e}")
+    
     return {"success": True, "message": "Calificación guardada"}
 
 @router.get("/{deliverable_id}/rating", response_model=dict)
