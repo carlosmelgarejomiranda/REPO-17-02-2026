@@ -459,6 +459,11 @@ class DeliverableReview(BaseModel):
     action: str  # "approve", "request_changes", "reject"
     notes: Optional[str] = None
 
+# Rating from brand to deliverable
+class DeliverableRating(BaseModel):
+    rating: int  # 1-5 stars
+    comment: Optional[str] = None  # Private comment (only admin and creator can see)
+
 # ==================== METRICS MODELS ====================
 
 class ContentMetrics(BaseModel):
