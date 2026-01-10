@@ -60,6 +60,7 @@ import CreatorsPage from "./pages/ugc/CreatorsPage";
 import UGCLanding from "./components/UGCLanding";
 import BrandCampaignReports from "./pages/ugc/BrandCampaignReports";
 import CampaignApplications from "./pages/ugc/CampaignApplications";
+import CreatorFeedback from "./pages/ugc/CreatorFeedback";
 
 // Auth context helper
 const useAuth = () => {
