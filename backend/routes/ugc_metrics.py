@@ -39,22 +39,58 @@ async def require_admin(request: Request):
 # ==================== AI METRICS EXTRACTION ====================
 
 import logging
+import aiohttp
+import base64
+
 ai_logger = logging.getLogger("ai_metrics")
+
+async def download_image_as_base64(url: str) -> tuple:
+    """Download image from URL and return base64 + mime type"""
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, timeout=30) as response:
+                if response.status == 200:
+                    content = await response.read()
+                    content_type = response.headers.get('content-type', 'image/jpeg')
+                    # Map content type to supported format
+                    if 'png' in content_type:
+                        mime = 'image/png'
+                    elif 'webp' in content_type:
+                        mime = 'image/webp'
+                    else:
+                        mime = 'image/jpeg'
+                    
+                    b64 = base64.b64encode(content).decode('utf-8')
+                    return b64, mime
+    except Exception as e:
+        ai_logger.error(f"Failed to download image: {e}")
+    return None, None
+
 
 async def extract_metrics_from_screenshot(screenshot_url: str, platform: str) -> dict:
     """
-    Use AI (Gemini Vision) to extract basic metrics from screenshot
+    Use AI (Gemini/OpenAI Vision) to extract basic metrics from screenshot
     Returns: {views, reach, likes, comments, shares, saves, watch_time_seconds, video_length_seconds, confidence}
     """
     try:
-        from emergentintegrations.llm.gemini import GeminiClient, GeminiConfig, Message
+        from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
         
         api_key = os.environ.get('EMERGENT_LLM_KEY')
         if not api_key:
             ai_logger.warning("EMERGENT_LLM_KEY not configured")
             return {"error": "AI not configured", "confidence": 0}
         
-        client = GeminiClient(GeminiConfig(api_key=api_key))
+        # Download image and convert to base64
+        image_b64, mime_type = await download_image_as_base64(screenshot_url)
+        if not image_b64:
+            return {"error": "Could not download image", "confidence": 0}
+        
+        # Initialize chat with vision model
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=f"metrics-{uuid.uuid4().hex[:8]}",
+            system_message="You are an expert at extracting metrics data from social media analytics screenshots. Always respond with valid JSON only."
+        ).with_model("gemini", "gemini-2.5-flash")
         
         platform_hints = {
             "instagram": """
@@ -106,17 +142,20 @@ IMPORTANT CONVERSION RULES:
 
 Return ONLY the JSON, no explanation."""
 
-        response = await client.send_message(
-            messages=[Message(role="user", content=prompt)],
-            image_url=screenshot_url
+        # Create message with image
+        image_content = ImageContent(image_base64=image_b64)
+        user_message = UserMessage(
+            text=prompt,
+            file_contents=[image_content]
         )
+        
+        response = await chat.send_message(user_message)
         
         # Parse JSON from response
         import json
         import re
         
-        # Try to extract JSON from response
-        response_text = response.content if hasattr(response, 'content') else str(response)
+        response_text = str(response)
         
         # Clean markdown code blocks if present
         response_text = re.sub(r'```json\s*', '', response_text)
@@ -142,13 +181,22 @@ async def extract_demographics_from_screenshot(screenshot_url: str, platform: st
     Returns: {gender, countries, age_ranges, confidence}
     """
     try:
-        from emergentintegrations.llm.gemini import GeminiClient, GeminiConfig, Message
+        from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
         
         api_key = os.environ.get('EMERGENT_LLM_KEY')
         if not api_key:
             return {"error": "AI not configured", "confidence": 0}
         
-        client = GeminiClient(GeminiConfig(api_key=api_key))
+        # Download image and convert to base64
+        image_b64, mime_type = await download_image_as_base64(screenshot_url)
+        if not image_b64:
+            return {"error": "Could not download image", "confidence": 0}
+        
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=f"demo-{uuid.uuid4().hex[:8]}",
+            system_message="You are an expert at extracting demographic data from social media analytics screenshots. Always respond with valid JSON only."
+        ).with_model("gemini", "gemini-2.5-flash")
         
         prompt = f"""Analyze this {platform.upper()} analytics demographics screenshot.
 
@@ -188,15 +236,18 @@ IMPORTANT:
 
 Return ONLY the JSON, no explanation."""
 
-        response = await client.send_message(
-            messages=[Message(role="user", content=prompt)],
-            image_url=screenshot_url
+        image_content = ImageContent(image_base64=image_b64)
+        user_message = UserMessage(
+            text=prompt,
+            file_contents=[image_content]
         )
+        
+        response = await chat.send_message(user_message)
         
         import json
         import re
         
-        response_text = response.content if hasattr(response, 'content') else str(response)
+        response_text = str(response)
         response_text = re.sub(r'```json\s*', '', response_text)
         response_text = re.sub(r'```\s*', '', response_text)
         
