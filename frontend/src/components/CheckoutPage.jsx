@@ -119,6 +119,10 @@ export const CheckoutPage = ({ cart, setCart, user, onLoginClick, onLogout, lang
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponError, setCouponError] = useState('');
   
+  // First purchase discount state
+  const [firstPurchaseDiscount, setFirstPurchaseDiscount] = useState(null);
+  const [checkingDiscount, setCheckingDiscount] = useState(false);
+  
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
