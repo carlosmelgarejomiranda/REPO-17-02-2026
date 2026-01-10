@@ -71,6 +71,9 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [showApplications, setShowApplications] = useState(false);
+  const [applications, setApplications] = useState([]);
+  const [loadingApplications, setLoadingApplications] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
 
   // Form state
