@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, Camera, Building2, UserCircle } from 'lucide-react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
 // Admin roles that can access the admin panel
@@ -10,6 +10,15 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
 
   // Check if user has admin access
   const hasAdminAccess = user && ADMIN_ROLES.includes(user.role);
+  
+  // Check if user has UGC creator profile
+  const hasCreatorProfile = user?.has_creator_profile || user?.ugc_role === 'creator';
+  
+  // Check if user has UGC brand profile
+  const hasBrandProfile = user?.has_brand_profile || user?.ugc_role === 'brand';
+  
+  // Check if user is a regular user (not admin, no UGC profiles)
+  const isRegularUser = user && !hasAdminAccess && !hasCreatorProfile && !hasBrandProfile;
 
   const navLinks = [
     { href: '/shop', label: 'E-commerce' },
@@ -37,17 +46,57 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
           </a>
           
           {/* Right Section */}
-          <div className="flex items-center gap-5">
-            {/* Admin Panel Button - Only for admin roles */}
-            {hasAdminAccess && (
-              <a
-                href="/admin"
-                className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black text-xs tracking-[0.1em] uppercase font-medium hover:bg-[#c49958] transition-colors"
-              >
-                <Settings className="w-3.5 h-3.5" />
-                Admin
-              </a>
-            )}
+          <div className="flex items-center gap-3 md:gap-5">
+            {/* Dynamic Panel Buttons - Desktop */}
+            <div className="hidden md:flex items-center gap-2">
+              {/* Admin Panel Button */}
+              {hasAdminAccess && (
+                <a
+                  href="/admin"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-[#d4a968] text-black text-[10px] tracking-[0.1em] uppercase font-medium hover:bg-[#c49958] transition-colors"
+                  data-testid="admin-panel-btn"
+                >
+                  <Settings className="w-3 h-3" />
+                  Panel Admin
+                </a>
+              )}
+              
+              {/* Creator Panel Button */}
+              {hasCreatorProfile && (
+                <a
+                  href="/ugc/creator/dashboard"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-purple-600 text-white text-[10px] tracking-[0.1em] uppercase font-medium hover:bg-purple-500 transition-colors"
+                  data-testid="creator-panel-btn"
+                >
+                  <Camera className="w-3 h-3" />
+                  Panel Creadores
+                </a>
+              )}
+              
+              {/* Brand Panel Button */}
+              {hasBrandProfile && (
+                <a
+                  href="/ugc/brand/dashboard"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white text-[10px] tracking-[0.1em] uppercase font-medium hover:bg-blue-500 transition-colors"
+                  data-testid="brand-panel-btn"
+                >
+                  <Building2 className="w-3 h-3" />
+                  Panel Marcas
+                </a>
+              )}
+              
+              {/* My Profile Button - For regular users without any UGC profile */}
+              {user && !hasAdminAccess && !hasCreatorProfile && !hasBrandProfile && (
+                <a
+                  href="/mi-perfil"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-gray-700 text-white text-[10px] tracking-[0.1em] uppercase font-medium hover:bg-gray-600 transition-colors"
+                  data-testid="profile-btn"
+                >
+                  <UserCircle className="w-3 h-3" />
+                  Mi Perfil
+                </a>
+              )}
+            </div>
 
             {/* Language Switcher */}
             <LanguageSwitcher 
@@ -96,14 +145,14 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                     className="fixed inset-0 z-40" 
                     onClick={() => setShowMenu(false)}
                   />
-                  <div className="absolute right-0 top-full mt-2 w-52 z-50 overflow-hidden bg-black"
+                  <div className="absolute right-0 top-full mt-2 w-56 z-50 overflow-hidden bg-black"
                     style={{ 
                       backgroundColor: '#000',
                       border: '1px solid rgba(212, 169, 104, 0.3)',
                       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
                     }}
                   >
-                    {navLinks.map((link, index) => (
+                    {navLinks.map((link) => (
                       <a
                         key={link.href}
                         href={link.href}
@@ -142,21 +191,71 @@ export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t 
                       </a>
                     </div>
                     
-                    {/* Admin Panel link in dropdown for mobile */}
-                    {hasAdminAccess && (
-                      <a
-                        href="/admin"
-                        className="block py-4 px-6 text-[11px] tracking-[0.15em] uppercase bg-[#d4a968] text-black hover:bg-[#c49958] transition-colors font-medium"
-                        style={{ 
-                          textDecoration: 'none'
-                        }}
-                        onClick={() => setShowMenu(false)}
-                      >
-                        <span className="flex items-center gap-2">
-                          <Settings className="w-3.5 h-3.5" />
-                          Panel Admin
-                        </span>
-                      </a>
+                    {/* User-specific Panel Links in Mobile Menu */}
+                    {user && (
+                      <div className="border-t border-[#d4a968]/30 mt-1 pt-1">
+                        <p className="px-6 py-2 text-[10px] tracking-[0.2em] uppercase text-[#d4a968]">
+                          Mi Cuenta
+                        </p>
+                        
+                        {/* My Profile - for all logged in users */}
+                        <a
+                          href="/mi-perfil"
+                          className="block py-3 px-6 text-[11px] tracking-[0.15em] uppercase text-[#f5ede4] bg-black hover:bg-[#111] hover:text-[#d4a968] transition-colors"
+                          style={{ backgroundColor: '#000', textDecoration: 'none' }}
+                          onClick={() => setShowMenu(false)}
+                        >
+                          <span className="flex items-center gap-2">
+                            <UserCircle className="w-3.5 h-3.5" />
+                            Mi Perfil
+                          </span>
+                        </a>
+                        
+                        {/* Creator Panel - Mobile */}
+                        {hasCreatorProfile && (
+                          <a
+                            href="/ugc/creator/dashboard"
+                            className="block py-3 px-6 text-[11px] tracking-[0.15em] uppercase text-purple-300 bg-black hover:bg-[#111] hover:text-purple-200 transition-colors"
+                            style={{ backgroundColor: '#000', textDecoration: 'none' }}
+                            onClick={() => setShowMenu(false)}
+                          >
+                            <span className="flex items-center gap-2">
+                              <Camera className="w-3.5 h-3.5" />
+                              Panel Creadores UGC
+                            </span>
+                          </a>
+                        )}
+                        
+                        {/* Brand Panel - Mobile */}
+                        {hasBrandProfile && (
+                          <a
+                            href="/ugc/brand/dashboard"
+                            className="block py-3 px-6 text-[11px] tracking-[0.15em] uppercase text-blue-300 bg-black hover:bg-[#111] hover:text-blue-200 transition-colors"
+                            style={{ backgroundColor: '#000', textDecoration: 'none' }}
+                            onClick={() => setShowMenu(false)}
+                          >
+                            <span className="flex items-center gap-2">
+                              <Building2 className="w-3.5 h-3.5" />
+                              Panel Marcas UGC
+                            </span>
+                          </a>
+                        )}
+                        
+                        {/* Admin Panel - Mobile */}
+                        {hasAdminAccess && (
+                          <a
+                            href="/admin"
+                            className="block py-4 px-6 text-[11px] tracking-[0.15em] uppercase bg-[#d4a968] text-black hover:bg-[#c49958] transition-colors font-medium"
+                            style={{ textDecoration: 'none' }}
+                            onClick={() => setShowMenu(false)}
+                          >
+                            <span className="flex items-center gap-2">
+                              <Settings className="w-3.5 h-3.5" />
+                              Panel Admin
+                            </span>
+                          </a>
+                        )}
+                      </div>
                     )}
                   </div>
                 </>
