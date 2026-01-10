@@ -229,6 +229,20 @@ async def submit_deliverable(
         }
     )
     
+    # Send WhatsApp notification to admin
+    try:
+        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1})
+        delivery_number = deliverable.get("delivery_number", 1)
+        from services.ugc_emails import notify_deliverable_submitted
+        await notify_deliverable_submitted(
+            campaign_name=campaign.get("name", "Campaña") if campaign else "Campaña",
+            creator_name=creator.get("name", "Creator"),
+            delivery_number=delivery_number,
+            content_url=data.post_url or data.file_url or "Sin URL"
+        )
+    except Exception as e:
+        logger.error(f"Failed to send submit notification: {e}")
+    
     return {"success": True, "message": "Entrega enviada para revisión"}
 
 # ==================== BRAND: REVIEW DELIVERABLES ====================
