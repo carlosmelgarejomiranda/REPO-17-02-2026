@@ -377,6 +377,41 @@ const BrandDeliverables = () => {
                       </p>
                     </div>
                   )}
+
+                  {/* Rating Section for approved deliverables */}
+                  {['approved', 'completed', 'metrics_pending', 'metrics_submitted'].includes(del.status) && (
+                    <div className="mt-4 pt-4 border-t border-white/10">
+                      {del.brand_rating ? (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-400">Tu calificación:</span>
+                            <div className="flex items-center gap-0.5">
+                              {[1, 2, 3, 4, 5].map(star => (
+                                <Star 
+                                  key={star} 
+                                  className={`w-4 h-4 ${star <= del.brand_rating.rating ? 'text-yellow-400 fill-current' : 'text-gray-600'}`} 
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => openRatingModal(del)}
+                            className="text-xs text-[#d4a968] hover:underline"
+                          >
+                            Editar
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => openRatingModal(del)}
+                          className="w-full py-2 bg-yellow-500/20 text-yellow-400 rounded-lg text-sm hover:bg-yellow-500/30 flex items-center justify-center gap-2"
+                        >
+                          <Star className="w-4 h-4" />
+                          Calificar entrega
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}
