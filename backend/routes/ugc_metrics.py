@@ -286,19 +286,28 @@ async def submit_metrics(
             closes = datetime.fromisoformat(deliverable["metrics_window_closes"].replace('Z', '+00:00'))
             is_late = now > closes
     
-    # Try AI extraction
-    ai_data = await extract_metrics_from_screenshot(
-        data.screenshot_url,
-        deliverable.get("platform", "instagram")
+    platform = deliverable.get("platform", "instagram")
+    
+    # Try AI extraction (both metrics and demographics)
+    ai_result = await extract_all_metrics(
+        metrics_screenshot_url=data.screenshot_url,
+        demographics_screenshot_url=data.demographics_screenshot_url,
+        platform=platform
     )
     
+    ai_metrics = ai_result.get("metrics", {})
+    ai_demographics = ai_result.get("demographics", {})
+    
     # Use AI data or manual input
-    views = data.views or ai_data.get("views")
-    reach = data.reach or ai_data.get("reach")
-    likes = data.likes or ai_data.get("likes", 0)
-    comments = data.comments or ai_data.get("comments", 0)
-    shares = data.shares or ai_data.get("shares", 0)
-    saves = data.saves or ai_data.get("saves")
+    views = data.views or ai_metrics.get("views")
+    reach = data.reach or ai_metrics.get("reach")
+    likes = data.likes or ai_metrics.get("likes", 0)
+    comments = data.comments or ai_metrics.get("comments", 0)
+    shares = data.shares or ai_metrics.get("shares", 0)
+    saves = data.saves or ai_metrics.get("saves")
+    watch_time = data.watch_time_seconds or ai_metrics.get("watch_time_seconds")
+    video_length = data.video_length_seconds or ai_metrics.get("video_length_seconds")
+    retention_rate = ai_metrics.get("retention_rate")
     
     total_interactions = (likes or 0) + (comments or 0) + (shares or 0) + (saves or 0)
     
@@ -307,20 +316,34 @@ async def submit_metrics(
         "deliverable_id": deliverable_id,
         "creator_id": creator["id"],
         "campaign_id": deliverable["campaign_id"],
-        "platform": deliverable.get("platform", "instagram"),
+        "platform": platform,
+        # Basic metrics
         "views": views,
         "reach": reach,
         "likes": likes,
         "comments": comments,
         "shares": shares,
         "saves": saves,
+        # Video metrics
+        "watch_time_seconds": watch_time,
+        "video_length_seconds": video_length,
+        "retention_rate": retention_rate,
+        # Calculated
         "total_interactions": total_interactions,
-        "engagement_rate": None,  # Calculate if we have views
+        "engagement_rate": None,
+        # Demographics (from AI)
+        "demographics": ai_demographics if ai_demographics.get("confidence", 0) > 0.3 else None,
+        # Screenshots
         "screenshot_url": data.screenshot_url,
+        "demographics_screenshot_url": data.demographics_screenshot_url,
         "screenshot_day": screenshot_day,
-        "ai_extracted": ai_data.get("confidence", 0) > 0.5,
-        "ai_confidence": ai_data.get("confidence", 0),
-        "ai_raw_data": ai_data,
+        # AI Processing
+        "ai_extracted": ai_result.get("overall_confidence", 0) > 0.5,
+        "ai_confidence": ai_result.get("overall_confidence", 0),
+        "ai_raw_data": {
+            "metrics": ai_metrics,
+            "demographics": ai_demographics
+        },
         "manually_verified": False,
         "verified_by": None,
         "is_late": is_late,
@@ -331,6 +354,10 @@ async def submit_metrics(
     # Calculate engagement rate
     if views and views > 0:
         metrics["engagement_rate"] = round((total_interactions / views) * 100, 2)
+    
+    # Calculate retention rate if we have both watch time and video length
+    if watch_time and video_length and video_length > 0:
+        metrics["retention_rate"] = round((watch_time / video_length) * 100, 2)
     
     await db.ugc_metrics.insert_one(metrics)
     
