@@ -178,7 +178,7 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
             {/* Left - Image */}
             <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1764593605393-e7c44d74b677?w=800&q=80"
+                src="https://customer-assets.emergentagent.com/job_one-account/artifacts/6frwfbef_fachada%20avenue.jpg"
                 alt="Avenue"
                 className="w-full h-full object-cover"
               />
