@@ -194,10 +194,11 @@ Build a comprehensive SaaS platform for connecting brands with UGC (User-Generat
 - `ugc_packages` - Brand package purchases
 
 ## Last Updated
-January 10, 2026 - Implemented First Purchase Discount System (10% OFF banner in checkout, auto-apply after login)
+January 10, 2026 - Fixed UX flow: "Soy Marca" button now leads to informational page, unified login modal across all flows
 
 ## Unified User Experience (P0 - In Progress)
 - [x] **First Purchase Discount** - 10% descuento automático en checkout para nuevos usuarios
+- [x] **Unified Login Modal** - Modal de login unificado en toda la app (BrandOnboarding ahora usa el modal principal)
+- [x] **Informational Pages First** - Botones "Soy Creador" y "Soy Marca" llevan a páginas informativas antes del registro
 - [ ] **Creator Progressive Onboarding** - Flujo de onboarding al aplicar a campaña
-- [ ] **Brand Progressive Onboarding** - Flujo simplificado para marcas
 - [ ] **Guest Checkout for Studio** - Reservas de estudio sin requerir login
