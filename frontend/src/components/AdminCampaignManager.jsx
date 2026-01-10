@@ -912,6 +912,13 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                     ) : (
                       <>
                         <button
+                          onClick={() => handleViewApplications(campaign)}
+                          className="p-2 rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
+                          title="Ver aplicaciones"
+                        >
+                          <ClipboardList className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => handleAddSlots(campaign)}
                           className="p-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
                           title="Agregar cupos"
