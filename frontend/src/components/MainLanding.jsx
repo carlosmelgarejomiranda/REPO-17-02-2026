@@ -117,7 +117,7 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
               data-testid="card-studio"
             >
               <img 
-                src="https://images.unsplash.com/photo-1615458508880-ec0521ce754f?w=600&q=80"
+                src="https://customer-assets.emergentagent.com/job_one-account/artifacts/idzlm38w_imagen%20studio.jpg"
                 alt="Avenue Studio"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
