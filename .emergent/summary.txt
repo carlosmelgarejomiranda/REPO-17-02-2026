@@ -1,188 +1,194 @@
-<analysis>original_problem_statement:
-The user wants to build a comprehensive SaaS platform for connecting brands with UGC (User-Generated Content) creators. The initial phase involved building the core platform functionality. After completing that, the user requested a detailed **Brand Campaign Dashboard**.
-
-Based on iterative feedback, the project has pivoted to a model where an **Admin** user creates and manages all campaigns through a dedicated admin panel, and **Brand** users primarily view reports and provide feedback on deliverables.
-
-The most recent requests focus on refining the admin and brand experience by adding a UI for campaign management, a rating system, image uploads, and enhancing user profiles with performance data.
+<analysis>**original_problem_statement:**
+The user wants to build a comprehensive SaaS platform named Avenue for connecting brands with UGC creators, alongside an e-commerce store and a studio rental service. The project's focus has evolved through several phases:
+1.  **Initial Build:** Core platform with Admin, Brand, and Creator roles.
+2.  **Admin-Centric Shift:** The model pivoted to an Admin user creating and managing all campaigns, with Brands primarily viewing reports and providing feedback. This involved building an Admin Campaign Management UI, a deliverable rating system, and automated background jobs for contract management.
+3.  **AI & Profile Enhancements:** The user requested AI-powered extraction of performance metrics (views, likes, demographics) from screenshots of Instagram insights. This was successfully implemented using Gemini Vision.
+4.  **Unified User Experience (Current):** The user provided detailed feedback on the fragmented user registration process. The current main objective is to refactor the entire user system into a **Unified Account with Progressive Profiles**. This means a single, simple registration, with users completing specific profiles (Creator, Brand, E-commerce Customer) only when they first attempt an action related to that area.
 
 **PRODUCT REQUIREMENTS (Latest):**
--   **Admin Campaign Management UI:**
-    -   A new section in the Admin Panel to create, view, and manage campaigns.
-    -   The creation form must include fields for selecting a parent company/brand, campaign details, cover image, and contract terms (deliveries per month, contract duration, start date).
-    -   It must also include detailed creator requirements (gender, age, followers, country, residence).
-    -   The admin must be able to view all applications for a campaign and confirm/reject creators from this interface.
--   **Deliverable Rating System:**
-    -   Brands must be able to rate (1-5 stars) and leave a private comment on approved deliverables.
-    -   The rating should contribute to the creator's public average rating.
-    -   The comment must be private, visible only to the creator and admins.
--   **Image Upload Functionality:**
-    -   The Create Campaign form in the admin panel must support uploading a cover image for the campaign.
--   **Enhanced Creator Profiles & Notifications:**
-    -   Public creator profiles must display their average rating.
-    -   Creators must be able to view the private comments left by brands on their deliverables.
-    -   A new statistics dashboard should be created for the admin.
-    -   An email notification should be sent to the creator when a brand rates their deliverable.
+-   **Unified Account System:**
+    -   Implement a single account for all platform areas (Ecommerce, Studio, UGC).
+    -   Registration should be minimal (email/password or Google).
+    -   Data (billing, shipping) should be centralized in a Mi Perfil page and shared across services.
+    -   Onboarding for Creator and Brand roles should be a progressive disclosure flow, asking for detailed info only when the user tries to apply for or create a campaign.
+-   **Dynamic Navbar:** The navigation bar must dynamically display buttons (Panel Admin, Panel Creador, Panel Marca, Mi Perfil) based on the logged-in user's roles and completed profiles.
+-   **Incentivized Checkout:** The e-commerce checkout should offer a 10% discount to guest users as an incentive to log in or create an account for their first purchase.
+-   **Guest Checkout for Studio:** The studio booking form should allow guest checkouts, similar to the e-commerce flow.
 
 **User's preferred language**: Spanish
 
 **what currently exists?**
-The platform is a full-stack application with distinct roles for Admins, Brands, and Creators. A comprehensive demo data set exists.
-
-Key completed features include:
--   **Contract-Based Campaign Model:** The backend logic has been refactored. Admins create campaigns with contract terms (e.g., monthly deliverable quotas, duration).
--   **Automated Background Jobs:** An  job runs daily to automatically recharge campaign slots (deliverable quotas) and handle the lifecycle of expired applications. It also sends email notifications (via Resend) to admins and brands upon slot recharge.
--   **Admin Campaign Management UI:** A new Gestión Campañas tab in the Admin Panel allows admins to create detailed campaigns, view all existing campaigns, and manage applications (confirm/reject) from a dedicated modal.
--   **Brand Reporting Dashboard:** A functional and simplified dashboard for brands to view reports (Metrics, Demographics, Applicants) for their campaigns. The UI has been refined multiple times based on user feedback.
--   **Deliverable Rating System:** Brands can rate and leave private comments on approved deliverables via a modal in the deliverables review page.
--   **File Upload Endpoint:** A placeholder endpoint () has been created to accept image uploads from the admin UI.
+The application is a full-stack React/FastAPI/MongoDB platform.
+- **UGC Module:** Features a robust, admin-centric campaign management system. Admins create campaigns, and creators apply. Brands review deliverables and provide ratings.
+- **AI Metrics Extraction:** A sophisticated system using Gemini Vision is in place to extract detailed performance and demographic data from user-uploaded screenshots.
+- **User System (In Transition):** The backend has been updated with endpoints for a unified user profile (), and authentication responses now include flags for UGC roles (, ).
+- **Frontend Foundation:** A dynamic  and a unified  page have been created to support the new user model. The checkout page has a discount banner, but the logic is not fully implemented.
 
 **Last working item**:
-- Last item agent was working: The agent was beginning the implementation of the user's latest batch of requests, starting with displaying creator ratings on their public profiles. The agent had just started analyzing the relevant frontend file.
-- Status: **NOT STARTED**
+- Last item agent was working: The agent was implementing the user's requested unified account system. It had just identified the existing 10% discount banner in  and was about to modify its text and implement the logic to apply the discount upon user login/registration during checkout.
+- Status: **IN PROGRESS**
 - Agent Testing Done: N
-- Which testing method agent to use? **both**. These changes require backend data to be correctly fetched and displayed on the frontend, plus a new backend email notification trigger.
+- Which testing method agent to use? **both**. The changes involve frontend UI/UX in the checkout flow and backend logic for applying discounts and managing user sessions. A frontend test should verify the banner and login modal, while a backend test should confirm the discount is correctly applied to the order.
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-  - Issue 1: Production Twilio Setup Required (Priority: P3)
-  - Issue 2: Image Upload Endpoint is a Placeholder (Priority: P2)
+  - Issue 1: Finalize Unified User Experience & Onboarding Flow (Priority: P0)
+  - Issue 2: Integrate Image Upload into Create Campaign Form (Priority: P1)
+  - Issue 3: Production Twilio Setup Required (Priority: P2)
 
 **Issues Detail:**
-  - **Issue 1: Production Twilio Setup Required**
-     - **Attempted fixes:** None. Functionality is implemented but inactive.
-     - **Next debug checklist:** Await user's confirmation of WhatsApp number approval by Meta.
-     - **Why fix this issue and what will be achieved with the fix?** Will enable production-ready WhatsApp notifications.
-     - **Status:** BLOCKED
-     - **Is recurring issue?** N
-     - **Should Test frontend/backend/both after fix?** Backend
-     - **Blocked on other issue:** User dependency (Meta approval).
-  - **Issue 2: Image Upload Endpoint is a Placeholder**
-     - **Attempted fixes:** None.
+  - **Issue 1: Finalize Unified User Experience & Onboarding Flow**
+     - **Attempted fixes:** The agent created the unified profile page, dynamic navbar, and backend endpoints. It identified the checkout banner to be modified.
      - **Next debug checklist:**
-        1.  In , modify the  endpoint.
-        2.  Use  to write the uploaded  object to a persistent directory (e.g., ).
-        3.  Ensure the directory exists.
-        4.  Return the path or URL to the saved file.
-     - **Why fix this issue and what will be achieved with the fix?** To complete the Create Campaign feature by allowing admins to upload and save a cover image for each campaign.
+        1.  In , update the discount banner's text to apply to the *current* purchase and trigger the login modal.
+        2.  Implement backend logic to apply a FIRST_PURCHASE discount coupon when a user logs in or registers during the checkout flow.
+        3.  Implement the Creator onboarding flow: on clicking Apply to Campaign, require login/registration, then show the full application form.
+        4.  Implement the Brand onboarding flow: in , ensure the simplified form and discount banner are present.
+        5.  Implement a guest checkout flow for the (yet to be created) Studio Booking page.
+     - **Why fix this issue and what will be achieved with the fix?** This is the user's highest priority. It will create a seamless, low-friction user journey across all parts of the Avenue platform, improving user retention and conversion.
+     - **Status:** IN PROGRESS
+     - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Both
+     - **Blocked on other issue:** None
+
+  - **Issue 2: Integrate Image Upload into Create Campaign Form**
+     - **Attempted fixes:** The generic file upload endpoint () was successfully fixed.
+     - **Next debug checklist:**
+        1.  Modify .
+        2.  Add a file input component to the Create Campaign form for the cover image.
+        3.  On form submission, upload the selected image to the  endpoint.
+        4.  Save the URL returned by the endpoint into the new campaign's document in the  collection.
+     - **Why fix this issue and what will be achieved with the fix?** This will complete a core requirement of the admin campaign management feature, allowing campaigns to have visual representation across the platform.
      - **Status:** NOT STARTED
      - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Both
+     - **Blocked on other issue:** None
+
+  - **Issue 3: Production Twilio Setup Required**
+     - **Attempted fixes:** Agent implemented all WhatsApp notification triggers but encountered an authentication error. The user confirmed their Meta verification is still pending.
+     - **Next debug checklist:** Await user confirmation that the number is approved by Meta and get the exact From number from their Twilio console.
+     - **Why fix this issue and what will be achieved with the fix?** Enables real-time WhatsApp notifications for all platform events, a key feature for user engagement.
+     - **Status:** BLOCKED
+     - **Is recurring issue?** Y (Previously thought to be ready, but blocked on external dependency)
      - **Should Test frontend/backend/both after fix?** Backend
-     - **Blocked on other issue:** None.
+     - **Blocked on other issue:** User dependency (Meta approval).
 
 **In progress Task List**:
-  - None.
+- **Task 1: Unified User Experience & Onboarding Refactor**
+    - **Where to resume:** . The agent needs to modify the existing discount banner and connect it to the login modal and discount logic.
+    - **What will be achieved with this?** A seamless, low-friction user journey across the entire platform, with incentivized registration and progressive profiling, as per the user's detailed request.
+    - **Status:** IN PROGRESS
+    - **Should Test frontend/backend/both after fix?** Both
+    - **Blocked on something:** None
 
 **Upcoming and Future Tasks**
     **Upcoming Tasks:**
-    - **P0: Implement Creator Profile Enhancements & Admin Stats:**
-        - **Task 1: Show Ratings on Creator Profile:** Modify  to include review data in the profile endpoint. Update  to display the average rating and a list of recent ratings/comments.
-        - **Task 2: Creator Feedback View:** Create a new component or section within the Creator Workspace () for creators to view private feedback from brands on their deliverables.
-        - **Task 3: Admin Statistics Dashboard:** Enhance the main Dashboard tab in  to show more meaningful platform-wide statistics.
-        - **Task 4: Rating Notification Email:** In , within the rating endpoint, add a call to the  service to send an email to the creator after their work is rated.
-    **Future Tasks:**
     - **P1: Implement Bancard Payment Gateway:** Blocked pending user credentials.
-    - **P2: Refactor :** The main admin panel component is very large. It should be broken down into smaller sub-components for better maintainability.
+    - **P2: Build Studio Booking System:** Create the frontend page and backend logic for users to reserve the studio, including a guest checkout option.
+    **Future Tasks:**
+    - **P3: In-app Notification System:** An agent-suggested improvement to complement email/WhatsApp alerts.
+    - **P4: Advanced Admin Features:** A user-mentioned backlog item for future expansion.
 
 **Completed work in this session**
-- **Implemented Full Admin Campaign Management UI:**
-  - Created  and integrated it as a new Gestión Campañas tab in the .
-  - The UI allows admins to create campaigns with contract details and specific creator requirements.
-  - Implemented a modal for admins to view and manage all applications for a campaign (Confirm/Reject).
-- **Implemented Deliverable Rating System:**
-  - Added a backend endpoint for brands to submit a star rating and a private comment on approved deliverables.
-  - Integrated a Calificar entrega button and modal on the  page.
-- **Implemented Contract-Based Campaign Logic:**
-  - Overhauled the campaign model to be based on contracts managed by an Admin.
-  - Created a background job service () with  to automatically manage monthly slot recharges and application expiry.
-  - Implemented automated email notifications for slot recharges.
-- **Major UX/UI Simplification:**
-  - Based on user feedback, heavily refactored the Brand Dashboard () and Campaigns page () to be simple, report-focused views, removing all management actions.
-- **Fixed Authentication Issues:** Replaced  with JWT Bearer token authentication in multiple frontend components.
-- **Resolved Bugs:** Fixed an issue causing duplicate applicants in campaign reports.
+- **AI-Powered Metrics Extraction:** Implemented a system to extract detailed performance metrics (views, likes, comments, shares, saves) and demographics (gender, age, country) from user-uploaded Instagram screenshots using Gemini Vision.
+- **Creator Feedback View:** Created a page () for creators to see private ratings and comments from brands.
+- **Admin Statistics Dashboard:** Built a new dashboard tab for admins with key platform metrics.
+- **Notification System Expansion:** Added email and WhatsApp notification triggers for all key UGC events (application status changes, deliverable reviews, ratings). The WhatsApp portion is functionally complete but blocked by user's Twilio setup.
+- **File Upload Endpoint Fix:** Repaired the  endpoint by correcting its registration order in , making it fully functional.
+- **Unified Profile Foundation:**
+    - Created the Mi Perfil page () for users to manage their data.
+    - Implemented a dynamic  that shows context-aware buttons based on user roles.
+    - Added backend endpoints () and updated authentication logic to support the unified profile model.
+- **UGCAdminPanel Refactor:** Extracted major tabs into separate components, reducing the main file's line count from 799 to 625.
+
+**Earlier issues found/mentioned but not fixed**
+   - None. The agent has been diligent in tracking and addressing issues or marking them as blocked.
+
+**Known issue recurrence from previous fork**
+  - None.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Background Job Scheduling:** Using  within FastAPI to run recurring tasks (monthly contract updates).
-- **Role-Based Feature Segregation:** A major pivot to separate campaign management (Admin) from reporting and feedback (Brand).
-- **Complex UI State Management:** Extensive use of React state, props, and modals to build the multi-faceted Admin Campaign Manager.
-- **Iterative Development:** The project's direction has evolved significantly through rapid, iterative feedback loops with the user.
-- **File Uploads with FastAPI:** Implemented the basic structure for handling multipart file uploads.
+- **AI-Powered Image Analysis:** Using Gemini Vision via  ( with ) to perform OCR and structured data extraction (JSON) from images based on a detailed prompt.
+- **Unified User Profile & Progressive Disclosure:** Refactoring the user identity model to a single account system. Information is collected contextually (e.g., asking for creator details only when they apply to a campaign) to minimize initial registration friction.
+- **Dynamic UI Rendering:** Using user role data fetched from an auth endpoint () to conditionally render navigation elements and control access in the frontend (React).
+- **Centralized API Router:** The issue with the upload endpoint highlighted the importance of router registration order in FastAPI. Endpoints must be defined on the  instance *before*  is called.
 
 **key DB schema**
-- **ugc_campaigns:** Now contains a  object (, , , etc.), , , and .
-- **ugc_deliverables:** The  sub-document now includes  and  fields.
+- **users:** A  object and  array were added. The  field is being supplemented with boolean flags like  and  to facilitate the transition to a  model.
+- **ugc_metrics:** The schema was significantly expanded to store all AI-extracted fields, including , , , , , , and nested objects for  (gender, age, country) with associated confidence scores.
+
+**changes in tech stack**
+  - None.
 
 **All files of reference**
--  (Logic for automated campaign management)
--  (Primary UI for the new admin workflow)
--  (Where brands rate content)
--  (Target for the next task)
--  (Backend logic for admin actions)
--  (Backend logic for ratings)
--  (Scheduler setup and upload endpoint)
+-  (Next task location)
+-  (Newly implemented dynamic navbar)
+-  (Newly created unified profile page)
+-  (Contains new profile endpoints and auth logic)
+-  (Contains the AI extraction logic)
+-  (Contains the AI prompt and notification logic)
+-  (New UI for submitting metrics screenshots)
 
 **Areas that need refactoring**:
--  is still a very large component (>800 lines). While a separate component was created for campaign management, the main panel itself could be broken down further to improve maintainability.
+- The user identity and registration flow is the main area currently undergoing a planned refactoring.
 
 **key api endpoints**
-- : (Admin) Creates a new campaign with contract details.
-- : (Admin) Gets all applications for a campaign.
-- : (Admin) Confirms or rejects an application.
-- : (Brand) Submits a rating and private comment for a deliverable.
-- : (Admin) Placeholder endpoint for uploading campaign cover images.
-- : (Brand) Gets data for the three brand reports.
+- : Retrieves the logged-in user's complete profile, including billing/shipping info and UGC role status.
+- : Updates the user's billing information.
+- : Updates the user's shipping addresses.
+- : Provides platform-wide statistics for the admin dashboard.
+- : Submits performance/demographics screenshots for AI processing.
+- : A generic, now functional, endpoint for file uploads.
 
 **Critical Info for New Agent**
-- **The Core Logic Has Changed:** Do not assume brands manage their own campaigns. The **Admin** now creates, staffs, and manages all campaigns. Brands are primarily consumers of data and providers of feedback.
-- **Admin Panel is Central:** The most complex and recent logic resides in the  component and its corresponding backend endpoints in .
-- **Background Jobs are Live:** The  is configured in  to run daily. Be aware of the  service, as it modifies campaign data automatically.
-- **User is Very Engaged:** The user provides frequent, detailed, and iterative feedback. Plan to implement features in small, verifiable chunks and present them for review.
+- **The highest priority is to continue the user identity refactor.** The user has provided very specific instructions for the desired flows (checkout incentive, progressive onboarding for UGC roles, dynamic navbar). You must resume work on .
+- **The AI metrics extraction is a new, powerful feature.** The core logic and prompts are in  and . It uses  with Gemini, not a direct SDK.
+- **Twilio is BLOCKED.** Do not attempt to fix the WhatsApp notifications until the user confirms their Meta Business account and number have been fully approved.
 
 **documents and test reports created in this job**
-- 
+-  (Updated with latest features)
 - 
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. ****: User approved implementing all proposed next actions: showing ratings on creator profiles, letting creators see private feedback, building an admin stats dashboard, and adding rating notifications. (PENDING IMPLEMENTATION)
-9.  ****: User asked for clarification on the proposed Next Action Items. (RESOLVED)
-8.  ****: User approved implementing the Admin Campaign Manager UI and provided very detailed field requirements for the Create Campaign form, including requirements, company selection, and image upload. (RESOLVED)
-7.  ****: User asked for an explanation of the task to create a UI for the new contract system. (RESOLVED)
-6.  ****: User asked for clarification on the cron job and email notification backlog items. (RESOLVED)
-5.  ****: User approved implementing the background job scheduler and email notifications, clarifying that admins (Avenue), not brands, confirm creators. (RESOLVED)
-4.  ****: User approved the major refactor to a contract-based campaign model managed by the admin. (RESOLVED)
-3.  **User provides detailed answers to agent's clarifying questions** about the new contract-based campaign model. (RESOLVED)
-2.  ****: User initiated a major feature pivot, describing a new contract-based system where campaigns have monthly renewable slots and are managed by the admin, not the brand. (IN PROGRESS - Led to contract system implementation)
-1.  **User requests changes to campaign card stats** on the Brand Dashboard. (RESOLVED)
+10. ****: User approved continuing with the pending tasks for the unified profile refactor. (IN PROGRESS)
+9. ****: User asked for a status update on the profile refactor task. (RESOLVED)
+8. **User provides detailed requirements for the unified profile:** Specifies logic for checkout discount, guest checkout for studio, separate onboarding for creators vs. brands, and dynamic navbar buttons. (PENDING IMPLEMENTATION)
+7. ****: User asked for an analysis of the current forms and flows. (RESOLVED)
+6. ****: User asked for a strategic recommendation on which forms should require login vs. not. (RESOLVED)
+5. ****: User asked for the best, lowest-friction way to handle multiple user types. (RESOLVED)
+4. ****: User asked for an explanation of the current user registration system. (RESOLVED)
+3. ****: User requested a creator profile for their admin account to test the new AI metrics submission flow. (RESOLVED)
+2. ****: User provided real Instagram insight screenshots to test the AI extraction feature. (RESOLVED)
+1. **User confirms Meta verification is still pending and pivots to AI metrics feature:** Aborts the WhatsApp implementation and approves moving on to the next task from the backlog. (RESOLVED)
 
 **Project Health Check:**
-- **Broken**: Nothing is broken.
-- **Mocked**:
-  - The  endpoint receives a file but does not save it to persistent storage.
-- **Partially Broken/Unreliable**: None.
+- **Broken**: None.
+- **Mocked**: None.
 - **Blocked**:
-  - Twilio/WhatsApp integration is blocked pending Meta approval.
-  - Bancard payment gateway is blocked pending user credentials.
+  - Twilio/WhatsApp integration is blocked pending user's Meta approval.
+  - Bancard payment gateway integration is blocked pending user-provided credentials.
 
 **3rd Party Integrations**
-- **Resend**: Integrated and working for transactional emails.
-- **APScheduler**: Integrated and working for background job scheduling.
-- **Twilio**: Implemented but BLOCKED for WhatsApp notifications.
-- **Google Analytics (GA4)**: Implemented for analytics.
-- **Bancard (Payments)**: Planned but BLOCKED.
-- **Google Maps API**: Implemented for delivery cost calculation.
-- **Emergent-managed Google Auth**: Implemented for user login.
+- **Resend**: Working for transactional emails.
+- **APScheduler**: Working for background jobs.
+- **Twilio**: Implemented but **BLOCKED**.
+- **Google Analytics (GA4)**: Implemented.
+- **Bancard (Payments)**: Planned but **BLOCKED**.
+- **Google Maps API**: Implemented.
+- **Emergent-managed Google Auth**: Implemented.
+- **Emergent LLM Key (Gemini Vision)**: Newly integrated via  and working for AI-powered screenshot analysis.
 
 **Testing status**
-  - Testing agent used after significant changes: YES (After the initial brand reports dashboard was built).
+  - Testing agent used after significant changes: YES (but tests failed due to issues in the test definitions, not the application code).
   - Troubleshoot agent used after agent stuck in loop: NO
-  - Test files created: None.
+  - Test files created: None. Agent has been using  and  scripts for backend validation.
   - Known regressions: None.
 
 **Credentials to test flow:**
-- **Admin User**: Email: , Password:  (Use this for the Admin Panel)
-- **Brand User**: Log in as the user associated with the AVENUE MALL EAS brand to test brand-side dashboards and rating functionality.
+- **Admin / All-Roles User**: Email: , Password:  (This user has admin, creator, and brand profiles, useful for testing the dynamic navbar).
 
 **What agent forgot to execute**
-The agent has not forgotten to execute any tasks. It successfully implemented a large set of features based on user requests and was about to start the next batch when the session ended. The implementation of the image upload endpoint remains incomplete (placeholder), which is correctly identified as a pending issue.</analysis>
+- The agent has not forgotten any tasks. It is in the middle of a large, multi-step implementation requested by the user. The task of integrating the now-fixed image upload endpoint into the campaign creation form remains on the upcoming task list, which is correct as it has not been prioritized by the user yet.</analysis>
