@@ -202,7 +202,16 @@ PACKAGE_CONFIGS = {
         price=990000,
         promo_price=790000,
         description="Ideal para comenzar con UGC",
-        features=["4 materiales de contenido", "Seguimiento en tiempo real", "Métricas verificadas con IA", "Comunicación centralizada", "Soporte comercial"]
+        features=[
+            "Gestión centralizada",
+            "Métricas verificadas con IA",
+            "Seguimiento en tiempo real",
+            "Panel de estadísticas",
+            "Sistema de reviews",
+            "Reporte de entrega de materiales",
+            "Reporte de métricas de la campaña",
+            "Soporte comercial"
+        ]
     ),
     PackageType.STANDARD: PackageConfig(
         type=PackageType.STANDARD,
@@ -211,7 +220,17 @@ PACKAGE_CONFIGS = {
         price=1790000,
         promo_price=1490000,
         description="El más popular para campañas medianas",
-        features=["8 materiales de contenido", "Seguimiento en tiempo real", "Métricas verificadas con IA", "Comunicación centralizada", "Soporte comercial"]
+        features=[
+            "Gestión centralizada",
+            "Métricas verificadas con IA",
+            "Seguimiento en tiempo real",
+            "Panel de estadísticas",
+            "Sistema de reviews",
+            "Reporte de entrega de materiales",
+            "Reporte de métricas de la campaña",
+            "Reporte de métricas de los postulantes",
+            "Soporte comercial"
+        ]
     ),
     PackageType.PRO: PackageConfig(
         type=PackageType.PRO,
@@ -220,7 +239,18 @@ PACKAGE_CONFIGS = {
         price=2390000,
         promo_price=1990000,
         description="Para marcas con alto volumen",
-        features=["12 materiales de contenido", "Seguimiento en tiempo real", "Métricas verificadas con IA", "Comunicación centralizada", "Soporte comercial"]
+        features=[
+            "Gestión centralizada",
+            "Métricas verificadas con IA",
+            "Seguimiento en tiempo real",
+            "Panel de estadísticas",
+            "Sistema de reviews",
+            "Reporte de entrega de materiales",
+            "Reporte de métricas de la campaña",
+            "Reporte de métricas de los postulantes",
+            "Gráficos de distribución demográfica",
+            "Soporte comercial prioritario"
+        ]
     ),
     PackageType.ENTERPRISE: PackageConfig(
         type=PackageType.ENTERPRISE,
@@ -229,7 +259,21 @@ PACKAGE_CONFIGS = {
         price=0,  # Custom quote
         promo_price=None,
         description="Solución personalizada para grandes marcas",
-        features=["Volumen personalizado", "Seguimiento en tiempo real", "Métricas verificadas con IA", "Comunicación centralizada", "Soporte comercial", "Reportes personalizados"]
+        features=[
+            "Gestión centralizada",
+            "Métricas verificadas con IA",
+            "Seguimiento en tiempo real",
+            "Panel de estadísticas",
+            "Sistema de reviews",
+            "Reporte de entrega de materiales",
+            "Reporte de métricas de la campaña",
+            "Reporte de métricas de los postulantes",
+            "Gráficos de distribución demográfica",
+            "Personalización de campañas",
+            "Panel de selección de postulantes",
+            "Reportes personalizados",
+            "Soporte comercial prioritario"
+        ]
     )
 }
 
