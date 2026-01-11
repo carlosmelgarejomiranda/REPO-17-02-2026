@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
   ArrowRight, Building2, Users, BarChart3, CheckCircle, Sparkles,
   ArrowLeft, Heart, TrendingUp, MessageCircle, Shield,
-  Package, Zap, FileCheck, Check, Star, Eye, Clock, MessageSquare
+  Package, Zap, FileCheck, Check, Star, Eye, Clock, MessageSquare, Truck
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
@@ -39,6 +39,20 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
     if (pkg.deliveries === 0) return null;
     const price = pkg.is_promo_active && pkg.promo_price ? pkg.promo_price : pkg.price;
     return Math.round(price / pkg.deliveries);
+  };
+
+  // Features that are exclusive to higher tiers (for highlighting)
+  const exclusiveFeatures = {
+    standard: ['Reporte de métricas de los postulantes'],
+    pro: ['Gráficos de distribución demográfica', 'Soporte comercial prioritario'],
+    enterprise: ['Personalización de campañas', 'Panel de selección de postulantes', 'Reportes personalizados']
+  };
+
+  const isExclusiveFeature = (pkg, feature) => {
+    if (pkg.type === 'standard' && exclusiveFeatures.standard.includes(feature)) return true;
+    if (pkg.type === 'pro' && exclusiveFeatures.pro.includes(feature)) return true;
+    if (pkg.type === 'enterprise' && exclusiveFeatures.enterprise.includes(feature)) return true;
+    return false;
   };
 
   return (
@@ -109,7 +123,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
 
       {/* ============== PLANES Y PRECIOS ============== */}
       <section id="planes" className="py-12 md:py-16 px-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-10">
             <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
@@ -119,8 +133,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
               Elegí según tu <span className="italic text-[#d4a968]">volumen</span>
             </h2>
             <p className="text-white/50 text-sm max-w-lg mx-auto mb-4">
-              Todos los planes incluyen acceso completo a la plataforma. 
-              A mayor volumen, menor costo por material.
+              A mayor volumen, menor costo por material y más funcionalidades incluidas.
             </p>
             {promoActive && (
               <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/30 px-3 py-1.5 rounded-full">
@@ -137,7 +150,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
               return (
                 <div 
                   key={pkg.type}
-                  className={`relative p-6 rounded-lg transition-all ${
+                  className={`relative flex flex-col p-5 rounded-lg transition-all ${
                     pkg.type === 'standard' 
                       ? 'bg-[#121212] border-2 border-[#d4a968]/50 hover:border-[#d4a968]' 
                       : 'bg-[#121212] border border-white/5 hover:border-white/20'
@@ -152,20 +165,20 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                     </div>
                   )}
 
-                  <div className="mb-4">
+                  <div className="mb-3">
                     <h3 className="text-lg font-medium text-white">{pkg.name}</h3>
                     <p className="text-white/50 text-xs mt-1">{pkg.description}</p>
                   </div>
 
                   {/* Materials highlight */}
                   {pkg.deliveries > 0 ? (
-                    <div className="mb-4 p-3 bg-[#d4a968]/10 rounded-lg text-center">
+                    <div className="mb-3 p-3 bg-[#d4a968]/10 rounded-lg text-center">
                       <span className="text-3xl font-light text-[#d4a968]">{pkg.deliveries}</span>
                       <span className="text-white/60 text-sm ml-2">materiales</span>
                     </div>
                   ) : (
-                    <div className="mb-4 p-3 bg-[#d4a968]/10 rounded-lg text-center">
-                      <span className="text-lg font-light text-[#d4a968]">Volumen personalizado</span>
+                    <div className="mb-3 p-3 bg-[#d4a968]/10 rounded-lg text-center">
+                      <span className="text-base font-light text-[#d4a968]">Volumen personalizado</span>
                     </div>
                   )}
 
@@ -176,24 +189,48 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                         {pkg.is_promo_active && pkg.promo_price ? (
                           <div>
                             <span className="text-white/40 line-through text-sm">{formatPrice(pkg.price)}</span>
-                            <div className="text-2xl font-light text-white">{formatPrice(pkg.promo_price)}</div>
+                            <div className="text-xl font-light text-white">{formatPrice(pkg.promo_price)}</div>
                           </div>
                         ) : (
-                          <div className="text-2xl font-light text-white">{formatPrice(pkg.price)}</div>
+                          <div className="text-xl font-light text-white">{formatPrice(pkg.price)}</div>
                         )}
                         {pricePerMaterial && (
                           <span className="text-[#d4a968] text-xs">{formatPrice(pricePerMaterial)} por material</span>
                         )}
                       </>
                     ) : (
-                      <div className="text-xl font-light text-white">Consultar</div>
+                      <div className="text-lg font-light text-white">Consultar</div>
                     )}
+                  </div>
+
+                  {/* Features List */}
+                  <div className="flex-1 mb-4">
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider mb-2">Incluye:</p>
+                    <ul className="space-y-1.5">
+                      {pkg.features && pkg.features.map((feature, fidx) => (
+                        <li 
+                          key={fidx} 
+                          className={`flex items-start gap-2 text-xs ${
+                            isExclusiveFeature(pkg, feature) 
+                              ? 'text-[#d4a968]' 
+                              : 'text-white/60'
+                          }`}
+                        >
+                          <Check className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${
+                            isExclusiveFeature(pkg, feature) 
+                              ? 'text-[#d4a968]' 
+                              : 'text-white/40'
+                          }`} />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
                   {/* CTA */}
                   <Link
                     to={pkg.type === 'enterprise' ? '#contacto' : '/ugc/brand/onboarding'}
-                    className={`block w-full text-center py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg ${
+                    className={`block w-full text-center py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg mt-auto ${
                       pkg.type === 'standard'
                         ? 'bg-[#d4a968] text-black hover:bg-[#e8c891]'
                         : 'border border-white/20 text-white hover:bg-white/5'
@@ -205,68 +242,24 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
               );
             })}
           </div>
-        </div>
-      </section>
 
-      {/* ============== TODOS LOS PLANES INCLUYEN ============== */}
-      <section className="py-12 md:py-16 px-6 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
-              Incluido en todos los planes
-            </span>
-            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
-              Acceso completo a la <span className="italic text-[#d4a968]">plataforma</span>
-            </h2>
-            <p className="text-white/50 text-sm max-w-lg mx-auto">
-              Sin importar el plan que elijas, tenés todas las funcionalidades 
-              para gestionar tus campañas de forma profesional.
-            </p>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              {
-                icon: Eye,
-                title: 'Seguimiento en tiempo real',
-                desc: 'Visualizá aplicantes, confirmados, entregas de material y métricas en tu dashboard.'
-              },
-              {
-                icon: BarChart3,
-                title: 'Métricas verificadas con IA',
-                desc: 'Los creadores suben sus métricas y nuestra IA las procesa automáticamente.'
-              },
-              {
-                icon: MessageSquare,
-                title: 'Sistema de reviews',
-                desc: 'Calificá cada entrega y dejá feedback a los creadores para futuras campañas.'
-              },
-              {
-                icon: Clock,
-                title: 'Gestión centralizada',
-                desc: 'Todo en un solo lugar: campañas, creadores, contenidos y reportes.'
-              },
-              {
-                icon: Users,
-                title: 'Soporte comercial',
-                desc: 'Te acompañamos en todo el proceso para que tu campaña sea un éxito.'
-              },
-              {
-                icon: FileCheck,
-                title: 'Panel de estadísticas',
-                desc: 'Accedé a métricas consolidadas de todas tus campañas y creadores.'
-              }
-            ].map((item, idx) => (
-              <div key={idx} className="p-5 bg-[#121212] rounded-lg border border-white/5">
-                <div className="w-10 h-10 rounded-full bg-[#d4a968]/10 flex items-center justify-center mb-4">
-                  <item.icon className="w-5 h-5 text-[#d4a968]" />
-                </div>
-                <h4 className="text-white font-medium mb-2 text-sm">{item.title}</h4>
-                <p className="text-white/50 text-xs leading-relaxed">{item.desc}</p>
+          {/* Delivery Note */}
+          <div className="mt-8 p-4 bg-[#121212] rounded-lg border border-white/5">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#d4a968]/10 flex items-center justify-center flex-shrink-0">
+                <Truck className="w-4 h-4 text-[#d4a968]" />
               </div>
-            ))}
+              <div>
+                <h4 className="text-white text-sm font-medium mb-1">Tarifas de delivery de productos*</h4>
+                <p className="text-white/50 text-xs leading-relaxed">
+                  El envío de productos a creadores tiene un costo de <span className="text-white/70">30.000 Gs</span> para entregas en 
+                  Asunción y Gran Asunción, y <span className="text-white/70">50.000 Gs</span> para entregas al interior del país.
+                </p>
+                <p className="text-white/40 text-[10px] mt-2 italic">
+                  *Estas tarifas pueden variar para localidades específicas o para objetos grandes o delicados.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
