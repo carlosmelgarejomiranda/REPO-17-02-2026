@@ -38,7 +38,9 @@ const BRANDS_LOGOS = [
   { name: 'Santal', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/9ug3sffi_santal.png' },
   { name: 'Undisturbed', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/qigxzvwt_undisturbed.png' },
   { name: 'Serotonina', url: 'https://customer-assets.emergentagent.com/job_avenue-agency/artifacts/owy00wkk_serotoninaa.png' },
-  { name: 'OKI', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/trqd3flg_OKI.png' }
+  { name: 'OKI', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/trqd3flg_OKI.png' },
+  { name: 'Karla Ruiz', url: 'https://customer-assets.emergentagent.com/job_avenue-agency/artifacts/lnpbw5d6_IMG_7056.PNG' },
+  { name: 'Skyline', url: 'https://customer-assets.emergentagent.com/job_avenue-agency/artifacts/8imn49pd_Design%20sem%20nome%20%284%29.png' }
 ];
 
 // Pricing data with breakdown
