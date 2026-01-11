@@ -2,15 +2,25 @@ import React, { useState } from 'react';
 import { 
   ArrowRight, Check, Store, Camera, Users, Star, Phone, Mail, Building, Send,
   ShoppingBag, Sparkles, Image, Video, BarChart3, Globe, MapPin, Zap,
-  MessageSquare, TrendingUp, Package, ChevronRight
+  MessageSquare, TrendingUp, Package, ChevronRight, Shield, Heart,
+  Truck, ClipboardList, CreditCard, Calendar, FileText, Handshake
 } from 'lucide-react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { trackBrandInquiry } from '../utils/analytics';
 
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80';
+// Images
+const HERO_IMAGE = 'https://customer-assets.emergentagent.com/job_one-account/artifacts/6frwfbef_fachada%20avenue.jpg';
+const STUDIO_IMAGE = 'https://customer-assets.emergentagent.com/job_one-account/artifacts/idzlm38w_imagen%20studio.jpg';
+const ECOMMERCE_IMAGE = 'https://images.unsplash.com/photo-1730749221242-e89b03900805?w=600&q=80';
+const SHOWROOM_IMAGE = 'https://customer-assets.emergentagent.com/job_one-account/artifacts/6frwfbef_fachada%20avenue.jpg';
 
-// Pricing data
+// Brands
+const BRANDS_SHOWCASE = [
+  'SEROTONINA', 'FILA', 'PREMIATA', 'SUN68', 'MALVA', 'AGUARA', 'SANTAL', 'LEVI\'S', 'TOMMY'
+];
+
+// Pricing data with breakdown
 const PRICING = {
   exhibidores: {
     label: 'Exhibidores',
@@ -25,7 +35,8 @@ const PRICING = {
         totalValue: 500000,
         savings: 0,
         savingsPercent: 0,
-        features: ['Presencia en Avenue Online', 'Página de marca personalizada', 'Gestión de productos', 'Pasarela de pagos integrada'],
+        breakdown: null,
+        features: ['Presencia en Avenue Online', 'Página de marca personalizada', 'Gestión de productos'],
         highlight: false
       },
       {
@@ -36,8 +47,14 @@ const PRICING = {
         totalValue: 2040000,
         savings: 840000,
         savingsPercent: 41,
-        features: ['Todo de E-commerce', 'Producción + post dedicado/mes', '2 horas de estudio/mes', '1 Campaña UGC Starter (4 materiales)/mes'],
-        highlight: true
+        breakdown: [
+          { item: 'E-commerce', value: 500000 },
+          { item: 'Producción + post dedicado/mes', value: 500000 },
+          { item: '2 horas de estudio/mes', value: 250000 },
+          { item: '1 Campaña UGC Starter (4 mat.)/mes', value: 790000 }
+        ],
+        features: ['Todo de E-commerce', 'Producción de contenido mensual', 'Horas de estudio incluidas', 'Campaña UGC con creadores'],
+        highlight: false
       },
       {
         id: 'showroom',
@@ -47,7 +64,11 @@ const PRICING = {
         totalValue: 1800000,
         savings: 500000,
         savingsPercent: 28,
-        features: ['Todo de E-commerce', 'Exhibidor en Avenue Showroom', 'Ubicación premium en Asunción', 'Atención personalizada en tienda'],
+        breakdown: [
+          { item: 'E-commerce', value: 500000 },
+          { item: 'Exhibidor en Showroom', value: 1300000 }
+        ],
+        features: ['Todo de E-commerce', 'Exhibidor en Avenue Showroom', 'Ubicación premium en Asunción'],
         highlight: false
       },
       {
@@ -58,8 +79,15 @@ const PRICING = {
         totalValue: 3340000,
         savings: 1540000,
         savingsPercent: 46,
-        features: ['Todo de Showroom + Online', 'Producción + post dedicado/mes', '2 horas de estudio/mes', '1 Campaña UGC Starter (4 materiales)/mes'],
-        highlight: false
+        breakdown: [
+          { item: 'E-commerce', value: 500000 },
+          { item: 'Exhibidor en Showroom', value: 1300000 },
+          { item: 'Producción + post dedicado/mes', value: 500000 },
+          { item: '2 horas de estudio/mes', value: 250000 },
+          { item: '1 Campaña UGC Starter (4 mat.)/mes', value: 790000 }
+        ],
+        features: ['Todo de Showroom + Online', 'Producción de contenido mensual', 'Horas de estudio incluidas', 'Campaña UGC con creadores'],
+        highlight: true
       }
     ]
   },
@@ -76,7 +104,8 @@ const PRICING = {
         totalValue: 500000,
         savings: 0,
         savingsPercent: 0,
-        features: ['Presencia en Avenue Online', 'Página de marca personalizada', 'Gestión de productos', 'Pasarela de pagos integrada'],
+        breakdown: null,
+        features: ['Presencia en Avenue Online', 'Página de marca personalizada', 'Gestión de productos'],
         highlight: false
       },
       {
@@ -87,8 +116,14 @@ const PRICING = {
         totalValue: 2040000,
         savings: 840000,
         savingsPercent: 41,
-        features: ['Todo de E-commerce', 'Producción + post dedicado/mes', '2 horas de estudio/mes', '1 Campaña UGC Starter (4 materiales)/mes'],
-        highlight: true
+        breakdown: [
+          { item: 'E-commerce', value: 500000 },
+          { item: 'Producción + post dedicado/mes', value: 500000 },
+          { item: '2 horas de estudio/mes', value: 250000 },
+          { item: '1 Campaña UGC Starter (4 mat.)/mes', value: 790000 }
+        ],
+        features: ['Todo de E-commerce', 'Producción de contenido mensual', 'Horas de estudio incluidas', 'Campaña UGC con creadores'],
+        highlight: false
       },
       {
         id: 'showroom',
@@ -98,7 +133,11 @@ const PRICING = {
         totalValue: 2200000,
         savings: 500000,
         savingsPercent: 23,
-        features: ['Todo de E-commerce', 'Perchero en Avenue Showroom', 'Ubicación premium en Asunción', 'Atención personalizada en tienda'],
+        breakdown: [
+          { item: 'E-commerce', value: 500000 },
+          { item: 'Perchero en Showroom', value: 1700000 }
+        ],
+        features: ['Todo de E-commerce', 'Perchero en Avenue Showroom', 'Ubicación premium en Asunción'],
         highlight: false
       },
       {
@@ -109,39 +148,87 @@ const PRICING = {
         totalValue: 3740000,
         savings: 1540000,
         savingsPercent: 41,
-        features: ['Todo de Showroom + Online', 'Producción + post dedicado/mes', '2 horas de estudio/mes', '1 Campaña UGC Starter (4 materiales)/mes'],
-        highlight: false
+        breakdown: [
+          { item: 'E-commerce', value: 500000 },
+          { item: 'Perchero en Showroom', value: 1700000 },
+          { item: 'Producción + post dedicado/mes', value: 500000 },
+          { item: '2 horas de estudio/mes', value: 250000 },
+          { item: '1 Campaña UGC Starter (4 mat.)/mes', value: 790000 }
+        ],
+        features: ['Todo de Showroom + Online', 'Producción de contenido mensual', 'Horas de estudio incluidas', 'Campaña UGC con creadores'],
+        highlight: true
       }
     ]
   }
 };
 
+// Included in ALL plans
+const INCLUDED_IN_ALL = [
+  { icon: Users, text: 'Equipo de venta dedicado' },
+  { icon: ClipboardList, text: 'Gestión de inventario' },
+  { icon: Truck, text: 'Delivery incluido' },
+  { icon: FileText, text: 'Reportes de ventas mensuales' }
+];
+
+// Ecosystem
 const ECOSYSTEM = [
   {
-    icon: Globe,
     title: 'Avenue Online',
-    description: 'E-commerce premium con tu propia página de marca. Vendé 24/7 con pasarela de pagos integrada.',
-    color: 'from-blue-500/20 to-blue-600/10'
+    description: 'E-commerce premium con tu propia página de marca. Vendé 24/7 con pasarela de pagos integrada y llegá a clientes de todo el país.',
+    image: ECOMMERCE_IMAGE
   },
   {
-    icon: Camera,
     title: 'Avenue Studio',
-    description: 'Producción de contenido profesional + campañas UGC con creadores verificados.',
-    color: 'from-purple-500/20 to-purple-600/10'
+    description: 'Producción de contenido profesional para tu marca. Sesiones fotográficas, videos y campañas UGC con creadores verificados.',
+    image: STUDIO_IMAGE
   },
   {
-    icon: MapPin,
     title: 'Avenue Showroom',
-    description: 'Espacio físico premium en Asunción. Tu marca presente donde están tus clientes.',
-    color: 'from-[#d4a968]/20 to-[#d4a968]/10'
+    description: 'Espacio físico premium en Asunción. Tu marca presente donde están tus clientes, con atención personalizada y experiencia de compra única.',
+    image: SHOWROOM_IMAGE
   }
 ];
 
+// Why Avenue
+const WHY_AVENUE = [
+  {
+    icon: Handshake,
+    title: 'Socio estratégico, no proveedor',
+    description: 'Nos involucramos en tu crecimiento. Tu éxito es nuestro éxito.'
+  },
+  {
+    icon: Globe,
+    title: 'Ecosistema integrado',
+    description: 'Online + físico + contenido. Todo conectado para maximizar tu visibilidad.'
+  },
+  {
+    icon: Users,
+    title: 'Audiencia premium',
+    description: 'Accedé a una base de clientes ya construida que busca marcas como la tuya.'
+  },
+  {
+    icon: TrendingUp,
+    title: 'Resultados medibles',
+    description: 'Reportes mensuales de ventas, tráfico y performance de tu marca.'
+  }
+];
+
+// Alliance benefits
+const ALLIANCE_BENEFITS = [
+  { icon: Users, title: 'Equipo de venta', description: 'Personal capacitado que conoce tu marca y productos' },
+  { icon: ClipboardList, title: 'Gestión de inventario', description: 'Control de stock y reposición coordinada' },
+  { icon: Truck, title: 'Logística y delivery', description: 'Envíos a todo el país gestionados por Avenue' },
+  { icon: FileText, title: 'Reportes mensuales', description: 'Información detallada de ventas y tendencias' },
+  { icon: Camera, title: 'Contenido profesional', description: 'Fotos y videos de tus productos (según plan)' },
+  { icon: MessageSquare, title: 'Marketing incluido', description: 'Promoción en nuestras redes y canales' }
+];
+
+// Process steps
 const PROCESS_STEPS = [
-  { step: '01', title: 'Conversamos', description: 'Entendemos tu marca, productos y objetivos de crecimiento' },
-  { step: '02', title: 'Diseñamos', description: 'Creamos un plan a medida: online, showroom, UGC o todo junto' },
-  { step: '03', title: 'Ejecutamos', description: 'Nos encargamos de todo: producción, gestión y logística' },
-  { step: '04', title: 'Medimos', description: 'Analizamos resultados y optimizamos tu estrategia' }
+  { step: '01', title: 'Conversamos', description: 'Entendemos tu marca, productos y objetivos' },
+  { step: '02', title: 'Diseñamos', description: 'Creamos un plan a medida para vos' },
+  { step: '03', title: 'Ejecutamos', description: 'Nos encargamos de todo: ventas, logística, contenido' },
+  { step: '04', title: 'Medimos', description: 'Analizamos resultados y optimizamos' }
 ];
 
 export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage }) => {
@@ -161,11 +248,10 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
   const [error, setError] = useState(null);
 
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
-
   const currentPricing = PRICING[productType];
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
+    return new Intl.NumberFormat('es-PY').format(price);
   };
 
   const handlePlanSelect = (plan) => {
@@ -219,27 +305,16 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
         <div className="max-w-lg w-full">
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/10 p-10 text-center">
             <div className="absolute top-0 right-0 w-40 h-40 bg-[#d4a968]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-            
             <div className="relative z-10">
               <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-[#d4a968] flex items-center justify-center">
                 <Check className="w-10 h-10 text-black" />
               </div>
-              
               <h2 className="text-3xl md:text-4xl font-light text-white mb-2">
                 ¡Mensaje <span className="italic text-[#d4a968]">Enviado</span>!
               </h2>
-              <p className="text-gray-400 mb-8">
-                Gracias por tu interés en ser parte de Avenue
-              </p>
-              
-              <p className="text-gray-500 text-sm mb-8">
-                Nuestro equipo se pondrá en contacto contigo pronto.
-              </p>
-              
-              <a
-                href="/"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors"
-              >
+              <p className="text-gray-400 mb-8">Gracias por tu interés en ser parte de Avenue</p>
+              <p className="text-gray-500 text-sm mb-8">Nuestro equipo se pondrá en contacto contigo pronto.</p>
+              <a href="/" className="inline-flex items-center gap-2 px-8 py-4 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors">
                 Volver al Inicio
                 <ArrowRight className="w-5 h-5" />
               </a>
@@ -252,20 +327,13 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <Navbar 
-        user={user}
-        onLoginClick={onLoginClick}
-        onLogout={onLogout}
-        language={language}
-        setLanguage={setLanguage}
-        t={t}
-      />
+      <Navbar user={user} onLoginClick={onLoginClick} onLogout={onLogout} language={language} setLanguage={setLanguage} t={t} />
 
       {/* ============== HERO ============== */}
       <section className="relative min-h-[60vh] flex items-center pt-16">
         <div className="absolute inset-0">
-          <img src={HERO_IMAGE} alt="Tu marca en Avenue" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-black/50" />
+          <img src={HERO_IMAGE} alt="Avenue Showroom" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/40" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-black/30" />
         </div>
         
@@ -285,11 +353,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
               No somos solo una tienda. Somos tu socio estratégico para ganar visibilidad y conectar con tu audiencia.
             </p>
             
-            <a 
-              href="#planes"
-              className="inline-flex items-center gap-3 px-6 py-3 bg-[#d4a968] text-black text-sm font-medium tracking-wide hover:bg-[#c49958] transition-all duration-300 rounded-lg"
-              data-testid="hero-cta"
-            >
+            <a href="#planes" className="inline-flex items-center gap-3 px-6 py-3 bg-[#d4a968] text-black text-sm font-medium tracking-wide hover:bg-[#c49958] transition-all duration-300 rounded-lg" data-testid="hero-cta">
               <span>Ver planes</span>
               <ArrowRight className="w-4 h-4" />
             </a>
@@ -297,46 +361,12 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
         </div>
       </section>
 
-      {/* ============== ECOSISTEMA AVENUE ============== */}
-      <section className="py-16 px-6 border-t border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
-              Nuestro ecosistema
-            </span>
-            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
-              Todo lo que tu marca <span className="italic text-[#d4a968]">necesita</span>
-            </h2>
-            <p className="text-white/50 text-sm max-w-lg mx-auto">
-              Tres pilares integrados para maximizar tu visibilidad y ventas
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-5">
-            {ECOSYSTEM.map((item, idx) => (
-              <div 
-                key={idx}
-                className="p-6 rounded-xl bg-[#121212] border border-white/5 hover:border-white/10 transition-all group"
-              >
-                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center mb-5`}>
-                  <item.icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-lg font-medium text-white mb-2">{item.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ============== PLANES Y TARIFAS ============== */}
-      <section id="planes" className="py-16 px-6 bg-[#0d0d0d]">
+      <section id="planes" className="py-16 px-6 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-10">
-            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
-              Planes y Tarifas
-            </span>
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Planes y Tarifas</span>
             <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
               Elegí el plan ideal para <span className="italic text-[#d4a968]">tu marca</span>
             </h2>
@@ -351,9 +381,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                 <button
                   onClick={() => setProductType('exhibidores')}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                    productType === 'exhibidores'
-                      ? 'bg-[#d4a968] text-black'
-                      : 'text-white/60 hover:text-white'
+                    productType === 'exhibidores' ? 'bg-[#d4a968] text-black' : 'text-white/60 hover:text-white'
                   }`}
                   data-testid="toggle-exhibidores"
                 >
@@ -363,9 +391,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                 <button
                   onClick={() => setProductType('percheros')}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                    productType === 'percheros'
-                      ? 'bg-[#d4a968] text-black'
-                      : 'text-white/60 hover:text-white'
+                    productType === 'percheros' ? 'bg-[#d4a968] text-black' : 'text-white/60 hover:text-white'
                   }`}
                   data-testid="toggle-percheros"
                 >
@@ -373,62 +399,81 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                   <span>Percheros</span>
                 </button>
               </div>
-              <p className="text-white/30 text-[10px] mt-2">
-                {currentPricing.description}
-              </p>
+              <p className="text-white/30 text-[10px] mt-2">{currentPricing.description}</p>
             </div>
           </div>
 
           {/* Plans Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {currentPricing.plans.map((plan, idx) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {currentPricing.plans.map((plan) => (
               <div 
                 key={plan.id}
                 className={`relative flex flex-col p-5 rounded-xl transition-all ${
                   plan.highlight 
-                    ? 'bg-[#121212] border-2 border-[#d4a968]/50 hover:border-[#d4a968]' 
+                    ? 'bg-gradient-to-b from-[#d4a968]/10 to-[#121212] border-2 border-[#d4a968] shadow-lg shadow-[#d4a968]/10' 
                     : 'bg-[#121212] border border-white/5 hover:border-white/20'
                 }`}
                 data-testid={`plan-${plan.id}`}
               >
                 {plan.highlight && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-[#d4a968] text-black text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-                      Recomendado
+                    <span className="bg-[#d4a968] text-black text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                      ⭐ Recomendado
                     </span>
                   </div>
                 )}
 
                 {/* Plan Header */}
-                <div className="mb-4">
+                <div className="mb-3 mt-2">
                   <h3 className="text-lg font-medium text-white">{plan.name}</h3>
                   <p className="text-white/50 text-xs mt-1">{plan.description}</p>
                 </div>
 
                 {/* Price */}
-                <div className="mb-4">
-                  <div className="text-2xl font-light text-white">{formatPrice(plan.price)}</div>
-                  <span className="text-white/40 text-xs">/mes</span>
+                <div className="mb-3">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl font-semibold text-white">{formatPrice(plan.price)}</span>
+                    <span className="text-white/40 text-xs">Gs/mes</span>
+                  </div>
                   
+                  {/* Savings Badge */}
                   {plan.savings > 0 && (
-                    <div className="mt-2 inline-flex items-center gap-1.5 bg-green-500/10 border border-green-500/30 px-2 py-1 rounded-full">
-                      <Sparkles className="w-3 h-3 text-green-400" />
-                      <span className="text-xs font-medium text-green-400">
-                        Ahorrás {plan.savingsPercent}%
-                      </span>
+                    <div className="mt-2">
+                      <div className="inline-flex items-center gap-1.5 bg-green-500/20 border border-green-500/40 px-3 py-1.5 rounded-full">
+                        <Sparkles className="w-4 h-4 text-green-400" />
+                        <span className="text-sm font-bold text-green-400">
+                          Ahorrás {plan.savingsPercent}%
+                        </span>
+                      </div>
+                      <p className="text-green-400/70 text-xs mt-1">
+                        {formatPrice(plan.savings)} Gs de ahorro
+                      </p>
                     </div>
-                  )}
-                  
-                  {plan.savings > 0 && (
-                    <p className="text-white/30 text-[10px] mt-1">
-                      Valor real: {formatPrice(plan.totalValue)}
-                    </p>
                   )}
                 </div>
 
+                {/* Price Breakdown */}
+                {plan.breakdown && (
+                  <div className="mb-3 p-3 bg-black/30 rounded-lg border border-white/5">
+                    <p className="text-white/40 text-[10px] uppercase tracking-wider mb-2">Desglose:</p>
+                    <ul className="space-y-1">
+                      {plan.breakdown.map((item, idx) => (
+                        <li key={idx} className="flex justify-between text-[11px]">
+                          <span className="text-white/50">{item.item}</span>
+                          <span className="text-white/70">{formatPrice(item.value)}</span>
+                        </li>
+                      ))}
+                      <li className="flex justify-between text-xs border-t border-white/10 pt-1 mt-1">
+                        <span className="text-white/70 font-medium">Valor total</span>
+                        <span className="text-white/70 line-through">{formatPrice(plan.totalValue)}</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+
                 {/* Features */}
                 <div className="flex-1 mb-4">
-                  <ul className="space-y-2">
+                  <ul className="space-y-1.5">
                     {plan.features.map((feature, fidx) => (
                       <li key={fidx} className="flex items-start gap-2 text-xs text-white/60">
                         <Check className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[#d4a968]" />
@@ -452,16 +497,159 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
               </div>
             ))}
           </div>
+
+          {/* Included in ALL plans */}
+          <div className="bg-[#121212] rounded-xl border border-white/5 p-5 mb-6">
+            <p className="text-center text-white/40 text-xs uppercase tracking-wider mb-4">Incluido en todos los planes</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {INCLUDED_IN_ALL.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#d4a968]/10 flex items-center justify-center flex-shrink-0">
+                    <item.icon className="w-4 h-4 text-[#d4a968]" />
+                  </div>
+                  <span className="text-white/70 text-xs">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Commercial Policy */}
+          <div className="bg-[#0d0d0d] rounded-xl border border-white/5 p-5">
+            <p className="text-center text-white/40 text-xs uppercase tracking-wider mb-4">Política Comercial</p>
+            <div className="grid md:grid-cols-2 gap-4 text-xs text-white/60">
+              <div className="flex items-start gap-3">
+                <CreditCard className="w-4 h-4 text-[#d4a968] mt-0.5 flex-shrink-0" />
+                <p><span className="text-white/80">Markup del 10%:</span> La marca define el precio de venta y Avenue aplica un markup del 10% (con redondeo en 10.000) para cobertura de gastos de POS y activación de alianzas bancarias.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Calendar className="w-4 h-4 text-[#d4a968] mt-0.5 flex-shrink-0" />
+                <p><span className="text-white/80">Contratos:</span> A partir de 3 meses con garantía. El pago del servicio se realiza por mes adelantado.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <FileText className="w-4 h-4 text-[#d4a968] mt-0.5 flex-shrink-0" />
+                <p><span className="text-white/80">Liquidación:</span> Los pagos por las ventas realizadas se liquidan mensualmente.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Shield className="w-4 h-4 text-[#d4a968] mt-0.5 flex-shrink-0" />
+                <p><span className="text-white/80">Garantía:</span> Tu inventario está protegido y asegurado mientras esté en nuestras instalaciones.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============== MARCAS QUE CONFÍAN ============== */}
+      <section className="py-10 border-y border-white/5 overflow-hidden bg-[#0d0d0d]">
+        <p className="text-center text-white/30 text-xs uppercase tracking-wider mb-6">Marcas que confían en Avenue</p>
+        <div className="flex animate-marquee whitespace-nowrap">
+          {[...BRANDS_SHOWCASE, ...BRANDS_SHOWCASE, ...BRANDS_SHOWCASE].map((brand, index) => (
+            <span key={index} className="mx-12 text-2xl font-light text-white/20 hover:text-white/40 transition-colors">
+              {brand}
+            </span>
+          ))}
+        </div>
+        <style>{`
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-33.33%); }
+          }
+          .animate-marquee {
+            animation: marquee 25s linear infinite;
+          }
+        `}</style>
+      </section>
+
+      {/* ============== ECOSISTEMA AVENUE ============== */}
+      <section className="py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Nuestro Ecosistema</span>
+            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+              Todo lo que tu marca <span className="italic text-[#d4a968]">necesita</span>
+            </h2>
+            <p className="text-white/50 text-sm max-w-lg mx-auto">
+              Tres pilares integrados para maximizar tu visibilidad y ventas
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-5">
+            {ECOSYSTEM.map((item, idx) => (
+              <div key={idx} className="group rounded-xl overflow-hidden bg-[#121212] border border-white/5 hover:border-white/10 transition-all">
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img 
+                    src={item.image} 
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="text-lg font-medium text-white mb-2">{item.title}</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============== ¿POR QUÉ AVENUE? ============== */}
+      <section className="py-16 px-6 bg-[#0d0d0d]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Propuesta de Valor</span>
+            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+              ¿Por qué <span className="italic text-[#d4a968]">Avenue</span>?
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {WHY_AVENUE.map((item, idx) => (
+              <div key={idx} className="p-5 rounded-xl bg-[#121212] border border-white/5 hover:border-[#d4a968]/30 transition-all">
+                <div className="w-12 h-12 rounded-lg bg-[#d4a968]/10 flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-[#d4a968]" />
+                </div>
+                <h3 className="text-white font-medium mb-2">{item.title}</h3>
+                <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============== LO QUE INCLUYE TU ALIANZA ============== */}
+      <section className="py-16 px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Beneficios</span>
+            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+              Lo que incluye tu <span className="italic text-[#d4a968]">alianza</span>
+            </h2>
+            <p className="text-white/50 text-sm max-w-lg mx-auto">
+              Más que un espacio de venta, una asociación estratégica
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {ALLIANCE_BENEFITS.map((item, idx) => (
+              <div key={idx} className="flex items-start gap-4 p-5 rounded-xl bg-[#121212] border border-white/5">
+                <div className="w-10 h-10 rounded-lg bg-[#d4a968]/10 flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-5 h-5 text-[#d4a968]" />
+                </div>
+                <div>
+                  <h4 className="text-white font-medium mb-1">{item.title}</h4>
+                  <p className="text-white/50 text-sm">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ============== CÓMO FUNCIONA ============== */}
-      <section className="py-16 px-6 border-t border-white/5">
+      <section className="py-16 px-6 bg-[#0d0d0d]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
-              Proceso simple
-            </span>
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Proceso</span>
             <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
               Cómo <span className="italic text-[#d4a968]">funciona</span>
             </h2>
@@ -487,18 +675,14 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
       </section>
 
       {/* ============== FORMULARIO ============== */}
-      <section id="contact-form" className="py-16 px-6 bg-[#0d0d0d]">
+      <section id="contact-form" className="py-16 px-6 border-t border-white/5">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">
-              Contacto
-            </span>
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Contacto</span>
             <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
               Hablemos de tu <span className="italic text-[#d4a968]">marca</span>
             </h2>
-            <p className="text-white/50 text-sm">
-              Completá el formulario y nuestro equipo se pondrá en contacto
-            </p>
+            <p className="text-white/50 text-sm">Completá el formulario y nuestro equipo se pondrá en contacto</p>
             {selectedPlan && (
               <div className="mt-4 inline-flex items-center gap-2 bg-[#d4a968]/10 border border-[#d4a968]/30 px-4 py-2 rounded-full">
                 <Check className="w-4 h-4 text-[#d4a968]" />
@@ -510,17 +694,13 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
           <div className="rounded-xl overflow-hidden bg-[#121212] border border-white/5">
             <div className="p-6 md:p-8">
               {error && (
-                <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-                  {error}
-                </div>
+                <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-xs mb-2 text-white/40">
-                      Nombre de la Marca *
-                    </label>
+                    <label className="block text-xs mb-2 text-white/40">Nombre de la Marca *</label>
                     <input
                       type="text"
                       required
@@ -531,9 +711,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                     />
                   </div>
                   <div>
-                    <label className="block text-xs mb-2 text-white/40">
-                      Nombre de Contacto *
-                    </label>
+                    <label className="block text-xs mb-2 text-white/40">Nombre de Contacto *</label>
                     <input
                       type="text"
                       required
@@ -547,9 +725,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-xs mb-2 text-white/40">
-                      Email *
-                    </label>
+                    <label className="block text-xs mb-2 text-white/40">Email *</label>
                     <input
                       type="email"
                       required
@@ -560,9 +736,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                     />
                   </div>
                   <div>
-                    <label className="block text-xs mb-2 text-white/40">
-                      Teléfono
-                    </label>
+                    <label className="block text-xs mb-2 text-white/40">Teléfono</label>
                     <input
                       type="tel"
                       value={formData.phone}
@@ -575,9 +749,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-xs mb-2 text-white/40">
-                      Tipo de producto *
-                    </label>
+                    <label className="block text-xs mb-2 text-white/40">Tipo de producto *</label>
                     <select
                       required
                       value={formData.product_type || productType}
@@ -587,14 +759,12 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                       }}
                       className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors"
                     >
-                      <option value="exhibidores" className="bg-[#1a1a1a]">Exhibidores (joyas, accesorios, cosmética...)</option>
+                      <option value="exhibidores" className="bg-[#1a1a1a]">Exhibidores (joyas, accesorios...)</option>
                       <option value="percheros" className="bg-[#1a1a1a]">Percheros (ropa, indumentaria)</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs mb-2 text-white/40">
-                      Plan de interés *
-                    </label>
+                    <label className="block text-xs mb-2 text-white/40">Plan de interés *</label>
                     <select
                       required
                       value={formData.interest}
@@ -605,16 +775,14 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                       <option value="ecommerce" className="bg-[#1a1a1a]">E-commerce</option>
                       <option value="online-pro" className="bg-[#1a1a1a]">Online PRO</option>
                       <option value="showroom" className="bg-[#1a1a1a]">Showroom + Online</option>
-                      <option value="showroom-pro" className="bg-[#1a1a1a]">Showroom + Online PRO</option>
+                      <option value="showroom-pro" className="bg-[#1a1a1a]">Showroom + Online PRO ⭐</option>
                       <option value="consulta" className="bg-[#1a1a1a]">Quiero que me asesoren</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs mb-2 text-white/40">
-                    Mensaje (opcional)
-                  </label>
+                  <label className="block text-xs mb-2 text-white/40">Mensaje (opcional)</label>
                   <textarea
                     rows={3}
                     value={formData.message}
@@ -649,7 +817,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
       </section>
 
       {/* ============== CTA WHATSAPP ============== */}
-      <section className="py-16 px-6 border-t border-white/5">
+      <section className="py-16 px-6 bg-[#0d0d0d]">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
             ¿Preferís hablar <span className="italic text-[#d4a968]">directamente</span>?
