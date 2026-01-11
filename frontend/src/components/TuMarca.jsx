@@ -19,7 +19,6 @@ const SHOWROOM_IMAGE = 'https://customer-assets.emergentagent.com/job_one-accoun
 const BRANDS_LOGOS = [
   { name: 'Cristaline', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/43f8bnvu_cristaline.png' },
   { name: 'Sarelly', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/obb5nku6_sarelly.png' },
-  { name: 'Coraltheia', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/vd1ynijp_Coraltheia%20%281%29.png' },
   { name: 'Laese', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/o91gyue1_laese.png' },
   { name: 'Thula', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/y060bk89_thula.png' },
   { name: 'Fila', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/n23vvyer_fila.png' },
@@ -37,7 +36,6 @@ const BRANDS_LOGOS = [
   { name: 'Bravisima', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/sl1cdb62_bravisima.png' },
   { name: 'Santal', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/9ug3sffi_santal.png' },
   { name: 'Undisturbed', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/qigxzvwt_undisturbed.png' },
-  { name: 'Serotonina', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/uj3dond3_serotoninaa.png' },
   { name: 'OKI', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/trqd3flg_OKI.png' }
 ];
 
