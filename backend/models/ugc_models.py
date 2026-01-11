@@ -202,7 +202,7 @@ PACKAGE_CONFIGS = {
         price=990000,
         promo_price=790000,
         description="Ideal para comenzar con UGC",
-        features=["4 entregas de contenido", "Soporte por email", "Dashboard básico"]
+        features=["4 materiales de contenido", "Seguimiento en tiempo real", "Métricas verificadas con IA", "Comunicación centralizada", "Soporte comercial"]
     ),
     PackageType.STANDARD: PackageConfig(
         type=PackageType.STANDARD,
@@ -211,7 +211,7 @@ PACKAGE_CONFIGS = {
         price=1790000,
         promo_price=1490000,
         description="El más popular para campañas medianas",
-        features=["8 entregas de contenido", "Soporte prioritario", "Dashboard completo", "Reportes de métricas"]
+        features=["8 materiales de contenido", "Seguimiento en tiempo real", "Métricas verificadas con IA", "Comunicación centralizada", "Soporte comercial"]
     ),
     PackageType.PRO: PackageConfig(
         type=PackageType.PRO,
@@ -220,7 +220,7 @@ PACKAGE_CONFIGS = {
         price=2390000,
         promo_price=1990000,
         description="Para marcas con alto volumen",
-        features=["12 entregas de contenido", "Soporte prioritario", "Dashboard avanzado", "Reportes detallados", "Acceso a creadores premium"]
+        features=["12 materiales de contenido", "Seguimiento en tiempo real", "Métricas verificadas con IA", "Comunicación centralizada", "Soporte comercial"]
     ),
     PackageType.ENTERPRISE: PackageConfig(
         type=PackageType.ENTERPRISE,
@@ -229,7 +229,7 @@ PACKAGE_CONFIGS = {
         price=0,  # Custom quote
         promo_price=None,
         description="Solución personalizada para grandes marcas",
-        features=["Entregas ilimitadas", "Account manager dedicado", "API access", "Reportes personalizados"]
+        features=["Volumen personalizado", "Seguimiento en tiempo real", "Métricas verificadas con IA", "Comunicación centralizada", "Soporte comercial", "Reportes personalizados"]
     )
 }
 
