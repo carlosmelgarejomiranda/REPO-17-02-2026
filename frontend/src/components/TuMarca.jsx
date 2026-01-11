@@ -560,24 +560,44 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
       </section>
 
       {/* ============== MARCAS QUE CONFÍAN ============== */}
-      <section className="py-10 border-y border-white/5 overflow-hidden bg-[#0d0d0d]">
-        <p className="text-center text-white/30 text-xs uppercase tracking-wider mb-6">Marcas que confían en Avenue</p>
-        <div className="flex animate-marquee whitespace-nowrap">
-          {[...BRANDS_SHOWCASE, ...BRANDS_SHOWCASE, ...BRANDS_SHOWCASE].map((brand, index) => (
-            <span key={index} className="mx-12 text-2xl font-light text-white/20 hover:text-white/40 transition-colors">
-              {brand}
-            </span>
-          ))}
+      <section className="py-12 border-y border-white/5 bg-[#0d0d0d]">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Nuestros Aliados</span>
+            <h3 className="text-xl md:text-2xl font-light text-white">
+              Marcas que <span className="italic text-[#d4a968]">confían</span> en Avenue
+            </h3>
+          </div>
+          
+          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+            {BRANDS_LOGOS.map((brand, index) => {
+              let maxHeight = '45px';
+              if (brand.name === 'Fila') maxHeight = '20px';
+              else if (brand.name === 'UGG') maxHeight = '25px';
+              
+              return (
+                <div
+                  key={index}
+                  className="flex items-center justify-center p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 group"
+                  style={{ height: '70px' }}
+                >
+                  <img 
+                    src={brand.url}
+                    alt={brand.name}
+                    className="w-full h-auto object-contain transition-all duration-300"
+                    style={{
+                      maxHeight: maxHeight,
+                      maxWidth: '100%',
+                      filter: 'brightness(0) invert(1) opacity(0.5)'
+                    }}
+                    onMouseEnter={(e) => e.target.style.filter = 'brightness(0) invert(1) opacity(1)'}
+                    onMouseLeave={(e) => e.target.style.filter = 'brightness(0) invert(1) opacity(0.5)'}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
-        <style>{`
-          @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-33.33%); }
-          }
-          .animate-marquee {
-            animation: marquee 25s linear infinite;
-          }
-        `}</style>
       </section>
 
       {/* ============== ECOSISTEMA AVENUE ============== */}
