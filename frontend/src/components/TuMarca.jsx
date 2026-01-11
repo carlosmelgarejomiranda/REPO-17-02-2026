@@ -15,9 +15,30 @@ const STUDIO_IMAGE = 'https://customer-assets.emergentagent.com/job_one-account/
 const ECOMMERCE_IMAGE = 'https://images.unsplash.com/photo-1730749221242-e89b03900805?w=600&q=80';
 const SHOWROOM_IMAGE = 'https://customer-assets.emergentagent.com/job_one-account/artifacts/6frwfbef_fachada%20avenue.jpg';
 
-// Brands
-const BRANDS_SHOWCASE = [
-  'SEROTONINA', 'FILA', 'PREMIATA', 'SUN68', 'MALVA', 'AGUARA', 'SANTAL', 'LEVI\'S', 'TOMMY'
+// Brands with logos
+const BRANDS_LOGOS = [
+  { name: 'Cristaline', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/43f8bnvu_cristaline.png' },
+  { name: 'Sarelly', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/obb5nku6_sarelly.png' },
+  { name: 'Coraltheia', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/vd1ynijp_Coraltheia%20%281%29.png' },
+  { name: 'Laese', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/o91gyue1_laese.png' },
+  { name: 'Thula', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/y060bk89_thula.png' },
+  { name: 'Fila', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/n23vvyer_fila.png' },
+  { name: 'Inmortal', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/z44zvkxg_inmortal.png' },
+  { name: 'Hunter', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/81t0v820_hunter.png' },
+  { name: 'Maria E Makeup', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/b5o58lv1_maria%20e%20makeup.png' },
+  { name: 'Malva', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/dqrkyqty_malva.png' },
+  { name: 'Aguara', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/q9zvhytl_aguara.png' },
+  { name: 'Body Sculpt', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/x1508c3y_body%20sculpt.png' },
+  { name: 'Efimera', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/430czjwq_efimera.png' },
+  { name: 'Premiata', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/bz75uuaw_premiata.png' },
+  { name: 'UGG', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/kjm7ig8m_ugg.png' },
+  { name: 'David Sandoval', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/2usl8am4_david%20sandoval.png' },
+  { name: 'Brofitwear', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/pv6lug6t_brofitwear.png' },
+  { name: 'Bravisima', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/sl1cdb62_bravisima.png' },
+  { name: 'Santal', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/9ug3sffi_santal.png' },
+  { name: 'Undisturbed', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/qigxzvwt_undisturbed.png' },
+  { name: 'Serotonina', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/uj3dond3_serotoninaa.png' },
+  { name: 'OKI', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/trqd3flg_OKI.png' }
 ];
 
 // Pricing data with breakdown
