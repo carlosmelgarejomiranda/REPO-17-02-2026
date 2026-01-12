@@ -581,6 +581,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
               else if (brand.name === 'OKI') maxHeight = '110px';
               else if (brand.name === 'Skyline') maxHeight = '110px';
               else if (brand.name === 'Serotonina') maxHeight = '59px';
+              else if (brand.name === 'Laese') maxHeight = '32px';
               
               return (
                 <div
