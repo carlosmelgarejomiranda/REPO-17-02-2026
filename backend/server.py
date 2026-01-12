@@ -1324,8 +1324,14 @@ async def create_reservation(reservation_data: ReservationCreate, request: Reque
         await send_confirmation_email(reservation_doc)
         await notify_new_reservation(reservation_doc)
     else:
-        # Regular user creates request - send notification to admin
+        # Regular user creates request - send notification to admin and customer
         await notify_reservation_request(reservation_doc)
+        # Send email notification to both customer and admin
+        try:
+            from email_service import send_booking_request_notification
+            await send_booking_request_notification(db, reservation_doc)
+        except Exception as e:
+            logger.error(f"Failed to send booking request emails: {e}")
     
     # Remove MongoDB _id before returning
     reservation_doc.pop("_id", None)
