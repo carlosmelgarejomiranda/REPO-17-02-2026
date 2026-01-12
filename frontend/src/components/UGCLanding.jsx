@@ -65,20 +65,20 @@ const UGCLanding = ({ t, user, onLoginClick, onLogout, language, setLanguage }) 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/ugc/creators"
+              to={creatorLink}
               className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:opacity-90 transition-all rounded-lg"
               data-testid="hero-cta-creator"
             >
               <Users className="w-4 h-4" />
-              Soy Creador
+              {user?.has_creator_profile ? 'Mi Panel Creator' : 'Soy Creador'}
             </Link>
             <Link
-              to="/ugc/marcas"
+              to={brandLink}
               className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
               data-testid="hero-cta-brand"
             >
               <Building2 className="w-4 h-4" />
-              Soy Marca
+              {user?.has_brand_profile ? 'Mi Panel Marca' : 'Soy Marca'}
             </Link>
           </div>
         </div>
