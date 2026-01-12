@@ -1042,13 +1042,19 @@ async def google_callback(request: Request, response: Response):
         path="/"
     )
     
+    # Check for UGC profiles
+    has_creator_profile = await db.ugc_creators.find_one({"user_id": user_id}) is not None
+    has_brand_profile = await db.ugc_brands.find_one({"user_id": user_id}) is not None
+    
     return {
         "user_id": user_id,
         "email": email,
         "name": name,
         "picture": picture,
         "role": role,
-        "token": token
+        "token": token,
+        "has_creator_profile": has_creator_profile,
+        "has_brand_profile": has_brand_profile
     }
 
 @api_router.get("/auth/me")
