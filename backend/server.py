@@ -575,7 +575,7 @@ async def notify_new_order_legacy(order: dict):
         </div>
     </div>
     """
-    await send_admin_email_notification(f"🛒 Nuevo Pedido #{order.get('order_id', 'N/A')} - {order.get('total', 0):,.0f} Gs", email_html)
+    await send_admin_email_notification(f"🛒 Nuevo Pedido #{order.get('order_id', 'N/A')} - {order.get('total', 0):,.0f} Gs", email_html, sender_type='ecommerce')
     
     # ========== CUSTOMER NOTIFICATIONS ==========
     
@@ -702,7 +702,7 @@ async def send_customer_order_confirmation(order: dict):
         """
         
         params = {
-            "from": SENDER_EMAIL,
+            "from": "AVENUE Pedidos <pedidos@avenue.com.py>",
             "to": [order.get('customer_email')],
             "subject": f"✅ Confirmación de Pedido #{order.get('order_id')} - Avenue Online",
             "html": customer_email_html
