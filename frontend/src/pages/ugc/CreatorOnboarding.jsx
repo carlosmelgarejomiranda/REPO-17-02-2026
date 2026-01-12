@@ -43,9 +43,13 @@ const CreatorOnboarding = () => {
     setError('');
 
     try {
+      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/creators/onboarding`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         credentials: 'include',
         body: JSON.stringify(formData)
       });
@@ -59,7 +63,8 @@ const CreatorOnboarding = () => {
       // Redirect to creator dashboard
       navigate('/ugc/creator/dashboard');
     } catch (err) {
-      setError(err.message);
+      console.error('Onboarding error:', err);
+      setError(err.message || 'Error de conexión. Por favor intenta de nuevo.');
     } finally {
       setLoading(false);
     }
