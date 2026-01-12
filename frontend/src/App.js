@@ -54,6 +54,7 @@ import DeliverableDetail from "./pages/ugc/DeliverableDetail";
 import BrandDeliverables from "./pages/ugc/BrandDeliverables";
 import MetricsSubmit from "./pages/ugc/MetricsSubmit";
 import CreatorProfile from "./pages/ugc/CreatorProfile";
+import CreatorProfileEdit from "./pages/ugc/CreatorProfileEdit";
 import Leaderboard from "./pages/ugc/Leaderboard";
 import UGCMarcas from "./pages/ugc/UGCMarcas";
 import CreatorsPage from "./pages/ugc/CreatorsPage";
