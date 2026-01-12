@@ -6,6 +6,14 @@ import { ShopHeader } from './ShopHeader';
 export const TerminosEcommerce = ({ cart, user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/shop');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <ShopHeader 
@@ -20,7 +28,7 @@ export const TerminosEcommerce = ({ cart, user, onLoginClick, onLogout, language
       
       <div className="max-w-4xl mx-auto px-6 py-12">
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleBack}
           className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-8"
         >
           <ArrowLeft className="w-4 h-4" />

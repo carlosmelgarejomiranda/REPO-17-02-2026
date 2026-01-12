@@ -5,11 +5,19 @@ import { useNavigate } from 'react-router-dom';
 export const PoliticaPrivacidad = () => {
   const navigate = useNavigate();
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <div className="max-w-4xl mx-auto px-6 py-12">
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleBack}
           className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
