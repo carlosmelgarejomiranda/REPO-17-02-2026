@@ -207,9 +207,15 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <div className="border-b border-white/10">
+<div className="border-b border-white/10">
         <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
-          <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-white flex items-center gap-2">
+          <button onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              navigate('/ugc/marcas');
+            }
+          }} className="text-gray-400 hover:text-white flex items-center gap-2">
             <ArrowLeft className="w-5 h-5" />
             Volver
           </button>

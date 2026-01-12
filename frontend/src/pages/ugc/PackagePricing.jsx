@@ -140,7 +140,13 @@ const PackagePricing = () => {
             <span className="text-[#d4a968] italic">Avenue</span> UGC
           </a>
           <button 
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate('/ugc/marcas');
+              }
+            }}
             className="text-gray-400 hover:text-white flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
