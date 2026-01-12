@@ -14,10 +14,6 @@ const UGCLanding = ({ t, user, onLoginClick, onLogout, language, setLanguage }) 
     setIsLoaded(true);
   }, []);
 
-  // Determine where to redirect based on user profile
-  const creatorLink = user?.has_creator_profile ? '/ugc/creator/dashboard' : '/ugc/creators';
-  const brandLink = user?.has_brand_profile ? '/ugc/marca/dashboard' : '/ugc/marcas';
-
   return (
     <div className="min-h-screen bg-[#0a0a0a] overflow-hidden">
       <Navbar 
