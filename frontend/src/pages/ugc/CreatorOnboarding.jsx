@@ -85,6 +85,67 @@ const CreatorOnboarding = () => {
     return true;
   };
 
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (showLoginPrompt && !user) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="border-b border-white/10">
+          <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
+            <button onClick={() => navigate('/ugc/creators')} className="text-gray-400 hover:text-white flex items-center gap-2">
+              <ArrowLeft className="w-5 h-5" />
+              Volver
+            </button>
+            <span className="text-xl font-light">
+              <span className="text-[#d4a968] italic">Avenue</span> UGC
+            </span>
+          </div>
+        </div>
+        
+        <div className="max-w-md mx-auto px-6 py-16 text-center">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-600/20 to-pink-600/20 flex items-center justify-center mx-auto mb-6">
+            <LogIn className="w-10 h-10 text-purple-400" />
+          </div>
+          
+          <h1 className="text-3xl font-light mb-4">
+            ¡Hola, <span className="text-[#d4a968] italic">Creator</span>!
+          </h1>
+          
+          <p className="text-gray-400 mb-8">
+            Para crear tu perfil de creator necesitás iniciar sesión o crear una cuenta primero.
+          </p>
+          
+          <button
+            onClick={() => {
+              if (onLoginClick) {
+                onLoginClick();
+              } else {
+                // Fallback: redirect to home with login trigger
+                navigate('/?login=true');
+              }
+            }}
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-lg font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2"
+          >
+            <LogIn className="w-5 h-5" />
+            Iniciar sesión / Registrarme
+          </button>
+          
+          <p className="text-gray-500 text-sm mt-6">
+            Es rápido y fácil con tu cuenta de Google
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
