@@ -915,8 +915,118 @@ async def send_booking_cancellation(db: AsyncIOMotorDatabase, reservation: Dict[
     )
 
 
+# ==================== UGC CAMPAIGN EMAILS ====================
 
-# ==================== BOOKING REQUEST EMAILS ====================
+def campaign_created_email(campaign: Dict[str, Any], brand: Dict[str, Any]) -> tuple[str, str, str]:
+    """Generate email for brand when admin creates their campaign"""
+    
+    # Format contract dates
+    contract = campaign.get('contract', {})
+    start_date = contract.get('start_date', '')[:10] if contract.get('start_date') else 'N/A'
+    end_date = contract.get('end_date', '')[:10] if contract.get('end_date') else 'N/A'
+    next_reload = contract.get('next_reload_date', '')[:10] if contract.get('next_reload_date') else 'N/A'
+    
+    # Format canje details
+    canje = campaign.get('canje', {})
+    canje_tipo = canje.get('tipo', 'producto')
+    canje_valor = canje.get('valor_estimado', 0)
+    canje_descripcion = canje.get('descripcion', 'A definir')
+    
+    content = f'''
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div style="width: 60px; height: 60px; margin: 0 auto 20px; background-color: rgba(74, 222, 128, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 28px;">🎬</span>
+        </div>
+        <h2 style="margin: 0; color: #fff; font-size: 24px; font-weight: 400;">¡Tu Campaña está Activa!</h2>
+        <p style="margin: 10px 0 0; color: #888; font-size: 14px;">Los creadores ya pueden aplicar</p>
+    </div>
+    
+    <div style="background-color: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+        <h3 style="margin: 0 0 15px; color: #4ade80; font-size: 18px;">{campaign.get('name', 'Tu Campaña')}</h3>
+        <p style="margin: 0; color: #888; font-size: 14px;">{campaign.get('description', '')[:200]}{'...' if len(campaign.get('description', '')) > 200 else ''}</p>
+    </div>
+    
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 25px;">
+        <tr>
+            <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <p style="margin: 0; color: #888; font-size: 12px;">Categoría</p>
+                <p style="margin: 4px 0 0; color: #fff; font-size: 14px;">{campaign.get('category', 'N/A')}</p>
+            </td>
+            <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: right;">
+                <p style="margin: 0; color: #888; font-size: 12px;">Ciudad</p>
+                <p style="margin: 4px 0 0; color: #fff; font-size: 14px;">{campaign.get('city', 'N/A')}</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <p style="margin: 0; color: #888; font-size: 12px;">Cupos Disponibles</p>
+                <p style="margin: 4px 0 0; color: #4ade80; font-size: 16px; font-weight: 600;">{campaign.get('available_slots', 0)}</p>
+            </td>
+            <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: right;">
+                <p style="margin: 0; color: #888; font-size: 12px;">Entregables Mensuales</p>
+                <p style="margin: 4px 0 0; color: #d4a968; font-size: 16px; font-weight: 600;">{contract.get('monthly_deliverables', 0)}</p>
+            </td>
+        </tr>
+    </table>
+    
+    <div style="background-color: rgba(212, 169, 104, 0.1); border: 1px solid rgba(212, 169, 104, 0.3); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+        <p style="margin: 0 0 12px; color: #d4a968; font-size: 14px; font-weight: 600;">📦 Canje para Creadores</p>
+        <p style="margin: 0; color: #fff; font-size: 14px;"><strong>Tipo:</strong> {canje_tipo.capitalize()}</p>
+        <p style="margin: 8px 0 0; color: #fff; font-size: 14px;"><strong>Valor estimado:</strong> {format_price(canje_valor)}</p>
+        <p style="margin: 8px 0 0; color: #888; font-size: 13px;">{canje_descripcion}</p>
+    </div>
+    
+    <div style="background-color: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+        <p style="margin: 0 0 12px; color: #fff; font-size: 14px; font-weight: 600;">📅 Contrato</p>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 13px;">Inicio:</td>
+                <td style="padding: 6px 0; color: #fff; font-size: 13px; text-align: right;">{start_date}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 13px;">Fin:</td>
+                <td style="padding: 6px 0; color: #fff; font-size: 13px; text-align: right;">{end_date}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 13px;">Próxima recarga de cupos:</td>
+                <td style="padding: 6px 0; color: #4ade80; font-size: 13px; text-align: right;">{next_reload}</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px 0; color: #888; font-size: 13px;">Duración:</td>
+                <td style="padding: 6px 0; color: #fff; font-size: 13px; text-align: right;">{contract.get('duration_months', 0)} meses</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="{BASE_URL}/ugc/marca/dashboard" style="display: inline-block; padding: 14px 30px; background-color: #4ade80; color: #000; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 8px;">Ver Mi Campaña</a>
+    </div>
+    
+    <p style="margin: 30px 0 0; color: #888; font-size: 13px; text-align: center;">
+        ¿Tenés dudas? <a href="https://wa.me/{COMPANY_INFO['whatsapp'].replace('+', '')}?text=Hola! Tengo una consulta sobre mi campaña UGC: {campaign.get('name', '')}" style="color: #d4a968; text-decoration: none;">Escribinos por WhatsApp</a>
+    </p>
+    '''
+    
+    subject = f"🎬 ¡Tu campaña '{campaign.get('name', '')}' está activa! - AVENUE UGC"
+    preview = f"Los creadores ya pueden aplicar a tu campaña. Cupos disponibles: {campaign.get('available_slots', 0)}"
+    html = get_base_template(content, preview)
+    
+    return subject, html, preview
+
+
+async def send_campaign_created_notification(db: AsyncIOMotorDatabase, campaign: Dict[str, Any], brand: Dict[str, Any]) -> Dict[str, Any]:
+    """Send campaign creation notification to brand"""
+    brand_email = brand.get('email') or brand.get('contact_email')
+    if not brand_email:
+        return {'success': False, 'error': 'No brand email'}
+    
+    subject, html, _ = campaign_created_email(campaign, brand)
+    return await send_email(
+        db, brand_email, subject, html,
+        sender_type='brands',
+        entity_type='ugc_campaign',
+        entity_id=campaign.get('id')
+    )
 
 def booking_request_received_email(reservation: Dict[str, Any]) -> tuple[str, str, str]:
     """Generate email for customer when booking request is received (before confirmation)"""
