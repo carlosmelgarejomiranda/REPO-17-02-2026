@@ -471,7 +471,7 @@ async def notify_new_reservation(reservation: dict):
         </div>
     </div>
     """
-    await send_admin_email_notification(f"🎬 Nueva Reserva - {reservation['name']} - {reservation['date']}", email_html)
+    await send_admin_email_notification(f"🎬 Nueva Reserva - {reservation['name']} - {reservation['date']}", email_html, sender_type='studio')
 
 async def notify_new_ugc_application(application: dict):
     """Send notifications for new UGC application"""
@@ -514,7 +514,7 @@ async def notify_new_ugc_application(application: dict):
         </div>
     </div>
     """
-    await send_admin_email_notification(f"📸 Nueva Aplicación UGC - {nombre_completo}", email_html)
+    await send_admin_email_notification(f"📸 Nueva Aplicación UGC - {nombre_completo}", email_html, sender_type='ugc')
 
 async def notify_new_order_legacy(order: dict):
     """Send notifications for new e-commerce order to admin - uses new WhatsApp service"""
