@@ -53,7 +53,9 @@ const CreatorProfileEdit = () => {
       
       if (res.ok) {
         const data = await res.json();
-        setProfile(data);
+        // Handle both social_networks and social_media (legacy)
+        const socialNetworks = data.social_networks || data.social_media || [];
+        setProfile({ ...data, social_networks: socialNetworks });
         setFormData({
           name: data.name || '',
           city: data.city || '',
