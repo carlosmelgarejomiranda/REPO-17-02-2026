@@ -377,7 +377,7 @@ async def send_confirmation_email(reservation: dict):
         """
         
         params = {
-            "from": SENDER_EMAIL,
+            "from": "AVENUE Studio <reservas@avenue.com.py>",
             "to": [reservation['email']],
             "subject": f"✅ Reserva Confirmada - Avenue Studio - {reservation['date']}",
             "html": html_content
@@ -412,11 +412,20 @@ async def send_whatsapp_notification(to_number: str, message: str):
         logger.error(f"Failed to send WhatsApp notification to {to_number}: {str(e)}")
         return False
 
-async def send_admin_email_notification(subject: str, html_content: str):
-    """Send email notification to admin"""
+async def send_admin_email_notification(subject: str, html_content: str, sender_type: str = 'ecommerce'):
+    """Send email notification to admin with appropriate sender based on type"""
+    # Map sender types to email addresses
+    senders = {
+        'ecommerce': 'AVENUE Pedidos <pedidos@avenue.com.py>',
+        'studio': 'AVENUE Studio <reservas@avenue.com.py>',
+        'ugc': 'AVENUE UGC <applicationUGC@avenue.com.py>',
+        'brands': 'AVENUE Marcas <infobrands@avenue.com.py>',
+    }
+    sender = senders.get(sender_type, senders['ecommerce'])
+    
     try:
         params = {
-            "from": SENDER_EMAIL,
+            "from": sender,
             "to": [ADMIN_EMAIL],
             "subject": subject,
             "html": html_content
