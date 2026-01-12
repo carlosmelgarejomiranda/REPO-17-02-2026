@@ -913,3 +913,158 @@ async def send_booking_cancellation(db: AsyncIOMotorDatabase, reservation: Dict[
         entity_type='reservation',
         entity_id=reservation.get('reservation_id')
     )
+
+
+
+# ==================== BOOKING REQUEST EMAILS ====================
+
+def booking_request_received_email(reservation: Dict[str, Any]) -> tuple[str, str, str]:
+    """Generate email for customer when booking request is received (before confirmation)"""
+    
+    content = f'''
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div style="width: 60px; height: 60px; margin: 0 auto 20px; background-color: rgba(212, 169, 104, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 28px;">📩</span>
+        </div>
+        <h2 style="margin: 0; color: #fff; font-size: 24px; font-weight: 400;">¡Solicitud Recibida!</h2>
+        <p style="margin: 10px 0 0; color: #888; font-size: 14px;">Estamos revisando tu solicitud de reserva</p>
+    </div>
+    
+    <div style="background-color: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td style="text-align: center;">
+                    <p style="margin: 0; color: #888; font-size: 12px;">FECHA Y HORA SOLICITADA</p>
+                    <p style="margin: 8px 0 0; color: #fbbf24; font-size: 22px; font-weight: 600;">{reservation.get('date', '')}</p>
+                    <p style="margin: 4px 0 0; color: #fff; font-size: 18px;">{reservation.get('time', reservation.get('start_time', ''))} - {reservation.get('end_time', '')}</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 25px;">
+        <tr>
+            <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <p style="margin: 0; color: #888; font-size: 12px;">Duración</p>
+                <p style="margin: 4px 0 0; color: #fff; font-size: 14px;">{reservation.get('duration', reservation.get('duration_hours', 1))} hora(s)</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <p style="margin: 0; color: #888; font-size: 12px;">Total estimado</p>
+                <p style="margin: 4px 0 0; color: #d4a968; font-size: 16px; font-weight: 600;">{format_price(reservation.get('total_price', reservation.get('price', 0)))}</p>
+            </td>
+        </tr>
+    </table>
+    
+    <div style="background-color: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+        <p style="margin: 0 0 12px; color: #fbbf24; font-size: 14px; font-weight: 600;">⏳ ¿Qué sigue?</p>
+        <ul style="margin: 0; padding: 0 0 0 20px; color: #888; font-size: 13px; line-height: 1.8;">
+            <li>Nuestro equipo revisará la disponibilidad</li>
+            <li>Te enviaremos un email de confirmación</li>
+            <li>También recibirás un mensaje de WhatsApp</li>
+            <li>El proceso toma normalmente menos de 24 horas</li>
+        </ul>
+    </div>
+    
+    <p style="margin: 0; color: #888; font-size: 13px; text-align: center;">
+        ¿Tienes alguna pregunta? <a href="https://wa.me/{COMPANY_INFO['whatsapp'].replace('+', '')}?text=Hola! Tengo una consulta sobre mi solicitud de reserva del {reservation.get('date', '')}" style="color: #d4a968; text-decoration: none;">Escríbenos por WhatsApp</a>
+    </p>
+    '''
+    
+    subject = f"📩 Solicitud recibida - {reservation.get('date', '')} - AVENUE Studio"
+    preview = f"Tu solicitud de reserva para el {reservation.get('date', '')} ha sido recibida"
+    html = get_base_template(content, preview)
+    
+    return subject, html, preview
+
+
+def admin_booking_request_email(reservation: Dict[str, Any]) -> tuple[str, str, str]:
+    """Generate admin notification for new booking REQUEST (pending approval)"""
+    
+    content = f'''
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="margin: 0; color: #fbbf24; font-size: 24px; font-weight: 400;">⏳ Nueva Solicitud de Reserva</h2>
+        <p style="margin: 10px 0 0; color: #888; font-size: 14px;">Requiere aprobación</p>
+    </div>
+    
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: rgba(251, 191, 36, 0.1); border-radius: 8px; margin-bottom: 20px;">
+        <tr>
+            <td style="padding: 20px; text-align: center;">
+                <p style="margin: 0; color: #888; font-size: 12px;">FECHA Y HORA</p>
+                <p style="margin: 8px 0 0; color: #fbbf24; font-size: 22px; font-weight: 600;">{reservation.get('date', '')}</p>
+                <p style="margin: 4px 0 0; color: #fff; font-size: 18px;">{reservation.get('time', reservation.get('start_time', ''))} - {reservation.get('end_time', '')}</p>
+            </td>
+        </tr>
+    </table>
+    
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+            <td style="padding: 10px 0;"><strong style="color: #888;">Cliente:</strong></td>
+            <td style="padding: 10px 0; color: #fff;">{reservation.get('customer_name', reservation.get('name', 'N/A'))}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;"><strong style="color: #888;">Email:</strong></td>
+            <td style="padding: 10px 0; color: #fff;">{reservation.get('customer_email', reservation.get('email', 'N/A'))}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;"><strong style="color: #888;">Teléfono:</strong></td>
+            <td style="padding: 10px 0; color: #fff;">{reservation.get('customer_phone', reservation.get('phone', 'N/A'))}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;"><strong style="color: #888;">Empresa:</strong></td>
+            <td style="padding: 10px 0; color: #fff;">{reservation.get('company', 'N/A')}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;"><strong style="color: #888;">Duración:</strong></td>
+            <td style="padding: 10px 0; color: #fff;">{reservation.get('duration', reservation.get('duration_hours', 1))} hora(s)</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;"><strong style="color: #888;">Total:</strong></td>
+            <td style="padding: 10px 0; color: #4ade80; font-weight: 600;">{format_price(reservation.get('total_price', reservation.get('price', 0)))}</td>
+        </tr>
+    </table>
+    
+    <div style="margin-top: 25px; text-align: center;">
+        <a href="{BASE_URL}/admin" style="display: inline-block; padding: 14px 30px; background-color: #fbbf24; color: #000; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 8px;">Revisar y Confirmar</a>
+    </div>
+    '''
+    
+    subject = f"⏳ Nueva Solicitud - {reservation.get('date', '')} {reservation.get('time', reservation.get('start_time', ''))}"
+    preview = f"Nueva solicitud de reserva de {reservation.get('customer_name', reservation.get('name', 'cliente'))} para el {reservation.get('date', '')}"
+    html = get_base_template(content, preview)
+    
+    return subject, html, preview
+
+
+async def send_booking_request_notification(db: AsyncIOMotorDatabase, reservation: Dict[str, Any]) -> Dict[str, Any]:
+    """Send booking request notification to customer and admin when a new request is created"""
+    import asyncio
+    results = []
+    
+    # Send to customer
+    customer_email = reservation.get('customer_email') or reservation.get('email')
+    if customer_email:
+        subject, html, _ = booking_request_received_email(reservation)
+        result = await send_email(
+            db, customer_email, subject, html,
+            sender_type='studio',
+            entity_type='reservation',
+            entity_id=reservation.get('reservation_id')
+        )
+        results.append(('customer', result))
+    
+    # Small delay to avoid rate limiting
+    await asyncio.sleep(0.6)
+    
+    # Send to admin
+    admin_subject, admin_html, _ = admin_booking_request_email(reservation)
+    admin_result = await send_email(
+        db, ADMIN_EMAIL, admin_subject, admin_html,
+        sender_type='studio',
+        entity_type='reservation',
+        entity_id=reservation.get('reservation_id')
+    )
+    results.append(('admin', admin_result))
+    
+    return {'results': results}
