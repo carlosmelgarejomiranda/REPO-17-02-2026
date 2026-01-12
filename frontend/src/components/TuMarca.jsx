@@ -19,10 +19,10 @@ const SHOWROOM_IMAGE = 'https://customer-assets.emergentagent.com/job_one-accoun
 const BRANDS_LOGOS = [
   // Fila 1-2 (orden específico)
   { name: 'Fila', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/n23vvyer_fila.png' },
-  { name: 'Serotonina', url: 'https://customer-assets.emergentagent.com/job_avenue-agency/artifacts/owy00wkk_serotoninaa.png' },
+  { name: 'UGG', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/kjm7ig8m_ugg.png' },
   { name: 'Premiata', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/bz75uuaw_premiata.png' },
   { name: 'Hunter', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/81t0v820_hunter.png' },
-  { name: 'UGG', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/kjm7ig8m_ugg.png' },
+  { name: 'Serotonina', url: 'https://customer-assets.emergentagent.com/job_avenue-agency/artifacts/owy00wkk_serotoninaa.png' },
   { name: 'Undisturbed', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/qigxzvwt_undisturbed.png' },
   { name: 'David Sandoval', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/2usl8am4_david%20sandoval.png' },
   { name: 'Santal', url: 'https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/9ug3sffi_santal.png' },
