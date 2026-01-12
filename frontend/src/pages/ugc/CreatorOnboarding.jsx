@@ -15,7 +15,7 @@ const CITIES = [
 
 const CreatorOnboarding = () => {
   const navigate = useNavigate();
-  const { user, loading: authLoading, onLoginClick } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
