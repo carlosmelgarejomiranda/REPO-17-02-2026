@@ -232,7 +232,13 @@ const MyProfile = ({ user, onLogout }) => {
       <div className="bg-black text-white py-8">
         <div className="max-w-4xl mx-auto px-6">
           <button 
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate('/');
+              }
+            }}
             className="flex items-center gap-2 text-gray-400 hover:text-white mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
