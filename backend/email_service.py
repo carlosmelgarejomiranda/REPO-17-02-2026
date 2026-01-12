@@ -20,7 +20,7 @@ EMAIL_SENDERS = {
     'ecommerce': 'AVENUE Pedidos <pedidos@avenue.com.py>',
     'studio': 'AVENUE Studio <reservas@avenue.com.py>',
     'ugc': 'AVENUE UGC <applicationUGC@avenue.com.py>',
-    'brands': 'AVENUE Marcas <infobrands@avenue.com.py>',
+    'brands': 'AVENUE UGC Marcas <infobrands@avenue.com.py>',
 }
 
 # Admin email for notifications
