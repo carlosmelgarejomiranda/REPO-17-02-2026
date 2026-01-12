@@ -125,12 +125,9 @@ const CreatorOnboarding = () => {
           
           <button
             onClick={() => {
-              if (onLoginClick) {
-                onLoginClick();
-              } else {
-                // Fallback: redirect to home with login trigger
-                navigate('/?login=true');
-              }
+              // Store intended destination and redirect to home with login flag
+              sessionStorage.setItem('redirect_after_login', '/ugc/creator/onboarding');
+              navigate('/?login=creator');
             }}
             className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-lg font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2"
           >
