@@ -441,6 +441,14 @@ async def admin_create_campaign(
     
     await db.ugc_campaigns.insert_one(campaign)
     
+    # Send email notification to brand
+    try:
+        from email_service import send_campaign_created_notification
+        await send_campaign_created_notification(db, campaign, brand)
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Failed to send campaign created email: {e}")
+    
     return {
         "success": True,
         "campaign_id": campaign_id,
