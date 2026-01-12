@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Instagram, Music2, Check, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Instagram, Music2, Check, Loader2, LogIn } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 const CATEGORIES = [
@@ -15,10 +15,18 @@ const CITIES = [
 
 const CreatorOnboarding = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading, onLoginClick } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  // Check if user needs to login
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setShowLoginPrompt(true);
+    }
+  }, [user, authLoading]);
 
   const [formData, setFormData] = useState({
     name: user?.name || '',
