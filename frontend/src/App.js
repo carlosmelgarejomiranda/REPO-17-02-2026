@@ -390,6 +390,27 @@ function AppRouter() {
     localStorage.setItem('avenue_cart', JSON.stringify(cart));
   }, [cart]);
 
+  // Handle login redirect from other pages (e.g., creator onboarding)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('login') === 'creator' && !user) {
+      setShowAuthModal(true);
+      // Clean up URL
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.search, user, navigate, location.pathname]);
+
+  // Redirect to intended page after login
+  useEffect(() => {
+    if (user) {
+      const redirectPath = sessionStorage.getItem('redirect_after_login');
+      if (redirectPath) {
+        sessionStorage.removeItem('redirect_after_login');
+        navigate(redirectPath);
+      }
+    }
+  }, [user, navigate]);
+
   // Check URL fragment for session_id (Google OAuth callback)
   if (location.hash?.includes('session_id=')) {
     return <AuthCallback onAuthComplete={(userData) => {
