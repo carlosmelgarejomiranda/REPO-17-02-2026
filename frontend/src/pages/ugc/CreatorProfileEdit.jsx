@@ -364,7 +364,7 @@ const CreatorProfileEdit = () => {
                         </div>
                       )}
                       <div>
-                        <p className="font-medium">@{sn.username}</p>
+                        <p className="font-medium">{sn.username?.startsWith('@') ? sn.username : `@${sn.username}`}</p>
                         <p className="text-sm text-gray-500 capitalize">{sn.platform}</p>
                       </div>
                     </div>
