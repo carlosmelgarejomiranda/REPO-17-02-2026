@@ -818,7 +818,8 @@ function AppRouter() {
               t={t}
             />
           } />
-          <Route path="/ugc/select-role" element={<RoleSelector />} />
+          {/* Redirect old select-role to creators page */}
+          <Route path="/ugc/select-role" element={<Navigate to="/ugc/creators" replace />} />
           <Route path="/ugc/creator/onboarding" element={<CreatorOnboarding />} />
           <Route path="/ugc/creator/dashboard" element={<CreatorDashboard />} />
           <Route path="/ugc/creator/profile" element={<CreatorProfileEdit />} />
