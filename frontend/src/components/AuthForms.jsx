@@ -393,21 +393,31 @@ export const AuthForms = ({ onLogin, onClose }) => {
 
 export const AuthCallback = ({ onAuthComplete }) => {
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState('connecting'); // connecting, retrying, timeout
+  const [status, setStatus] = useState('connecting');
   const [attempts, setAttempts] = useState(0);
   const hasProcessed = React.useRef(false);
-  const timeoutRef = React.useRef(null);
+  const shouldStop = React.useRef(false);
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+  const MAX_ATTEMPTS = 5; // Maximum retry attempts
+  const RETRY_DELAY = 2000; // 2 seconds between retries
 
   const messages = [
     'Conectando...',
     'Un momento...',
     'Casi listo...',
     'Verificando...',
-    'Ya casi...'
+    'Último intento...'
   ];
 
   const processAuth = async (retryCount = 0) => {
+    // Check if we should stop
+    if (shouldStop.current || retryCount >= MAX_ATTEMPTS) {
+      setError('No se pudo conectar. Por favor intenta de nuevo.');
+      setStatus('error');
+      return;
+    }
+
     try {
       setAttempts(retryCount + 1);
       
@@ -416,7 +426,9 @@ export const AuthCallback = ({ onAuthComplete }) => {
       const sessionId = new URLSearchParams(hash.substring(1)).get('session_id');
 
       if (!sessionId) {
-        throw new Error('session_not_found');
+        setError('No se encontró la sesión. Por favor intenta de nuevo.');
+        setStatus('error');
+        return;
       }
 
       // Exchange session_id for user data
@@ -433,10 +445,8 @@ export const AuthCallback = ({ onAuthComplete }) => {
         throw new Error(data.detail || 'auth_failed');
       }
 
-      // Success - clear timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      // Success!
+      shouldStop.current = true;
 
       // Store token
       if (data.token) {
@@ -452,25 +462,28 @@ export const AuthCallback = ({ onAuthComplete }) => {
     } catch (err) {
       console.error('Auth error:', err);
       
-      // Check if it's a network error - keep retrying
+      // Check if we should stop
+      if (shouldStop.current) return;
+      
+      // Check if it's a network error and we haven't exceeded max attempts
       const isNetworkError = err.message === 'Load failed' || 
                             err.message === 'Failed to fetch' ||
                             err.name === 'TypeError';
       
-      if (isNetworkError && status !== 'timeout') {
+      if (isNetworkError && retryCount < MAX_ATTEMPTS - 1) {
         setStatus('retrying');
-        // Wait and retry
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        return processAuth(retryCount + 1);
-      }
-      
-      // Non-network error or timeout reached
-      if (err.message === 'session_not_found') {
-        setError('No se encontró la sesión. Por favor intenta de nuevo.');
-      } else if (err.message === 'auth_failed') {
-        setError('Error de autenticación. Por favor intenta de nuevo.');
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        if (!shouldStop.current) {
+          return processAuth(retryCount + 1);
+        }
       } else {
-        setError('Error de conexión. Por favor intenta de nuevo.');
+        // Max attempts reached or non-network error
+        setError(
+          err.message === 'auth_failed' 
+            ? 'Error de autenticación. Por favor intenta de nuevo.'
+            : 'Error de conexión. Por favor intenta de nuevo.'
+        );
+        setStatus('error');
       }
     }
   };
@@ -478,19 +491,10 @@ export const AuthCallback = ({ onAuthComplete }) => {
   React.useEffect(() => {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
-    
-    // Set 10 second timeout
-    timeoutRef.current = setTimeout(() => {
-      setStatus('timeout');
-      setError('La conexión está tardando más de lo esperado.');
-    }, 10000);
-    
     processAuth();
     
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      shouldStop.current = true;
     };
   }, [API_URL, onAuthComplete]);
 
@@ -498,18 +502,17 @@ export const AuthCallback = ({ onAuthComplete }) => {
     setError(null);
     setStatus('connecting');
     setAttempts(0);
+    shouldStop.current = false;
     hasProcessed.current = false;
-    
-    // Set new timeout
-    timeoutRef.current = setTimeout(() => {
-      setStatus('timeout');
-      setError('La conexión está tardando más de lo esperado.');
-    }, 10000);
-    
     processAuth();
   };
 
-  if (error) {
+  const handleCancel = () => {
+    shouldStop.current = true;
+    window.location.href = '/';
+  };
+
+  if (error || status === 'error') {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
         <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
@@ -531,7 +534,7 @@ export const AuthCallback = ({ onAuthComplete }) => {
                 Reintentar
               </Button>
               <Button
-                onClick={() => window.location.href = '/'}
+                onClick={handleCancel}
                 variant="outline"
                 style={{ borderColor: '#333', color: '#888' }}
               >
@@ -558,23 +561,21 @@ export const AuthCallback = ({ onAuthComplete }) => {
           {messages[Math.min(attempts, messages.length - 1)]}
         </p>
         
-        {/* Subtle attempt counter when retrying */}
+        {/* Attempt counter when retrying */}
         {status === 'retrying' && attempts > 1 && (
           <p style={{ color: '#666', fontSize: '12px' }}>
-            Intento {attempts}
+            Intento {attempts} de {MAX_ATTEMPTS}
           </p>
         )}
         
-        {/* Cancel option after a few attempts */}
-        {attempts > 2 && (
-          <button
-            onClick={() => window.location.href = '/'}
-            className="mt-6 text-sm underline"
-            style={{ color: '#666' }}
-          >
-            Cancelar
-          </button>
-        )}
+        {/* Cancel option */}
+        <button
+          onClick={handleCancel}
+          className="mt-6 text-sm underline"
+          style={{ color: '#666' }}
+        >
+          Cancelar
+        </button>
       </div>
     </div>
   );
