@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Instagram, Music2, Check, Loader2, LogIn } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
 
 const CATEGORIES = [
   'Gastronomía', 'Belleza', 'Moda', 'Lifestyle', 'Viajes',
