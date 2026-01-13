@@ -65,8 +65,6 @@ const CreatorOnboarding = () => {
     
     verifyAuth();
   }, [API_URL]);
-    verifyAuth();
-  }, [API_URL]);
 
   // Update form data when user loads
   useEffect(() => {
