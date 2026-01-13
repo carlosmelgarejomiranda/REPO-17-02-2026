@@ -13,15 +13,22 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
       const res = await fetch(`${API_URL}/api/auth/me`, {
-        credentials: 'include'
+        credentials: 'include',
+        headers
       });
       if (res.ok) {
         const data = await res.json();
         setUser(data);
+      } else {
+        setUser(null);
       }
     } catch (err) {
       console.error('Auth check failed:', err);
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -33,6 +40,7 @@ export const AuthProvider = ({ children }) => {
         method: 'POST',
         credentials: 'include'
       });
+      localStorage.removeItem('auth_token');
       setUser(null);
     } catch (err) {
       console.error('Logout failed:', err);
@@ -60,15 +68,22 @@ export const useAuth = () => {
     
     const checkAuth = async () => {
       try {
+        const token = localStorage.getItem('auth_token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        
         const res = await fetch(`${API_URL}/api/auth/me`, {
-          credentials: 'include'
+          credentials: 'include',
+          headers
         });
         if (res.ok) {
           const data = await res.json();
           setFallbackUser(data);
+        } else {
+          setFallbackUser(null);
         }
       } catch (err) {
         console.error('Auth check failed:', err);
+        setFallbackUser(null);
       } finally {
         setFallbackLoading(false);
       }
@@ -81,5 +96,5 @@ export const useAuth = () => {
     return context;
   }
   
-  return { user: fallbackUser, loading: fallbackLoading, setUser: setFallbackUser };
+  return { user: fallbackUser, loading: fallbackLoading, setUser: setFallbackUser, checkAuth: () => {} };
 };
