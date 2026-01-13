@@ -393,18 +393,30 @@ export const AuthForms = ({ onLogin, onClose }) => {
 
 export const AuthCallback = ({ onAuthComplete }) => {
   const [error, setError] = useState(null);
-  const [retrying, setRetrying] = useState(false);
+  const [status, setStatus] = useState('connecting'); // connecting, retrying, timeout
+  const [attempts, setAttempts] = useState(0);
   const hasProcessed = React.useRef(false);
+  const timeoutRef = React.useRef(null);
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+  const messages = [
+    'Conectando...',
+    'Un momento...',
+    'Casi listo...',
+    'Verificando...',
+    'Ya casi...'
+  ];
 
   const processAuth = async (retryCount = 0) => {
     try {
+      setAttempts(retryCount + 1);
+      
       // Get session_id from URL fragment
       const hash = window.location.hash;
       const sessionId = new URLSearchParams(hash.substring(1)).get('session_id');
 
       if (!sessionId) {
-        throw new Error('No se encontró la sesión. Por favor intenta de nuevo.');
+        throw new Error('session_not_found');
       }
 
       // Exchange session_id for user data
@@ -418,7 +430,12 @@ export const AuthCallback = ({ onAuthComplete }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || 'Error de autenticación');
+        throw new Error(data.detail || 'auth_failed');
+      }
+
+      // Success - clear timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
 
       // Store token
@@ -435,31 +452,60 @@ export const AuthCallback = ({ onAuthComplete }) => {
     } catch (err) {
       console.error('Auth error:', err);
       
-      // Retry up to 2 times for network errors
-      if (retryCount < 2 && (err.message === 'Load failed' || err.message === 'Failed to fetch')) {
-        console.log(`Retrying auth... attempt ${retryCount + 1}`);
-        setRetrying(true);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      // Check if it's a network error - keep retrying
+      const isNetworkError = err.message === 'Load failed' || 
+                            err.message === 'Failed to fetch' ||
+                            err.name === 'TypeError';
+      
+      if (isNetworkError && status !== 'timeout') {
+        setStatus('retrying');
+        // Wait and retry
+        await new Promise(resolve => setTimeout(resolve, 1500));
         return processAuth(retryCount + 1);
       }
       
-      setError(err.message === 'Load failed' || err.message === 'Failed to fetch' 
-        ? 'Error de conexión. Por favor intenta de nuevo.' 
-        : err.message);
-    } finally {
-      setRetrying(false);
+      // Non-network error or timeout reached
+      if (err.message === 'session_not_found') {
+        setError('No se encontró la sesión. Por favor intenta de nuevo.');
+      } else if (err.message === 'auth_failed') {
+        setError('Error de autenticación. Por favor intenta de nuevo.');
+      } else {
+        setError('Error de conexión. Por favor intenta de nuevo.');
+      }
     }
   };
 
   React.useEffect(() => {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
+    
+    // Set 10 second timeout
+    timeoutRef.current = setTimeout(() => {
+      setStatus('timeout');
+      setError('La conexión está tardando más de lo esperado.');
+    }, 10000);
+    
     processAuth();
+    
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [API_URL, onAuthComplete]);
 
   const handleRetry = () => {
     setError(null);
+    setStatus('connecting');
+    setAttempts(0);
     hasProcessed.current = false;
+    
+    // Set new timeout
+    timeoutRef.current = setTimeout(() => {
+      setStatus('timeout');
+      setError('La conexión está tardando más de lo esperado.');
+    }, 10000);
+    
     processAuth();
   };
 
@@ -468,20 +514,26 @@ export const AuthCallback = ({ onAuthComplete }) => {
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
         <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
           <CardContent className="p-8 text-center">
-            <p style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</p>
+            <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <p style={{ color: '#f5ede4', marginBottom: '8px', fontSize: '16px' }}>{error}</p>
+            <p style={{ color: '#666', marginBottom: '20px', fontSize: '14px' }}>
+              Intentos realizados: {attempts}
+            </p>
             <div className="flex gap-3 justify-center">
               <Button
                 onClick={handleRetry}
-                className="mt-2"
                 style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
               >
                 Reintentar
               </Button>
               <Button
                 onClick={() => window.location.href = '/'}
-                className="mt-2"
                 variant="outline"
-                style={{ borderColor: '#d4a968', color: '#d4a968' }}
+                style={{ borderColor: '#333', color: '#888' }}
               >
                 Volver al inicio
               </Button>
@@ -495,11 +547,35 @@ export const AuthCallback = ({ onAuthComplete }) => {
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
       <div className="text-center">
-        <div className="animate-spin w-8 h-8 border-2 rounded-full mx-auto mb-4" 
-             style={{ borderColor: '#d4a968', borderTopColor: 'transparent' }}></div>
-        <p style={{ color: '#a8a8a8' }}>
-          {retrying ? 'Reintentando...' : 'Verificando autenticación...'}
+        {/* Animated spinner */}
+        <div className="relative w-16 h-16 mx-auto mb-6">
+          <div className="absolute inset-0 rounded-full border-2 border-[#d4a968]/20"></div>
+          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#d4a968] animate-spin"></div>
+        </div>
+        
+        {/* Dynamic message */}
+        <p style={{ color: '#f5ede4', fontSize: '18px', marginBottom: '8px' }}>
+          {messages[Math.min(attempts, messages.length - 1)]}
         </p>
+        
+        {/* Subtle attempt counter when retrying */}
+        {status === 'retrying' && attempts > 1 && (
+          <p style={{ color: '#666', fontSize: '12px' }}>
+            Intento {attempts}
+          </p>
+        )}
+        
+        {/* Cancel option after a few attempts */}
+        {attempts > 2 && (
+          <button
+            onClick={() => window.location.href = '/'}
+            className="mt-6 text-sm underline"
+            style={{ color: '#666' }}
+          >
+            Cancelar
+          </button>
+        )}
+      </div>
         <p style={{ color: '#a8a8a8' }}>Autenticando...</p>
       </div>
     </div>
