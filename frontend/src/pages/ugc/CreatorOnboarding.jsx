@@ -117,7 +117,7 @@ const CreatorOnboarding = () => {
   };
 
   // Show loading while checking auth
-  if (authLoading) {
+  if (checkingAuth) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
@@ -126,7 +126,7 @@ const CreatorOnboarding = () => {
   }
 
   // Show login prompt if not authenticated
-  if (showLoginPrompt && !user) {
+  if (!currentUser) {
     return (
       <div className="min-h-screen bg-black text-white">
         <div className="border-b border-white/10">
