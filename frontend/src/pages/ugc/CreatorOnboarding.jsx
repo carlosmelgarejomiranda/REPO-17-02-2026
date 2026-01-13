@@ -193,11 +193,12 @@ const CreatorOnboarding = () => {
                 <select
                   value={formData.city}
                   onChange={(e) => setFormData({...formData, city: e.target.value})}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#d4a968] focus:outline-none"
+                  className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#d4a968] focus:outline-none appearance-none cursor-pointer"
+                  style={{ colorScheme: 'dark' }}
                 >
-                  <option value="">Seleccionar ciudad</option>
+                  <option value="" className="bg-[#1a1a1a] text-white">Seleccionar ciudad</option>
                   {CITIES.map(city => (
-                    <option key={city} value={city}>{city}</option>
+                    <option key={city} value={city} className="bg-[#1a1a1a] text-black">{city}</option>
                   ))}
                 </select>
               </div>
