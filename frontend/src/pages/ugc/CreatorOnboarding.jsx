@@ -25,19 +25,34 @@ const CreatorOnboarding = () => {
   // Check authentication directly
   useEffect(() => {
     const verifyAuth = async () => {
+      // Small delay to ensure token is saved after redirect
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       try {
         const token = localStorage.getItem('auth_token');
-        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        console.log('CreatorOnboarding - Token found:', token ? 'YES' : 'NO');
+        
+        if (!token) {
+          console.log('CreatorOnboarding - No token, showing login prompt');
+          setCurrentUser(null);
+          setCheckingAuth(false);
+          return;
+        }
         
         const res = await fetch(`${API_URL}/api/auth/me`, {
           credentials: 'include',
-          headers
+          headers: { 'Authorization': `Bearer ${token}` }
         });
+        
+        console.log('CreatorOnboarding - Auth response status:', res.status);
         
         if (res.ok) {
           const userData = await res.json();
+          console.log('CreatorOnboarding - User authenticated:', userData.email);
           setCurrentUser(userData);
         } else {
+          console.log('CreatorOnboarding - Auth failed, clearing token');
+          localStorage.removeItem('auth_token');
           setCurrentUser(null);
         }
       } catch (err) {
@@ -48,6 +63,8 @@ const CreatorOnboarding = () => {
       }
     };
     
+    verifyAuth();
+  }, [API_URL]);
     verifyAuth();
   }, [API_URL]);
 
