@@ -15,21 +15,39 @@ const CITIES = [
 
 const CreatorOnboarding = () => {
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, checkAuth } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
+  // Re-check auth when component mounts (in case user just logged in)
+  useEffect(() => {
+    if (checkAuth) {
+      checkAuth();
+    }
+  }, []);
+
   // Check if user needs to login
   useEffect(() => {
-    if (!authLoading && !user) {
-      setShowLoginPrompt(true);
+    if (!authLoading) {
+      if (user) {
+        setShowLoginPrompt(false);
+      } else {
+        setShowLoginPrompt(true);
+      }
     }
   }, [user, authLoading]);
 
+  // Update form data when user loads
+  useEffect(() => {
+    if (user?.name) {
+      setFormData(prev => ({ ...prev, name: user.name }));
+    }
+  }, [user]);
+
   const [formData, setFormData] = useState({
-    name: user?.name || '',
+    name: '',
     city: '',
     categories: [],
     bio: '',
