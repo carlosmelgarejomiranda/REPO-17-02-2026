@@ -193,7 +193,7 @@ const CreatorOnboarding = () => {
       {/* Header */}
       <div className="border-b border-white/10">
         <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
-          <button onClick={() => navigate('/ugc/select-role')} className="text-gray-400 hover:text-white flex items-center gap-2">
+          <button onClick={() => navigate('/ugc/creators')} className="text-gray-400 hover:text-white flex items-center gap-2">
             <ArrowLeft className="w-5 h-5" />
             Volver
           </button>

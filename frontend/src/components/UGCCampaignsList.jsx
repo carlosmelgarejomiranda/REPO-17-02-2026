@@ -101,7 +101,7 @@ export const UGCCampaignsList = ({ t }) => {
                 <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link 
-                to="/ugc/select-role"
+                to="/ugc/creators"
                 className="group inline-flex items-center gap-4 px-8 py-4 border border-white/30 text-white font-medium tracking-wide hover:border-[#d4a968] hover:text-[#d4a968] transition-all duration-300"
               >
                 <span>Unirme</span>
@@ -361,7 +361,7 @@ export const UGCCampaignsList = ({ t }) => {
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  to="/ugc/select-role"
+                  to="/ugc/creators"
                   className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium tracking-wide hover:opacity-90 transition-all rounded-lg"
                 >
                   <span>Registrarme como Creator</span>
@@ -411,7 +411,7 @@ export const UGCCampaignsList = ({ t }) => {
                   <Package className="w-5 h-5" />
                 </Link>
                 <Link
-                  to="/ugc/select-role"
+                  to="/ugc/creators"
                   className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-[#d4a968]/50 text-[#d4a968] font-medium tracking-wide hover:bg-[#d4a968]/10 transition-all rounded-lg"
                 >
                   Registrar Marca

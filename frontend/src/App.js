@@ -39,7 +39,7 @@ import {
 } from "./components/SEOHead";
 
 // UGC Platform Pages
-import RoleSelector from "./pages/ugc/RoleSelector";
+import BrandOnboarding from "./pages/ugc/BrandOnboarding";
 import CreatorOnboarding from "./pages/ugc/CreatorOnboarding";
 import BrandOnboarding from "./pages/ugc/BrandOnboarding";
 import PackagePricing from "./pages/ugc/PackagePricing";
