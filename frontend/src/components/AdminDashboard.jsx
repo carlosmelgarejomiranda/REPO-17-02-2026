@@ -524,7 +524,7 @@ export const AdminDashboard = ({ user }) => {
           {activeModule === 'config' && currentSubTab === 'users' && <UserRolesManager />}
           {activeModule === 'config' && currentSubTab === 'security' && <MFASettings user={user} />}
           {activeModule === 'config' && currentSubTab === 'audit' && <AuditLogViewer />}
-          {activeModule === 'config' && currentSubTab === 'settings' && <AdminSettings />}
+          {activeModule === 'config' && currentSubTab === 'settings' && <AdminSettings currentUser={user} />}
         </div>
       </div>
     );
