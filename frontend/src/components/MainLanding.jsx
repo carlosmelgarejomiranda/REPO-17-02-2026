@@ -261,7 +261,7 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
 
             {/* Service 2: Studio */}
             <Link 
-              to="/studio/reservar"
+              to="/studio/alquiler"
               className="group p-5 bg-[#121212] border border-white/5 rounded-lg hover:border-[#d4a968]/30 transition-all"
               data-testid="service-studio"
             >
@@ -276,7 +276,7 @@ export const MainLanding = ({ t, user, onLoginClick, onLogout, language, setLang
                     y ubicación premium.
                   </p>
                   <span className="text-[#d4a968] text-xs group-hover:underline">
-                    Reservar →
+                    Ver planes →
                   </span>
                 </div>
               </div>
