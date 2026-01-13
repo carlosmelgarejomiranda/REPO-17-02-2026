@@ -15,36 +15,49 @@ const CITIES = [
 
 const CreatorOnboarding = () => {
   const navigate = useNavigate();
-  const { user, loading: authLoading, checkAuth } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // Re-check auth when component mounts (in case user just logged in)
-  useEffect(() => {
-    if (checkAuth) {
-      checkAuth();
-    }
-  }, []);
+  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
-  // Check if user needs to login
+  // Check authentication directly
   useEffect(() => {
-    if (!authLoading) {
-      if (user) {
-        setShowLoginPrompt(false);
-      } else {
-        setShowLoginPrompt(true);
+    const verifyAuth = async () => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        
+        const res = await fetch(`${API_URL}/api/auth/me`, {
+          credentials: 'include',
+          headers
+        });
+        
+        if (res.ok) {
+          const userData = await res.json();
+          setCurrentUser(userData);
+        } else {
+          setCurrentUser(null);
+        }
+      } catch (err) {
+        console.error('Auth check failed:', err);
+        setCurrentUser(null);
+      } finally {
+        setCheckingAuth(false);
       }
-    }
-  }, [user, authLoading]);
+    };
+    
+    verifyAuth();
+  }, [API_URL]);
 
   // Update form data when user loads
   useEffect(() => {
-    if (user?.name) {
-      setFormData(prev => ({ ...prev, name: user.name }));
+    if (currentUser?.name) {
+      setFormData(prev => ({ ...prev, name: currentUser.name }));
     }
-  }, [user]);
+  }, [currentUser]);
 
   const [formData, setFormData] = useState({
     name: '',
