@@ -415,8 +415,15 @@ function AppRouter() {
   if (location.hash?.includes('session_id=')) {
     return <AuthCallback onAuthComplete={(userData) => {
       login(userData);
-      navigate('/studio/reservar');
-    }} />;
+      // Check if there's a redirect path saved
+      const redirectPath = sessionStorage.getItem('redirect_after_login');
+      if (redirectPath) {
+        sessionStorage.removeItem('redirect_after_login');
+        navigate(redirectPath);
+      } else {
+        navigate('/');
+      }
+    }} />
   }
 
   const scrollToSection = (id) => {
