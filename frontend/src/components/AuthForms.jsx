@@ -576,8 +576,6 @@ export const AuthCallback = ({ onAuthComplete }) => {
           </button>
         )}
       </div>
-        <p style={{ color: '#a8a8a8' }}>Autenticando...</p>
-      </div>
     </div>
   );
 };
