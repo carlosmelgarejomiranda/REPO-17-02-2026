@@ -93,7 +93,7 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
 
             {/* Card 2: Studio Rental */}
             <Link 
-              to="/studio/reservar"
+              to="/studio/alquiler"
               className="group relative overflow-hidden rounded-lg aspect-[4/3] cursor-pointer"
               data-testid="card-studio-rental"
             >
@@ -115,7 +115,7 @@ export const StudioLanding = ({ t, user, onLoginClick, onLogout, language, setLa
                   Espacio profesional para tus producciones
                 </p>
                 <span className="flex items-center gap-1.5 text-[#d4a968] text-xs font-medium group-hover:gap-2 transition-all">
-                  Reservar <ArrowRight className="w-3.5 h-3.5" />
+                  Ver planes <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
             </Link>
