@@ -41,7 +41,6 @@ import {
 // UGC Platform Pages
 import BrandOnboarding from "./pages/ugc/BrandOnboarding";
 import CreatorOnboarding from "./pages/ugc/CreatorOnboarding";
-import BrandOnboarding from "./pages/ugc/BrandOnboarding";
 import PackagePricing from "./pages/ugc/PackagePricing";
 import CampaignsList from "./pages/ugc/CampaignsList";
 import CreatorDashboard from "./pages/ugc/CreatorDashboard";
