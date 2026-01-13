@@ -521,7 +521,7 @@ export const AdminDashboard = ({ user }) => {
           {activeModule === 'brands' && <BrandsInquiriesPanel inquiries={brandInquiries} loading={loading} onRefresh={fetchData} />}
 
           {/* Config */}
-          {activeModule === 'config' && currentSubTab === 'users' && <UserRolesManager />}
+          {activeModule === 'config' && currentSubTab === 'users' && <UserRolesManager currentUser={user} />}
           {activeModule === 'config' && currentSubTab === 'security' && <MFASettings user={user} />}
           {activeModule === 'config' && currentSubTab === 'audit' && <AuditLogViewer />}
           {activeModule === 'config' && currentSubTab === 'settings' && <AdminSettings currentUser={user} />}
