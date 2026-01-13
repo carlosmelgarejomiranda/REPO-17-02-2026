@@ -4,8 +4,8 @@ import { ArrowLeft, ArrowRight, Instagram, Music2, Check, Loader2, LogIn } from 
 import { useAuth } from '../../hooks/useAuth';
 
 const CATEGORIES = [
-  'Food & Gastro', 'Beauty', 'Fashion', 'Lifestyle', 'Travel',
-  'Fitness', 'Tech', 'Pets', 'Parenting', 'Home & Deco'
+  'Gastronomía', 'Belleza', 'Moda', 'Lifestyle', 'Viajes',
+  'Fitness', 'Tecnología', 'Mascotas', 'Maternidad', 'Hogar & Deco'
 ];
 
 const CITIES = [
