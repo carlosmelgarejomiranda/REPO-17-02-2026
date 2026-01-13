@@ -421,16 +421,34 @@ export const AuthCallback = ({ onAuthComplete }) => {
     try {
       setAttempts(retryCount + 1);
       
-      // Get session_id from URL fragment
+      // Get session_id from URL fragment OR query params (mobile compatibility)
       const hash = window.location.hash;
-      const sessionId = new URLSearchParams(hash.substring(1)).get('session_id');
+      const search = window.location.search;
+      
+      let sessionId = null;
+      
+      // Try fragment first (#session_id=xxx)
+      if (hash && hash.length > 1) {
+        sessionId = new URLSearchParams(hash.substring(1)).get('session_id');
+      }
+      
+      // If not in fragment, try query params (?session_id=xxx)
+      if (!sessionId && search) {
+        sessionId = new URLSearchParams(search).get('session_id');
+      }
+      
+      // Log for debugging
+      console.log('Auth callback - hash:', hash, 'search:', search, 'sessionId:', sessionId ? 'found' : 'not found');
 
       if (!sessionId) {
+        console.error('No session_id found in URL. Full URL:', window.location.href);
         setError('No se encontró la sesión. Por favor intenta de nuevo.');
         setStatus('error');
         return;
       }
 
+      console.log('Calling google callback API...');
+      
       // Exchange session_id for user data
       const response = await fetch(`${API_URL}/api/auth/google/callback`, {
         method: 'POST',
@@ -438,6 +456,8 @@ export const AuthCallback = ({ onAuthComplete }) => {
         credentials: 'include',
         body: JSON.stringify({ session_id: sessionId })
       });
+
+      console.log('Google callback response status:', response.status);
 
       const data = await response.json();
 
