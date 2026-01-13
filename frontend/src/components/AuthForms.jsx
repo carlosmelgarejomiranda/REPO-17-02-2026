@@ -393,70 +393,99 @@ export const AuthForms = ({ onLogin, onClose }) => {
 
 export const AuthCallback = ({ onAuthComplete }) => {
   const [error, setError] = useState(null);
+  const [retrying, setRetrying] = useState(false);
   const hasProcessed = React.useRef(false);
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+  const processAuth = async (retryCount = 0) => {
+    try {
+      // Get session_id from URL fragment
+      const hash = window.location.hash;
+      const sessionId = new URLSearchParams(hash.substring(1)).get('session_id');
+
+      if (!sessionId) {
+        throw new Error('No se encontró la sesión. Por favor intenta de nuevo.');
+      }
+
+      // Exchange session_id for user data
+      const response = await fetch(`${API_URL}/api/auth/google/callback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ session_id: sessionId })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Error de autenticación');
+      }
+
+      // Store token
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+      }
+
+      // Clear URL fragment and redirect
+      window.history.replaceState(null, '', window.location.pathname);
+      
+      if (onAuthComplete) {
+        onAuthComplete(data);
+      }
+    } catch (err) {
+      console.error('Auth error:', err);
+      
+      // Retry up to 2 times for network errors
+      if (retryCount < 2 && (err.message === 'Load failed' || err.message === 'Failed to fetch')) {
+        console.log(`Retrying auth... attempt ${retryCount + 1}`);
+        setRetrying(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return processAuth(retryCount + 1);
+      }
+      
+      setError(err.message === 'Load failed' || err.message === 'Failed to fetch' 
+        ? 'Error de conexión. Por favor intenta de nuevo.' 
+        : err.message);
+    } finally {
+      setRetrying(false);
+    }
+  };
 
   React.useEffect(() => {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
-
-    const processAuth = async () => {
-      try {
-        // Get session_id from URL fragment
-        const hash = window.location.hash;
-        const sessionId = new URLSearchParams(hash.substring(1)).get('session_id');
-
-        if (!sessionId) {
-          throw new Error('No session_id found');
-        }
-
-        // Exchange session_id for user data
-        const response = await fetch(`${API_URL}/api/auth/google/callback`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ session_id: sessionId })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.detail || 'Authentication failed');
-        }
-
-        // Store token
-        if (data.token) {
-          localStorage.setItem('auth_token', data.token);
-        }
-
-        // Clear URL fragment and redirect
-        window.history.replaceState(null, '', window.location.pathname);
-        
-        if (onAuthComplete) {
-          onAuthComplete(data);
-        }
-      } catch (err) {
-        console.error('Auth error:', err);
-        setError(err.message);
-      }
-    };
-
     processAuth();
   }, [API_URL, onAuthComplete]);
+
+  const handleRetry = () => {
+    setError(null);
+    hasProcessed.current = false;
+    processAuth();
+  };
 
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
         <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
           <CardContent className="p-8 text-center">
-            <p style={{ color: '#ef4444' }}>Error: {error}</p>
-            <Button
-              onClick={() => window.location.href = '/studio'}
-              className="mt-4"
-              style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
-            >
-              Volver
-            </Button>
+            <p style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</p>
+            <div className="flex gap-3 justify-center">
+              <Button
+                onClick={handleRetry}
+                className="mt-2"
+                style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+              >
+                Reintentar
+              </Button>
+              <Button
+                onClick={() => window.location.href = '/'}
+                className="mt-2"
+                variant="outline"
+                style={{ borderColor: '#d4a968', color: '#d4a968' }}
+              >
+                Volver al inicio
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -468,6 +497,9 @@ export const AuthCallback = ({ onAuthComplete }) => {
       <div className="text-center">
         <div className="animate-spin w-8 h-8 border-2 rounded-full mx-auto mb-4" 
              style={{ borderColor: '#d4a968', borderTopColor: 'transparent' }}></div>
+        <p style={{ color: '#a8a8a8' }}>
+          {retrying ? 'Reintentando...' : 'Verificando autenticación...'}
+        </p>
         <p style={{ color: '#a8a8a8' }}>Autenticando...</p>
       </div>
     </div>
