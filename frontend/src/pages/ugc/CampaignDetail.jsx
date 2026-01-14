@@ -240,9 +240,19 @@ const CampaignDetail = () => {
               </p>
             )}
 
-            <p className="text-gray-300 leading-relaxed">{campaign.description}</p>
+            <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{campaign.description}</p>
           </div>
         </div>
+
+        {/* Full Description Section - if description is long */}
+        {campaign.description && campaign.description.length > 300 && (
+          <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-8">
+            <h3 className="text-lg font-medium text-white mb-4">Descripción completa</h3>
+            <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+              {campaign.description}
+            </div>
+          </div>
+        )}
 
         {/* Details Grid */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
