@@ -201,11 +201,13 @@ const CreatorsPage = ({ user, onLoginClick, onLogout, language, setLanguage, t }
                     </div>
                   )}
 
-                  {/* Slots */}
-                  {campaign.slots_available !== undefined && (
-                    <div className="flex items-center justify-between text-xs mb-4">
-                      <span className="text-white/40">Lugares disponibles</span>
-                      <span className="text-white font-medium">{campaign.slots_available}</span>
+                  {/* Slots - Only show if 1 or 2 left */}
+                  {campaign.slots_available !== undefined && campaign.slots_available > 0 && campaign.slots_available <= 2 && (
+                    <div className="flex items-center justify-between text-xs mb-4 p-2 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                      <span className="text-orange-400 font-medium">¡Últimos cupos!</span>
+                      <span className="text-orange-300 font-medium">
+                        {campaign.slots_available === 1 ? '1 cupo' : `${campaign.slots_available} cupos`}
+                      </span>
                     </div>
                   )}
 
