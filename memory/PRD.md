@@ -26,6 +26,12 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
   - Campos de Canje, Fechas y Notas con texto blanco
   - Verificado con screenshots
 
+- **Bug Fix: Botones Panel Creadores/Marcas no aparecen en producción**
+  - Problema: `useAuth.js` y `App.js` usaban `process.env.REACT_APP_BACKEND_URL` que apunta al preview
+  - Solución: Creado `/utils/api.js` con `getApiUrl()` que usa `window.location.origin` en producción
+  - Archivos modificados: `useAuth.js`, `App.js`, nuevo `utils/api.js`
+  - Fix aplica para TODOS los usuarios, no solo admin
+
 ---
 
 ### Session: 2026-01-12
