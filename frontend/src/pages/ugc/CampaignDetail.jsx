@@ -51,34 +51,46 @@ const CampaignDetail = () => {
   const fetchCampaign = async () => {
     try {
       setLoading(true);
+      setError('');
       const token = localStorage.getItem('auth_token');
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
+      console.log('Fetching campaign:', id, 'from:', API_URL);
       
       const res = await fetch(`${API_URL}/api/ugc/campaigns/${id}`, {
         headers
       });
       
+      console.log('Campaign response status:', res.status);
+      
       if (res.ok) {
         const data = await res.json();
+        console.log('Campaign data received:', data?.name);
         setCampaign(data);
         
         // Check if already applied
         if (token) {
-          const appRes = await fetch(`${API_URL}/api/ugc/applications/my`, {
-            headers
-          });
-          if (appRes.ok) {
-            const appData = await appRes.json();
-            const applications = appData.applications || [];
-            setHasApplied(applications.some(a => a.campaign_id === id));
+          try {
+            const appRes = await fetch(`${API_URL}/api/ugc/applications/my`, {
+              headers
+            });
+            if (appRes.ok) {
+              const appData = await appRes.json();
+              const applications = appData.applications || [];
+              setHasApplied(applications.some(a => a.campaign_id === id));
+            }
+          } catch (appErr) {
+            console.log('Error checking applications:', appErr);
           }
         }
       } else {
+        const errorText = await res.text();
+        console.error('Campaign fetch error:', res.status, errorText);
         setError('Campaña no encontrada');
       }
     } catch (err) {
-      console.error(err);
-      setError('Error al cargar la campaña');
+      console.error('Campaign fetch exception:', err);
+      setError('Error al cargar la campaña. Por favor intenta de nuevo.');
     } finally {
       setLoading(false);
     }
