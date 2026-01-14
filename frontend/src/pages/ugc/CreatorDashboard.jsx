@@ -5,6 +5,9 @@ import {
   ArrowRight, Instagram, Music2, Camera, BarChart3, Loader2
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { getApiUrl } from '../../utils/api';
+
+const API_URL = getApiUrl();
 
 const CreatorDashboard = () => {
   const { user } = useAuth();
@@ -18,9 +21,12 @@ const CreatorDashboard = () => {
 
   const fetchData = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
       const [profileRes, deliverablesRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/creators/me`, { credentials: 'include' }),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/creators/me/active-deliverables`, { credentials: 'include' })
+        fetch(`${API_URL}/api/ugc/creators/me`, { headers }),
+        fetch(`${API_URL}/api/ugc/creators/me/active-deliverables`, { headers })
       ]);
 
       if (profileRes.ok) {
