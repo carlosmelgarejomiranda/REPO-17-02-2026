@@ -5,17 +5,23 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 // Admin roles that can access the admin panel
 const ADMIN_ROLES = ['superadmin', 'admin', 'staff', 'designer'];
 
+// Roles that should always see all panel buttons (for management purposes)
+const FULL_ACCESS_ROLES = ['superadmin', 'admin'];
+
 export const Navbar = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   // Check if user has admin access
   const hasAdminAccess = user && ADMIN_ROLES.includes(user.role);
   
-  // Check if user has UGC creator profile
-  const hasCreatorProfile = user?.has_creator_profile || user?.ugc_role === 'creator';
+  // Check if user has full access (superadmin/admin should see all panels)
+  const hasFullAccess = user && FULL_ACCESS_ROLES.includes(user.role);
   
-  // Check if user has UGC brand profile
-  const hasBrandProfile = user?.has_brand_profile || user?.ugc_role === 'brand';
+  // Check if user has UGC creator profile (or is admin with full access)
+  const hasCreatorProfile = hasFullAccess || user?.has_creator_profile || user?.ugc_role === 'creator';
+  
+  // Check if user has UGC brand profile (or is admin with full access)
+  const hasBrandProfile = hasFullAccess || user?.has_brand_profile || user?.ugc_role === 'brand';
   
   // Check if user is a regular user (not admin, no UGC profiles)
   const isRegularUser = user && !hasAdminAccess && !hasCreatorProfile && !hasBrandProfile;
