@@ -1,16 +1,7 @@
 import { useState, useEffect, createContext, useContext } from 'react';
+import { getApiUrl } from '../utils/api';
 
 const AuthContext = createContext(null);
-
-// Helper to get correct API URL for both preview and production
-const getApiUrl = () => {
-  // In production (deployed site), use current origin
-  // In development/preview, use the env variable
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-    return window.location.origin;
-  }
-  return process.env.REACT_APP_BACKEND_URL || '';
-};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
