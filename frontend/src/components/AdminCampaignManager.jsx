@@ -5,8 +5,9 @@ import {
   RefreshCw, Eye, EyeOff, ChevronDown, Image as ImageIcon,
   UserCheck, XCircle, Star, ClipboardList, List, Type, Minus, Pencil
 } from 'lucide-react';
+import { getApiUrl } from '../utils/api';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Options for select fields
 const GENDER_OPTIONS = [
