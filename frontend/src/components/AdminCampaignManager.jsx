@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Plus, X, Building2, Calendar, Users, Target, MapPin, Upload,
   Instagram, Music2, Loader2, CheckCircle, AlertCircle, Clock,
   RefreshCw, Eye, EyeOff, ChevronDown, Image as ImageIcon,
-  UserCheck, XCircle, Star, ClipboardList
+  UserCheck, XCircle, Star, ClipboardList, List, Type, Minus
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
