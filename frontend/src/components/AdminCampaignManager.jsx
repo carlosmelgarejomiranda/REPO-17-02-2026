@@ -1145,6 +1145,13 @@ Ejemplo de formato:
                     ) : (
                       <>
                         <button
+                          onClick={() => handleEditCampaign(campaign)}
+                          className="p-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors"
+                          title="Editar campaña"
+                        >
+                          <Target className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => handleViewApplications(campaign)}
                           className="p-2 rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
                           title="Ver aplicaciones"
