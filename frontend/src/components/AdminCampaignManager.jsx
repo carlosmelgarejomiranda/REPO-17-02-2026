@@ -738,12 +738,13 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.canje_type}
                       onChange={(e) => setFormData(prev => ({ ...prev, canje_type: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                     >
-                      <option value="product">Producto</option>
-                      <option value="service">Servicio</option>
-                      <option value="discount">Descuento</option>
-                      <option value="money">Dinero</option>
+                      <option value="product" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Producto</option>
+                      <option value="service" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Servicio</option>
+                      <option value="discount" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Descuento</option>
+                      <option value="money" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Dinero</option>
                     </select>
                   </div>
                   <div>
@@ -753,7 +754,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       value={formData.canje_value}
                       onChange={(e) => setFormData(prev => ({ ...prev, canje_value: e.target.value }))}
                       placeholder="0"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -765,7 +766,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       onChange={(e) => setFormData(prev => ({ ...prev, canje_description: e.target.value }))}
                       rows={2}
                       placeholder="Ej: Kit de productos Sedal (Shampoo + Acondicionador + Tratamiento)..."
-                      className={`w-full px-4 py-3 bg-white/5 border rounded-lg focus:border-[#d4a968] focus:outline-none resize-none ${errors.canje_description ? 'border-red-500' : 'border-white/10'}`}
+                      className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none resize-none ${errors.canje_description ? 'border-red-500' : 'border-white/10'}`}
                     />
                   </div>
                 </div>
@@ -786,7 +787,8 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       type="date"
                       value={formData.applications_deadline}
                       onChange={(e) => setFormData(prev => ({ ...prev, applications_deadline: e.target.value }))}
-                      className={`w-full px-4 py-3 bg-white/5 border rounded-lg focus:border-[#d4a968] focus:outline-none ${errors.applications_deadline ? 'border-red-500' : 'border-white/10'}`}
+                      className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white focus:border-[#d4a968] focus:outline-none ${errors.applications_deadline ? 'border-red-500' : 'border-white/10'}`}
+                      style={{ colorScheme: 'dark' }}
                     />
                   </div>
                   <div>
@@ -797,7 +799,8 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       type="date"
                       value={formData.publish_start}
                       onChange={(e) => setFormData(prev => ({ ...prev, publish_start: e.target.value }))}
-                      className={`w-full px-4 py-3 bg-white/5 border rounded-lg focus:border-[#d4a968] focus:outline-none ${errors.publish_start ? 'border-red-500' : 'border-white/10'}`}
+                      className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white focus:border-[#d4a968] focus:outline-none ${errors.publish_start ? 'border-red-500' : 'border-white/10'}`}
+                      style={{ colorScheme: 'dark' }}
                     />
                   </div>
                   <div>
@@ -808,7 +811,8 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       type="date"
                       value={formData.publish_end}
                       onChange={(e) => setFormData(prev => ({ ...prev, publish_end: e.target.value }))}
-                      className={`w-full px-4 py-3 bg-white/5 border rounded-lg focus:border-[#d4a968] focus:outline-none ${errors.publish_end ? 'border-red-500' : 'border-white/10'}`}
+                      className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white focus:border-[#d4a968] focus:outline-none ${errors.publish_end ? 'border-red-500' : 'border-white/10'}`}
+                      style={{ colorScheme: 'dark' }}
                     />
                   </div>
                 </div>
@@ -822,7 +826,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                   onChange={(e) => setFormData(prev => ({ ...prev, admin_notes: e.target.value }))}
                   rows={2}
                   placeholder="Notas privadas sobre esta campaña..."
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none resize-none"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none resize-none"
                 />
               </div>
             </div>
