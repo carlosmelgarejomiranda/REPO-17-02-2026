@@ -284,19 +284,23 @@ const CampaignsCatalog = () => {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="text-center p-2 bg-white/5 rounded-lg">
                       <p className="text-xs text-gray-500">Canje</p>
                       <p className="text-[#d4a968] font-medium text-sm">{formatPrice(campaign.canje?.value || 0)}</p>
                     </div>
-                    <div className="text-center p-2 bg-white/5 rounded-lg">
-                      <p className="text-xs text-gray-500">Cupos</p>
-                      <p className="text-white font-medium text-sm">{campaign.slots_filled || 0}/{campaign.slots}</p>
-                    </div>
-                    <div className="text-center p-2 bg-white/5 rounded-lg">
-                      <p className="text-xs text-gray-500">Cierre</p>
-                      <p className="text-white font-medium text-sm">{formatDate(campaign.timeline?.application_deadline)}</p>
-                    </div>
+                    {/* Show slots only if 1 or 2 remaining */}
+                    {campaign.slots_available !== undefined && campaign.slots_available <= 2 && campaign.slots_available > 0 ? (
+                      <div className="text-center p-2 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                        <p className="text-xs text-orange-400">¡Últimos cupos!</p>
+                        <p className="text-orange-300 font-medium text-sm">{campaign.slots_available}</p>
+                      </div>
+                    ) : (
+                      <div className="text-center p-2 bg-white/5 rounded-lg">
+                        <p className="text-xs text-gray-500">Estado</p>
+                        <p className="text-green-400 font-medium text-sm">Disponible</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Requirements */}
