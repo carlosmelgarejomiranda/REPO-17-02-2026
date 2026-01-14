@@ -1,3 +1,4 @@
+import { getApiUrl } from '../utils/api';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Instagram, Music2, CheckCircle, ChevronLeft, Send, Gift, MapPin, Phone, ArrowRight, Check, Sparkles, Users, Star } from 'lucide-react';
@@ -51,7 +52,7 @@ export const UGCCreators = ({ t, campaignId }) => {
   const [submitted, setSubmitted] = useState(false);
   const [submitResult, setSubmitResult] = useState(null);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const API_URL = getApiUrl();
 
   // If campaign not found, show error
   if (!campaign) {
