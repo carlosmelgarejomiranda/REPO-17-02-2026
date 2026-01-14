@@ -1015,7 +1015,7 @@ async def google_callback(request: Request, response: Response):
         # Check if user exists
         existing_user = await db.users.find_one({"email": email}, {"_id": 0})
     
-    if existing_user:
+        if existing_user:
         # Update existing user
         await db.users.update_one(
             {"email": email},
