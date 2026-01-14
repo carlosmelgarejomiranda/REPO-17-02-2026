@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../../utils/api';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   ArrowLeft, ArrowRight, Loader2, Building2, Globe, Instagram, Phone, User, Mail, 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getApiUrl } from '../utils/api';
 import { X, Minus, Plus, Check } from 'lucide-react';
 
 const API_URL = getApiUrl();

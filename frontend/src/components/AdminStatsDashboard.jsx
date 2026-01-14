@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../utils/api';
 import {
   Users, Building2, Briefcase, FileCheck, TrendingUp, DollarSign,
   Clock, CheckCircle, Star, Eye, Heart, BarChart3, Loader2,

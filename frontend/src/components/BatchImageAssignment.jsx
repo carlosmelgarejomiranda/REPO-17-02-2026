@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { getApiUrl } from '../utils/api';
 import { Upload, Image, Check, X, AlertCircle, Loader2, ChevronLeft, Undo2, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 

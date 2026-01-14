@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { getApiUrl } from '../utils/api';
 import { 
   Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, ShoppingBag, 
   Image, ChevronLeft, Settings, BarChart3, Mail, Palette, Shield, UserCog, 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getApiUrl } from '../utils/api';
 import { 
   ArrowRight, Check, Store, Camera, Users, Star, Phone, Mail, Building, Send,
   ShoppingBag, Sparkles, Image, Video, BarChart3, Globe, MapPin, Zap,

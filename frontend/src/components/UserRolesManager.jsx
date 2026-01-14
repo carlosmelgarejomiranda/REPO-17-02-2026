@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../utils/api';
 import { Users, Shield, ShieldCheck, Palette, UserCog, Search, Check, X, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 

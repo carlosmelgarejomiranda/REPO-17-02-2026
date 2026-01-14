@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../../utils/api';
 import { Link } from 'react-router-dom';
 import { 
   ArrowLeft, Star, MessageSquare, Calendar, Loader2, 

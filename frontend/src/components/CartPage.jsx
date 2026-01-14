@@ -1,4 +1,5 @@
 import React from 'react';
+import { getApiUrl } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { ShopHeader } from './ShopHeader';

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { getApiUrl } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingBag, Search, X, User, LogOut, Menu, ChevronRight } from 'lucide-react';
 import { ProductDetailModal } from './ProductDetailModal';

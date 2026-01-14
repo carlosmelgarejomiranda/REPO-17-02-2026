@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { getApiUrl } from '../utils/api';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, Package, MapPin, Phone, Mail, Loader2, AlertCircle, MessageCircle, Clock } from 'lucide-react';
 import { ShopHeader } from './ShopHeader';

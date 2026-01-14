@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, Component } from 'react';
+import { getApiUrl } from '../utils/api';
 import { 
   X, Save, Eye, Smartphone, Monitor, ChevronLeft, Upload, Check,
   Edit3, Loader2, Image, Images, ChevronRight, Move

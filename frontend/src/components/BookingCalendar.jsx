@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../utils/api';
 import { Calendar, Clock, User, Phone, Mail, Building, FileText, ChevronLeft, ChevronRight, ArrowRight, Check, Camera, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';

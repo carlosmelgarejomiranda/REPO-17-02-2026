@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '../../utils/api';
 import { Link, useParams } from 'react-router-dom';
 import { 
   ArrowLeft, CheckCircle, XCircle, AlertCircle, Clock, ExternalLink,
