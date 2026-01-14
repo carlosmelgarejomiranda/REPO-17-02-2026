@@ -7,8 +7,9 @@ import {
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
+import { getApiUrl } from '../../utils/api';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+const API_URL = getApiUrl();
 
 const CreatorsPage = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [isLoaded, setIsLoaded] = useState(false);
