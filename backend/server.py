@@ -899,43 +899,27 @@ async def login(credentials: UserLogin, request: Request, response: Response):
     role = user.get("role", "user")
     has_mfa = user.get("mfa_enabled", False)
     
-    # Check if admin needs MFA
-    if is_admin_role(role) and has_mfa:
-        # Return partial token - MFA verification required
-        partial_token = create_jwt_token(user["user_id"], user["email"], role, mfa_verified=False)
-        
-        await create_audit_log(
-            db, AuditAction.LOGIN_SUCCESS, user["user_id"], user["email"], role,
-            ip_address, user_agent, {"mfa_required": True}
-        )
-        
-        return {
-            "user_id": user["user_id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": role,
-            "mfa_required": True,
-            "partial_token": partial_token
-        }
-    
-    # DEVELOPMENT MODE: Skip MFA setup requirement for admins
-    # TODO: Re-enable MFA enforcement for production
-    # if is_admin_role(role) and not has_mfa:
+    # MFA DISABLED - Skip MFA verification for now
+    # TODO: Re-enable MFA when needed
+    # if is_admin_role(role) and has_mfa:
+    #     # Return partial token - MFA verification required
     #     partial_token = create_jwt_token(user["user_id"], user["email"], role, mfa_verified=False)
+    #     
     #     await create_audit_log(
     #         db, AuditAction.LOGIN_SUCCESS, user["user_id"], user["email"], role,
-    #         ip_address, user_agent, {"mfa_setup_required": True}
+    #         ip_address, user_agent, {"mfa_required": True}
     #     )
+    #     
     #     return {
     #         "user_id": user["user_id"],
     #         "email": user["email"],
     #         "name": user["name"],
     #         "role": role,
-    #         "mfa_setup_required": True,
+    #         "mfa_required": True,
     #         "partial_token": partial_token
     #     }
     
-    # Create full token for non-admin users
+    # Create full token
     token = create_jwt_token(user["user_id"], user["email"], role, mfa_verified=True)
     
     # Set cookie
