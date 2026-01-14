@@ -485,11 +485,12 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                   <select
                     value={formData.brand_id}
                     onChange={(e) => setFormData(prev => ({ ...prev, brand_id: e.target.value }))}
-                    className={`w-full px-4 py-3 bg-white/5 border rounded-lg focus:border-[#d4a968] focus:outline-none ${errors.brand_id ? 'border-red-500' : 'border-white/10'}`}
+                    className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white focus:border-[#d4a968] focus:outline-none ${errors.brand_id ? 'border-red-500' : 'border-white/10'}`}
+                    style={{ colorScheme: 'dark' }}
                   >
-                    <option value="">Seleccionar empresa...</option>
+                    <option value="" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Seleccionar empresa...</option>
                     {brands.map(brand => (
-                      <option key={brand.id} value={brand.id}>{brand.company_name}</option>
+                      <option key={brand.id} value={brand.id} style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>{brand.company_name}</option>
                     ))}
                   </select>
                   {errors.brand_id && <p className="text-red-400 text-xs mt-1">{errors.brand_id}</p>}
@@ -504,7 +505,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                     value={formData.brand_name}
                     onChange={(e) => setFormData(prev => ({ ...prev, brand_name: e.target.value }))}
                     placeholder="Ej: Sedal, Rexona, Axe..."
-                    className={`w-full px-4 py-3 bg-white/5 border rounded-lg focus:border-[#d4a968] focus:outline-none ${errors.brand_name ? 'border-red-500' : 'border-white/10'}`}
+                    className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none ${errors.brand_name ? 'border-red-500' : 'border-white/10'}`}
                   />
                   {errors.brand_name && <p className="text-red-400 text-xs mt-1">{errors.brand_name}</p>}
                 </div>
