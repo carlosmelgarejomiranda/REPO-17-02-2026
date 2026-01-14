@@ -1149,7 +1149,7 @@ Ejemplo de formato:
                           className="p-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors"
                           title="Editar campaña"
                         >
-                          <Target className="w-4 h-4" />
+                          <Pencil className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleViewApplications(campaign)}
