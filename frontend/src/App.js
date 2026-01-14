@@ -68,7 +68,7 @@ import MyProfile from "./pages/MyProfile";
 const useAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const API_URL = getApiUrl();
 
   useEffect(() => {
     checkAuth();
