@@ -541,18 +541,99 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                 </div>
               </div>
 
-              {/* Description */}
+              {/* Description with formatting toolbar */}
               <div>
                 <label className="block text-sm text-gray-400 mb-2">
                   Descripción <span className="text-red-400">*</span>
                 </label>
+                
+                {/* Formatting Toolbar */}
+                <div className="flex items-center gap-2 mb-2 p-2 bg-white/5 rounded-t-lg border border-white/10 border-b-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const textarea = document.getElementById('campaign-description');
+                      const start = textarea.selectionStart;
+                      const end = textarea.selectionEnd;
+                      const text = formData.description;
+                      const newText = text.substring(0, start) + '• ' + text.substring(end);
+                      setFormData(prev => ({ ...prev, description: newText }));
+                      setTimeout(() => {
+                        textarea.focus();
+                        textarea.setSelectionRange(start + 2, start + 2);
+                      }, 0);
+                    }}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded text-sm text-white transition-colors"
+                    title="Agregar bullet point"
+                  >
+                    <List className="w-4 h-4" />
+                    Bullet
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const textarea = document.getElementById('campaign-description');
+                      const start = textarea.selectionStart;
+                      const text = formData.description;
+                      const newText = text.substring(0, start) + '\n\n📌 ' + text.substring(start);
+                      setFormData(prev => ({ ...prev, description: newText }));
+                      setTimeout(() => {
+                        textarea.focus();
+                        textarea.setSelectionRange(start + 5, start + 5);
+                      }, 0);
+                    }}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded text-sm text-white transition-colors"
+                    title="Agregar subtítulo"
+                  >
+                    <Type className="w-4 h-4" />
+                    Subtítulo
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const textarea = document.getElementById('campaign-description');
+                      const start = textarea.selectionStart;
+                      const text = formData.description;
+                      const newText = text.substring(0, start) + '\n───────────────\n' + text.substring(start);
+                      setFormData(prev => ({ ...prev, description: newText }));
+                      setTimeout(() => {
+                        textarea.focus();
+                        textarea.setSelectionRange(start + 19, start + 19);
+                      }, 0);
+                    }}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded text-sm text-white transition-colors"
+                    title="Agregar separador"
+                  >
+                    <Minus className="w-4 h-4" />
+                    Separador
+                  </button>
+                  
+                  <span className="text-xs text-gray-500 ml-auto">
+                    Tip: Usa doble Enter para separar párrafos
+                  </span>
+                </div>
+                
                 <textarea
+                  id="campaign-description"
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  rows={3}
-                  placeholder="Descripción de la campaña para los creadores..."
-                  className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none resize-none ${errors.description ? 'border-red-500' : 'border-white/10'}`}
+                  rows={8}
+                  placeholder="Descripción de la campaña para los creadores...
+
+Ejemplo de formato:
+📌 Qué buscamos
+• Contenido auténtico y creativo
+• Videos de 30-60 segundos
+• Mostrar el producto en uso
+
+📌 Requisitos
+• Perfil público
+• Mencionar @marca"
+                  className={`w-full px-4 py-3 bg-white/5 border rounded-b-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none resize-y min-h-[200px] whitespace-pre-wrap ${errors.description ? 'border-red-500' : 'border-white/10'}`}
                 />
+                {errors.description && <p className="text-red-400 text-xs mt-1">{errors.description}</p>}
               </div>
 
               {/* Cover Image */}
