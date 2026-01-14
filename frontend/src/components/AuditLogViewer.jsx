@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Search, Filter, Calendar, User, Globe, Monitor, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Action labels in Spanish
 const ACTION_LABELS = {

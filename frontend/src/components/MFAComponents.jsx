@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Smartphone, Key, AlertTriangle, Check, Copy, RefreshCw, X, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // MFA Setup Component - Initial configuration
 export const MFASetup = ({ onComplete, onSkip, token }) => {

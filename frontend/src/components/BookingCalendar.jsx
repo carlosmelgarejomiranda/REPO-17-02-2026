@@ -37,7 +37,7 @@ export const BookingCalendar = ({ t, user, onBookingComplete }) => {
   const [success, setSuccess] = useState(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const API_URL = getApiUrl();
 
   // Update form when user changes
   useEffect(() => {

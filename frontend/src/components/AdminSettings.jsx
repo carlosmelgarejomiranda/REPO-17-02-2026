@@ -17,7 +17,7 @@ export const AdminSettings = ({ currentUser }) => {
   const [hasChanges, setHasChanges] = useState(false);
   const [originalSettings, setOriginalSettings] = useState(null);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const API_URL = getApiUrl();
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token');

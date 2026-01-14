@@ -13,7 +13,7 @@ import AdminBrandsTab from './admin/AdminBrandsTab';
 import AdminCampaignsTab from './admin/AdminCampaignsTab';
 import AdminDeliverablesTab from './admin/AdminDeliverablesTab';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Format currency
 const formatPrice = (price) => {

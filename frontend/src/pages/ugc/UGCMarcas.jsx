@@ -8,7 +8,7 @@ import {
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+const API_URL = getApiUrl();
 
 const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [isLoaded, setIsLoaded] = useState(false);

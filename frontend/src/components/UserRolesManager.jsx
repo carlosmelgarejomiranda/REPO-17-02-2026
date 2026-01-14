@@ -26,7 +26,7 @@ export const UserRolesManager = ({ currentUser }) => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const API_URL = getApiUrl();
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token');

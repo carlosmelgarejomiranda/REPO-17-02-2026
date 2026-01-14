@@ -5,7 +5,7 @@ import { ArrowLeft, MapPin, Store, Truck, Loader2, AlertTriangle, ShoppingBag, X
 import { ShopHeader } from './ShopHeader';
 import { trackBeginCheckout, trackAddShippingInfo, trackApplyCoupon, trackPurchase } from '../utils/analytics';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 const GOOGLE_MAPS_KEY = process.env.REACT_APP_GOOGLE_MAPS_KEY || '';
 
 const mapContainerStyle = {

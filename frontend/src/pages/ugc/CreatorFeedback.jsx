@@ -5,7 +5,7 @@ import {
   AlertCircle, Building2, CheckCircle, Clock
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const CreatorFeedback = () => {
   const [feedback, setFeedback] = useState([]);

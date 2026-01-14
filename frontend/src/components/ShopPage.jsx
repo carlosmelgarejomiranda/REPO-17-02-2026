@@ -5,7 +5,7 @@ import { ProductDetailModal } from './ProductDetailModal';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { trackAddToCart, trackViewItem, trackSearch } from '../utils/analytics';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Helper to resolve image URLs
 const resolveImageUrl = (imageUrl) => {

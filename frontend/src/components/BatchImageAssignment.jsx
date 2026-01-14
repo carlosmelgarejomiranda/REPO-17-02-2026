@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Upload, Image, Check, X, AlertCircle, Loader2, ChevronLeft, Undo2, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 export const BatchImageAssignment = ({ onClose }) => {
   // State for brand/category selection

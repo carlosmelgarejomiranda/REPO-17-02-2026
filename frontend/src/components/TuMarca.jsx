@@ -272,7 +272,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const API_URL = getApiUrl();
   const currentPricing = PRICING[productType];
 
   const formatPrice = (price) => {

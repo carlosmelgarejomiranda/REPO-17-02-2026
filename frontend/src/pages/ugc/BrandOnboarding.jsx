@@ -40,7 +40,7 @@ const CITIES_BY_COUNTRY = {
   OTHER: ['Otra']
 };
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { ShopHeader } from './ShopHeader';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Helper to resolve image URLs
 const resolveImageUrl = (imageUrl) => {

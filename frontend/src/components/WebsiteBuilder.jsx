@@ -4,7 +4,7 @@ import {
   Edit3, Loader2, Image, Images, ChevronRight, Move
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Error Boundary to catch any React errors
 class WebsiteBuilderErrorBoundary extends Component {
@@ -790,7 +790,7 @@ const MediaModal = ({ onClose, onSelect, currentUrl, currentPosition, type }) =>
   const imageRef = useRef(null);
   const containerRef = useRef(null);
   const dragStartRef = useRef({ x: 0, y: 0, posX: 50, posY: 50 });
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const API_URL = getApiUrl();
   
   // Handle apply button click
   const handleApplyClick = (e) => {

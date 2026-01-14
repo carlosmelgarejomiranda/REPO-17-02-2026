@@ -17,7 +17,7 @@ import { MFASettings } from './MFAComponents';
 import { AuditLogViewer } from './AuditLogViewer';
 import UGCAdminPanel from './UGCAdminPanel';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Permission helper
 const hasPermission = (role, permission) => {

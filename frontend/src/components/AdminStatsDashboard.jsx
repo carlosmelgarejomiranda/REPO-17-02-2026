@@ -5,7 +5,7 @@ import {
   RefreshCw, Calendar, ArrowUpRight, ArrowDownRight
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const formatNumber = (num) => {
   if (!num) return '0';

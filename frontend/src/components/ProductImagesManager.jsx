@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { BatchImageAssignment } from './BatchImageAssignment';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Single Upload Modal Component
 const SingleUploadModal = ({ product, onClose, onUpload, uploading }) => {

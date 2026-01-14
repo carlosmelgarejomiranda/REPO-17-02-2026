@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Minus, Plus, Check } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 // Helper to resolve image URLs
 const resolveImageUrl = (imageUrl) => {
