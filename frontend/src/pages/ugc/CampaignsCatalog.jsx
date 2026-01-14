@@ -318,10 +318,6 @@ const CampaignsCatalog = () => {
                     <div className="w-full py-3 rounded-lg bg-green-500/20 text-green-400 text-center text-sm font-medium">
                       ✓ Ya aplicaste
                     </div>
-                  ) : campaign.slots_filled >= campaign.slots ? (
-                    <div className="w-full py-3 rounded-lg bg-gray-500/20 text-gray-400 text-center text-sm">
-                      Cupos completos
-                    </div>
                   ) : (
                     <button
                       onClick={() => handleApply(campaign)}
