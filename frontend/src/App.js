@@ -37,6 +37,7 @@ import {
   HomeSEO, ShopSEO, StudioSEO, StudioBookingSEO, BrandsSEO, UGCSEO, 
   PrivacySEO, TermsSEO, StudioTermsSEO, CheckoutSEO, CartSEO, AdminSEO 
 } from "./components/SEOHead";
+import { getApiUrl } from "./utils/api";
 
 // UGC Platform Pages
 import BrandOnboarding from "./pages/ugc/BrandOnboarding";
