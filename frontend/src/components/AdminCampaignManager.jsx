@@ -619,7 +619,8 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       type="date"
                       value={formData.contract_start_date}
                       onChange={(e) => setFormData(prev => ({ ...prev, contract_start_date: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                     />
                   </div>
                 </div>
@@ -627,7 +628,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
 
               {/* Requirements Section */}
               <div className="border-t border-white/10 pt-6">
-                <h4 className="text-lg font-medium mb-4 flex items-center gap-2">
+                <h4 className="text-lg font-medium mb-4 flex items-center gap-2 text-white">
                   <Target className="w-5 h-5 text-[#d4a968]" />
                   Requisitos del Creador
                 </h4>
@@ -647,10 +648,11 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.gender}
                       onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                     >
                       {GENDER_OPTIONS.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        <option key={opt.value} value={opt.value} style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>{opt.label}</option>
                       ))}
                     </select>
                   </div>
@@ -660,10 +662,11 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.min_age}
                       onChange={(e) => setFormData(prev => ({ ...prev, min_age: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                     >
                       {AGE_OPTIONS.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        <option key={opt.value} value={opt.value} style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>{opt.label}</option>
                       ))}
                     </select>
                   </div>
@@ -673,10 +676,11 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.min_followers}
                       onChange={(e) => setFormData(prev => ({ ...prev, min_followers: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                     >
                       {FOLLOWERS_OPTIONS.map(opt => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        <option key={opt.value} value={opt.value} style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>{opt.label}</option>
                       ))}
                     </select>
                   </div>
@@ -686,10 +690,11 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.country}
                       onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
                     >
                       {COUNTRIES.map(country => (
-                        <option key={country} value={country}>{country}</option>
+                        <option key={country} value={country} style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>{country}</option>
                       ))}
                     </select>
                   </div>
@@ -700,10 +705,11 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       <select
                         value={formData.residence}
                         onChange={(e) => setFormData(prev => ({ ...prev, residence: e.target.value }))}
-                        className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                        className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                        style={{ colorScheme: 'dark' }}
                       >
                         {RESIDENCE_OPTIONS.map(opt => (
-                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          <option key={opt.value} value={opt.value} style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>{opt.label}</option>
                         ))}
                       </select>
                       {formData.residence === 'other' && (
@@ -712,7 +718,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                           value={formData.residence_other}
                           onChange={(e) => setFormData(prev => ({ ...prev, residence_other: e.target.value }))}
                           placeholder="Especificar ciudad/zona..."
-                          className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                          className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
                         />
                       )}
                     </div>
