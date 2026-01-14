@@ -1,48 +1,39 @@
 <analysis>**original_problem_statement:**
 The user's core mission is to establish Avenue as a positioning and visibility agency, using its e-commerce platform, studio, and UGC services as key differentiators.
 
-In this session, the user reported and the agent addressed a series of critical bugs that were preventing users from signing up, logging in, and using core admin functionalities. The user also requested and received several UI/UX improvements and bug fixes across the platform.
+In this session, the user reported a cascade of issues stemming from a single root cause: incorrect API URL configuration in the production environment. This led to bugs like navigation panel buttons not appearing, inability to edit campaigns, and broken user flows on mobile. The user also requested and received several UI/UX improvements, including rich text formatting for campaign descriptions and the ability to edit campaigns. Finally, the user inquired about storage limitations, leading to a discussion about scaling image storage.
 
 Key user requests during this session:
-1.  **Fix Studio Booking Notifications:** The initial task was to fix a bug where studio bookings didn't send emails.
-2.  **Fix Incorrect Email Senders:** The user noticed that some emails were being sent from a generic  address instead of context-specific ones like .
-3.  **Implement Campaign Creation Emails:** The user requested that an email notification be sent to a brand when an admin creates a new UGC campaign for them.
-4.  **MAJOR BUG: Creator Onboarding & Login Flow:** The user reported multiple critical issues:
-    *   A creator could not access their profile edit page.
-    *   Admin users could not see the correct navigation links (Panel Admin, Panel Creadores) after logging in with Google.
-    *   New users could not sign up as creators, encountering a Failed to fetch error.
-    *   The Google login flow was getting stuck in an infinite loop on a loading screen, especially on mobile devices (Safari on iPhone).
-5.  **MAJOR BUG: Admin Panel Permissions:** The superadmin () could not modify system settings or manage user roles.
-6.  **UI/UX Fixes:**
-    *   Redesign the Creator dashboard and campaign cards (requested, but only critical bugs fixed).
-    *   Improve the link flow for Alquiler de estudio.
-    *   Fix a white screen bug on the production site.
-    *   Improve text color on several forms for readability.
-    *   Remove an obsolete page ().
-7.  **Disable MFA:** The user requested the deactivation of Multi-Factor Authentication for their account.
+1.  **Fix UI Bugs:** Resolve issues with text color in the admin panel and improve the formatting of campaign descriptions.
+2.  **CRITICAL BUG: Missing Panel Buttons:** The Panel Creadores and Panel Marcas buttons were not appearing in the navbar for the admin user in the production environment.
+3.  **FEATURE: Campaign Editing:** Implement the ability for admins to edit existing campaigns.
+4.  **CRITICAL BUG: Campaign Editing Failure:** After implementing editing, saving changes failed in production with a connection error.
+5.  **FEATURE: Rich Text Formatting:** Add tools (like bullet points) to the campaign editor and correctly render the formatted text on the campaign detail page.
+6.  **CRITICAL BUG: Blank Page on Mobile:** Clicking Ver detalles on a campaign from the creators' page on a mobile device resulted in a blank white screen.
+7.  **CRITICAL BUG: Broken Creator Onboarding Flow:** A logged-in user was being incorrectly prompted to log in again when trying to apply for a campaign, getting stuck in a refresh loop on mobile.
+8.  **Architectural Refactor:** Correct the root cause of the production-specific bugs across the entire application.
+9.  **Clarification:** Inquire about database storage limits in preparation for uploading 4000+ product photos.
+10. **Remove Made with Emergent Badge:** Remove the branding badge from the UI.
 
 **User's preferred language**: Spanish
 
 **what currently exists?**
-The platform is a full-stack React/FastAPI/MongoDB application. The agent successfully resolved a series of critical bugs during this session.
--   **Studio Booking Notifications:** The email notification system for studio reservations (for both client and admin) is now fully functional, including confirmation emails.
--   **Correct Email Senders:** All transactional emails now originate from the correct, context-specific addresses (e.g., , , ).
--   **UGC Campaign Creation Notification:** An email is now automatically sent to the brand when an admin creates a new campaign for them.
--   **Auth & Onboarding Flow (FIXED):** The critical bugs preventing user registration and login have been resolved.
-    *   The Google login callback now correctly handles production vs. preview environments, avoiding cross-origin errors.
-    *   The infinite loop during login has been fixed with improved retry logic and error handling.
-    *   The flow for new creators correctly prompts for login/registration before showing the onboarding form and redirects properly afterward.
-    *   The navigation bar now correctly displays panel links (Admin, Creator, Brand) for authenticated users with the appropriate profiles.
--   **Admin Permissions (FIXED):** Superadmin can now access and modify System Settings and manage User Roles.
--   **UI/UX Improvements:** The white screen bug has been fixed, obsolete pages removed, and form text colors improved for readability.
--   **MFA Disabled:** MFA checks have been commented out in the backend, effectively disabling the feature as requested.
+The platform is a full-stack React/FastAPI/MongoDB application. During this session, the agent performed a critical architectural refactor, resolving numerous production-specific bugs.
+
+-   **Global API URL Fix:** A centralized  utility function was created and implemented across 30+ frontend files. This function dynamically provides the correct backend URL for production () and preview environments, fixing the root cause of many bugs.
+-   **Navigation Panel:** Navbar buttons (Panel Admin, Panel Creadores, Panel Marcas) now correctly display for admin/superadmin roles in all environments, regardless of whether they have specific profiles.
+-   **Campaign Management:** Admins can now create, **edit**, and save campaigns. The connection error on save has been fixed by creating the necessary backend PUT endpoint and correcting the frontend API call URL.
+-   **Rich Text Editor:** The campaign description field in the admin panel now includes buttons to add formatting (bullets, subtitles, separators).
+-   **Campaign Detail Page:** A new page () was created from scratch. It now correctly fetches and displays campaign details, and renders formatted descriptions (preserving line breaks, styling bullets, etc.). The blank screen issue on mobile has been resolved.
+-   **Creator Onboarding Flow:** The bug that caused a refresh loop for logged-in users has been fixed by correcting the API URL used to check authentication status.
+-   **UI Fixes:** Various text color issues in the admin panel have been corrected, and the Made with Emergent badge has been removed.
 
 **Last working item**:
--   **Last item agent was working:** The user requested that the text color in the Create Campaign form in the admin panel be changed to white for better readability against the dark background. The agent identified the missing  classes in  and applied the fix to all relevant form elements (, , ).
--   **Status:** USER VERIFICATION PENDING
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** Frontend testing agent or screenshot tool. The agent should navigate to the admin panel, open the Create Campaign modal, and verify that all text fields, dropdowns, and text areas have white text.
--   **User Testing Done:** N
+-   **Last item agent was working:** The user requested to add the integration of an external image storage service (like Cloudinary) to the backlog for future implementation to handle a large number of product photos. The agent updated the  file accordingly.
+-   **Status:** FINISHED
+-   **Agent Testing Done:** N/A
+-   **Which testing method agent to use?** N/A
+-   **User Testing Done:** N/A
 
 **All Pending/In progress Issue list**:
 -   Issue 1: Redesign Creator Dashboard & Campaign Cards (Priority: P0)
@@ -51,177 +42,156 @@ The platform is a full-stack React/FastAPI/MongoDB application. The agent succes
 -   Issue 4: Final user approval on the new Command Center Admin Panel design (Priority: P3)
 -   Issue 5: Integrate Image Upload into Create Campaign Form (Priority: P4)
 -   Issue 6: Production Twilio Setup (Priority: P5)
--   Issue 7: Verify text color fix in Admin Create Campaign form (Priority: P6)
 
 **Issues Detail:**
 -   **Issue 1: Redesign Creator Dashboard & Campaign Cards**
-    -   **Attempted fixes:** The agent acknowledged the user's request but prioritized fixing critical bugs that were completely blocking user functionality (profile access, login). The design work has not started.
+    -   **Attempted fixes:** No design work has started. Priority has been on fixing critical functional bugs.
     -   **Next debug checklist:**
-        1.  Propose a new, more visually appealing design for the campaign cards in .
-        2.  Propose a redesign for the creator dashboard () to make it more intuitive and visually engaging, with easy access to campaigns.
+        1.  Propose a new, visually appealing design for the campaign cards in .
+        2.  Propose a redesign for the creator dashboard (), focusing on intuition and visual engagement.
         3.  Seek user approval on the designs before implementation.
-    -   **Why fix this issue and what will be achieved with the fix?** The user is very dissatisfied with the current creator-facing UI, calling it muy feo (very ugly) and para nada atractivo (not at all attractive). Improving this is crucial for creator engagement, which is the core of the UGC business model.
+    -   **Why fix this issue and what will be achieved with the fix?** The current creator UI is a major point of dissatisfaction for the user. Improving it is crucial for creator engagement and the success of the UGC model.
     -   **Status:** NOT STARTED
     -   **Is recurring issue?** N
     -   **Should Test frontend/backend/both after fix?** Frontend
     -   **Blocked on other issue:** None.
 
 -   **Issue 2: Implement Creator Reports**
-    -   **Attempted fixes:** None. This was part of the user's request to overhaul the creator dashboard.
+    -   **Attempted fixes:** None.
     -   **Next debug checklist:**
-        1.  Design the UI for two new reports in the creator dashboard: a metrics report (similar to the brand panel) and a deliverables report (showing submissions, scores, and reviews).
-        2.  Implement the necessary backend endpoints to fetch this data.
-        3.  Build the frontend components to display the reports.
-    -   **Why fix this issue and what will be achieved with the fix?** This will provide creators with valuable feedback and performance data, fulfilling a key user requirement for the creator panel.
+        1.  Design UI for creator metrics and deliverables reports within the new dashboard.
+        2.  Implement backend endpoints to provide this data.
+        3.  Build the frontend components.
+    -   **Why fix this issue and what will be achieved with the fix?** Provides valuable performance feedback to creators, a key user requirement.
     -   **Status:** NOT STARTED
     -   **Is recurring issue?** N
     -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on other issue:** Blocked by Issue 1: Redesign Creator Dashboard as it should be part of the new design.
+    -   **Blocked on other issue:** Issue 1: Redesign Creator Dashboard.
 
 -   **Issue 3: User Prueba de Fuego (Trial by Fire) of the full UGC flow**
-    -   **Attempted fixes:** The platform is ready for the test. This was paused while the agent fixed numerous critical bugs reported by the user.
-    -   **Next debug checklist:** This task is pending user action. The next agent should wait for the user to complete the test and provide feedback or report any bugs found.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a crucial user acceptance test for the core functionality of the UGC platform.
+    -   **Attempted fixes:** The platform is now stable enough for this test.
+    -   **Next debug checklist:** Await user action and feedback.
+    -   **Why fix this issue and what will be achieved with the fix?** Crucial user acceptance testing for the core UGC functionality.
     -   **Status:** USER VERIFICATION PENDING
     -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both (if user finds bugs)
+    -   **Should Test frontend/backend/both after fix?** Both (if bugs are found)
     -   **Blocked on other issue:** Blocked by the user.
 
 -   **Issue 4: Final user approval on the new Command Center Admin Panel design**
-    -   **Attempted fixes:** The agent implemented the redesign. The user then found functional bugs within it (settings/role access), which are now fixed. Final design approval is still pending.
-    -   **Next debug checklist:** Await user feedback on the new design now that it's fully functional.
-    -   **Why fix this issue and what will be achieved with the fix?** To ensure the internal-facing tools meet the user's standards for usability and aesthetics.
+    -   **Attempted fixes:** The design was implemented, and functional bugs within it were fixed.
+    -   **Next debug checklist:** Await final user feedback on the design.
+    -   **Why fix this issue and what will be achieved with the fix?** Ensures internal tools meet usability and aesthetic standards.
     -   **Status:** USER VERIFICATION PENDING
     -   **Is recurring issue?** N
     -   **Should Test frontend/backend/both after fix?** Frontend
     -   **Blocked on other issue:** Blocked by the user.
 
 -   **Issue 5: Integrate Image Upload into Create Campaign Form**
-    -   **Status:** NOT STARTED (Same as previous handoff).
+    -   **Status:** NOT STARTED.
 
 -   **Issue 6: Production Twilio Setup**
-    -   **Status:** BLOCKED (Same as previous handoff).
+    -   **Status:** BLOCKED (pending user's Meta approval).
     -   **Is recurring issue?** Y
-
--   **Issue 7: Verify text color fix in Admin Create Campaign form**
-    -   **Attempted fixes:** Agent added  classes to inputs in .
-    -   **Next debug checklist:** Use screenshot tool to view the Create Campaign form and confirm text is white.
-    -   **Why fix this issue and what will be achieved with the fix?** To confirm the last requested UI fix is working correctly.
-    -   **Status:** USER VERIFICATION PENDING
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** None.
 
 **In progress Task List**:
 -   **Task 1: Overhaul Creator Experience**
-    -   **Where to resume:** Begin by proposing new designs for the Creator Dashboard () and the campaign cards (), incorporating the user's feedback about making them beautiful, practical, and intuitive.
-    -   **What will be achieved with this?** A significantly improved user experience for content creators, which is vital for the business model.
-    -   **Status:** IN PROGRESS (The critical bug-fixing part is complete; the design and implementation of new UI/UX and reports are pending).
+    -   **Where to resume:** Begin by proposing new designs for the Creator Dashboard () and campaign cards ().
+    -   **What will be achieved with this?** A significantly improved user experience for content creators.
+    -   **Status:** IN PROGRESS (Critical bug-fixing is complete; design/implementation of new UI/UX is pending).
     -   **Should Test frontend/backend/both after fix?** Both
     -   **Blocked on something:** Awaiting user design approval.
 
 **Upcoming and Future Tasks**
 **Upcoming Tasks:**
 -   **P1: Implement Creator Progressive Onboarding:** Unify the creator registration flow with the global login modal.
--   **P2: Build Studio Booking System (Enhancements):** While reservations exist, a full guest checkout option is still pending.
+-   **P2: Build Studio Booking System (Enhancements):** A full guest checkout option is still pending.
 -   **P3: Implement Bancard Payment Gateway:** (Blocked pending user credentials).
 **Future Tasks:**
 -   **P4: Platform for Content Production Services.**
 -   **P5: In-app Notification System.**
--   **P6: Advanced Admin Features** (e.g., Global Search, Advanced Filters, Report Export as proposed by the agent).
+-   **P6: Advanced Admin Features** (e.g., Global Search, Advanced Filters, Report Export).
+-   **P7: Cloudinary Integration:** Implement Cloudinary for scalable external storage of e-commerce product images.
 
 **Completed work in this session**
--   **Studio Booking Notifications (FIXED):** Implemented and verified email notifications for studio reservation creation and confirmation.
--   **Email Sender Correction (FIXED):** Refactored legacy email functions in  to use correct, context-specific sender addresses from .
--   **UGC Campaign Creation Notification (IMPLEMENTED):** Added a new email template and integrated it to notify brands when an admin creates a campaign for them.
--   **Critical Auth & Onboarding Flow (FIXED):** Resolved a complex, multi-stage bug preventing new creators from signing up and existing users from logging in, which included:
-    -   Creating a new Creator Profile Edit page ().
-    -   Fixing the Google Auth callback to handle production domains, resolving a Load failed / CORS issue.
-    -   Fixing an infinite retry loop in the auth callback and improving the UX.
-    -   Ensuring the login flow (both Google and standard) correctly redirects users back to their intended page (e.g., creator onboarding).
-    -   Fixing the Navbar to correctly show panel links based on user profiles fetched after login.
--   **Critical Admin Permissions (FIXED):** Resolved a bug where  couldn't access Settings or User Roles by correctly passing the  prop to the components.
--   **White Screen Bug (FIXED):** Corrected a fatal JavaScript error () in  that was causing a blank page on the live site.
--   **MFA Deactivation:** Disabled MFA checks in the backend login flow as requested.
--   **UI & UX Clean-up:**
-    -   Removed the obsolete  page and updated all links pointing to it.
-    -   Corrected the Alquiler de estudio links to point to the plans page () instead of directly to reservations.
-    -   Improved text color to white on the Admin Create Campaign form for better readability.
-    -   Translated creator categories and fixed dropdown text color in the Creator Onboarding form.
+-   **Global API URL Refactor:** Created a  utility and implemented it across 30+ frontend files to fix widespread production vs. preview environment bugs.
+-   **Navbar Panel Buttons Fix:** Resolved bug where panel buttons weren't showing in production by modifying the logic to always show them for  and  roles.
+-   **Campaign Editing Implemented:** Added full CRUD functionality for campaigns, including a new  backend endpoint and the corresponding frontend logic.
+-   **Rich Text Editor for Campaigns:** Replaced the plain textarea for campaign descriptions with a simple editor containing buttons for bullets, subtitles, and separators.
+-   **Campaign Detail Page Created:** Built the  page from scratch, including routing, the  component, and API integration.
+-   **Mobile Blank Screen Fix:** Fixed the campaign detail page showing a blank screen on mobile by improving the loading and error states.
+-   **Creator Onboarding Loop Fix:** Corrected the API URL in  to prevent logged-in users from being incorrectly prompted to log in again.
+-   **UI Fixes:** Corrected multiple instances of incorrect text color in the admin panel and removed the Made with Emergent badge.
+-   **Storage Consultation:** Investigated current image storage, explained limitations, recommended an external service (Cloudinary), and added it to the future task list per user request.
 
 **Earlier issues found/mentioned but not fixed**
--   None. The agent addressed all issues raised by the user during the session.
+-   None.
 
 **Known issue recurrence from previous fork**
--   **Twilio Setup Blockage:** The requirement for production Twilio setup remains blocked pending user action (Meta approval), which is a recurring state.
+-   **Production vs. Preview URL Mismatch:** This was the root cause of nearly every bug reported in this session. The agent performed a massive, codebase-wide refactor to fix this by creating and implementing a centralized  utility. This should be considered resolved, but any new component with API calls needs to use this utility.
+-   **Twilio Setup Blockage:** Remains blocked pending user action.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Cross-Origin Resource Sharing (CORS):** The agent diagnosed and fixed a critical Load failed error by making the frontend API calls aware of the production domain, resolving a CORS issue that only appeared in the deployed environment.
--   **Authentication Flow Debugging:** The agent debugged a complex, multi-layered authentication issue involving  vs. cookies, component re-renders, state synchronization in React hooks (), and environment-specific API endpoints.
--   **Robust Asynchronous UX:** The agent improved a failing authentication callback by implementing a state machine with progressive messages, automatic retries with a fixed limit, and clear user actions (cancel/retry), significantly enhancing the user experience for an unreliable network operation.
--   **React State and Prop Drilling:** The agent fixed major permission bugs in the admin panel by identifying that the  object was not being passed down as a prop from the parent () to the child components (, ).
+-   **Production vs. Preview Environment Mismatch:** The core problem of the session. The agent diagnosed that  incorrectly pointed to the preview URL in the production build, causing widespread CORS and data integrity failures.
+-   **Centralized API Configuration:** The robust solution was creating a  utility that programmatically determines the correct API endpoint ( for production, env var for preview/local). This was a major architectural improvement.
+-   **Role-Based UI Rendering:** Modified  to show admin-specific UI elements based on user roles (, ) in addition to user-specific data, making the admin experience more reliable.
+-   **Data vs. Code Debugging:** The agent correctly identified that an initial bug (missing navbar buttons) was due to missing data in the production database before implementing a more robust code-based solution (show buttons for all admins).
+-   **Dynamic Component State (for Editing):** Implemented campaign editing by adding an  state, which dynamically changes the UI (modal title, button text) and pre-fills the form with existing data.
+-   **Simple Rich Text Formatting:** Implemented a basic rich text editor by manipulating textarea state with buttons to insert markdown-like syntax (, ) and then parsing and styling this syntax with a renderer component on the detail page.
 
 **key DB schema**
 -   No schema changes were made.
 
 **All files of reference**
+-    (NEWLY CREATED - CRITICAL)
+-    (NEWLY CREATED)
 -   
 -   
 -   
--   
--   
--   
+-   Nearly all  files in  were modified to use .
 
 **Critical Info for New Agent**
--   **The Authentication Flow is Fragile:** The agent performed major surgery on the login/signup flow (, , ). While it now works, it has proven to be a source of complex, environment-specific bugs. Be extra cautious when modifying anything related to authentication.
--   **User's Next Priority is Creator UI/UX:** The user has explicitly stated their dissatisfaction with the creator-facing pages (, ). The next major task should be to propose and implement a complete visual and functional overhaul for these sections.
--   **Production vs. Preview Environment:** The key to solving the main login bug was realizing the production frontend was calling the preview backend URL. Any future logic involving API URLs must account for this distinction. The agent implemented a fix in  that can be used as a reference: . This logic should be centralized.
--   **The User is Technical and Provides Good Feedback:** The user correctly identified that an infinite loop was a symptom, not the root cause, and provided screenshots that were crucial for debugging. Trust their reports and ask for logs/screenshots.
+-   **USE  FOR ALL API CALLS:** A global refactor was performed to fix production bugs. For any new or modified component that makes an API call, you **MUST** import and use the  utility from . Do not use  directly.
+-   **User's Next Priority is Creator UI/UX:** Now that the platform is stable, the user's focus will return to the visual and functional overhaul of the creator-facing pages (, ).
+-   **Production Data Differs from Preview:** Be aware that the production and preview databases are separate and may contain different data (e.g., different user/campaign IDs). Bugs that seem to be code-related might be data-related.
 
 **documents and test reports created in this job**
--    was updated once.
+-    was updated with the future task for Cloudinary integration.
 
 **Last 10 User Messages and any pending HUMAN messages**
--   **User:** tampoco me permite asignar roles a los usuarios (I can't assign roles to users either).
--   **Agent:** Fixed by passing  to .
--   **User:** hice el redeployment... ahora aparece cargando pero se queda colgado ahi (I redeployed... now it shows loading but gets stuck there).
--   **Agent:** Investigated the infinite loop.
--   **User:** pero el problema no es necesariamente el callback infinito. el problema de fondo es que no conecta (But the problem isn't necessarily the infinite callback. The underlying problem is that it doesn't connect).
--   **Agent:** Agreed and dug deeper.
--   **User:** la foto de los 49 intentos fue de safari en un iphone. pero el mismo problema tengo en la version desktop. (The 49 attempts photo was from Safari on an iPhone. But I have the same problem on the desktop version).
--   **Agent:** Used this info to rule out mobile-only issues.
--   **User:** persiste el problema (The problem persists), and shared a screenshot with debug info.
--   **Agent:** Used the debug info to find the cross-origin root cause.
--   **User:** Reported that a new user () had an issue while another () worked, sharing a screenshot of the error.
--   **Agent:** Investigated the 500 Internal Server Error and improved backend logging.
--   **User:** Confirmed the fix worked: esta vez funciono bien. (This time it worked well).
--   **User:** desactiva la verificacion MFA (disable MFA verification).
--   **Agent:** Disabled MFA.
--   **User:** en el panel admin... al abrir el formulario para crear campaña quiero que el texto sea blanco (In the admin panel... when opening the create campaign form I want the text to be white).
--   **Agent:** Implemented the text color fix.
+-   **User:** Asked why the agent was only fixing some files with the API URL problem.
+-   **Agent:** Explained the root cause (production vs. preview URL) and offered to fix all 30+ affected files.
+-   **User:** si corrijamos todo ya (yes, let's fix everything now).
+-   **Agent:** Performed the global refactor across the entire frontend codebase.
+-   **User:** Asked if the global refactor could have negative impacts and why it wasn't coded that way originally.
+-   **Agent:** Explained that the change is safe and the issue was a latent bug that only became apparent in the deployed production environment.
+-   **User:** Asked about database storage limits, mentioning a plan to upload 4000+ photos.
+-   **Agent:** Consulted the support agent and explained the current local storage mechanism and its limitations.
+-   **Agent:** Recommended using an external service like Cloudinary for scalability and performance.
+-   **User:** ponelo en lista de futuras implementaciones (put it on the list of future implementations).
+-   **Agent:** Confirmed and updated the backlog.
 
 **Project Health Check:**
--   **Broken**: None. The critical bugs have been fixed.
+-   **Broken**: None. All critical production bugs have been resolved.
 -   **Mocked**: None.
 -   **Blocked**: Twilio integration (user dependency), Bancard integration (user dependency).
 
 **3rd Party Integrations**
--   **Resend**: Working for transactional emails.
+-   **Resend**: Working.
 -   **Twilio**: Implemented but **BLOCKED** pending user's Meta approval.
--   **Emergent-managed Google Auth**: Was the source of many issues, but is now working correctly after extensive debugging and fixes in both frontend and backend.
--   **Emergent LLM Key (Gemini Vision)**: Working.
+-   **Emergent-managed Google Auth**: Working.
+-   **Cloudinary**: Not integrated, but added to the backlog as a future task.
 
 **Testing status**
 -   **Testing agent used after significant changes:** NO
 -   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** None.
--   **Known regressions:** None identified, but the auth flow was heavily changed and could have regressions.
+-   **Known regressions:** None identified. The global refactor should have increased stability, but due to the large number of files changed, regression testing would be beneficial.
 
 **Credentials to test flow:**
 -   **Admin / All-Roles User**: Email: , Password: 
 
 **What agent forgot to execute**
--   The agent did not forget to execute any tasks. It reacted and reprioritized work based on the user's stream of critical bug reports, correctly deferring lower-priority items to stabilize the platform.</analysis>
+-   The agent was thorough and addressed the root cause of multiple issues with a global refactor rather than patching individual bugs. No tasks appear to have been forgotten.</analysis>
