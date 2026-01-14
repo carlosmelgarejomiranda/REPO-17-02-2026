@@ -584,14 +584,16 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
         </button>
       </div>
 
-      {/* Create Form Modal */}
+      {/* Create/Edit Form Modal */}
       {showCreateForm && (
         <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 overflow-y-auto py-10">
           <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-3xl mx-4">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h3 className="text-xl font-medium text-white">Crear Nueva Campaña</h3>
-              <button onClick={() => setShowCreateForm(false)} className="text-gray-400 hover:text-white">
+              <h3 className="text-xl font-medium text-white">
+                {editingCampaign ? 'Editar Campaña' : 'Crear Nueva Campaña'}
+              </h3>
+              <button onClick={() => { setShowCreateForm(false); setEditingCampaign(null); setFormData(initialFormState); }} className="text-gray-400 hover:text-white">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -607,7 +609,8 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                   <select
                     value={formData.brand_id}
                     onChange={(e) => setFormData(prev => ({ ...prev, brand_id: e.target.value }))}
-                    className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white focus:border-[#d4a968] focus:outline-none ${errors.brand_id ? 'border-red-500' : 'border-white/10'}`}
+                    disabled={!!editingCampaign}
+                    className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white focus:border-[#d4a968] focus:outline-none ${editingCampaign ? 'opacity-50 cursor-not-allowed' : ''} ${errors.brand_id ? 'border-red-500' : 'border-white/10'}`}
                     style={{ colorScheme: 'dark' }}
                   >
                     <option value="" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Seleccionar empresa...</option>
