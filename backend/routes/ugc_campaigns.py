@@ -60,9 +60,7 @@ async def get_available_campaigns(
     # Build query - only live campaigns visible to creators
     query = {
         "status": CampaignStatus.LIVE,
-        "visible_to_creators": {"$ne": False},  # Include campaigns without this field or with True
-        # Only show campaigns with available slots > 0
-        "$expr": {"$gt": [{"$subtract": [{"$ifNull": ["$available_slots", {"$subtract": [{"$ifNull": ["$slots", 0]}, {"$ifNull": ["$slots_filled", 0]}]}]}, {"$ifNull": ["$slots_filled", 0]}]}, 0]}
+        "visible_to_creators": {"$ne": False}  # Include campaigns without this field or with True
     }
     
     if city:
