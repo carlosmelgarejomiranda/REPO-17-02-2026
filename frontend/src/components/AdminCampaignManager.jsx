@@ -522,7 +522,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="Si está vacío, usa el nombre de la marca"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
                   />
                 </div>
 
@@ -531,10 +531,11 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                    style={{ colorScheme: 'dark' }}
                   >
                     {CATEGORIES.map(cat => (
-                      <option key={cat} value={cat}>{CATEGORY_LABELS[cat]}</option>
+                      <option key={cat} value={cat} style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>{CATEGORY_LABELS[cat]}</option>
                     ))}
                   </select>
                 </div>
