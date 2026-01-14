@@ -18,6 +18,16 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-14
+
+#### ✅ Completed
+- **UI Fix: Texto blanco en formulario "Crear Campaña"**
+  - Corregido `AdminCampaignManager.jsx`
+  - Campos de Canje, Fechas y Notas con texto blanco
+  - Verificado con screenshots
+
+---
+
 ### Session: 2026-01-12
 
 #### ✅ Completed
