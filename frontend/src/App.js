@@ -48,6 +48,7 @@ import CreatorDashboard from "./pages/ugc/CreatorDashboard";
 import BrandDashboard from "./pages/ugc/BrandDashboard";
 import CampaignBuilder from "./pages/ugc/CampaignBuilder";
 import CampaignsCatalog from "./pages/ugc/CampaignsCatalog";
+import CampaignDetail from "./pages/ugc/CampaignDetail";
 import BrandCampaigns from "./pages/ugc/BrandCampaigns";
 import CreatorWorkspace from "./pages/ugc/CreatorWorkspace";
 import DeliverableDetail from "./pages/ugc/DeliverableDetail";
