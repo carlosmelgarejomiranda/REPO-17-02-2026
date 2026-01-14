@@ -117,6 +117,9 @@ async def get_available_campaigns(
         else:
             campaign["has_applied"] = False
     
+    # Filter out campaigns with 0 available slots (they should not be visible to creators)
+    campaigns = [c for c in campaigns if c.get("slots_available", 0) > 0]
+    
     total = await db.ugc_campaigns.count_documents(query)
     
     return {
