@@ -5,8 +5,9 @@ import {
   Calendar, Users, MapPin, Tag, Gift, FileText, 
   Instagram, Music2, Info, AlertCircle, Check
 } from 'lucide-react';
+import { getApiUrl } from '../../utils/api';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const CampaignBuilder = () => {
   const navigate = useNavigate();
