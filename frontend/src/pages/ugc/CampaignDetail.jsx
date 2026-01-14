@@ -239,20 +239,60 @@ const CampaignDetail = () => {
                 {campaign.brand.company_name}
               </p>
             )}
-
-            <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{campaign.description}</p>
           </div>
         </div>
 
-        {/* Full Description Section - if description is long */}
-        {campaign.description && campaign.description.length > 300 && (
-          <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-8">
-            <h3 className="text-lg font-medium text-white mb-4">Descripción completa</h3>
-            <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-              {campaign.description}
-            </div>
+        {/* Description Section */}
+        <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-8">
+          <h3 className="text-lg font-medium text-white mb-4">Sobre la campaña</h3>
+          <div className="text-gray-300 leading-relaxed">
+            {campaign.description?.split('\n').map((line, index) => {
+              // Empty line = paragraph break
+              if (!line.trim()) {
+                return <div key={index} className="h-3" />;
+              }
+              
+              // Separator line
+              if (line.includes('───') || line.includes('---')) {
+                return <hr key={index} className="border-white/10 my-4" />;
+              }
+              
+              // Subtitle with emoji (📌)
+              if (line.trim().startsWith('📌') || line.trim().startsWith('🎯') || line.trim().startsWith('✨') || line.trim().startsWith('💡')) {
+                return (
+                  <h4 key={index} className="text-[#d4a968] font-medium text-lg mt-4 mb-2">
+                    {line}
+                  </h4>
+                );
+              }
+              
+              // Bullet point
+              if (line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*')) {
+                return (
+                  <div key={index} className="flex items-start gap-2 ml-2 my-1">
+                    <span className="text-[#d4a968] mt-1">•</span>
+                    <span>{line.trim().substring(1).trim()}</span>
+                  </div>
+                );
+              }
+              
+              // Bold text simulation (text between **)
+              if (line.includes('**')) {
+                const parts = line.split(/\*\*(.*?)\*\*/g);
+                return (
+                  <p key={index} className="my-1">
+                    {parts.map((part, i) => 
+                      i % 2 === 1 ? <strong key={i} className="text-white">{part}</strong> : part
+                    )}
+                  </p>
+                );
+              }
+              
+              // Regular paragraph
+              return <p key={index} className="my-1">{line}</p>;
+            })}
           </div>
-        )}
+        </div>
 
         {/* Details Grid */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
