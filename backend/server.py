@@ -1000,6 +1000,8 @@ async def google_callback(request: Request, response: Response):
             except httpx.TimeoutException:
                 logger.error("Google callback: Timeout calling Emergent API")
                 raise HTTPException(status_code=504, detail="Authentication server timeout. Please try again.")
+            except HTTPException:
+                raise
             except Exception as e:
                 logger.error(f"Google callback: Error calling Emergent API: {str(e)}")
                 raise HTTPException(status_code=500, detail=f"Authentication failed: {str(e)}")
@@ -1016,46 +1018,46 @@ async def google_callback(request: Request, response: Response):
         existing_user = await db.users.find_one({"email": email}, {"_id": 0})
     
         if existing_user:
-        # Update existing user
-        await db.users.update_one(
-            {"email": email},
-            {"$set": {"name": name, "picture": picture}}
-        )
-        user_id = existing_user["user_id"]
-        role = existing_user.get("role", "user")
-        # Ensure superadmin email always has superadmin role
-        if email == ADMIN_EMAIL and role != "superadmin":
-            role = "superadmin"
-            await db.users.update_one({"email": email}, {"$set": {"role": "superadmin"}})
-    else:
-        # Create new user
-        user_id = f"user_{uuid.uuid4().hex[:12]}"
-        role = "superadmin" if email == ADMIN_EMAIL else "user"
+            # Update existing user
+            await db.users.update_one(
+                {"email": email},
+                {"$set": {"name": name, "picture": picture}}
+            )
+            user_id = existing_user["user_id"]
+            role = existing_user.get("role", "user")
+            # Ensure superadmin email always has superadmin role
+            if email == ADMIN_EMAIL and role != "superadmin":
+                role = "superadmin"
+                await db.users.update_one({"email": email}, {"$set": {"role": "superadmin"}})
+        else:
+            # Create new user
+            user_id = f"user_{uuid.uuid4().hex[:12]}"
+            role = "superadmin" if email == ADMIN_EMAIL else "user"
+            
+            user_doc = {
+                "user_id": user_id,
+                "email": email,
+                "name": name,
+                "picture": picture,
+                "role": role,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.users.insert_one(user_doc)
         
-        user_doc = {
-            "user_id": user_id,
-            "email": email,
-            "name": name,
-            "picture": picture,
-            "role": role,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-        await db.users.insert_one(user_doc)
-    
-    # Create JWT token
-    token = create_jwt_token(user_id, email, role)
-    
-    # Set cookie
-    response.set_cookie(
-        key="session_token",
-        value=token,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=JWT_EXPIRATION_HOURS * 3600,
-        path="/"
-    )
-    
+        # Create JWT token
+        token = create_jwt_token(user_id, email, role)
+        
+        # Set cookie
+        response.set_cookie(
+            key="session_token",
+            value=token,
+            httponly=True,
+            secure=True,
+            samesite="none",
+            max_age=JWT_EXPIRATION_HOURS * 3600,
+            path="/"
+        )
+        
         # Check for UGC profiles
         has_creator_profile = await db.ugc_creators.find_one({"user_id": user_id}) is not None
         has_brand_profile = await db.ugc_brands.find_one({"user_id": user_id}) is not None
