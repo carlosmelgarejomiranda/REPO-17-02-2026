@@ -468,7 +468,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
           <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-3xl mx-4">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h3 className="text-xl font-medium">Crear Nueva Campaña</h3>
+              <h3 className="text-xl font-medium text-white">Crear Nueva Campaña</h3>
               <button onClick={() => setShowCreateForm(false)} className="text-gray-400 hover:text-white">
                 <X className="w-6 h-6" />
               </button>
@@ -876,7 +876,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-medium text-lg">{campaign.name}</h3>
+                      <h3 className="font-medium text-lg text-white">{campaign.name}</h3>
                       {getStatusBadge(campaign.status, contract)}
                       {campaign.visible_to_creators === false && (
                         <span className="px-2 py-1 rounded-full text-xs bg-orange-500/20 text-orange-400 flex items-center gap-1">
