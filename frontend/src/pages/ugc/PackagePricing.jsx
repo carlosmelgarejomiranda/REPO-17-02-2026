@@ -4,6 +4,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Sparkles, ArrowRight, Calculator, Loader2, Crown, Star, Building2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
+const API_URL = getApiUrl();
+
 const PackagePricing = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -33,9 +35,9 @@ const PackagePricing = () => {
 
   const checkBrandProfile = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/brands/me`, {
-        credentials: 'include'
-      });
+      const token = localStorage.getItem('auth_token');
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      const res = await fetch(`${API_URL}/api/ugc/brands/me`, { headers });
       setHasBrandProfile(res.ok);
     } catch (err) {
       setHasBrandProfile(false);
@@ -46,7 +48,7 @@ const PackagePricing = () => {
 
   const fetchPackages = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/packages/pricing`);
+      const res = await fetch(`${API_URL}/api/ugc/packages/pricing`);
       const data = await res.json();
       // Include all packages including enterprise
       setPackages(data.packages || []);
@@ -59,7 +61,7 @@ const PackagePricing = () => {
 
   const fetchEnterpriseQuote = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/packages/enterprise/quote`, {
+      const res = await fetch(`${API_URL}/api/ugc/packages/enterprise/quote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(enterpriseForm)
