@@ -399,7 +399,11 @@ export const AuthCallback = ({ onAuthComplete }) => {
   const hasProcessed = React.useRef(false);
   const shouldStop = React.useRef(false);
   
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  // Use current origin for production, fallback to env variable for development
+  const API_URL = window.location.hostname === 'localhost' 
+    ? (process.env.REACT_APP_BACKEND_URL || '') 
+    : window.location.origin;
+  
   const MAX_ATTEMPTS = 5;
   const RETRY_DELAY = 2000;
 
