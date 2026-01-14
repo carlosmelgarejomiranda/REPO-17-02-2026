@@ -387,45 +387,59 @@ const CampaignDetail = () => {
           </div>
         </div>
 
-        {/* Timeline */}
+        {/* Plazos de entrega */}
         <div className="bg-white/5 rounded-xl p-6 border border-white/10 mb-8">
           <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[#d4a968]" />
-            Fechas importantes
+            <Clock className="w-5 h-5 text-[#d4a968]" />
+            Plazos de entrega
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {timeline.applications_deadline && (
-              <div>
-                <span className="text-gray-400 text-sm">Cierre de aplicaciones:</span>
-                <p className="text-white">{formatDate(timeline.applications_deadline)}</p>
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#d4a968]/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-[#d4a968] font-medium text-sm">1</span>
               </div>
-            )}
-            {timeline.publish_start && (
               <div>
-                <span className="text-gray-400 text-sm">Inicio publicación:</span>
-                <p className="text-white">{formatDate(timeline.publish_start)}</p>
+                <p className="text-white font-medium">Subir link del contenido</p>
+                <p className="text-gray-400 text-sm">7 días desde la confirmación de tu participación</p>
               </div>
-            )}
-            {timeline.publish_end && (
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#d4a968]/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-[#d4a968] font-medium text-sm">2</span>
+              </div>
               <div>
-                <span className="text-gray-400 text-sm">Fin publicación:</span>
-                <p className="text-white">{formatDate(timeline.publish_end)}</p>
+                <p className="text-white font-medium">Subir métricas</p>
+                <p className="text-gray-400 text-sm">15 días desde la confirmación de tu participación</p>
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Slots Info */}
-        <div className="flex items-center justify-between bg-white/5 rounded-xl p-6 border border-white/10 mb-8">
-          <div className="flex items-center gap-3">
-            <Users className="w-6 h-6 text-[#d4a968]" />
-            <div>
-              <span className="text-gray-400 text-sm">Cupos disponibles</span>
-              <p className="text-2xl font-light text-white">
-                {campaign.available_slots || 0} <span className="text-gray-500 text-lg">/ {campaign.total_slots_loaded || campaign.slots || '?'}</span>
+            </div>
+            <div className="mt-4 p-3 bg-[#d4a968]/10 rounded-lg border border-[#d4a968]/20">
+              <p className="text-[#d4a968] text-sm flex items-start gap-2">
+                <Star className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span><strong>Tip:</strong> Mientras antes subas el contenido a tus redes, tendrás más tiempo para generar mejores métricas antes del límite de entrega.</span>
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Apply Section */}
+        <div className="flex items-center justify-between bg-white/5 rounded-xl p-6 border border-white/10 mb-8">
+          {/* Show urgency only if 1 or 2 slots left */}
+          {campaign.available_slots <= 2 && campaign.available_slots > 0 && (
+            <div className="flex items-center gap-3">
+              <Users className="w-6 h-6 text-orange-400" />
+              <div>
+                <span className="text-orange-400 text-sm font-medium">¡Últimos cupos!</span>
+                <p className="text-white">
+                  Solo {campaign.available_slots === 1 ? 'queda 1 cupo' : `quedan ${campaign.available_slots} cupos`} disponibles
+                </p>
+              </div>
+            </div>
+          )}
+          
+          {/* Show nothing about slots if more than 2 available */}
+          {(campaign.available_slots > 2 || campaign.available_slots === undefined) && (
+            <div className="flex-1" />
+          )}
 
           {/* Apply Button */}
           {hasApplied ? (
