@@ -70,7 +70,7 @@ export const useAuth = () => {
   // Always declare hooks at top level
   const [fallbackUser, setFallbackUser] = useState(null);
   const [fallbackLoading, setFallbackLoading] = useState(true);
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+  const API_URL = getApiUrl();
 
   useEffect(() => {
     // Only run if no context (not wrapped in AuthProvider)
