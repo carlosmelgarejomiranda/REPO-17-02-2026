@@ -972,34 +972,48 @@ async def login(credentials: UserLogin, request: Request, response: Response):
 @api_router.post("/auth/google/callback")
 async def google_callback(request: Request, response: Response):
     """Handle Google OAuth callback - exchange session_id for user data"""
-    body = await request.json()
-    session_id = body.get("session_id")
-    
-    if not session_id:
-        raise HTTPException(status_code=400, detail="session_id required")
-    
-    # Call Emergent auth API to get user data
-    async with httpx.AsyncClient() as client:
-        try:
-            auth_response = await client.get(
-                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-                headers={"X-Session-ID": session_id}
-            )
-            
-            if auth_response.status_code != 200:
-                raise HTTPException(status_code=401, detail="Invalid session")
-            
-            google_data = auth_response.json()
-        except Exception as e:
-            logger.error(f"Google auth error: {str(e)}")
-            raise HTTPException(status_code=500, detail="Authentication failed")
-    
-    email = google_data.get("email")
-    name = google_data.get("name")
-    picture = google_data.get("picture")
-    
-    # Check if user exists
-    existing_user = await db.users.find_one({"email": email}, {"_id": 0})
+    try:
+        body = await request.json()
+        session_id = body.get("session_id")
+        
+        if not session_id:
+            raise HTTPException(status_code=400, detail="session_id required")
+        
+        logger.info(f"Google callback: Processing session_id {session_id[:8]}...")
+        
+        # Call Emergent auth API to get user data
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            try:
+                auth_response = await client.get(
+                    "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                    headers={"X-Session-ID": session_id}
+                )
+                
+                logger.info(f"Google callback: Emergent API response status: {auth_response.status_code}")
+                
+                if auth_response.status_code != 200:
+                    logger.error(f"Google callback: Invalid session - status {auth_response.status_code}, body: {auth_response.text[:200]}")
+                    raise HTTPException(status_code=401, detail="Invalid or expired session. Please try again.")
+                
+                google_data = auth_response.json()
+                logger.info(f"Google callback: Got user data for {google_data.get('email', 'unknown')}")
+            except httpx.TimeoutException:
+                logger.error("Google callback: Timeout calling Emergent API")
+                raise HTTPException(status_code=504, detail="Authentication server timeout. Please try again.")
+            except Exception as e:
+                logger.error(f"Google callback: Error calling Emergent API: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Authentication failed: {str(e)}")
+        
+        email = google_data.get("email")
+        name = google_data.get("name")
+        picture = google_data.get("picture")
+        
+        if not email:
+            logger.error("Google callback: No email in response")
+            raise HTTPException(status_code=400, detail="No email received from Google")
+        
+        # Check if user exists
+        existing_user = await db.users.find_one({"email": email}, {"_id": 0})
     
     if existing_user:
         # Update existing user
