@@ -529,6 +529,61 @@ async def admin_renew_campaign(
         "message": f"Contrato renovado. {data.monthly_deliverables} cupos añadidos. Próxima recarga: {next_reload.strftime('%d/%m/%Y')}"
     }
 
+@router.put("/campaigns/{campaign_id}", response_model=dict)
+async def admin_update_campaign(
+    campaign_id: str,
+    request: Request
+):
+    """Admin updates a campaign's details"""
+    await require_admin(request)
+    db = await get_db()
+    
+    campaign = await db.ugc_campaigns.find_one({"id": campaign_id})
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    data = await request.json()
+    
+    # Build update object
+    update_fields = {
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Update basic fields
+    if "name" in data:
+        update_fields["name"] = data["name"]
+    if "description" in data:
+        update_fields["description"] = data["description"]
+    if "category" in data:
+        update_fields["category"] = data["category"]
+    if "city" in data:
+        update_fields["city"] = data["city"]
+    if "admin_notes" in data:
+        update_fields["admin_notes"] = data["admin_notes"]
+    
+    # Update nested objects
+    if "requirements" in data:
+        update_fields["requirements"] = data["requirements"]
+    if "canje" in data:
+        update_fields["canje"] = data["canje"]
+    if "timeline" in data:
+        update_fields["timeline"] = data["timeline"]
+    if "assets" in data:
+        # Merge with existing assets
+        existing_assets = campaign.get("assets", {})
+        existing_assets.update(data["assets"])
+        update_fields["assets"] = existing_assets
+    
+    await db.ugc_campaigns.update_one(
+        {"id": campaign_id},
+        {"$set": update_fields}
+    )
+    
+    return {
+        "success": True,
+        "message": "Campaña actualizada exitosamente"
+    }
+
 @router.put("/campaigns/{campaign_id}/add-slots", response_model=dict)
 async def admin_add_slots(
     campaign_id: str,
