@@ -31,10 +31,11 @@ const CampaignDetail = () => {
   const checkCreatorProfile = async () => {
     try {
       const token = localStorage.getItem('auth_token');
-      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      if (!token) return;
+      
+      const headers = { 'Authorization': `Bearer ${token}` };
       
       const res = await fetch(`${API_URL}/api/ugc/creators/me`, { 
-        credentials: 'include',
         headers
       });
       if (res.ok) {
