@@ -54,7 +54,6 @@ const CampaignDetail = () => {
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
       
       const res = await fetch(`${API_URL}/api/ugc/campaigns/${id}`, {
-        credentials: 'include',
         headers
       });
       
@@ -65,7 +64,6 @@ const CampaignDetail = () => {
         // Check if already applied
         if (token) {
           const appRes = await fetch(`${API_URL}/api/ugc/applications/my`, {
-            credentials: 'include',
             headers
           });
           if (appRes.ok) {
