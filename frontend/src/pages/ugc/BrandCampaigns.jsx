@@ -5,7 +5,7 @@ import {
   Plus, Users, BarChart3, Loader2, AlertCircle, TrendingUp, Calendar
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const BrandCampaigns = () => {
   const [campaigns, setCampaigns] = useState([]);

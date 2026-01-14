@@ -7,7 +7,7 @@ import {
   Instagram, Music2, Sparkles, Clock, Users, Globe, PieChart, Play
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const MetricsSubmit = () => {
   const { deliverableId } = useParams();

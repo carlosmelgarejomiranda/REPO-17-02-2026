@@ -7,7 +7,7 @@ import {
   Star, MessageSquare
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const CreatorWorkspace = () => {
   const [deliverables, setDeliverables] = useState([]);

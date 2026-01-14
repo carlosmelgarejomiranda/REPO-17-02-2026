@@ -7,7 +7,7 @@ import {
   BarChart3, Eye, Heart
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const CreatorProfile = () => {
   const { creatorId } = useParams();

@@ -7,7 +7,7 @@ import {
   Calendar, Tag, ChevronDown, Building2
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const CampaignsCatalog = () => {
   const navigate = useNavigate();

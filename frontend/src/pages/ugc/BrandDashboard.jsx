@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { BarChart3, Loader2, AlertCircle, Building2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const BrandDashboard = () => {
   const { user } = useAuth();

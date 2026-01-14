@@ -6,7 +6,7 @@ import {
   Instagram, Music2, TrendingUp, Clock, Medal
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const Leaderboard = () => {
   const [creators, setCreators] = useState([]);

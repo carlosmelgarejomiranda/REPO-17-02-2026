@@ -6,7 +6,7 @@ import {
   Clock, AlertCircle, Send, Loader2, Camera, Image, Link as LinkIcon
 } from 'lucide-react';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const DeliverableDetail = () => {
   const { id } = useParams();
