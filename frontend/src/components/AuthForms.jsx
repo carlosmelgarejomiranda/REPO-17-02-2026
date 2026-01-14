@@ -395,12 +395,13 @@ export const AuthCallback = ({ onAuthComplete }) => {
   const [error, setError] = useState(null);
   const [status, setStatus] = useState('connecting');
   const [attempts, setAttempts] = useState(0);
+  const [debugInfo, setDebugInfo] = useState('');
   const hasProcessed = React.useRef(false);
   const shouldStop = React.useRef(false);
+  
   const API_URL = process.env.REACT_APP_BACKEND_URL || '';
-
-  const MAX_ATTEMPTS = 5; // Maximum retry attempts
-  const RETRY_DELAY = 2000; // 2 seconds between retries
+  const MAX_ATTEMPTS = 5;
+  const RETRY_DELAY = 2000;
 
   const messages = [
     'Conectando...',
@@ -410,125 +411,124 @@ export const AuthCallback = ({ onAuthComplete }) => {
     'Último intento...'
   ];
 
-  const processAuth = async (retryCount = 0) => {
-    // Check if we should stop
-    if (shouldStop.current || retryCount >= MAX_ATTEMPTS) {
-      setError('No se pudo conectar. Por favor intenta de nuevo.');
-      setStatus('error');
-      return;
-    }
+  React.useEffect(() => {
+    if (hasProcessed.current) return;
+    hasProcessed.current = true;
 
-    try {
-      setAttempts(retryCount + 1);
-      
-      // Get session_id from URL fragment OR query params (mobile compatibility)
-      const hash = window.location.hash;
-      const search = window.location.search;
-      
-      let sessionId = null;
-      
-      // Try fragment first (#session_id=xxx)
-      if (hash && hash.length > 1) {
-        sessionId = new URLSearchParams(hash.substring(1)).get('session_id');
-      }
-      
-      // If not in fragment, try query params (?session_id=xxx)
-      if (!sessionId && search) {
-        sessionId = new URLSearchParams(search).get('session_id');
-      }
-      
-      // Log for debugging
-      console.log('Auth callback - hash:', hash, 'search:', search, 'sessionId:', sessionId ? 'found' : 'not found');
-
-      if (!sessionId) {
-        console.error('No session_id found in URL. Full URL:', window.location.href);
-        setError('No se encontró la sesión. Por favor intenta de nuevo.');
+    const processAuth = async (retryCount = 0) => {
+      if (shouldStop.current || retryCount >= MAX_ATTEMPTS) {
+        setError('No se pudo conectar después de varios intentos.');
         setStatus('error');
         return;
       }
 
-      console.log('Calling google callback API...');
-      
-      // Exchange session_id for user data
-      const response = await fetch(`${API_URL}/api/auth/google/callback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ session_id: sessionId })
-      });
-
-      console.log('Google callback response status:', response.status);
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || 'auth_failed');
-      }
-
-      // Success!
-      shouldStop.current = true;
-
-      // Store token
-      if (data.token) {
-        localStorage.setItem('auth_token', data.token);
-      }
-
-      // Clear URL fragment and redirect
-      window.history.replaceState(null, '', window.location.pathname);
-      
-      if (onAuthComplete) {
-        onAuthComplete(data);
-      }
-    } catch (err) {
-      console.error('Auth error:', err);
-      
-      // Check if we should stop
-      if (shouldStop.current) return;
-      
-      // Check if it's a network error and we haven't exceeded max attempts
-      const isNetworkError = err.message === 'Load failed' || 
-                            err.message === 'Failed to fetch' ||
-                            err.name === 'TypeError';
-      
-      if (isNetworkError && retryCount < MAX_ATTEMPTS - 1) {
-        setStatus('retrying');
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-        if (!shouldStop.current) {
-          return processAuth(retryCount + 1);
+      try {
+        setAttempts(retryCount + 1);
+        
+        // Get session_id from URL
+        const hash = window.location.hash || '';
+        const search = window.location.search || '';
+        const fullUrl = window.location.href;
+        
+        let sessionId = null;
+        
+        // Try fragment first
+        if (hash.includes('session_id=')) {
+          sessionId = new URLSearchParams(hash.substring(1)).get('session_id');
         }
-      } else {
-        // Max attempts reached or non-network error
-        setError(
-          err.message === 'auth_failed' 
-            ? 'Error de autenticación. Por favor intenta de nuevo.'
-            : 'Error de conexión. Por favor intenta de nuevo.'
-        );
-        setStatus('error');
-      }
-    }
-  };
+        
+        // Try query params
+        if (!sessionId && search.includes('session_id=')) {
+          sessionId = new URLSearchParams(search).get('session_id');
+        }
+        
+        // Debug info
+        const debug = `URL: ${fullUrl.substring(0, 100)}... | Hash: ${hash.substring(0, 50)} | Session: ${sessionId ? 'found' : 'NOT FOUND'}`;
+        setDebugInfo(debug);
+        console.log('AuthCallback Debug:', debug);
 
-  React.useEffect(() => {
-    if (hasProcessed.current) return;
-    hasProcessed.current = true;
+        if (!sessionId) {
+          setError('No se encontró la sesión de Google. Intentá iniciar sesión de nuevo.');
+          setStatus('error');
+          return;
+        }
+
+        // Call backend
+        const callUrl = `${API_URL}/api/auth/google/callback`;
+        console.log('Calling:', callUrl);
+        
+        const response = await fetch(callUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ session_id: sessionId })
+        });
+
+        console.log('Response status:', response.status);
+        const data = await response.json();
+        console.log('Response data:', data);
+
+        if (!response.ok) {
+          throw new Error(data.detail || 'Error de autenticación');
+        }
+
+        // Success!
+        shouldStop.current = true;
+        
+        if (data.token) {
+          localStorage.setItem('auth_token', data.token);
+        }
+
+        // Clear URL and complete
+        window.history.replaceState(null, '', window.location.pathname);
+        
+        if (onAuthComplete) {
+          onAuthComplete(data);
+        }
+      } catch (err) {
+        console.error('Auth error:', err.message, err);
+        
+        if (shouldStop.current) return;
+        
+        const isNetworkError = err.message === 'Load failed' || 
+                              err.message === 'Failed to fetch' ||
+                              err.name === 'TypeError';
+        
+        if (isNetworkError && retryCount < MAX_ATTEMPTS - 1) {
+          setStatus('retrying');
+          setDebugInfo(prev => prev + ` | Retry ${retryCount + 1}: ${err.message}`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+          if (!shouldStop.current) {
+            return processAuth(retryCount + 1);
+          }
+        } else {
+          setError(`Error: ${err.message}`);
+          setStatus('error');
+        }
+      }
+    };
+
     processAuth();
     
     return () => {
       shouldStop.current = true;
     };
-  }, [API_URL, onAuthComplete]);
+  }, []); // Empty deps - run once only
 
   const handleRetry = () => {
     setError(null);
     setStatus('connecting');
     setAttempts(0);
+    setDebugInfo('');
     shouldStop.current = false;
     hasProcessed.current = false;
-    processAuth();
+    window.location.reload(); // Full reload to retry
   };
 
   const handleCancel = () => {
     shouldStop.current = true;
+    // Clear hash and go home
+    window.history.replaceState(null, '', '/');
     window.location.href = '/';
   };
 
@@ -536,15 +536,19 @@ export const AuthCallback = ({ onAuthComplete }) => {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
         <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968' }}>
-          <CardContent className="p-8 text-center">
+          <CardContent className="p-8 text-center max-w-md">
             <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
             <p style={{ color: '#f5ede4', marginBottom: '8px', fontSize: '16px' }}>{error}</p>
-            <p style={{ color: '#666', marginBottom: '20px', fontSize: '14px' }}>
-              Intentos realizados: {attempts}
+            <p style={{ color: '#666', marginBottom: '16px', fontSize: '14px' }}>
+              Intentos: {attempts}
+            </p>
+            {/* Debug info for troubleshooting */}
+            <p style={{ color: '#444', marginBottom: '20px', fontSize: '10px', wordBreak: 'break-all' }}>
+              {debugInfo}
             </p>
             <div className="flex gap-3 justify-center">
               <Button
@@ -570,25 +574,28 @@ export const AuthCallback = ({ onAuthComplete }) => {
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
       <div className="text-center">
-        {/* Animated spinner */}
         <div className="relative w-16 h-16 mx-auto mb-6">
           <div className="absolute inset-0 rounded-full border-2 border-[#d4a968]/20"></div>
           <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-[#d4a968] animate-spin"></div>
         </div>
         
-        {/* Dynamic message */}
         <p style={{ color: '#f5ede4', fontSize: '18px', marginBottom: '8px' }}>
-          {messages[Math.min(attempts, messages.length - 1)]}
+          {messages[Math.min(attempts - 1, messages.length - 1)] || 'Conectando...'}
         </p>
         
-        {/* Attempt counter when retrying */}
         {status === 'retrying' && attempts > 1 && (
-          <p style={{ color: '#666', fontSize: '12px' }}>
+          <p style={{ color: '#666', fontSize: '12px', marginBottom: '8px' }}>
             Intento {attempts} de {MAX_ATTEMPTS}
           </p>
         )}
         
-        {/* Cancel option */}
+        {/* Show debug info after first attempt */}
+        {attempts > 0 && debugInfo && (
+          <p style={{ color: '#333', fontSize: '9px', marginBottom: '12px', maxWidth: '300px', margin: '0 auto', wordBreak: 'break-all' }}>
+            {debugInfo}
+          </p>
+        )}
+        
         <button
           onClick={handleCancel}
           className="mt-6 text-sm underline"
