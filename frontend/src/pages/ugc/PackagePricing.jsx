@@ -96,10 +96,13 @@ const PackagePricing = () => {
         body.enterprise_quote = enterpriseForm;
       }
 
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/packages/purchase`, {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/api/ugc/packages/purchase`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify(body)
       });
 
