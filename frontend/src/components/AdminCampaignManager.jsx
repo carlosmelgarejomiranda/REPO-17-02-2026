@@ -70,43 +70,42 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingCampaign, setEditingCampaign] = useState(null); // For edit mode
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [showApplications, setShowApplications] = useState(false);
   const [applications, setApplications] = useState([]);
   const [loadingApplications, setLoadingApplications] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
 
-  // Form state
-  const [formData, setFormData] = useState({
+  // Initial form state
+  const initialFormState = {
     brand_id: '',
-    brand_name: '', // The specific brand/product name for the campaign title
+    brand_name: '',
     name: '',
     description: '',
     category: 'fashion',
     city: 'Asunción',
-    // Contract
     monthly_deliverables: 4,
     contract_duration_months: 3,
     contract_start_date: new Date().toISOString().split('T')[0],
-    // Requirements
     gender: 'all',
     min_age: 18,
     min_followers: 0,
     country: 'Paraguay',
     residence: 'asuncion_gran',
     residence_other: '',
-    // Canje
     canje_type: 'product',
     canje_description: '',
     canje_value: 0,
-    // Timeline
     applications_deadline: '',
     publish_start: '',
     publish_end: '',
-    // Image
     cover_image_url: '',
     admin_notes: ''
-  });
+  };
+
+  // Form state
+  const [formData, setFormData] = useState(initialFormState);
 
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
