@@ -80,6 +80,9 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 ### P3 - Low Priority / Backlog
 - [ ] **Progressive Creator Onboarding** - Unificar con login modal
 - [ ] **Studio Guest Checkout** - Checkout sin cuenta
+- [ ] **Cloudinary Integration** - Almacenamiento de imágenes externo para ecommerce (4000+ fotos). Actualmente las imágenes se guardan en `/app/backend/uploads/` en el servidor local
+- [ ] **Creator Dashboard Redesign** - Mejorar UI/UX del panel de creadores
+- [ ] **Creator Reports** - Métricas y reportes para creadores
 
 ### Blocked
 - [ ] **Twilio WhatsApp Production** - Requiere aprobación Meta
