@@ -1040,23 +1040,38 @@ Ejemplo de formato:
             {/* Modal Footer */}
             <div className="flex items-center justify-end gap-3 p-6 border-t border-white/10">
               <button
-                onClick={() => setShowCreateForm(false)}
-                className="px-6 py-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors"
+                onClick={() => { setShowCreateForm(false); setEditingCampaign(null); setFormData(initialFormState); }}
+                className="px-6 py-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors text-white"
               >
                 Cancelar
               </button>
-              <button
-                onClick={handleCreateCampaign}
-                disabled={actionLoading === 'create'}
-                className="px-6 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
-              >
-                {actionLoading === 'create' ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Plus className="w-5 h-5" />
-                )}
-                Crear Campaña
-              </button>
+              {editingCampaign ? (
+                <button
+                  onClick={handleSaveCampaign}
+                  disabled={actionLoading === 'save'}
+                  className="px-6 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
+                >
+                  {actionLoading === 'save' ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <CheckCircle className="w-5 h-5" />
+                  )}
+                  Guardar Cambios
+                </button>
+              ) : (
+                <button
+                  onClick={handleCreateCampaign}
+                  disabled={actionLoading === 'create'}
+                  className="px-6 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] transition-colors font-medium disabled:opacity-50 flex items-center gap-2"
+                >
+                  {actionLoading === 'create' ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <Plus className="w-5 h-5" />
+                  )}
+                  Crear Campaña
+                </button>
+              )}
             </div>
           </div>
         </div>
