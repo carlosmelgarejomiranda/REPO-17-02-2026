@@ -179,7 +179,14 @@ const CampaignDetail = () => {
     );
   }
 
-  if (!campaign) return null;
+  if (!campaign) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4 p-4">
+        <Loader2 className="w-8 h-8 animate-spin text-[#d4a968]" />
+        <p className="text-gray-400">Cargando campaña...</p>
+      </div>
+    );
+  }
 
   const canje = campaign.canje || {};
   const requirements = campaign.requirements || {};
