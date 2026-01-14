@@ -551,7 +551,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   rows={3}
                   placeholder="Descripción de la campaña para los creadores..."
-                  className={`w-full px-4 py-3 bg-white/5 border rounded-lg focus:border-[#d4a968] focus:outline-none resize-none ${errors.description ? 'border-red-500' : 'border-white/10'}`}
+                  className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none resize-none ${errors.description ? 'border-red-500' : 'border-white/10'}`}
                 />
               </div>
 
@@ -588,7 +588,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
 
               {/* Contract Section */}
               <div className="border-t border-white/10 pt-6">
-                <h4 className="text-lg font-medium mb-4 flex items-center gap-2">
+                <h4 className="text-lg font-medium mb-4 flex items-center gap-2 text-white">
                   <Calendar className="w-5 h-5 text-[#d4a968]" />
                   Contrato
                 </h4>
@@ -600,7 +600,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       min="1"
                       value={formData.monthly_deliverables}
                       onChange={(e) => setFormData(prev => ({ ...prev, monthly_deliverables: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -610,7 +610,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
                       min="1"
                       value={formData.contract_duration_months}
                       onChange={(e) => setFormData(prev => ({ ...prev, contract_duration_months: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:border-[#d4a968] focus:outline-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
                     />
                   </div>
                   <div>
