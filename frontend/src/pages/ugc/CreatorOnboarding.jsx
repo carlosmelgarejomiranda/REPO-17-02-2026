@@ -98,13 +98,12 @@ const CreatorOnboarding = () => {
 
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/creators/onboarding`, {
+      const response = await fetch(`${API_URL}/api/ugc/creators/onboarding`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         },
-        credentials: 'include',
         body: JSON.stringify(formData)
       });
 
