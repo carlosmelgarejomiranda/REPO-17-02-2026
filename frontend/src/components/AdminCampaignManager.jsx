@@ -244,11 +244,134 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
         const data = await res.json();
         alert(data.message || 'Campaña creada exitosamente');
         setShowCreateForm(false);
+        setEditingCampaign(null);
+        setFormData(initialFormState);
         fetchData();
         if (onSuccess) onSuccess();
       } else {
         const error = await res.json();
         alert(error.detail || 'Error al crear campaña');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Open edit mode for a campaign
+  const handleEditCampaign = (campaign) => {
+    const timeline = campaign.timeline || {};
+    const requirements = campaign.requirements || {};
+    const canje = campaign.canje || {};
+    const contract = campaign.contract || {};
+    
+    // Determine residence value
+    let residenceValue = 'asuncion_gran';
+    let residenceOther = '';
+    if (requirements.residence && !requirements.residence.includes('Asunción y Gran')) {
+      residenceValue = 'other';
+      residenceOther = requirements.residence;
+    }
+    
+    setFormData({
+      brand_id: campaign.brand_id || '',
+      brand_name: campaign.assets?.brand_name || campaign.name || '',
+      name: campaign.name || '',
+      description: campaign.description || '',
+      category: campaign.category || 'fashion',
+      city: campaign.city || 'Asunción',
+      monthly_deliverables: contract.monthly_deliverables || 4,
+      contract_duration_months: contract.duration_months || 3,
+      contract_start_date: contract.start_date ? new Date(contract.start_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+      gender: requirements.gender || 'all',
+      min_age: requirements.min_age || 18,
+      min_followers: requirements.min_followers || 0,
+      country: requirements.country || 'Paraguay',
+      residence: residenceValue,
+      residence_other: residenceOther,
+      canje_type: canje.type || 'product',
+      canje_description: canje.description || '',
+      canje_value: canje.value || 0,
+      applications_deadline: timeline.applications_deadline ? new Date(timeline.applications_deadline).toISOString().split('T')[0] : '',
+      publish_start: timeline.publish_start ? new Date(timeline.publish_start).toISOString().split('T')[0] : '',
+      publish_end: timeline.publish_end ? new Date(timeline.publish_end).toISOString().split('T')[0] : '',
+      cover_image_url: campaign.assets?.cover_image || '',
+      admin_notes: campaign.admin_notes || ''
+    });
+    
+    setEditingCampaign(campaign);
+    setShowCreateForm(true);
+  };
+
+  // Save edited campaign
+  const handleSaveCampaign = async () => {
+    if (!validateForm()) return;
+    if (!editingCampaign) return;
+
+    setActionLoading('save');
+    const token = localStorage.getItem('auth_token');
+
+    const campaignName = formData.name.trim() || formData.brand_name;
+
+    const payload = {
+      name: campaignName,
+      description: formData.description,
+      category: formData.category,
+      city: formData.residence === 'asuncion_gran' ? 'Asunción' : formData.residence_other,
+      requirements: {
+        min_followers: parseInt(formData.min_followers) || null,
+        min_age: parseInt(formData.min_age),
+        gender: formData.gender,
+        country: formData.country,
+        residence: formData.residence === 'asuncion_gran' ? 'Asunción y Gran Asunción' : formData.residence_other,
+        platforms: ['instagram', 'tiktok'],
+        mandatory_tag: null,
+        mandatory_mention: null,
+        additional_rules: ['Perfil público de Instagram y/o TikTok']
+      },
+      canje: {
+        type: formData.canje_type,
+        description: formData.canje_description,
+        value: parseInt(formData.canje_value) || 0,
+        requires_shipping: formData.canje_type === 'product',
+        requires_scheduling: formData.canje_type === 'service'
+      },
+      timeline: {
+        applications_deadline: new Date(formData.applications_deadline).toISOString(),
+        publish_start: new Date(formData.publish_start).toISOString(),
+        publish_end: new Date(formData.publish_end).toISOString(),
+        delivery_sla_hours: 48
+      },
+      assets: {
+        cover_image: formData.cover_image_url,
+        brand_name: formData.brand_name
+      },
+      admin_notes: formData.admin_notes
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/api/ugc/admin/campaigns/${editingCampaign.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        alert(data.message || 'Campaña actualizada exitosamente');
+        setShowCreateForm(false);
+        setEditingCampaign(null);
+        setFormData(initialFormState);
+        fetchData();
+        if (onSuccess) onSuccess();
+      } else {
+        const error = await res.json();
+        alert(error.detail || 'Error al actualizar campaña');
       }
     } catch (err) {
       console.error(err);
