@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Instagram, Music2, Check, Loader2, LogIn } from 'lucide-react';
+import { getApiUrl } from '../../utils/api';
+
+const API_URL = getApiUrl();
 
 const CATEGORIES = [
   'Gastronomía', 'Belleza', 'Moda', 'Lifestyle', 'Viajes',
@@ -20,8 +23,6 @@ const CreatorOnboarding = () => {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL || '';
-
   // Check authentication directly
   useEffect(() => {
     const verifyAuth = async () => {
@@ -31,6 +32,7 @@ const CreatorOnboarding = () => {
       try {
         const token = localStorage.getItem('auth_token');
         console.log('CreatorOnboarding - Token found:', token ? 'YES' : 'NO');
+        console.log('CreatorOnboarding - API_URL:', API_URL);
         
         if (!token) {
           console.log('CreatorOnboarding - No token, showing login prompt');
@@ -40,7 +42,6 @@ const CreatorOnboarding = () => {
         }
         
         const res = await fetch(`${API_URL}/api/auth/me`, {
-          credentials: 'include',
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -64,7 +65,7 @@ const CreatorOnboarding = () => {
     };
     
     verifyAuth();
-  }, [API_URL]);
+  }, []);
 
   // Update form data when user loads
   useEffect(() => {
