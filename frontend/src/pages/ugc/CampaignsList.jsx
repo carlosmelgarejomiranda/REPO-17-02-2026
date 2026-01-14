@@ -6,6 +6,8 @@ import {
   Filter, X, Loader2 
 } from 'lucide-react';
 
+const API_URL = getApiUrl();
+
 const CampaignsList = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,8 +33,7 @@ const CampaignsList = () => {
       if (filters.platform) params.append('platform', filters.platform);
 
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/ugc/campaigns/available?${params}`,
-        { credentials: 'include' }
+        `${API_URL}/api/ugc/campaigns/available?${params}`
       );
       const data = await res.json();
       setCampaigns(data.campaigns || []);
@@ -46,8 +47,8 @@ const CampaignsList = () => {
   const fetchFilters = async () => {
     try {
       const [citiesRes, catsRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/campaigns/filters/cities`),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/ugc/campaigns/filters/categories`)
+        fetch(`${API_URL}/api/ugc/campaigns/filters/cities`),
+        fetch(`${API_URL}/api/ugc/campaigns/filters/categories`)
       ]);
       const citiesData = await citiesRes.json();
       const catsData = await catsRes.json();
