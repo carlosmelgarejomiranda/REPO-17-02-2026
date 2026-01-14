@@ -5,8 +5,9 @@ import {
   Truck, Save, Loader2, CheckCircle, AlertCircle, Plus,
   Trash2, Edit2, Package, Calendar, Building2
 } from 'lucide-react';
+import { getApiUrl } from '../utils/api';
 
-const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = getApiUrl();
 
 const MyProfile = ({ user, onLogout }) => {
   const navigate = useNavigate();
