@@ -1429,6 +1429,71 @@ Ejemplo de formato:
           </div>
         </div>
       )}
+
+      {/* Transfer Campaign Modal */}
+      {showTransferModal && campaignToTransfer && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-4">
+          <div className="bg-[#1a1a1a] rounded-xl w-full max-w-md border border-white/10">
+            <div className="p-6 border-b border-white/10">
+              <h3 className="text-lg font-medium flex items-center gap-2">
+                <ArrowRightLeft className="w-5 h-5 text-yellow-400" />
+                Transferir Campaña
+              </h3>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="p-4 bg-white/5 rounded-lg">
+                <p className="text-sm text-gray-400 mb-1">Campaña</p>
+                <p className="text-white font-medium">{campaignToTransfer.name}</p>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">
+                  Email del nuevo propietario (marca)
+                </label>
+                <input
+                  type="email"
+                  value={transferEmail}
+                  onChange={(e) => setTransferEmail(e.target.value)}
+                  className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-[#d4a968] focus:outline-none"
+                  placeholder="email@ejemplo.com"
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  El usuario debe tener un perfil de marca registrado
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-white/10">
+              <button
+                onClick={() => {
+                  setShowTransferModal(false);
+                  setTransferEmail('');
+                  setCampaignToTransfer(null);
+                }}
+                className="px-4 py-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleTransferCampaign}
+                disabled={!transferEmail || transferring}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                  transferEmail && !transferring
+                    ? 'bg-yellow-500 text-black hover:bg-yellow-400'
+                    : 'bg-white/10 text-white/50 cursor-not-allowed'
+                } transition-colors`}
+              >
+                {transferring ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Transfiriendo...</>
+                ) : (
+                  <>Transferir</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
