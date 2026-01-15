@@ -210,7 +210,7 @@ const CreatorOnboarding = () => {
             <ArrowLeft className="w-5 h-5" />
             Volver
           </button>
-          <span className="text-[#d4a968]">Paso {step} de 3</span>
+          <span className="text-[#d4a968]">Paso {step} de 4</span>
         </div>
       </div>
 
@@ -219,7 +219,7 @@ const CreatorOnboarding = () => {
         <div className="h-1 bg-white/10 rounded-full">
           <div 
             className="h-1 bg-[#d4a968] rounded-full transition-all"
-            style={{ width: `${(step / 3) * 100}%` }}
+            style={{ width: `${(step / 4) * 100}%` }}
           />
         </div>
       </div>
