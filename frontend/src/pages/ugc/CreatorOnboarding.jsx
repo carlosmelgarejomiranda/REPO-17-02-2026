@@ -446,7 +446,7 @@ const CreatorOnboarding = () => {
             Anterior
           </button>
 
-          {step < 3 ? (
+          {step < 4 ? (
             <button
               onClick={() => setStep(s => s + 1)}
               disabled={!canProceed()}
