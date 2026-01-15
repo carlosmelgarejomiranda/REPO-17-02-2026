@@ -252,9 +252,19 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
                 </div>
                 
                 {isVerified ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-green-400 text-sm">Verificado</span>
-                    <Check className="w-5 h-5 text-green-400" />
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePlatformSelect(platform);
+                      }}
+                      className="text-xs text-[#d4a968] hover:underline"
+                    >
+                      Actualizar
+                    </button>
+                    <div className="flex items-center gap-1 text-green-400 text-sm">
+                      <Check className="w-4 h-4" />
+                    </div>
                   </div>
                 ) : (
                   <div className="text-[#d4a968]">
