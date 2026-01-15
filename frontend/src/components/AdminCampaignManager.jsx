@@ -534,6 +534,39 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
     }
   };
 
+  const handleTransferCampaign = async () => {
+    if (!transferEmail || !campaignToTransfer) return;
+    
+    setTransferring(true);
+    const token = localStorage.getItem('auth_token');
+    
+    try {
+      const res = await fetch(
+        `${API_URL}/api/ugc/admin/campaigns/${campaignToTransfer.id}/transfer?new_brand_email=${encodeURIComponent(transferEmail)}`,
+        {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` }
+        }
+      );
+      
+      if (res.ok) {
+        const data = await res.json();
+        alert(`Campaña transferida exitosamente a ${data.new_brand_name || transferEmail}`);
+        setShowTransferModal(false);
+        setTransferEmail('');
+        setCampaignToTransfer(null);
+        fetchData();
+      } else {
+        const error = await res.json();
+        alert(error.detail || 'Error al transferir campaña');
+      }
+    } catch (err) {
+      alert('Error de conexión');
+    } finally {
+      setTransferring(false);
+    }
+  };
+
   const getApplicationStatusBadge = (status) => {
     const badges = {
       applied: { color: 'bg-blue-500/20 text-blue-400', label: 'Pendiente', icon: Clock },
