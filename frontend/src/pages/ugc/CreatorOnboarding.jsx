@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Instagram, Music2, Check, Loader2, LogIn } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Instagram, Music2, Check, Loader2, LogIn, Shield, Camera, Sparkles } from 'lucide-react';
 import { getApiUrl } from '../../utils/api';
+import SocialVerification from '../../components/SocialVerification';
 
 const API_URL = getApiUrl();
 
