@@ -144,6 +144,25 @@ const CreatorsPage = ({ user, onLoginClick, onLogout, language, setLanguage, t }
             <div className="flex justify-center py-12">
               <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
+          ) : fetchError ? (
+            <div className="text-center py-12 px-6 bg-[#121212] rounded-xl border border-white/5">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-8 h-8 text-red-400" />
+              </div>
+              <h3 className="text-white font-medium mb-2">Error al cargar campañas</h3>
+              <p className="text-white/50 text-sm max-w-md mx-auto mb-6">
+                Hubo un problema al cargar las campañas. Por favor intenta de nuevo.
+              </p>
+              <button
+                onClick={() => {
+                  setLoadingCampaigns(true);
+                  fetchCampaigns();
+                }}
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-5 py-2.5 text-xs tracking-[0.1em] uppercase font-semibold hover:opacity-90 transition-all rounded-lg"
+              >
+                Reintentar
+              </button>
+            </div>
           ) : campaigns.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {campaigns.slice(0, 6).map((campaign) => (
