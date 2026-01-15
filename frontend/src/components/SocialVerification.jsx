@@ -239,10 +239,17 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
                   <div className="text-left">
                     <p className="text-white font-medium">{platform.name}</p>
                     {isVerified ? (
-                      <div className="flex items-center gap-2 text-green-400 text-sm">
-                        <BadgeCheck className="w-4 h-4" />
-                        <span>@{isVerified.username}</span>
-                        <span className="text-green-300">• {formatNumber(isVerified.follower_count)} seguidores</span>
+                      <div>
+                        <div className="flex items-center gap-2 text-green-400 text-sm">
+                          <BadgeCheck className="w-4 h-4" />
+                          <span>@{isVerified.username}</span>
+                          <span className="text-green-300">• {formatNumber(isVerified.follower_count)} seguidores</span>
+                        </div>
+                        {isVerified.verified_at && (
+                          <p className="text-gray-500 text-xs mt-1">
+                            Verificado: {new Date(isVerified.verified_at).toLocaleDateString()}
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <p className="text-gray-500 text-sm">Click para verificar</p>
@@ -251,19 +258,16 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
                 </div>
                 
                 {isVerified ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-end gap-1">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handlePlatformSelect(platform);
                       }}
-                      className="text-xs text-[#d4a968] hover:underline"
+                      className="px-3 py-1 text-xs bg-[#d4a968]/20 text-[#d4a968] rounded-lg hover:bg-[#d4a968]/30 transition-colors"
                     >
                       Actualizar
                     </button>
-                    <div className="flex items-center gap-1 text-green-400 text-sm">
-                      <Check className="w-4 h-4" />
-                    </div>
                   </div>
                 ) : (
                   <div className="text-[#d4a968]">
