@@ -84,6 +84,10 @@ const CreatorOnboarding = () => {
     tiktok_username: ''
   });
 
+  // State for verification step
+  const [verificationData, setVerificationData] = useState({});
+  const [skipVerification, setSkipVerification] = useState(false);
+
   const handleCategoryToggle = (cat) => {
     setFormData(prev => ({
       ...prev,
