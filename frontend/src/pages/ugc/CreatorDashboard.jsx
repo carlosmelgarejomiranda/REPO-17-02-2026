@@ -146,6 +146,10 @@ const CreatorDashboard = () => {
             <Link to="/ugc/campaigns" className="text-gray-400 hover:text-white transition-colors">
               Campañas
             </Link>
+            <Link to="/ugc/creator/applications" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors" data-testid="my-applications-link">
+              <FileText className="w-4 h-4" />
+              Aplicaciones
+            </Link>
             <Link to="/ugc/creator/profile" className="flex items-center gap-2 text-gray-400 hover:text-white">
               <User className="w-5 h-5" />
               Mi Perfil
