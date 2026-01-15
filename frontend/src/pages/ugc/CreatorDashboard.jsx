@@ -264,12 +264,18 @@ const CreatorDashboard = () => {
                           <Instagram className="w-4 h-4 text-white" />
                         </div>
                       )}
-                      <span className="font-medium">@{sn.username}</span>
+                      <span className="font-medium flex items-center gap-2">
+                        @{sn.username}
+                        {sn.verified_by_ai && (
+                          <BadgeCheck className="w-4 h-4 text-green-400" title="Verificado con IA" />
+                        )}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-400">Seguidores:</span>
-                      <span className="text-white font-medium">
+                      <span className={`font-medium ${sn.verified_by_ai ? 'text-green-400' : 'text-white'}`}>
                         {sn.followers ? sn.followers.toLocaleString() : 'Sin actualizar'}
+                        {sn.verified_by_ai && <span className="text-xs text-gray-500 ml-1">✓</span>}
                       </span>
                     </div>
                     {!sn.followers && (
@@ -277,7 +283,7 @@ const CreatorDashboard = () => {
                         to="/ugc/creator/profile"
                         className="mt-3 block text-xs text-[#d4a968] hover:underline"
                       >
-                        Actualizar seguidores →
+                        Verificar con screenshot →
                       </Link>
                     )}
                   </div>
