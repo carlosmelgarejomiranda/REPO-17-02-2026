@@ -32,8 +32,8 @@ const CreatorDashboard = () => {
       if (profileRes.ok) {
         const profileData = await profileRes.json();
         
-        // Build social_networks from social_accounts if social_networks is empty
-        let socialNetworks = profileData.social_networks || [];
+        // Build social_networks from social_media (legacy) and social_accounts (verified)
+        let socialNetworks = profileData.social_networks || profileData.social_media || [];
         const socialAccounts = profileData.social_accounts || {};
         
         // If we have verified social accounts, use them
