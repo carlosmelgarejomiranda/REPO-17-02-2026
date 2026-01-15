@@ -129,22 +129,41 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
     try {
       const params = new URLSearchParams({
         platform: selectedPlatform.id,
-        username: extractedData.username,
-        follower_count: extractedData.follower_count,
-        ...(extractedData.following_count && { following_count: extractedData.following_count }),
-        ...(extractedData.posts_count && { posts_count: extractedData.posts_count }),
-        ...(extractedData.likes_count && { likes_count: extractedData.likes_count }),
-        is_verified: extractedData.is_verified || false
+        username: extractedData.username || '',
+        follower_count: String(extractedData.follower_count || 0)
       });
+      
+      // Add optional params only if they have values
+      if (extractedData.following_count) {
+        params.append('following_count', String(extractedData.following_count));
+      }
+      if (extractedData.posts_count) {
+        params.append('posts_count', String(extractedData.posts_count));
+      }
+      if (extractedData.likes_count) {
+        params.append('likes_count', String(extractedData.likes_count));
+      }
+      params.append('is_verified', String(extractedData.is_verified || false));
 
-      const response = await fetch(`${API_URL}/api/social-verification/confirm?${params}`, {
+      const response = await fetch(`${API_URL}/api/social-verification/confirm?${params.toString()}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         }
       });
 
-      const data = await response.json();
+      // Clone response before reading to avoid "body stream already read" error
+      const responseClone = response.clone();
+      
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // If JSON parsing fails, try to get text
+        const text = await responseClone.text();
+        console.error('Response text:', text);
+        throw new Error('Error al procesar la respuesta del servidor');
+      }
 
       if (!response.ok) {
         throw new Error(data.detail || 'Error al guardar verificación');
@@ -162,6 +181,7 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
       onVerificationComplete?.(selectedPlatform.id, data.data);
 
     } catch (err) {
+      console.error('Confirm error:', err);
       setError(err.message || 'Error al guardar');
     } finally {
       setLoading(false);
