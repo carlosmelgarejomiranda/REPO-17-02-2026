@@ -349,8 +349,81 @@ const CreatorOnboarding = () => {
             </div>
 
             <p className="text-sm text-gray-500">
-              Podrás actualizar tus seguidores más tarde subiendo screenshots de tu perfil.
+              En el siguiente paso podrás verificar tus seguidores con un screenshot.
             </p>
+          </div>
+        )}
+
+        {/* Step 4: Verify Social Networks */}
+        {step === 4 && (
+          <div className="space-y-8">
+            <div>
+              <h1 className="text-3xl font-light mb-2">Verificá tus <span className="text-[#d4a968] italic">seguidores</span></h1>
+              <p className="text-gray-400">Aumentá tus chances de ser seleccionado</p>
+            </div>
+
+            {/* Info banner */}
+            <div className="p-5 bg-gradient-to-br from-[#d4a968]/20 to-purple-500/10 border border-[#d4a968]/30 rounded-xl">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-[#d4a968]/20 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-6 h-6 text-[#d4a968]" />
+                </div>
+                <div>
+                  <h3 className="text-white font-medium mb-1">¿Por qué verificar?</h3>
+                  <p className="text-gray-300 text-sm">
+                    Los creadores con seguidores verificados tienen <span className="text-[#d4a968] font-medium">3x más chances</span> de ser seleccionados por las marcas. 
+                    La verificación genera confianza y demuestra que tu audiencia es real.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Verification Component */}
+            {!skipVerification ? (
+              <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
+                <SocialVerification 
+                  onVerificationComplete={handleVerificationComplete}
+                  initialData={verificationData}
+                />
+              </div>
+            ) : (
+              <div className="p-6 bg-white/5 border border-white/10 rounded-xl text-center">
+                <div className="w-16 h-16 rounded-full bg-gray-500/20 flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-400 mb-4">Podrás verificar tus redes en cualquier momento desde tu perfil</p>
+                <button
+                  onClick={() => setSkipVerification(false)}
+                  className="text-[#d4a968] hover:underline text-sm"
+                >
+                  Quiero verificar ahora
+                </button>
+              </div>
+            )}
+
+            {/* Show verified accounts */}
+            {Object.keys(verificationData).length > 0 && (
+              <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                <p className="text-green-400 text-sm font-medium mb-2">✓ Cuentas verificadas:</p>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(verificationData).map(([platform, data]) => (
+                    <span key={platform} className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">
+                      {platform}: {data.follower_count?.toLocaleString()} seguidores
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Skip option */}
+            {!skipVerification && Object.keys(verificationData).length === 0 && (
+              <button
+                onClick={() => setSkipVerification(true)}
+                className="w-full text-center text-gray-500 hover:text-gray-300 text-sm py-2 transition-colors"
+              >
+                Hacerlo luego →
+              </button>
+            )}
           </div>
         )}
 
