@@ -223,15 +223,14 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
             const Icon = platform.icon;
             
             return (
-              <button
+              <div
                 key={platform.id}
-                onClick={() => !isVerified && handlePlatformSelect(platform)}
-                disabled={isVerified}
                 className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
                   isVerified 
-                    ? 'bg-green-500/10 border-green-500/30 cursor-default'
-                    : 'bg-white/5 border-white/10 hover:border-[#d4a968]/50 hover:bg-white/10'
+                    ? 'bg-green-500/10 border-green-500/30'
+                    : 'bg-white/5 border-white/10 hover:border-[#d4a968]/50 hover:bg-white/10 cursor-pointer'
                 }`}
+                onClick={() => !isVerified && handlePlatformSelect(platform)}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${platform.color} flex items-center justify-center`}>
