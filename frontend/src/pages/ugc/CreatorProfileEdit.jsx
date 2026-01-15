@@ -144,11 +144,12 @@ const CreatorProfileEdit = () => {
     setError('');
 
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(
         `${API_URL}/api/ugc/creators/me/social?platform=${newSocialPlatform}&username=${newSocialUsername.replace('@', '')}`,
         {
           method: 'POST',
-          credentials: 'include'
+          headers: { 'Authorization': `Bearer ${token}` }
         }
       );
 
@@ -176,11 +177,12 @@ const CreatorProfileEdit = () => {
     setError('');
 
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(
         `${API_URL}/api/ugc/creators/me/social/${platform}/followers?followers=${parseInt(newFollowers)}`,
         {
           method: 'PUT',
-          credentials: 'include'
+          headers: { 'Authorization': `Bearer ${token}` }
         }
       );
 
