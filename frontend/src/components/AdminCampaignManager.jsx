@@ -1207,6 +1207,16 @@ Ejemplo de formato:
                           <ClipboardList className="w-4 h-4" />
                         </button>
                         <button
+                          onClick={() => {
+                            setCampaignToTransfer(campaign);
+                            setShowTransferModal(true);
+                          }}
+                          className="p-2 rounded-lg bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 transition-colors"
+                          title="Transferir propiedad"
+                        >
+                          <ArrowRightLeft className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => handleAddSlots(campaign)}
                           className="p-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
                           title="Agregar cupos"
