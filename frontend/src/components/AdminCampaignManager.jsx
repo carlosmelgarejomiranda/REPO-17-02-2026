@@ -1402,8 +1402,26 @@ Ejemplo de formato:
                                 )}
 
                                 {app.status === 'confirmed' && (
-                                  <span className="text-xs text-green-400 flex items-center gap-1">
-                                    <CheckCircle className="w-3.5 h-3.5" /> Creador confirmado
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs text-green-400 flex items-center gap-1">
+                                      <CheckCircle className="w-3.5 h-3.5" /> Confirmado
+                                    </span>
+                                    <button
+                                      onClick={() => {
+                                        if (window.confirm('¿Estás seguro de cancelar la participación de este creador? Se liberará el cupo.')) {
+                                          handleUpdateApplicationStatus(app.id, 'cancelled');
+                                        }
+                                      }}
+                                      className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs hover:bg-red-500/30 transition-colors"
+                                    >
+                                      Cancelar
+                                    </button>
+                                  </div>
+                                )}
+
+                                {app.status === 'cancelled' && (
+                                  <span className="text-xs text-red-400 flex items-center gap-1">
+                                    <XCircle className="w-3.5 h-3.5" /> Cancelado
                                   </span>
                                 )}
                               </>
