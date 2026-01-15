@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   User, Star, TrendingUp, Award, Briefcase, Clock, CheckCircle,
-  ArrowRight, Instagram, Music2, Camera, BarChart3, Loader2, BadgeCheck
+  ArrowRight, Instagram, Music2, Camera, BarChart3, Loader2, BadgeCheck, FileText
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { getApiUrl } from '../../utils/api';
