@@ -31,10 +31,19 @@ const CreatorDashboard = () => {
 
       if (profileRes.ok) {
         const profileData = await profileRes.json();
-        // Merge social_networks with verified social_accounts data
-        if (profileData.social_networks && profileData.social_accounts) {
-          profileData.social_networks = profileData.social_networks.map(sn => {
-            const verifiedData = profileData.social_accounts[sn.platform];
+        
+        // Build social_networks from social_accounts if social_networks is empty
+        let socialNetworks = profileData.social_networks || [];
+        const socialAccounts = profileData.social_accounts || {};
+        
+        // If we have verified social accounts, use them
+        if (Object.keys(socialAccounts).length > 0) {
+          // Create a map of existing networks by platform
+          const existingPlatforms = new Set(socialNetworks.map(sn => sn.platform));
+          
+          // Update existing networks with verified data
+          socialNetworks = socialNetworks.map(sn => {
+            const verifiedData = socialAccounts[sn.platform];
             if (verifiedData && verifiedData.verified_by_ai) {
               return {
                 ...sn,
@@ -45,7 +54,22 @@ const CreatorDashboard = () => {
             }
             return sn;
           });
+          
+          // Add verified accounts that don't exist in social_networks
+          Object.entries(socialAccounts).forEach(([platform, data]) => {
+            if (!existingPlatforms.has(platform) && data.verified_by_ai) {
+              socialNetworks.push({
+                platform: platform,
+                username: data.username,
+                followers: data.follower_count,
+                verified_by_ai: true,
+                verified_at: data.verified_at
+              });
+            }
+          });
         }
+        
+        profileData.social_networks = socialNetworks;
         setProfile(profileData);
       }
 
