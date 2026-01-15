@@ -740,6 +740,27 @@ Revisá en el panel de admin."""
     return await send_whatsapp_ugc_notification(wa_message, 'ugc')
 
 
+async def notify_application_cancelled(
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str,
+    cancelled_by: str = "creator"
+):
+    """Notify admin when a confirmed application is cancelled - WhatsApp"""
+    by_label = "creador" if cancelled_by == "creator" else "admin"
+    wa_message = f"""❌ *PARTICIPACIÓN CANCELADA*
+
+📸 *Campaña:* {campaign_name}
+🏢 *Marca:* {brand_name}
+👤 *Creator:* {creator_name}
+
+⚠️ Cancelado por: {by_label}
+
+Se liberó un cupo en la campaña."""
+    
+    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
+
+
 async def notify_deliverable_rated_whatsapp(
     creator_phone: str,
     creator_name: str,
