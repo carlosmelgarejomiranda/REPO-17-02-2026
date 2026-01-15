@@ -402,6 +402,92 @@ async def admin_get_campaign_applications(
     }
 
 
+@router.put("/applications/{application_id}/status", response_model=dict)
+async def admin_update_application_status(
+    application_id: str,
+    status: str,
+    reason: Optional[str] = None,
+    request: Request = None
+):
+    """Admin updates application status (shortlist/confirm/reject)"""
+    await require_admin(request)
+    db = await get_db()
+    
+    application = await db.ugc_applications.find_one({"id": application_id})
+    if not application:
+        raise HTTPException(status_code=404, detail="Aplicación no encontrada")
+    
+    campaign = await db.ugc_campaigns.find_one({"id": application["campaign_id"]})
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaña no encontrada")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    update_data = {
+        "status": status,
+        "updated_at": now
+    }
+    
+    if reason:
+        update_data["rejection_reason"] = reason
+    
+    if status == "confirmed":
+        # Check slots
+        slots_filled = campaign.get("slots_filled", 0) or 0
+        total_slots = campaign.get("slots", 0) or 0
+        available = campaign.get("available_slots", total_slots - slots_filled)
+        
+        if available <= 0:
+            raise HTTPException(status_code=400, detail="No hay más cupos disponibles")
+        
+        update_data["confirmed_at"] = now
+        
+        # Increment slots_filled
+        await db.ugc_campaigns.update_one(
+            {"id": campaign["id"]},
+            {"$inc": {"slots_filled": 1}}
+        )
+        
+        # Create deliverable for this creator
+        from models.ugc_models import ContentPlatform, DeliverableStatus
+        
+        creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
+        platform = "instagram"  # Default
+        if creator:
+            social_accounts = creator.get("social_accounts", {})
+            if social_accounts.get("instagram"):
+                platform = "instagram"
+            elif social_accounts.get("tiktok"):
+                platform = "tiktok"
+            elif creator.get("social_networks"):
+                platform = creator["social_networks"][0].get("platform", "instagram")
+        
+        deliverable = {
+            "id": str(uuid.uuid4()),
+            "campaign_id": campaign["id"],
+            "application_id": application_id,
+            "creator_id": application["creator_id"],
+            "brand_id": campaign["brand_id"],
+            "platform": platform,
+            "status": DeliverableStatus.AWAITING_PUBLISH,
+            "created_at": now,
+            "updated_at": now
+        }
+        
+        await db.ugc_deliverables.insert_one(deliverable)
+    
+    await db.ugc_applications.update_one(
+        {"id": application_id},
+        {"$set": update_data}
+    )
+    
+    return {
+        "success": True,
+        "message": f"Aplicación actualizada a {status}",
+        "application_id": application_id
+    }
+
+
 from models.ugc_models import CampaignCreate, CampaignContractRenewal, CampaignContract
 
 @router.post("/campaigns", response_model=dict)
