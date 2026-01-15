@@ -103,9 +103,15 @@ async def get_available_campaigns(
             {"_id": 0, "company_name": 1, "logo_url": 1, "industry": 1}
         )
         campaign["brand"] = brand
-        # Calculate available slots - use available_slots if present, else fallback
-        available = campaign.get("available_slots", campaign.get("slots", 0) - campaign.get("slots_filled", 0))
-        campaign["slots_available"] = max(0, available - campaign.get("slots_filled", 0))
+        
+        # Calculate available slots correctly
+        # Priority: available_slots field > (slots - slots_filled)
+        if "available_slots" in campaign and campaign["available_slots"] is not None:
+            campaign["slots_available"] = max(0, campaign["available_slots"])
+        else:
+            total_slots = campaign.get("slots", 0) or 0
+            filled_slots = campaign.get("slots_filled", 0) or 0
+            campaign["slots_available"] = max(0, total_slots - filled_slots)
         
         # Check if creator has applied
         if creator_id:
