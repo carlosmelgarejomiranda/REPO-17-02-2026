@@ -409,7 +409,7 @@ async def admin_update_application_status(
     reason: Optional[str] = None,
     request: Request = None
 ):
-    """Admin updates application status (shortlist/confirm/reject)"""
+    """Admin updates application status (shortlist/confirm/reject/cancel)"""
     await require_admin(request)
     db = await get_db()
     
@@ -421,6 +421,7 @@ async def admin_update_application_status(
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
+    old_status = application.get("status")
     now = datetime.now(timezone.utc).isoformat()
     
     update_data = {
@@ -429,9 +430,10 @@ async def admin_update_application_status(
     }
     
     if reason:
-        update_data["rejection_reason"] = reason
+        update_data["cancellation_reason"] = reason
     
-    if status == "confirmed":
+    # Handle confirmation
+    if status == "confirmed" and old_status != "confirmed":
         # Check slots
         slots_filled = campaign.get("slots_filled", 0) or 0
         total_slots = campaign.get("slots", 0) or 0
@@ -449,7 +451,7 @@ async def admin_update_application_status(
         )
         
         # Create deliverable for this creator
-        from models.ugc_models import ContentPlatform, DeliverableStatus
+        from models.ugc_models import DeliverableStatus
         
         creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
         platform = "instagram"  # Default
@@ -475,6 +477,23 @@ async def admin_update_application_status(
         }
         
         await db.ugc_deliverables.insert_one(deliverable)
+    
+    # Handle cancellation of confirmed creator
+    if status == "cancelled" and old_status == "confirmed":
+        update_data["cancelled_at"] = now
+        update_data["cancelled_by"] = "admin"
+        
+        # Decrement slots_filled to free up the slot
+        await db.ugc_campaigns.update_one(
+            {"id": campaign["id"]},
+            {"$inc": {"slots_filled": -1}}
+        )
+        
+        # Mark deliverable as cancelled
+        await db.ugc_deliverables.update_many(
+            {"application_id": application_id},
+            {"$set": {"status": "cancelled", "cancelled_at": now}}
+        )
     
     await db.ugc_applications.update_one(
         {"id": application_id},
@@ -511,6 +530,15 @@ async def admin_update_application_status(
                     reason=reason
                 )
                 print(f"[Email] Rejection sent to {creator_email}")
+            elif status == "cancelled" and creator_email:
+                # Send cancellation email
+                await send_application_rejected(
+                    to_email=creator_email,
+                    creator_name=creator_name,
+                    campaign_name=campaign_name,
+                    reason=reason or "Tu participación ha sido cancelada por el administrador."
+                )
+                print(f"[Email] Cancellation sent to {creator_email}")
     except Exception as e:
         print(f"[Email Error] Failed to send notification: {e}")
     
