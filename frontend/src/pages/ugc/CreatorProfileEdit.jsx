@@ -359,6 +359,60 @@ const CreatorProfileEdit = () => {
           </div>
         </div>
 
+        {/* AI Verification Section */}
+        <div className="mb-8 p-6 bg-gradient-to-br from-[#d4a968]/10 to-transparent border border-[#d4a968]/20 rounded-xl">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-medium flex items-center gap-2">
+                <Shield className="w-5 h-5 text-[#d4a968]" />
+                Verificar Seguidores con IA
+              </h2>
+              <p className="text-gray-400 text-sm mt-1">
+                Sube un screenshot de tu perfil y verificamos tus seguidores automáticamente
+              </p>
+            </div>
+            <button
+              onClick={() => setShowAIVerification(!showAIVerification)}
+              className="flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black rounded-lg text-sm font-medium hover:bg-[#c49958] transition-colors"
+            >
+              <Camera className="w-4 h-4" />
+              {showAIVerification ? 'Cerrar' : 'Verificar'}
+            </button>
+          </div>
+
+          {/* Verified accounts badges */}
+          {(verificationStatus.instagram || verificationStatus.tiktok) && (
+            <div className="flex flex-wrap gap-3 mt-4">
+              {verificationStatus.instagram && (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/30 rounded-full">
+                  <BadgeCheck className="w-4 h-4 text-green-400" />
+                  <span className="text-green-400 text-sm">
+                    Instagram verificado: {verificationStatus.instagram.follower_count?.toLocaleString()} seguidores
+                  </span>
+                </div>
+              )}
+              {verificationStatus.tiktok && (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/30 rounded-full">
+                  <BadgeCheck className="w-4 h-4 text-green-400" />
+                  <span className="text-green-400 text-sm">
+                    TikTok verificado: {verificationStatus.tiktok.follower_count?.toLocaleString()} seguidores
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* AI Verification Component */}
+          {showAIVerification && (
+            <div className="mt-6 p-6 bg-black/50 border border-white/10 rounded-xl">
+              <SocialVerification 
+                onVerificationComplete={handleVerificationComplete}
+                initialData={verificationStatus}
+              />
+            </div>
+          )}
+        </div>
+
         {/* Social Networks */}
         <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-xl">
           <div className="flex items-center justify-between mb-4">
@@ -377,7 +431,9 @@ const CreatorProfileEdit = () => {
 
           {profile?.social_networks?.length > 0 ? (
             <div className="space-y-3">
-              {profile.social_networks.map((sn, idx) => (
+              {profile.social_networks.map((sn, idx) => {
+                const isVerified = verificationStatus[sn.platform];
+                return (
                 <div
                   key={idx}
                   className="p-4 bg-black/50 border border-white/10 rounded-xl"
@@ -394,27 +450,35 @@ const CreatorProfileEdit = () => {
                         </div>
                       )}
                       <div>
-                        <p className="font-medium">{sn.username?.startsWith('@') ? sn.username : `@${sn.username}`}</p>
-                        <p className="text-sm text-gray-500 capitalize">{sn.platform}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{sn.username?.startsWith('@') ? sn.username : `@${sn.username}`}</p>
+                          {isVerified && <BadgeCheck className="w-4 h-4 text-green-400" />}
+                        </div>
+                        <p className="text-sm text-gray-500 capitalize">
+                          {sn.platform}
+                          {isVerified && <span className="text-green-400 ml-2">• Verificado</span>}
+                        </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-medium">
-                        {sn.followers ? sn.followers.toLocaleString() : '—'}
+                      <p className={`text-lg font-medium ${isVerified ? 'text-green-400' : ''}`}>
+                        {isVerified 
+                          ? isVerified.follower_count?.toLocaleString()
+                          : (sn.followers ? sn.followers.toLocaleString() : '—')
+                        }
                       </p>
-                      <button
-                        onClick={() => {
-                          setShowUpdateFollowers(sn.platform);
-                          setNewFollowers(sn.followers?.toString() || '');
-                        }}
-                        className="text-xs text-[#d4a968] hover:underline"
-                      >
-                        {sn.followers ? 'Actualizar' : 'Agregar'} seguidores
-                      </button>
+                      {!isVerified && (
+                        <button
+                          onClick={() => setShowAIVerification(true)}
+                          className="text-xs text-[#d4a968] hover:underline"
+                        >
+                          Verificar con screenshot
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           ) : (
             <div className="text-center py-8">
