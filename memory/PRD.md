@@ -18,6 +18,28 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-15
+
+#### ✅ Completed
+- **Application Cancellation Feature (P0)**
+  - Admin can cancel confirmed applications via admin panel
+  - Creator can cancel their own confirmed applications via new CreatorApplications page
+  - Both actions update application status to 'cancelled'
+  - Campaign slots_filled is decremented to free up slots
+  - Deliverables are marked as cancelled
+  - WhatsApp notifications sent to admin
+  - Files modified:
+    - `/app/backend/routes/ugc_applications.py` - Added POST `/{id}/withdraw` endpoint for creators
+    - `/app/backend/routes/ugc_admin.py` - Updated PUT `/admin/applications/{id}/status` for cancellation
+    - `/app/backend/services/ugc_emails.py` - Added `notify_application_cancelled` function
+    - `/app/frontend/src/pages/ugc/CreatorApplications.jsx` - New page for creators to manage applications
+    - `/app/frontend/src/components/AdminCampaignManager.jsx` - Added cancel button for confirmed applications
+    - `/app/frontend/src/pages/ugc/CreatorDashboard.jsx` - Added link to CreatorApplications page
+    - `/app/frontend/src/App.js` - Added route for CreatorApplications
+  - Test report: `/app/test_reports/iteration_4.json` (12/12 tests passed)
+
+---
+
 ### Session: 2026-01-14
 
 #### ✅ Completed
