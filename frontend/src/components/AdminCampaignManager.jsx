@@ -1344,7 +1344,7 @@ Ejemplo de formato:
 
                               {app.motivation && (
                                 <p className="mt-2 text-sm text-gray-300 italic max-w-md">
-                                  "{app.motivation}"
+                                  &ldquo;{app.motivation}&rdquo;
                                 </p>
                               )}
                             </div>
