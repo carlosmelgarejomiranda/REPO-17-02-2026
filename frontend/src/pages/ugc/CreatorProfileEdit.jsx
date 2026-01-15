@@ -77,8 +77,9 @@ const CreatorProfileEdit = () => {
 
   const fetchProfile = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(`${API_URL}/api/ugc/creators/me`, {
-        credentials: 'include'
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       
       if (res.ok) {
