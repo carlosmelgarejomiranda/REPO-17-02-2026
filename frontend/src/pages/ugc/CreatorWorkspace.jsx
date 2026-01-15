@@ -20,7 +20,10 @@ const CreatorWorkspace = () => {
 
   const fetchDeliverables = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ugc/deliverables/me`, { credentials: 'include' });
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/api/ugc/deliverables/me`, { 
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {} 
+      });
       if (res.ok) {
         const data = await res.json();
         setDeliverables(data.deliverables || []);
