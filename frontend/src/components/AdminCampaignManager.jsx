@@ -498,16 +498,19 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
     const token = localStorage.getItem('auth_token');
     
     try {
-      const res = await fetch(`${API_URL}/api/ugc/applications/${applicationId}/status`, {
+      // Use admin endpoint to update application status
+      const params = new URLSearchParams({
+        status: newStatus
+      });
+      if (newStatus === 'rejected') {
+        params.append('reason', 'No seleccionado por Avenue');
+      }
+      
+      const res = await fetch(`${API_URL}/api/ugc/admin/applications/${applicationId}/status?${params}`, {
         method: 'PUT',
         headers: { 
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ 
-          status: newStatus, 
-          reason: newStatus === 'rejected' ? 'No seleccionado por Avenue' : null 
-        })
+        }
       });
       
       if (res.ok) {
