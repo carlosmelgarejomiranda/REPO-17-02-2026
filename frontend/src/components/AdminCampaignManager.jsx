@@ -572,7 +572,9 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
       applied: { color: 'bg-blue-500/20 text-blue-400', label: 'Pendiente', icon: Clock },
       shortlisted: { color: 'bg-purple-500/20 text-purple-400', label: 'Preseleccionado', icon: UserCheck },
       confirmed: { color: 'bg-green-500/20 text-green-400', label: 'Confirmado', icon: CheckCircle },
-      rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado', icon: XCircle }
+      rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado', icon: XCircle },
+      cancelled: { color: 'bg-orange-500/20 text-orange-400', label: 'Cancelado', icon: XCircle },
+      withdrawn: { color: 'bg-gray-500/20 text-gray-400', label: 'Retirado', icon: XCircle }
     };
     const badge = badges[status] || badges.applied;
     const Icon = badge.icon;
