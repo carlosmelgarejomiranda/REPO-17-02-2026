@@ -112,10 +112,13 @@ const CreatorProfileEdit = () => {
     setSuccess('');
 
     try {
+      const token = localStorage.getItem('auth_token');
       const res = await fetch(`${API_URL}/api/ugc/creators/me`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(formData)
       });
 
