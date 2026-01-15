@@ -49,7 +49,31 @@ const CreatorProfileEdit = () => {
 
   useEffect(() => {
     fetchProfile();
+    fetchVerificationStatus();
   }, []);
+
+  const fetchVerificationStatus = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/api/social-verification/status`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setVerificationStatus(data);
+      }
+    } catch (err) {
+      console.error('Error fetching verification status:', err);
+    }
+  };
+
+  const handleVerificationComplete = (platform, data) => {
+    setVerificationStatus(prev => ({ ...prev, [platform]: data }));
+    setShowAIVerification(false);
+    fetchProfile();
+    setSuccess(`¡${platform.charAt(0).toUpperCase() + platform.slice(1)} verificado correctamente!`);
+    setTimeout(() => setSuccess(''), 3000);
+  };
 
   const fetchProfile = async () => {
     try {
