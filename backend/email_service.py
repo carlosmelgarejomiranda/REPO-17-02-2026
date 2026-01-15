@@ -19,7 +19,7 @@ resend.api_key = os.environ.get('RESEND_API_KEY')
 EMAIL_SENDERS = {
     'ecommerce': 'AVENUE Pedidos <pedidos@avenue.com.py>',
     'studio': 'AVENUE Studio <reservas@avenue.com.py>',
-    'ugc': 'AVENUE UGC <applicationUGC@avenue.com.py>',
+    'ugc': 'AVENUE UGC <creadoresUGC@avenue.com.py>',
     'brands': 'AVENUE UGC Marcas <infobrands@avenue.com.py>',
 }
 

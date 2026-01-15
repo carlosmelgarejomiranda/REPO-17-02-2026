@@ -418,7 +418,7 @@ async def send_admin_email_notification(subject: str, html_content: str, sender_
     senders = {
         'ecommerce': 'AVENUE Pedidos <pedidos@avenue.com.py>',
         'studio': 'AVENUE Studio <reservas@avenue.com.py>',
-        'ugc': 'AVENUE UGC <applicationUGC@avenue.com.py>',
+        'ugc': 'AVENUE UGC <creadoresUGC@avenue.com.py>',
         'brands': 'AVENUE Marcas <infobrands@avenue.com.py>',
     }
     sender = senders.get(sender_type, senders['ecommerce'])
