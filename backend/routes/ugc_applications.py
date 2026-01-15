@@ -365,6 +365,85 @@ async def update_application_status(
 
 # ==================== CREATOR: MY APPLICATIONS ====================
 
+@router.post("/{application_id}/withdraw", response_model=dict)
+async def withdraw_confirmed_application(
+    application_id: str,
+    request: Request
+):
+    """Creator withdraws their CONFIRMED application (cancels participation)"""
+    db = await get_db()
+    user, creator = await require_creator(request)
+    
+    application = await db.ugc_applications.find_one({
+        "id": application_id,
+        "creator_id": creator["id"]
+    })
+    
+    if not application:
+        raise HTTPException(status_code=404, detail="Aplicación no encontrada")
+    
+    # Only allow withdrawal of confirmed applications
+    if application["status"] != ApplicationStatus.CONFIRMED:
+        raise HTTPException(
+            status_code=400, 
+            detail="Solo podés cancelar aplicaciones confirmadas. Para retirar una aplicación pendiente, usá el botón de retirar."
+        )
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Get campaign to update slots
+    campaign = await db.ugc_campaigns.find_one({"id": application["campaign_id"]})
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaña no encontrada")
+    
+    # Update application status to CANCELLED
+    await db.ugc_applications.update_one(
+        {"id": application_id},
+        {
+            "$set": {
+                "status": ApplicationStatus.CANCELLED,
+                "updated_at": now,
+                "cancelled_at": now,
+                "cancelled_by": "creator"
+            },
+            "$push": {
+                "status_history": {
+                    "status": ApplicationStatus.CANCELLED,
+                    "timestamp": now,
+                    "by": "creator"
+                }
+            }
+        }
+    )
+    
+    # Decrement slots_filled to free up the slot
+    await db.ugc_campaigns.update_one(
+        {"id": campaign["id"]},
+        {"$inc": {"slots_filled": -1}}
+    )
+    
+    # Mark any deliverables as cancelled
+    await db.ugc_deliverables.update_many(
+        {"application_id": application_id},
+        {"$set": {"status": "cancelled", "cancelled_at": now}}
+    )
+    
+    # Send email notification to admin
+    try:
+        from services.ugc_emails import notify_application_cancelled
+        brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1})
+        await notify_application_cancelled(
+            creator_name=creator["name"],
+            campaign_name=campaign.get("name", ""),
+            brand_name=brand.get("company_name", "") if brand else "",
+            cancelled_by="creator"
+        )
+    except Exception as e:
+        logger.error(f"Failed to send cancellation notification: {e}")
+    
+    return {"success": True, "message": "Tu participación ha sido cancelada"}
+
+
 @router.get("/me", response_model=dict)
 async def get_my_applications(
     status: Optional[ApplicationStatus] = None,
