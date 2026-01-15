@@ -125,7 +125,10 @@ const CreatorProfileEdit = () => {
 
       if (res.ok) {
         setSuccess('Perfil actualizado correctamente');
-        setTimeout(() => setSuccess(''), 3000);
+        // Redirigir al dashboard después de 1.5 segundos
+        setTimeout(() => {
+          navigate('/ugc/creator/dashboard');
+        }, 1500);
       } else {
         const data = await res.json();
         setError(data.detail || 'Error al guardar');
