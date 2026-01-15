@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   User, Star, TrendingUp, Award, Briefcase, Clock, CheckCircle,
-  ArrowRight, Instagram, Music2, Camera, BarChart3, Loader2
+  ArrowRight, Instagram, Music2, Camera, BarChart3, Loader2, BadgeCheck
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { getApiUrl } from '../../utils/api';
@@ -31,6 +31,21 @@ const CreatorDashboard = () => {
 
       if (profileRes.ok) {
         const profileData = await profileRes.json();
+        // Merge social_networks with verified social_accounts data
+        if (profileData.social_networks && profileData.social_accounts) {
+          profileData.social_networks = profileData.social_networks.map(sn => {
+            const verifiedData = profileData.social_accounts[sn.platform];
+            if (verifiedData && verifiedData.verified_by_ai) {
+              return {
+                ...sn,
+                followers: verifiedData.follower_count,
+                verified_by_ai: true,
+                verified_at: verifiedData.verified_at
+              };
+            }
+            return sn;
+          });
+        }
         setProfile(profileData);
       }
 
