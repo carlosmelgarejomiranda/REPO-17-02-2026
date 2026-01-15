@@ -132,7 +132,15 @@ const CreatorOnboarding = () => {
     if (step === 1) return formData.name && formData.city;
     if (step === 2) return formData.categories.length > 0;
     if (step === 3) return formData.instagram_username || formData.tiktok_username;
+    if (step === 4) return true; // Verification is optional
     return true;
+  };
+
+  const handleVerificationComplete = (platform, data) => {
+    setVerificationData(prev => ({
+      ...prev,
+      [platform]: data
+    }));
   };
 
   // Show loading while checking auth
