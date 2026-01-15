@@ -270,7 +270,7 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
                     <Upload className="w-5 h-5" />
                   </div>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
