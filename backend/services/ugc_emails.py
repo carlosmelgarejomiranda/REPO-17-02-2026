@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize Resend
 resend.api_key = os.environ.get('RESEND_API_KEY')
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'AVENUE UGC <applicationUGC@avenue.com.py>')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'AVENUE UGC <creadoresUGC@avenue.com.py>')
 
 # Email Templates
 def get_base_template(content: str, title: str = "Avenue UGC") -> str:

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize Resend
 resend.api_key = os.environ.get('RESEND_API_KEY', '')
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'AVENUE UGC <creadoresUGC@avenue.com.py>')
 BASE_URL = os.environ.get('FRONTEND_URL', 'https://avenue.com.py')
 
 # Email templates
