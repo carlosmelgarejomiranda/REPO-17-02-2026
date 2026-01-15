@@ -162,9 +162,18 @@ async def get_verification_status(current_user: dict = Depends(get_current_user)
     Obtener estado de verificación de redes sociales del creador
     """
     try:
-        creator = await db.ugc_creators.find_one({"user_id": current_user["id"]})
+        if not current_user:
+            raise HTTPException(status_code=401, detail="No autenticado")
+            
+        user_id = current_user.get("user_id") or current_user.get("id")
+        creator = await db.ugc_creators.find_one({"user_id": user_id})
         if not creator:
-            raise HTTPException(status_code=404, detail="Perfil de creador no encontrado")
+            # Return empty if no creator profile (user might not be a creator)
+            return {
+                "instagram": None,
+                "tiktok": None,
+                "youtube": None
+            }
         
         social_accounts = creator.get("social_accounts", {})
         
@@ -189,7 +198,11 @@ async def remove_verification(
     Eliminar verificación de una plataforma
     """
     try:
-        creator = await db.ugc_creators.find_one({"user_id": current_user["id"]})
+        if not current_user:
+            raise HTTPException(status_code=401, detail="No autenticado")
+            
+        user_id = current_user.get("user_id") or current_user.get("id")
+        creator = await db.ugc_creators.find_one({"user_id": user_id})
         if not creator:
             raise HTTPException(status_code=404, detail="Perfil de creador no encontrado")
         
