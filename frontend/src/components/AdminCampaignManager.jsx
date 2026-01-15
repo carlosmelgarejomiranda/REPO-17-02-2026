@@ -474,15 +474,20 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
     
     const token = localStorage.getItem('auth_token');
     try {
-      const res = await fetch(`${API_URL}/api/ugc/applications/campaign/${campaign.id}`, {
+      // Use admin endpoint to get applications
+      const res = await fetch(`${API_URL}/api/ugc/admin/campaigns/${campaign.id}/applications`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         const data = await res.json();
         setApplications(data.applications || []);
+      } else {
+        console.error('Error fetching applications:', await res.text());
+        setApplications([]);
       }
     } catch (err) {
       console.error(err);
+      setApplications([]);
     } finally {
       setLoadingApplications(false);
     }
