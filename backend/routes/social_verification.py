@@ -91,10 +91,14 @@ async def confirm_verification(
     Confirmar y guardar la verificación de red social
     """
     try:
-        # Buscar el perfil del creador
-        creator = await db.ugc_creators.find_one({"user_id": current_user["id"]})
+        if not current_user:
+            raise HTTPException(status_code=401, detail="No autenticado")
+        
+        # Buscar el perfil del creador usando user_id
+        user_id = current_user.get("user_id") or current_user.get("id")
+        creator = await db.ugc_creators.find_one({"user_id": user_id})
         if not creator:
-            raise HTTPException(status_code=404, detail="Perfil de creador no encontrado")
+            raise HTTPException(status_code=404, detail="Perfil de creador no encontrado. Primero debes completar el registro como creador.")
         
         # Preparar datos de la cuenta social
         social_data = {
