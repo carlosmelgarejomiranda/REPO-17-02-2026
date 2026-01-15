@@ -488,6 +488,61 @@ async def admin_update_application_status(
     }
 
 
+@router.put("/campaigns/{campaign_id}/transfer", response_model=dict)
+async def admin_transfer_campaign_ownership(
+    campaign_id: str,
+    new_brand_email: str,
+    request: Request = None
+):
+    """Admin transfers campaign ownership to a different brand (by email)"""
+    await require_admin(request)
+    db = await get_db()
+    
+    # Find the campaign
+    campaign = await db.ugc_campaigns.find_one({"id": campaign_id})
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaña no encontrada")
+    
+    # Find the user by email
+    user = await db.users.find_one({"email": new_brand_email})
+    if not user:
+        raise HTTPException(status_code=404, detail=f"Usuario con email {new_brand_email} no encontrado")
+    
+    user_id = user.get("user_id") or user.get("id")
+    
+    # Find or create brand profile for this user
+    brand = await db.ugc_brands.find_one({"user_id": user_id})
+    if not brand:
+        raise HTTPException(status_code=404, detail=f"El usuario {new_brand_email} no tiene perfil de marca. Debe registrarse como marca primero.")
+    
+    old_brand_id = campaign.get("brand_id")
+    new_brand_id = brand["id"]
+    
+    # Update campaign
+    await db.ugc_campaigns.update_one(
+        {"id": campaign_id},
+        {"$set": {
+            "brand_id": new_brand_id,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Also update any deliverables associated with this campaign
+    await db.ugc_deliverables.update_many(
+        {"campaign_id": campaign_id},
+        {"$set": {"brand_id": new_brand_id}}
+    )
+    
+    return {
+        "success": True,
+        "message": f"Campaña transferida a {new_brand_email}",
+        "campaign_id": campaign_id,
+        "old_brand_id": old_brand_id,
+        "new_brand_id": new_brand_id,
+        "new_brand_name": brand.get("company_name")
+    }
+
+
 from models.ugc_models import CampaignCreate, CampaignContractRenewal, CampaignContract
 
 @router.post("/campaigns", response_model=dict)
