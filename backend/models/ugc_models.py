@@ -32,7 +32,8 @@ class ApplicationStatus(str, Enum):
     SHORTLISTED = "shortlisted"
     CONFIRMED = "confirmed"
     REJECTED = "rejected"
-    WITHDRAWN = "withdrawn"
+    WITHDRAWN = "withdrawn"  # Creator cancels their own application
+    CANCELLED = "cancelled"  # Admin cancels a confirmed creator
 
 class DeliverableStatus(str, Enum):
     AWAITING_PUBLISH = "awaiting_publish"
