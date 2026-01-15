@@ -38,6 +38,10 @@ const CreatorProfileEdit = () => {
   const [newFollowers, setNewFollowers] = useState('');
   const [updatingFollowers, setUpdatingFollowers] = useState(false);
 
+  // AI Verification modal
+  const [showAIVerification, setShowAIVerification] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState({});
+
   const categories = [
     'Moda', 'Belleza', 'Lifestyle', 'Fitness', 'Gastronomía', 
     'Tecnología', 'Viajes', 'Arte', 'Música', 'Deportes'
