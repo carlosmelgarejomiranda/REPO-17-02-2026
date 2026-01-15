@@ -353,6 +353,55 @@ async def get_all_campaigns(
     
     return {"campaigns": campaigns, "total": total}
 
+
+@router.get("/campaigns/{campaign_id}/applications", response_model=dict)
+async def admin_get_campaign_applications(
+    campaign_id: str,
+    status: Optional[str] = None,
+    request: Request = None
+):
+    """Admin gets all applications for a campaign"""
+    await require_admin(request)
+    db = await get_db()
+    
+    # Verify campaign exists
+    campaign = await db.ugc_campaigns.find_one({"id": campaign_id})
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaña no encontrada")
+    
+    # Build query
+    query = {"campaign_id": campaign_id}
+    if status:
+        query["status"] = status
+    
+    # Get applications
+    applications = await db.ugc_applications.find(
+        query,
+        {"_id": 0}
+    ).sort("applied_at", -1).to_list(500)
+    
+    # Enrich with creator profiles and social accounts
+    for app in applications:
+        creator = await db.ugc_creators.find_one(
+            {"id": app["creator_id"]},
+            {"_id": 0}
+        )
+        if creator:
+            # Include verified social accounts info
+            social_accounts = creator.get("social_accounts", {})
+            creator["verified_instagram"] = social_accounts.get("instagram")
+            creator["verified_tiktok"] = social_accounts.get("tiktok")
+            app["creator"] = creator
+        else:
+            app["creator"] = None
+    
+    return {
+        "applications": applications, 
+        "total": len(applications),
+        "campaign_name": campaign.get("name")
+    }
+
+
 from models.ugc_models import CampaignCreate, CampaignContractRenewal, CampaignContract
 
 @router.post("/campaigns", response_model=dict)
