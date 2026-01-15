@@ -481,6 +481,39 @@ async def admin_update_application_status(
         {"$set": update_data}
     )
     
+    # Send email notifications
+    try:
+        from services.ugc_emails import send_application_confirmed, send_application_rejected
+        
+        creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
+        if creator:
+            creator_email = creator.get("email")
+            creator_name = creator.get("name", "Creador")
+            campaign_name = campaign.get("name", "Campaña")
+            
+            # Get brand name
+            brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]})
+            brand_name = brand.get("company_name", "Avenue") if brand else "Avenue"
+            
+            if status == "confirmed" and creator_email:
+                await send_application_confirmed(
+                    to_email=creator_email,
+                    creator_name=creator_name,
+                    campaign_name=campaign_name,
+                    brand_name=brand_name
+                )
+                print(f"[Email] Confirmation sent to {creator_email}")
+            elif status == "rejected" and creator_email:
+                await send_application_rejected(
+                    to_email=creator_email,
+                    creator_name=creator_name,
+                    campaign_name=campaign_name,
+                    reason=reason
+                )
+                print(f"[Email] Rejection sent to {creator_email}")
+    except Exception as e:
+        print(f"[Email Error] Failed to send notification: {e}")
+    
     return {
         "success": True,
         "message": f"Aplicación actualizada a {status}",
