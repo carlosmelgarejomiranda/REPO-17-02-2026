@@ -96,7 +96,7 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         },
         body: JSON.stringify({
           image_base64: imageBase64,
@@ -140,7 +140,7 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
       const response = await fetch(`${API_URL}/api/social-verification/confirm?${params}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         }
       });
 
