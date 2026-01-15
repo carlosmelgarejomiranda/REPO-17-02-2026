@@ -302,6 +302,19 @@ const CreatorDashboard = () => {
                         {sn.verified_by_ai && <span className="text-xs text-gray-500 ml-1">✓</span>}
                       </span>
                     </div>
+                    {sn.verified_by_ai && sn.verified_at && (
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
+                        <span className="text-xs text-gray-500">
+                          Verificado: {new Date(sn.verified_at).toLocaleDateString()}
+                        </span>
+                        <Link
+                          to="/ugc/creator/profile"
+                          className="text-xs text-[#d4a968] hover:underline flex items-center gap-1"
+                        >
+                          Actualizar →
+                        </Link>
+                      </div>
+                    )}
                     {!sn.followers && (
                       <Link
                         to="/ugc/creator/profile"
