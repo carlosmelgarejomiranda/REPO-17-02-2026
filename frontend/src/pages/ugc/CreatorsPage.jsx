@@ -15,21 +15,31 @@ const CreatorsPage = ({ user, onLoginClick, onLogout, language, setLanguage, t }
   const [isLoaded, setIsLoaded] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
   const [loadingCampaigns, setLoadingCampaigns] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
     fetchCampaigns();
   }, []);
 
-  const fetchCampaigns = async () => {
+  const fetchCampaigns = async (retryCount = 0) => {
     try {
+      setFetchError(false);
       const res = await fetch(`${API_URL}/api/ugc/campaigns/available`);
       if (res.ok) {
         const data = await res.json();
         setCampaigns(data.campaigns || []);
+      } else {
+        throw new Error('Failed to fetch');
       }
     } catch (err) {
       console.error('Error fetching campaigns:', err);
+      // Retry once after 1 second if first attempt fails
+      if (retryCount < 1) {
+        setTimeout(() => fetchCampaigns(retryCount + 1), 1000);
+      } else {
+        setFetchError(true);
+      }
     } finally {
       setLoadingCampaigns(false);
     }
