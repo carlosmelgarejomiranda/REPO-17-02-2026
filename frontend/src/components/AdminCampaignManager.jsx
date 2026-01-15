@@ -77,6 +77,12 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
   const [applications, setApplications] = useState([]);
   const [loadingApplications, setLoadingApplications] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
+  
+  // Transfer ownership state
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [transferEmail, setTransferEmail] = useState('');
+  const [transferring, setTransferring] = useState(false);
+  const [campaignToTransfer, setCampaignToTransfer] = useState(null);
 
   // Initial form state
   const initialFormState = {
