@@ -405,11 +405,12 @@ const DemographicsReport = ({ demographics }) => {
     );
   }
 
-  // Check if there's actual data
+  // Check if there's actual data - use has_data flag from API or check values
+  const hasDataFlag = demographics.has_data === true;
   const hasGenderData = demographics.gender && (demographics.gender.male > 0 || demographics.gender.female > 0 || demographics.gender.other > 0);
   const hasAgeData = demographics.age_ranges && demographics.age_ranges.length > 0 && demographics.age_ranges.some(a => a.percent > 0);
   const hasCountryData = demographics.countries && demographics.countries.length > 0 && demographics.countries.some(c => c.percent > 0);
-  const hasAnyData = hasGenderData || hasAgeData || hasCountryData;
+  const hasAnyData = hasDataFlag || hasGenderData || hasAgeData || hasCountryData;
 
   if (!hasAnyData) {
     return (
