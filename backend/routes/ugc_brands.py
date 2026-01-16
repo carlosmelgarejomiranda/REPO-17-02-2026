@@ -83,6 +83,17 @@ async def complete_brand_onboarding(
             {"$set": {"role": "brand", "updated_at": now}}
         )
     
+    # Send welcome email + notify avenue
+    try:
+        from services.ugc_emails import send_brand_welcome
+        await send_brand_welcome(
+            to_email=user["email"],
+            brand_name=data.company_name
+        )
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Failed to send brand welcome email: {e}")
+    
     return {"success": True, "brand_id": brand_profile["id"], "message": "Brand profile created"}
 
 # ==================== PROFILE ====================
