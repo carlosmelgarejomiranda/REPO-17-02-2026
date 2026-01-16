@@ -437,16 +437,45 @@ async def submit_metrics(
     # Update creator stats
     await update_creator_stats(db, creator["id"])
     
-    # Send WhatsApp notification to admin
+    # Send notifications
     try:
-        from services.ugc_emails import notify_metrics_submitted
-        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1})
-        await notify_metrics_submitted(
-            campaign_name=campaign.get("name", "Campaña") if campaign else "Campaña",
+        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1, "brand_id": 1})
+        campaign_name = campaign.get("name", "Campaña") if campaign else "Campaña"
+        
+        # Get brand info
+        brand = await db.ugc_brands.find_one({"id": campaign.get("brand_id")}, {"_id": 0, "company_name": 1, "email": 1}) if campaign else None
+        brand_name = brand.get("company_name", "Marca") if brand else "Marca"
+        brand_email = brand.get("email") if brand else None
+        
+        from services.ugc_emails import (
+            send_metrics_submitted_to_creator,
+            send_metrics_submitted_to_brand,
+            notify_metrics_submitted_whatsapp
+        )
+        
+        # 1. Email al creador confirmando sus métricas
+        if creator.get("email"):
+            await send_metrics_submitted_to_creator(
+                to_email=creator.get("email"),
+                creator_name=creator.get("name", "Creator"),
+                campaign_name=campaign_name,
+                brand_name=brand_name
+            )
+        
+        # 2. Email a la marca notificando métricas recibidas
+        if brand_email:
+            await send_metrics_submitted_to_brand(
+                to_email=brand_email,
+                brand_name=brand_name,
+                campaign_name=campaign_name,
+                creator_name=creator.get("name", "Creator")
+            )
+        
+        # 3. WhatsApp notification to admin
+        await notify_metrics_submitted_whatsapp(
             creator_name=creator.get("name", "Creator"),
-            platform=deliverable.get("platform", "instagram"),
-            views=views or 0,
-            likes=likes or 0
+            campaign_name=campaign_name,
+            brand_name=brand_name
         )
     except Exception as e:
         import logging
