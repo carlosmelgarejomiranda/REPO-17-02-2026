@@ -7,6 +7,7 @@ import {
   TrendingUp, Star, Loader2, ChevronDown, Award, AlertCircle,
   CheckCircle, XCircle, FileCheck, ClipboardList
 } from 'lucide-react';
+import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
