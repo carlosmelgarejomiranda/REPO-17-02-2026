@@ -52,21 +52,11 @@ const BrandCampaigns = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="text-xl font-light">
-            <span className="text-[#d4a968] italic">Avenue</span> UGC
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/ugc/brand/dashboard" className="text-gray-400 hover:text-white transition-colors">
-              Dashboard
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* UGC Navbar */}
+      <UGCNavbar type="brand" />
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Main Content */}
+      <div className="pt-20 max-w-6xl mx-auto px-6 py-8">
         {/* Page Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
