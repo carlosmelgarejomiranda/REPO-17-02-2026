@@ -901,18 +901,42 @@ async def send_brand_inquiry_confirmation(db: AsyncIOMotorDatabase, inquiry: Dic
 
 
 async def send_booking_cancellation(db: AsyncIOMotorDatabase, reservation: Dict[str, Any]) -> Dict[str, Any]:
-    """Send booking cancellation to customer"""
-    customer_email = reservation.get('customer_email')
-    if not customer_email:
-        return {'success': False, 'error': 'No customer email'}
+    """Send booking cancellation to customer and admin"""
+    import asyncio
+    results = []
     
-    subject, html, _ = booking_cancelled_email(reservation)
-    return await send_email(
-        db, customer_email, subject, html,
+    customer_email = reservation.get('customer_email')
+    if customer_email:
+        subject, html, _ = booking_cancelled_email(reservation)
+        result = await send_email(
+            db, customer_email, subject, html,
+            sender_type='studio',
+            entity_type='reservation',
+            entity_id=reservation.get('reservation_id')
+        )
+        results.append(('customer', result))
+    
+    # Small delay to avoid rate limiting
+    await asyncio.sleep(0.6)
+    
+    # Send to admin
+    admin_html = f"""
+    <h2 style="color: #d4a968;">❌ Reserva Cancelada</h2>
+    <p><strong>Cliente:</strong> {reservation.get('name', 'N/A')}</p>
+    <p><strong>Email:</strong> {reservation.get('customer_email', 'N/A')}</p>
+    <p><strong>Fecha:</strong> {reservation.get('date', 'N/A')}</p>
+    <p><strong>Horario:</strong> {reservation.get('time_slot', 'N/A')}</p>
+    <p><strong>Paquete:</strong> {reservation.get('package_name', 'N/A')}</p>
+    """
+    admin_result = await send_email(
+        db, ADMIN_EMAIL, f"❌ Reserva Cancelada - {reservation.get('name', 'Cliente')}", admin_html,
         sender_type='studio',
         entity_type='reservation',
         entity_id=reservation.get('reservation_id')
     )
+    results.append(('admin', admin_result))
+    
+    return {'results': results}
 
 
 # ==================== UGC CAMPAIGN EMAILS ====================
