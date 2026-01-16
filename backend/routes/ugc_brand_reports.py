@@ -105,7 +105,7 @@ async def get_campaign_demographics(
     platform: Optional[str] = None,
     month: Optional[str] = None
 ):
-    """Get demographic distribution for campaign reach"""
+    """Get demographic distribution for campaign reach - aggregated from real metrics"""
     db = await get_db()
     user, brand = await require_brand(request)
     
@@ -117,62 +117,91 @@ async def get_campaign_demographics(
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
-    # For demo purposes, generate representative demographics
-    # In production, this would aggregate from actual platform insights
+    # Get all metrics for this campaign that have demographics data
+    query = {"campaign_id": campaign_id}
+    if platform:
+        query["platform"] = platform
     
-    # Gender distribution (varies slightly based on campaign category)
-    gender_base = {
-        "fashion": {"female": 68, "male": 28, "other": 4},
-        "beauty": {"female": 75, "male": 20, "other": 5},
-        "fitness": {"female": 52, "male": 45, "other": 3},
-        "food": {"female": 55, "male": 42, "other": 3},
-        "tech": {"female": 35, "male": 62, "other": 3},
-        "lifestyle": {"female": 58, "male": 38, "other": 4}
+    metrics_cursor = db.ugc_metrics.find(query, {"_id": 0, "demographics": 1})
+    metrics_list = await metrics_cursor.to_list(length=100)
+    
+    # Aggregate demographics from all metrics
+    total_gender = {"female": 0, "male": 0, "other": 0}
+    total_age_ranges = {}
+    total_countries = {}
+    metrics_with_demographics = 0
+    
+    for metric in metrics_list:
+        demographics = metric.get("demographics", {})
+        if not demographics:
+            continue
+        
+        # Gender aggregation
+        gender = demographics.get("gender", {})
+        if gender:
+            metrics_with_demographics += 1
+            total_gender["female"] += gender.get("female", 0)
+            total_gender["male"] += gender.get("male", 0)
+            total_gender["other"] += gender.get("other", 0)
+        
+        # Age ranges aggregation
+        age_ranges = demographics.get("age_ranges", [])
+        for age in age_ranges:
+            range_key = age.get("range", "")
+            if range_key:
+                total_age_ranges[range_key] = total_age_ranges.get(range_key, 0) + age.get("percent", 0)
+        
+        # Countries aggregation
+        countries = demographics.get("countries", [])
+        for country in countries:
+            country_name = country.get("country", "")
+            if country_name:
+                total_countries[country_name] = total_countries.get(country_name, 0) + country.get("percent", 0)
+    
+    # If no metrics with demographics, return empty data
+    if metrics_with_demographics == 0:
+        return {
+            "gender": {"female": 0, "male": 0, "other": 0},
+            "age_ranges": [],
+            "countries": [],
+            "has_data": False
+        }
+    
+    # Average the aggregated values
+    avg_gender = {
+        "female": round(total_gender["female"] / metrics_with_demographics),
+        "male": round(total_gender["male"] / metrics_with_demographics),
+        "other": round(total_gender["other"] / metrics_with_demographics)
     }
-    category = campaign.get("category", "lifestyle")
-    gender = gender_base.get(category, gender_base["lifestyle"])
     
-    # Age distribution (typical for social media)
-    age_ranges = [
-        {"range": "13-17", "percent": 12},
-        {"range": "18-24", "percent": 38},
-        {"range": "25-34", "percent": 28},
-        {"range": "35-44", "percent": 14},
-        {"range": "45-54", "percent": 5},
-        {"range": "55+", "percent": 3}
+    # Normalize to 100%
+    gender_total = avg_gender["female"] + avg_gender["male"] + avg_gender["other"]
+    if gender_total > 0:
+        factor = 100 / gender_total
+        avg_gender = {
+            "female": round(avg_gender["female"] * factor),
+            "male": round(avg_gender["male"] * factor),
+            "other": 100 - round(avg_gender["female"] * factor) - round(avg_gender["male"] * factor)
+        }
+    
+    # Format age ranges
+    avg_age_ranges = [
+        {"range": key, "percent": round(value / metrics_with_demographics)}
+        for key, value in sorted(total_age_ranges.items())
     ]
     
-    # Country distribution (Paraguay-focused)
-    countries = [
-        {"country": "Paraguay", "percent": 82},
-        {"country": "Argentina", "percent": 9},
-        {"country": "Brasil", "percent": 4},
-        {"country": "Uruguay", "percent": 3},
-        {"country": "Otros", "percent": 2}
+    # Format countries (top 5)
+    avg_countries = [
+        {"country": key, "percent": round(value / metrics_with_demographics)}
+        for key, value in sorted(total_countries.items(), key=lambda x: -x[1])[:5]
     ]
-    
-    # Adjust based on platform filter
-    if platform == 'tiktok':
-        # TikTok tends to have younger audience
-        age_ranges[0]["percent"] = 18  # 13-17
-        age_ranges[1]["percent"] = 42  # 18-24
-        age_ranges[2]["percent"] = 24  # 25-34
-        age_ranges[3]["percent"] = 10  # 35-44
-        age_ranges[4]["percent"] = 4   # 45-54
-        age_ranges[5]["percent"] = 2   # 55+
-    elif platform == 'instagram':
-        # Instagram has slightly older audience
-        age_ranges[0]["percent"] = 8   # 13-17
-        age_ranges[1]["percent"] = 35  # 18-24
-        age_ranges[2]["percent"] = 32  # 25-34
-        age_ranges[3]["percent"] = 16  # 35-44
-        age_ranges[4]["percent"] = 6   # 45-54
-        age_ranges[5]["percent"] = 3   # 55+
     
     return {
-        "gender": gender,
-        "age_ranges": age_ranges,
-        "countries": countries
+        "gender": avg_gender,
+        "age_ranges": avg_age_ranges,
+        "countries": avg_countries,
+        "has_data": True,
+        "metrics_count": metrics_with_demographics
     }
 
 # ==================== APPLICANTS REPORT ====================
