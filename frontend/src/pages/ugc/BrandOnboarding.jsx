@@ -331,7 +331,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                   value={formData.company_name}
                   onChange={(e) => handleChange('company_name', e.target.value)}
                   placeholder="Mi Empresa S.A."
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                  className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
                 />
               </div>
 
@@ -382,7 +382,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                     value={formData.contact_first_name}
                     onChange={(e) => handleChange('contact_first_name', e.target.value)}
                     placeholder="Juan"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                    className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -392,7 +392,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                     value={formData.contact_last_name}
                     onChange={(e) => handleChange('contact_last_name', e.target.value)}
                     placeholder="Pérez"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                    className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
                   />
                 </div>
               </div>
@@ -415,7 +415,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                     value={formData.contact_phone}
                     onChange={(e) => handleChange('contact_phone', e.target.value.replace(/\D/g, ''))}
                     placeholder="981123456"
-                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                    className="flex-1 px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
                   />
                 </div>
               </div>
@@ -489,7 +489,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                   onChange={(e) => handleChange('description', e.target.value)}
                   placeholder="Contanos brevemente sobre tu empresa y qué tipo de contenido buscás..."
                   rows={4}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none resize-none"
+                  className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none resize-none"
                 />
               </div>
             </div>
