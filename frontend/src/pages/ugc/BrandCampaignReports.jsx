@@ -411,22 +411,27 @@ const DemographicsReport = ({ demographics }) => {
     );
   }
 
-  const genderData = demographics.gender || { male: 35, female: 58, other: 7 };
-  const ageData = demographics.age_ranges || [
-    { range: '13-17', percent: 8 },
-    { range: '18-24', percent: 35 },
-    { range: '25-34', percent: 32 },
-    { range: '35-44', percent: 15 },
-    { range: '45-54', percent: 7 },
-    { range: '55+', percent: 3 }
-  ];
-  const countryData = demographics.countries || [
-    { country: 'Paraguay', percent: 78 },
-    { country: 'Argentina', percent: 12 },
-    { country: 'Brasil', percent: 5 },
-    { country: 'Uruguay', percent: 3 },
-    { country: 'Otros', percent: 2 }
-  ];
+  // Check if there's actual data
+  const hasGenderData = demographics.gender && (demographics.gender.male > 0 || demographics.gender.female > 0 || demographics.gender.other > 0);
+  const hasAgeData = demographics.age_ranges && demographics.age_ranges.length > 0 && demographics.age_ranges.some(a => a.percent > 0);
+  const hasCountryData = demographics.countries && demographics.countries.length > 0 && demographics.countries.some(c => c.percent > 0);
+  const hasAnyData = hasGenderData || hasAgeData || hasCountryData;
+
+  if (!hasAnyData) {
+    return (
+      <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
+        <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+        <h3 className="text-xl text-white mb-2">Sin datos demográficos</h3>
+        <p className="text-gray-400">
+          Los datos demográficos aparecerán cuando los creadores suban sus métricas con capturas de audiencia.
+        </p>
+      </div>
+    );
+  }
+
+  const genderData = demographics.gender || { male: 0, female: 0, other: 0 };
+  const ageData = demographics.age_ranges || [];
+  const countryData = demographics.countries || [];
 
   return (
     <div className="space-y-8">
