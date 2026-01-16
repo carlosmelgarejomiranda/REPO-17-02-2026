@@ -138,13 +138,42 @@ async def apply_to_campaign(
     
     await db.ugc_applications.insert_one(application)
     
-    # Send WhatsApp notification to admin
+    # Get brand info for notifications
+    brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1, "email": 1})
+    brand_name = brand.get("company_name", "Marca") if brand else "Marca"
+    brand_email = brand.get("email") if brand else None
+    
+    # Send notifications
     try:
-        brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1})
-        from services.ugc_emails import notify_new_campaign_application
+        from services.ugc_emails import (
+            send_application_submitted, 
+            send_new_application_to_brand,
+            notify_new_campaign_application
+        )
+        
+        # 1. Email al creador confirmando su aplicación
+        await send_application_submitted(
+            to_email=creator.get("email"),
+            creator_name=creator["name"],
+            campaign_name=campaign["name"],
+            brand_name=brand_name
+        )
+        
+        # 2. Email a la marca notificando nueva aplicación
+        if brand_email:
+            await send_new_application_to_brand(
+                to_email=brand_email,
+                brand_name=brand_name,
+                campaign_name=campaign["name"],
+                creator_name=creator["name"],
+                creator_username=primary_social.get("username"),
+                creator_followers=primary_social.get("followers", 0)
+            )
+        
+        # 3. WhatsApp notification to admin
         await notify_new_campaign_application(
             campaign_name=campaign["name"],
-            brand_name=brand.get("company_name", "Marca") if brand else "Marca",
+            brand_name=brand_name,
             creator_name=creator["name"],
             creator_level=creator.get("level", "rookie"),
             creator_followers=primary_social.get("followers", 0)
