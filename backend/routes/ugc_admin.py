@@ -502,7 +502,11 @@ async def admin_update_application_status(
     
     # Send email notifications
     try:
-        from services.ugc_emails import send_application_confirmed, send_application_rejected
+        from services.ugc_emails import (
+            send_application_confirmed, 
+            send_application_rejected,
+            send_creator_confirmed_to_brand
+        )
         
         creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
         if creator:
@@ -510,11 +514,13 @@ async def admin_update_application_status(
             creator_name = creator.get("name", "Creador")
             campaign_name = campaign.get("name", "Campaña")
             
-            # Get brand name
+            # Get brand info
             brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]})
             brand_name = brand.get("company_name", "Avenue") if brand else "Avenue"
+            brand_email = brand.get("email") if brand else None
             
             if status == "confirmed" and creator_email:
+                # Email al creador
                 await send_application_confirmed(
                     to_email=creator_email,
                     creator_name=creator_name,
@@ -522,6 +528,17 @@ async def admin_update_application_status(
                     brand_name=brand_name
                 )
                 print(f"[Email] Confirmation sent to {creator_email}")
+                
+                # Email a la marca notificando que se confirmó
+                if brand_email:
+                    await send_creator_confirmed_to_brand(
+                        to_email=brand_email,
+                        brand_name=brand_name,
+                        campaign_name=campaign_name,
+                        creator_name=creator_name
+                    )
+                    print(f"[Email] Brand notified: {brand_email}")
+                    
             elif status == "rejected" and creator_email:
                 await send_application_rejected(
                     to_email=creator_email,
