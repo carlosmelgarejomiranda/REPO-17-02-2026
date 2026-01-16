@@ -312,16 +312,16 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
           <table className="w-full min-w-[1200px]">
             <thead>
               <tr className="border-b border-white/10 bg-white/5">
-                <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Nombre del Creador</th>
-                <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Visualizaciones</th>
+                <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Creador</th>
+                <th className="text-center p-4 text-[#d4a968] text-sm font-medium">Plataforma</th>
+                <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Views</th>
                 <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Alcance</th>
                 <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Likes</th>
                 <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Comentarios</th>
                 <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Compartidos</th>
                 <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Guardados</th>
-                <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Tiempo Rep.</th>
-                <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Tasa Interacción</th>
-                <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Tasa Retención</th>
+                <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Interacción</th>
+                <th className="text-center p-4 text-[#d4a968] text-sm font-medium">Posteo</th>
               </tr>
             </thead>
             <tbody>
@@ -337,11 +337,10 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                   // Calculate derived metrics
                   const totalInteractions = (m.likes || 0) + (m.comments || 0) + (m.shares || 0) + (m.saves || 0);
                   const interactionRate = m.reach > 0 ? (totalInteractions / m.reach) * 100 : 0;
-                  const avgWatchTime = m.reach > 0 ? (m.watch_time || 0) / m.reach : 0;
-                  const retentionRate = m.video_length > 0 ? (avgWatchTime / m.video_length) * 100 : 0;
                   
                   return (
                     <tr key={m.id || idx} className="border-b border-white/5 hover:bg-white/5">
+                      {/* Creator Name */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
@@ -349,22 +348,34 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                               {m.creator?.name?.charAt(0) || 'C'}
                             </span>
                           </div>
-                          <div>
-                            <p className="text-white font-medium">{m.creator?.name || 'Creator'}</p>
-                            <p className="text-xs text-gray-500 flex items-center gap-1">
-                              {m.platform === 'tiktok' ? <Music2 className="w-3 h-3" /> : <Instagram className="w-3 h-3" />}
-                              {m.platform}
-                            </p>
-                          </div>
+                          <p className="text-white font-medium">{m.creator?.name || 'Creator'}</p>
                         </div>
                       </td>
-                      <td className="p-4 text-right text-white">{formatNumber(m.views)}</td>
+                      
+                      {/* Platform Badge */}
+                      <td className="p-4 text-center">
+                        {m.platform === 'tiktok' ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black border border-white/20 rounded-full">
+                            <Music2 className="w-4 h-4 text-white" />
+                            <span className="text-xs font-medium text-white">TikTok</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-full">
+                            <Instagram className="w-4 h-4 text-white" />
+                            <span className="text-xs font-medium text-white">Instagram</span>
+                          </span>
+                        )}
+                      </td>
+                      
+                      {/* Metrics */}
+                      <td className="p-4 text-right text-white font-medium">{formatNumber(m.views)}</td>
                       <td className="p-4 text-right text-gray-300">{formatNumber(m.reach)}</td>
                       <td className="p-4 text-right text-pink-400">{formatNumber(m.likes)}</td>
                       <td className="p-4 text-right text-blue-400">{formatNumber(m.comments)}</td>
                       <td className="p-4 text-right text-green-400">{formatNumber((m.shares || 0) + (m.reposts || 0))}</td>
                       <td className="p-4 text-right text-yellow-400">{formatNumber(m.saves)}</td>
-                      <td className="p-4 text-right text-gray-300">{formatNumber(m.watch_time)}s</td>
+                      
+                      {/* Interaction Rate */}
                       <td className="p-4 text-right">
                         <span className={`font-bold ${
                           interactionRate >= 10 ? 'text-green-400' :
@@ -374,14 +385,23 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                           {interactionRate.toFixed(1)}%
                         </span>
                       </td>
-                      <td className="p-4 text-right">
-                        <span className={`font-bold ${
-                          retentionRate >= 70 ? 'text-green-400' :
-                          retentionRate >= 40 ? 'text-yellow-400' :
-                          'text-orange-400'
-                        }`}>
-                          {retentionRate.toFixed(1)}%
-                        </span>
+                      
+                      {/* Post URL Button */}
+                      <td className="p-4 text-center">
+                        {m.post_url ? (
+                          <a
+                            href={m.post_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#d4a968]/20 text-[#d4a968] rounded-lg hover:bg-[#d4a968]/30 transition-colors"
+                            title="Ver posteo"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            <span className="text-xs font-medium">Ver</span>
+                          </a>
+                        ) : (
+                          <span className="text-gray-500 text-xs">-</span>
+                        )}
                       </td>
                     </tr>
                   );
