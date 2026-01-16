@@ -166,18 +166,11 @@ const BrandCampaignReports = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/ugc/brand/campaigns" className="flex items-center gap-2 text-gray-400 hover:text-white">
-            <ArrowLeft className="w-5 h-5" />
-            Mis Campañas
-          </Link>
-          <span className="text-[#d4a968] italic">Reportes</span>
-        </div>
-      </div>
+      {/* UGC Navbar */}
+      <UGCNavbar type="brand" />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      {/* Main Content */}
+      <div className="pt-20 max-w-7xl mx-auto px-6 py-8">
         {/* Campaign Title & Action Buttons */}
         <div className="flex items-start justify-between mb-8">
           <div>
