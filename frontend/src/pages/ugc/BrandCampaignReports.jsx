@@ -5,7 +5,7 @@ import {
   ArrowLeft, BarChart3, Users, Globe, Filter, Calendar, Instagram, 
   Music2, Eye, Heart, MessageCircle, Share2, Bookmark, Clock, 
   TrendingUp, Star, Loader2, ChevronDown, Award, AlertCircle,
-  CheckCircle, XCircle, FileCheck, ClipboardList
+  CheckCircle, XCircle, FileCheck, ClipboardList, ExternalLink
 } from 'lucide-react';
 import { UGCNavbar } from '../../components/UGCNavbar';
 
