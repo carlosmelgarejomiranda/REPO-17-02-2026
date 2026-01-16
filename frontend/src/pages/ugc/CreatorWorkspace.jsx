@@ -6,6 +6,7 @@ import {
   Instagram, Music2, Upload, Eye, Loader2, RefreshCw, ChevronRight,
   Star, MessageSquare
 } from 'lucide-react';
+import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
