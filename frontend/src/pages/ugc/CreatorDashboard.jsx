@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { getApiUrl } from '../../utils/api';
+import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
