@@ -341,10 +341,10 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                   value={formData.industry}
                   onChange={(e) => handleChange('industry', e.target.value)}
                   className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none appearance-none cursor-pointer"
-                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
+                  style={{ colorScheme: 'dark', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
                 >
-                  <option value="" className="bg-[#1a1a1a] text-white">Seleccionar...</option>
-                  {INDUSTRIES.map(ind => <option key={ind} value={ind} className="bg-[#1a1a1a] text-white">{ind}</option>)}
+                  <option value="" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Seleccionar...</option>
+                  {INDUSTRIES.map(ind => <option key={ind} value={ind} style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>{ind}</option>)}
                 </select>
               </div>
 
@@ -355,9 +355,9 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                     value={formData.country}
                     onChange={(e) => handleCountryChange(e.target.value)}
                     className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none appearance-none cursor-pointer"
-                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
+                    style={{ colorScheme: 'dark', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
                   >
-                    {COUNTRIES.map(c => <option key={c.code} value={c.code} className="bg-[#1a1a1a] text-white">{c.flag} {c.name}</option>)}
+                    {COUNTRIES.map(c => <option key={c.code} value={c.code} style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>{c.flag} {c.name}</option>)}
                   </select>
                 </div>
                 <div>
@@ -366,10 +366,10 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                     value={formData.city}
                     onChange={(e) => handleChange('city', e.target.value)}
                     className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none appearance-none cursor-pointer"
-                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
+                    style={{ colorScheme: 'dark', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23888'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
                   >
-                    <option value="" className="bg-[#1a1a1a] text-white">Seleccionar...</option>
-                    {availableCities.map(city => <option key={city} value={city} className="bg-[#1a1a1a] text-white">{city}</option>)}
+                    <option value="" style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>Seleccionar...</option>
+                    {availableCities.map(city => <option key={city} value={city} style={{ backgroundColor: '#1a1a1a', color: '#ffffff' }}>{city}</option>)}
                   </select>
                 </div>
               </div>
