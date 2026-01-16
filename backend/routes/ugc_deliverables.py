@@ -229,16 +229,46 @@ async def submit_deliverable(
         }
     )
     
-    # Send WhatsApp notification to admin
+    # Send notifications
     try:
-        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1})
+        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1, "brand_id": 1})
+        campaign_name = campaign.get("name", "Campaña") if campaign else "Campaña"
         delivery_number = deliverable.get("delivery_number", 1)
-        from services.ugc_emails import notify_deliverable_submitted
-        await notify_deliverable_submitted(
-            campaign_name=campaign.get("name", "Campaña") if campaign else "Campaña",
+        
+        # Get brand info
+        brand = await db.ugc_brands.find_one({"id": campaign.get("brand_id")}, {"_id": 0, "company_name": 1, "email": 1}) if campaign else None
+        brand_name = brand.get("company_name", "Marca") if brand else "Marca"
+        brand_email = brand.get("email") if brand else None
+        
+        from services.ugc_emails import (
+            send_content_submitted_to_creator,
+            send_content_submitted_to_brand,
+            notify_deliverable_submitted_whatsapp
+        )
+        
+        # 1. Email al creador confirmando su entrega
+        if creator.get("email"):
+            await send_content_submitted_to_creator(
+                to_email=creator.get("email"),
+                creator_name=creator.get("name", "Creator"),
+                campaign_name=campaign_name,
+                brand_name=brand_name
+            )
+        
+        # 2. Email a la marca notificando nueva entrega
+        if brand_email:
+            await send_content_submitted_to_brand(
+                to_email=brand_email,
+                brand_name=brand_name,
+                campaign_name=campaign_name,
+                creator_name=creator.get("name", "Creator")
+            )
+        
+        # 3. WhatsApp notification to admin
+        await notify_deliverable_submitted_whatsapp(
             creator_name=creator.get("name", "Creator"),
-            delivery_number=delivery_number,
-            content_url=data.post_url or data.file_url or "Sin URL"
+            campaign_name=campaign_name,
+            brand_name=brand_name
         )
     except Exception as e:
         logger.error(f"Failed to send submit notification: {e}")
