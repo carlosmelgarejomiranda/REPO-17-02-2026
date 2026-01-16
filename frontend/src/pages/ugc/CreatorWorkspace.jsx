@@ -66,18 +66,11 @@ const CreatorWorkspace = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/ugc/creator/dashboard" className="flex items-center gap-2 text-gray-400 hover:text-white">
-            <ArrowLeft className="w-5 h-5" />
-            Dashboard
-          </Link>
-          <span className="text-[#d4a968] italic">Mi Workspace</span>
-        </div>
-      </div>
+      {/* UGC Navbar */}
+      <UGCNavbar type="creator" />
 
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      {/* Main Content */}
+      <div className="pt-20 max-w-5xl mx-auto px-6 py-8">
         {/* Title */}
         <div className="mb-8">
           <h1 className="text-3xl font-light mb-2">
