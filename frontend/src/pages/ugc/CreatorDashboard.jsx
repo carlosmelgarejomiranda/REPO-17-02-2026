@@ -137,29 +137,11 @@ const CreatorDashboard = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="/" className="text-xl font-light">
-            <span className="text-[#d4a968] italic">Avenue</span> UGC
-          </a>
-          <div className="flex items-center gap-4">
-            <Link to="/ugc/campaigns" className="text-gray-400 hover:text-white transition-colors">
-              Campañas
-            </Link>
-            <Link to="/ugc/creator/applications" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors" data-testid="my-applications-link">
-              <FileText className="w-4 h-4" />
-              Aplicaciones
-            </Link>
-            <Link to="/ugc/creator/profile" className="flex items-center gap-2 text-gray-400 hover:text-white">
-              <User className="w-5 h-5" />
-              Mi Perfil
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* UGC Navbar */}
+      <UGCNavbar type="creator" />
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Main Content - with top padding for fixed navbar */}
+      <div className="pt-20 max-w-6xl mx-auto px-6 py-8">
         {/* Welcome Section */}
         <div className="mb-10">
           <h1 className="text-3xl font-light mb-2">
