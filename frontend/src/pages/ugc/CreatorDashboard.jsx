@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   User, Star, TrendingUp, Award, Briefcase, Clock, CheckCircle,
-  ArrowRight, Instagram, Music2, Camera, BarChart3, Loader2, BadgeCheck, FileText
+  ArrowRight, Instagram, Music2, Camera, BarChart3, Loader2, BadgeCheck, 
+  FileText, ChevronRight, Plus, Zap
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { getApiUrl } from '../../utils/api';
@@ -33,16 +34,12 @@ const CreatorDashboard = () => {
       if (profileRes.ok) {
         const profileData = await profileRes.json();
         
-        // Build social_networks from social_media (legacy) and social_accounts (verified)
         let socialNetworks = profileData.social_networks || profileData.social_media || [];
         const socialAccounts = profileData.social_accounts || {};
         
-        // If we have verified social accounts, use them
         if (Object.keys(socialAccounts).length > 0) {
-          // Create a map of existing networks by platform
           const existingPlatforms = new Set(socialNetworks.map(sn => sn.platform));
           
-          // Update existing networks with verified data
           socialNetworks = socialNetworks.map(sn => {
             const verifiedData = socialAccounts[sn.platform];
             if (verifiedData && verifiedData.verified_by_ai) {
@@ -56,11 +53,10 @@ const CreatorDashboard = () => {
             return sn;
           });
           
-          // Add verified accounts that don't exist in social_networks
           Object.entries(socialAccounts).forEach(([platform, data]) => {
             if (!existingPlatforms.has(platform) && data.verified_by_ai) {
               socialNetworks.push({
-                platform: platform,
+                platform,
                 username: data.username,
                 followers: data.follower_count,
                 verified_by_ai: true,
@@ -70,13 +66,12 @@ const CreatorDashboard = () => {
           });
         }
         
-        profileData.social_networks = socialNetworks;
-        setProfile(profileData);
+        setProfile({ ...profileData, social_networks: socialNetworks });
       }
 
       if (deliverablesRes.ok) {
-        const delData = await deliverablesRes.json();
-        setDeliverables(delData.deliverables || []);
+        const deliverablesData = await deliverablesRes.json();
+        setDeliverables(deliverablesData.deliverables || []);
       }
     } catch (err) {
       console.error(err);
@@ -88,25 +83,27 @@ const CreatorDashboard = () => {
   const getLevelColor = (level) => {
     const colors = {
       rookie: 'from-gray-500 to-gray-600',
-      trusted: 'from-blue-500 to-blue-600',
-      pro: 'from-purple-500 to-purple-600',
-      elite: 'from-[#d4a968] to-amber-600'
+      rising: 'from-blue-500 to-blue-600',
+      established: 'from-purple-500 to-purple-600',
+      top: 'from-yellow-500 to-orange-500',
+      elite: 'from-[#d4a968] to-yellow-500'
     };
     return colors[level] || colors.rookie;
   };
 
   const getLevelLabel = (level) => {
-    const labels = { rookie: 'Rookie', trusted: 'Trusted', pro: 'Pro', elite: 'Elite' };
+    const labels = { rookie: 'Rookie', rising: 'Rising', established: 'Established', top: 'Top', elite: 'Elite' };
     return labels[level] || 'Rookie';
   };
 
   const getStatusColor = (status) => {
     const colors = {
       awaiting_publish: 'bg-yellow-500/20 text-yellow-400',
-      published: 'bg-blue-500/20 text-blue-400',
       submitted: 'bg-purple-500/20 text-purple-400',
-      approved: 'bg-green-500/20 text-green-400',
+      under_review: 'bg-purple-500/20 text-purple-400',
       changes_requested: 'bg-orange-500/20 text-orange-400',
+      approved: 'bg-green-500/20 text-green-400',
+      completed: 'bg-green-500/20 text-green-400',
       metrics_pending: 'bg-cyan-500/20 text-cyan-400'
     };
     return colors[status] || 'bg-gray-500/20 text-gray-400';
@@ -114,15 +111,13 @@ const CreatorDashboard = () => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      awaiting_publish: 'Por publicar',
-      published: 'Publicado',
+      awaiting_publish: 'Por Publicar',
       submitted: 'Enviado',
-      under_review: 'En revisión',
+      under_review: 'En Revisión',
+      changes_requested: 'Cambios',
       approved: 'Aprobado',
-      changes_requested: 'Cambios solicitados',
-      metrics_pending: 'Métricas pendientes',
-      metrics_submitted: 'Métricas enviadas',
-      completed: 'Completado'
+      completed: 'Completado',
+      metrics_pending: 'Métricas'
     };
     return labels[status] || status;
   };
@@ -135,197 +130,257 @@ const CreatorDashboard = () => {
     );
   }
 
+  const stats = profile?.stats || {};
+  const socialNetworks = profile?.social_networks || [];
+
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* UGC Navbar */}
       <UGCNavbar type="creator" />
 
-      {/* Main Content - with top padding for fixed navbar */}
-      <div className="pt-20 max-w-6xl mx-auto px-6 py-8">
-        {/* Welcome Section */}
-        <div className="mb-10">
-          <h1 className="text-3xl font-light mb-2">
-            Hola, <span className="text-[#d4a968] italic">{profile?.name || user?.name}</span>
-          </h1>
-          <p className="text-gray-400">Este es tu panel de creador UGC</p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-4 mb-10">
-          {/* Level Card */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getLevelColor(profile?.level)} flex items-center justify-center mb-4`}>
-              <Award className="w-6 h-6 text-white" />
+      {/* Main Content */}
+      <div className="pt-16 pb-24 md:pb-8">
+        {/* Header Section - Compact on mobile */}
+        <div className="px-4 md:px-6 py-4 md:py-6 bg-gradient-to-b from-[#d4a968]/10 to-transparent">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-sm">Hola,</p>
+                <h1 className="text-xl md:text-2xl font-medium">
+                  <span className="text-[#d4a968]">{profile?.name || user?.name}</span>
+                </h1>
+              </div>
+              {/* Level Badge - Compact */}
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r ${getLevelColor(profile?.level)}`}>
+                <Award className="w-4 h-4 text-white" />
+                <span className="text-sm font-medium text-white">{getLevelLabel(profile?.level)}</span>
+              </div>
             </div>
-            <p className="text-gray-400 text-sm mb-1">Nivel</p>
-            <p className="text-2xl font-medium">{getLevelLabel(profile?.level)}</p>
-            <div className="mt-2 h-1 bg-white/10 rounded-full">
-              <div 
-                className="h-1 bg-[#d4a968] rounded-full transition-all"
-                style={{ width: `${profile?.level_progress || 0}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Rating Card */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-4">
-              <Star className="w-6 h-6 text-yellow-500" />
-            </div>
-            <p className="text-gray-400 text-sm mb-1">Rating</p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-2xl font-medium">{profile?.stats?.avg_rating?.toFixed(1) || '0.0'}</p>
-              <span className="text-gray-500 text-sm">/ 5.0</span>
-            </div>
-            <p className="text-xs text-gray-500 mt-1">{profile?.stats?.total_ratings || 0} reviews</p>
-          </div>
-
-          {/* Campaigns Card */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4">
-              <Briefcase className="w-6 h-6 text-purple-500" />
-            </div>
-            <p className="text-gray-400 text-sm mb-1">Campañas</p>
-            <p className="text-2xl font-medium">{profile?.stats?.completed_campaigns || 0}</p>
-            <p className="text-xs text-gray-500 mt-1">completadas</p>
-          </div>
-
-          {/* On-Time Card */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-4">
-              <Clock className="w-6 h-6 text-green-500" />
-            </div>
-            <p className="text-gray-400 text-sm mb-1">Puntualidad</p>
-            <p className="text-2xl font-medium">{profile?.stats?.delivery_on_time_rate || 100}%</p>
-            <p className="text-xs text-gray-500 mt-1">entregas a tiempo</p>
           </div>
         </div>
 
-        {/* Two Columns */}
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Active Deliverables */}
-          <div className="md:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-medium">Entregas Activas</h2>
-              <Link to="/ugc/creator/workspace" className="text-[#d4a968] text-sm hover:underline flex items-center gap-1">
-                Ver todas <ArrowRight className="w-4 h-4" />
-              </Link>
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          {/* Stats Grid - 2x2 on mobile, 4 cols on desktop */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+            {/* Rating */}
+            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center">
+                  <Star className="w-4 h-4 text-yellow-500" />
+                </div>
+                <span className="text-xs text-gray-400">Rating</span>
+              </div>
+              <p className="text-xl md:text-2xl font-semibold">{stats.avg_rating?.toFixed(1) || '0.0'}</p>
+              <p className="text-[10px] md:text-xs text-gray-500">{stats.total_ratings || 0} reviews</p>
             </div>
 
-            {deliverables.length === 0 ? (
-              <div className="p-8 bg-white/5 border border-white/10 rounded-xl text-center">
-                <Camera className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400 mb-4">No tenés entregas activas</p>
-                <Link
-                  to="/ugc/campaigns"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958]"
-                >
-                  Buscar campañas <ArrowRight className="w-4 h-4" />
+            {/* Campaigns */}
+            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                  <Briefcase className="w-4 h-4 text-purple-500" />
+                </div>
+                <span className="text-xs text-gray-400">Campañas</span>
+              </div>
+              <p className="text-xl md:text-2xl font-semibold">{stats.completed_campaigns || 0}</p>
+              <p className="text-[10px] md:text-xs text-gray-500">completadas</p>
+            </div>
+
+            {/* On-Time */}
+            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-green-500" />
+                </div>
+                <span className="text-xs text-gray-400">A tiempo</span>
+              </div>
+              <p className="text-xl md:text-2xl font-semibold">{stats.delivery_on_time_rate || 100}%</p>
+              <p className="text-[10px] md:text-xs text-gray-500">puntualidad</p>
+            </div>
+
+            {/* Total Reach */}
+            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-blue-500" />
+                </div>
+                <span className="text-xs text-gray-400">Alcance</span>
+              </div>
+              <p className="text-xl md:text-2xl font-semibold">
+                {stats.total_reach ? (stats.total_reach > 1000 ? `${(stats.total_reach/1000).toFixed(1)}K` : stats.total_reach) : '0'}
+              </p>
+              <p className="text-[10px] md:text-xs text-gray-500">total reach</p>
+            </div>
+          </div>
+
+          {/* Quick Actions - Mobile */}
+          <div className="grid grid-cols-2 gap-3 mb-6 md:hidden">
+            <Link
+              to="/ugc/campaigns"
+              className="flex items-center gap-3 p-3 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl hover:bg-[#d4a968]/20 transition-all"
+            >
+              <div className="w-10 h-10 rounded-xl bg-[#d4a968] flex items-center justify-center">
+                <Zap className="w-5 h-5 text-black" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Explorar</p>
+                <p className="text-[10px] text-gray-400">Campañas</p>
+              </div>
+            </Link>
+            <Link
+              to="/ugc/creator/applications"
+              className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all"
+            >
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-purple-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Aplicaciones</p>
+                <p className="text-[10px] text-gray-400">Ver estado</p>
+              </div>
+            </Link>
+          </div>
+
+          {/* Content Grid */}
+          <div className="grid md:grid-cols-3 gap-4 md:gap-6">
+            {/* Active Deliverables - Takes 2 cols on desktop */}
+            <div className="md:col-span-2 order-1">
+              <div className="flex items-center justify-between mb-3 md:mb-4">
+                <h2 className="text-base md:text-lg font-medium">Entregas Activas</h2>
+                <Link to="/ugc/creator/workspace" className="text-[#d4a968] text-xs md:text-sm hover:underline flex items-center gap-1">
+                  Ver todas <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
-            ) : (
-              <div className="space-y-4">
-                {deliverables.slice(0, 5).map((item) => (
+
+              {deliverables.length === 0 ? (
+                <div className="p-6 md:p-8 bg-white/5 border border-white/10 rounded-xl text-center">
+                  <Camera className="w-10 h-10 md:w-12 md:h-12 text-gray-600 mx-auto mb-3" />
+                  <p className="text-gray-400 text-sm mb-3">No tenés entregas activas</p>
                   <Link
-                    key={item.deliverable.id}
-                    to={`/ugc/creator/deliverable/${item.deliverable.id}`}
-                    className="block p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all"
+                    to="/ugc/campaigns"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black text-sm rounded-lg hover:bg-[#c49958]"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-[#d4a968]/20 flex items-center justify-center">
-                          {item.deliverable.platform === 'tiktok' ? (
-                            <Music2 className="w-5 h-5 text-[#d4a968]" />
-                          ) : (
-                            <Instagram className="w-5 h-5 text-[#d4a968]" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium">{item.campaign?.name}</p>
-                          <p className="text-sm text-gray-500">{item.brand?.company_name}</p>
-                        </div>
+                    Buscar campañas <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-2 md:space-y-3">
+                  {deliverables.slice(0, 4).map((item) => (
+                    <Link
+                      key={item.deliverable.id}
+                      to={`/ugc/creator/deliverable/${item.deliverable.id}`}
+                      className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-[#d4a968]/20 flex items-center justify-center flex-shrink-0">
+                        {item.deliverable.platform === 'tiktok' ? (
+                          <Music2 className="w-5 h-5 text-[#d4a968]" />
+                        ) : (
+                          <Instagram className="w-5 h-5 text-[#d4a968]" />
+                        )}
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs ${getStatusColor(item.deliverable.status)}`}>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{item.campaign?.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{item.brand?.company_name}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-[10px] md:text-xs whitespace-nowrap ${getStatusColor(item.deliverable.status)}`}>
                         {getStatusLabel(item.deliverable.status)}
                       </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Social Networks */}
-          <div>
-            <h2 className="text-xl font-medium mb-6">Mis Redes</h2>
-            <div className="space-y-4">
-              {profile?.social_networks?.length > 0 ? (
-                profile.social_networks.map((sn, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 bg-white/5 border border-white/10 rounded-xl"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      {sn.platform === 'tiktok' ? (
-                        <div className="w-8 h-8 rounded-full bg-black border border-white/20 flex items-center justify-center">
-                          <Music2 className="w-4 h-4" />
-                        </div>
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center">
-                          <Instagram className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                      <span className="font-medium flex items-center gap-2">
-                        @{sn.username}
-                        {sn.verified_by_ai && (
-                          <BadgeCheck className="w-4 h-4 text-green-400" title="Verificado con IA" />
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-400">Seguidores:</span>
-                      <span className={`font-medium ${sn.verified_by_ai ? 'text-green-400' : 'text-white'}`}>
-                        {sn.followers ? sn.followers.toLocaleString() : 'Sin actualizar'}
-                        {sn.verified_by_ai && <span className="text-xs text-gray-500 ml-1">✓</span>}
-                      </span>
-                    </div>
-                    {sn.verified_by_ai && sn.verified_at && (
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5">
-                        <span className="text-xs text-gray-500">
-                          Verificado: {new Date(sn.verified_at).toLocaleDateString()}
-                        </span>
-                        <Link
-                          to="/ugc/creator/profile"
-                          className="text-xs text-[#d4a968] hover:underline flex items-center gap-1"
-                        >
-                          Actualizar →
-                        </Link>
-                      </div>
-                    )}
-                    {!sn.followers && (
-                      <Link
-                        to="/ugc/creator/profile"
-                        className="mt-3 block text-xs text-[#d4a968] hover:underline"
-                      >
-                        Verificar con screenshot →
-                      </Link>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div className="p-4 bg-white/5 border border-white/10 rounded-xl text-center">
-                  <p className="text-gray-400 text-sm">No tenés redes conectadas</p>
+                    </Link>
+                  ))}
                 </div>
               )}
+            </div>
 
-              <Link
-                to="/ugc/creator/profile"
-                className="block p-4 border border-dashed border-white/20 rounded-xl text-center text-gray-400 hover:border-[#d4a968]/50 hover:text-[#d4a968] transition-all"
-              >
-                + Agregar red social
-              </Link>
+            {/* Social Networks - Sidebar on desktop, full width on mobile */}
+            <div className="order-2">
+              <div className="flex items-center justify-between mb-3 md:mb-4">
+                <h2 className="text-base md:text-lg font-medium">Mis Redes</h2>
+                <Link to="/ugc/creator/profile" className="text-[#d4a968] text-xs hover:underline flex items-center gap-1">
+                  Editar <ChevronRight className="w-3 h-3" />
+                </Link>
+              </div>
+              
+              {socialNetworks.length > 0 ? (
+                <div className="space-y-2 md:space-y-3">
+                  {socialNetworks.map((sn, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 bg-white/5 border border-white/10 rounded-xl"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {sn.platform === 'tiktok' ? (
+                            <div className="w-8 h-8 rounded-full bg-black border border-white/20 flex items-center justify-center">
+                              <Music2 className="w-4 h-4" />
+                            </div>
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center">
+                              <Instagram className="w-4 h-4 text-white" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-sm font-medium flex items-center gap-1">
+                              @{sn.username}
+                              {sn.verified_by_ai && (
+                                <BadgeCheck className="w-3.5 h-3.5 text-green-400" />
+                              )}
+                            </p>
+                            <p className={`text-xs ${sn.verified_by_ai ? 'text-green-400' : 'text-gray-400'}`}>
+                              {sn.followers ? `${sn.followers.toLocaleString()} seguidores` : 'Sin verificar'}
+                            </p>
+                          </div>
+                        </div>
+                        {!sn.verified_by_ai && (
+                          <Link
+                            to="/ugc/creator/profile"
+                            className="text-[10px] px-2 py-1 bg-[#d4a968]/20 text-[#d4a968] rounded-full"
+                          >
+                            Verificar
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-4 bg-white/5 border border-dashed border-white/20 rounded-xl text-center">
+                  <Plus className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                  <p className="text-gray-400 text-sm mb-2">Agregá tus redes</p>
+                  <Link
+                    to="/ugc/creator/profile"
+                    className="text-[#d4a968] text-xs hover:underline"
+                  >
+                    Configurar perfil →
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-lg border-t border-white/10 md:hidden z-40">
+        <div className="flex items-center justify-around py-2">
+          <Link to="/ugc/creator/dashboard" className="flex flex-col items-center py-2 px-4 text-[#d4a968]">
+            <BarChart3 className="w-5 h-5" />
+            <span className="text-[10px] mt-1">Dashboard</span>
+          </Link>
+          <Link to="/ugc/campaigns" className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-white">
+            <Briefcase className="w-5 h-5" />
+            <span className="text-[10px] mt-1">Campañas</span>
+          </Link>
+          <Link to="/ugc/creator/applications" className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-white">
+            <FileText className="w-5 h-5" />
+            <span className="text-[10px] mt-1">Aplicaciones</span>
+          </Link>
+          <Link to="/ugc/creator/workspace" className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-white">
+            <Camera className="w-5 h-5" />
+            <span className="text-[10px] mt-1">Workspace</span>
+          </Link>
+          <Link to="/ugc/creator/profile" className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-white">
+            <User className="w-5 h-5" />
+            <span className="text-[10px] mt-1">Perfil</span>
+          </Link>
         </div>
       </div>
     </div>
