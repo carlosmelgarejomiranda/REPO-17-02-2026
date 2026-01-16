@@ -461,7 +461,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                     value={formData.website}
                     onChange={(e) => handleChange('website', cleanUrl(e.target.value))}
                     placeholder="miempresa.com.py"
-                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-r-lg text-white focus:border-[#d4a968] focus:outline-none"
+                    className="flex-1 px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-r-lg text-white focus:border-[#d4a968] focus:outline-none"
                   />
                 </div>
               </div>
@@ -477,7 +477,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                     value={formData.instagram}
                     onChange={(e) => handleChange('instagram', cleanInstagram(e.target.value))}
                     placeholder="miempresa"
-                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-r-lg text-white focus:border-[#d4a968] focus:outline-none"
+                    className="flex-1 px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-r-lg text-white focus:border-[#d4a968] focus:outline-none"
                   />
                 </div>
               </div>
