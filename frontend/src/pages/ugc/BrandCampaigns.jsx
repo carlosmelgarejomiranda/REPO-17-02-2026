@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { 
   Plus, Users, BarChart3, Loader2, AlertCircle, TrendingUp, Calendar
 } from 'lucide-react';
+import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
