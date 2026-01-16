@@ -5,6 +5,7 @@ import {
   Instagram, Music2, Users, ChevronRight, Ban
 } from 'lucide-react';
 import { getApiUrl } from '../../utils/api';
+import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
