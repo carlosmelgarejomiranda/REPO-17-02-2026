@@ -63,25 +63,11 @@ const BrandDashboard = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="text-xl font-light">
-            <span className="text-[#d4a968] italic">Avenue</span> UGC
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/ugc/brand/packages" className="text-gray-400 hover:text-white transition-colors">
-              Mi Paquete
-            </Link>
-            <div className="flex items-center gap-2 text-gray-400">
-              <Building2 className="w-5 h-5" />
-              {profile?.company_name}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* UGC Navbar */}
+      <UGCNavbar type="brand" />
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Main Content - with top padding for fixed navbar */}
+      <div className="pt-20 max-w-6xl mx-auto px-6 py-8">
         {/* Page Header */}
         <div className="mb-10">
           <h1 className="text-3xl font-light mb-2">
