@@ -65,6 +65,7 @@ import CampaignApplications from "./pages/ugc/CampaignApplications";
 import CreatorApplications from "./pages/ugc/CreatorApplications";
 import CreatorFeedback from "./pages/ugc/CreatorFeedback";
 import MyProfile from "./pages/MyProfile";
+import InvestorPage from "./pages/InvestorPage";
 
 // Auth context helper
 const useAuth = () => {
