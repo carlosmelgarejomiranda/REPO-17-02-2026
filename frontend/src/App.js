@@ -704,7 +704,19 @@ function AppRouter() {
           {/* Investor Page - Private Admin Only */}
           <Route path="/admin/investors" element={
             ['admin', 'superadmin'].includes(user?.role) ? (
-              <InvestorPage />
+              <>
+                <Navbar 
+                  user={user}
+                  onLoginClick={() => setShowAuthModal(true)}
+                  onLogout={logout}
+                  language={language}
+                  setLanguage={setLanguage}
+                  t={t}
+                />
+                <div style={{ paddingTop: '64px' }}>
+                  <InvestorPage />
+                </div>
+              </>
             ) : (
               <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
                 <div className="text-center">
