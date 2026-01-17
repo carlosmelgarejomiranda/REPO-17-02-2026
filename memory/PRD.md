@@ -18,6 +18,29 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-17
+
+#### ✅ Completed
+- **Página de Inversores (P0)**
+  - Creada página privada de presentación para inversores
+  - Accesible solo para roles `admin` y `superadmin`
+  - Ruta: `/admin/investors`
+  - Secciones incluidas:
+    - Hero con métricas clave (GMV, Creadores, Marcas, Campañas, Reservas, Crecimiento)
+    - "Nuestra Historia" con timeline de evolución (2021-2024)
+    - "La Plataforma" - descripción de E-commerce, Studio y UGC
+    - "Oportunidad de Mercado" - Paraguay como mercado emergente
+    - "Ventaja Competitiva" - First Mover, Ecosistema Integrado, etc.
+    - "Modelo de Ingresos" - distribución porcentual por servicio
+    - "Visión a 3 Años" - roadmap de expansión regional
+  - Quick Action "Pitch Inversores" agregado al AdminDashboard
+  - Archivos creados/modificados:
+    - `/app/frontend/src/pages/InvestorPage.jsx` - Nueva página completa
+    - `/app/frontend/src/App.js` - Import y ruta protegida
+    - `/app/frontend/src/components/AdminDashboard.jsx` - Quick action button
+
+---
+
 ### Session: 2026-01-16
 
 #### ✅ Completed
