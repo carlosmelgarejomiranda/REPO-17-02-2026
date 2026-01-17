@@ -701,6 +701,26 @@ function AppRouter() {
             />
           } />
 
+          {/* Investor Page - Private Admin Only */}
+          <Route path="/admin/investors" element={
+            ['admin', 'superadmin'].includes(user?.role) ? (
+              <InvestorPage />
+            ) : (
+              <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
+                <div className="text-center">
+                  <h1 className="text-2xl mb-4" style={{ color: '#f5ede4' }}>Acceso Restringido</h1>
+                  <p className="mb-4" style={{ color: '#a8a8a8' }}>Esta página es solo para administradores</p>
+                  <Button 
+                    onClick={() => setShowAuthModal(true)}
+                    style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </div>
+              </div>
+            )
+          } />
+
           {/* Auth Callback Route */}
           <Route path="/auth/callback" element={
             <AuthCallback onAuthComplete={(userData) => {
