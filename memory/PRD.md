@@ -144,9 +144,13 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 ## Pending Issues
 
 ### P1 - High Priority
-- [ ] **Creator Dashboard & Campaign Cards Redesign** - Mejorar UX para creadores
+- [ ] **Verificar Dark Mode UI para Forms** - Fix aplicado, pendiente confirmación visual del usuario
+- [ ] **Mejorar mensaje error Transfer Campaign** - Cambiar mensaje genérico a "El email no corresponde a una marca registrada"
+- [ ] **Notificaciones Email Faltantes:**
+  - Brands: Campaña aprobada, slots recargados, plan comprado
+  - Creators: Notificación al subir de nivel
+  - E-commerce: Ciclo completo de órdenes
 - [ ] **"Prueba de Fuego" UGC** - Test completo del flujo E2E (USER VERIFICATION PENDING)
-- [ ] **Admin Panel Approval** - Feedback del nuevo diseño (USER VERIFICATION PENDING)
 
 ### P2 - Medium Priority  
 - [ ] **Image Upload in Create Campaign** - Integrar subida de imagen cover
