@@ -1027,19 +1027,19 @@ async def debug_products_status():
         total_grouped = await db.shop_products_grouped.count_documents({})
         total_with_stock = await db.shop_products_grouped.count_documents({"total_stock": {"$gt": 0}})
         
-        # Count products with images
+        # Count products with images (correct query - field must exist AND be a non-empty string)
         with_custom_image = await db.shop_products_grouped.count_documents({
-            "custom_image": {"$ne": None, "$ne": ""}
+            "custom_image": {"$exists": True, "$type": "string", "$ne": ""}
         })
         with_images_array = await db.shop_products_grouped.count_documents({
-            "images.0": {"$exists": True, "$ne": None, "$ne": ""}
+            "images.0": {"$exists": True, "$type": "string", "$ne": ""}
         })
         
         # Sample products with images
         sample_with_images = await db.shop_products_grouped.find(
             {"$or": [
-                {"custom_image": {"$ne": None, "$ne": ""}},
-                {"images.0": {"$exists": True, "$ne": None, "$ne": ""}}
+                {"custom_image": {"$exists": True, "$type": "string", "$ne": ""}},
+                {"images.0": {"$exists": True, "$type": "string", "$ne": ""}}
             ]},
             {"_id": 0, "grouped_id": 1, "base_model": 1, "custom_image": 1, "images": 1, "total_stock": 1}
         ).limit(10).to_list(10)
