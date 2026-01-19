@@ -441,8 +441,7 @@ export const AdminDashboard = ({ user }) => {
   const quickActions = [
     { label: 'Nueva Campaña UGC', icon: Plus, action: () => { setActiveModule('ugc'); setActiveSubTab('overview'); }, color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
     { label: 'Editar Web', icon: Palette, action: () => setShowBuilder(true), color: 'bg-[#d4a968]/20 text-[#d4a968] border-[#d4a968]/30' },
-    ...(pendingActions > 0 ? [{ label: `${pendingActions} Pendientes`, icon: Bell, action: () => {}, color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' }] : []),
-    ...(['admin', 'superadmin'].includes(userRole) ? [{ label: 'Pitch Inversores', icon: Briefcase, action: () => window.location.href = '/admin/investors', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' }] : [])
+    ...(pendingActions > 0 ? [{ label: `${pendingActions} Pendientes`, icon: Bell, action: () => {}, color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' }] : [])
   ];
 
   // Website Builder view
