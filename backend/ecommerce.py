@@ -1013,6 +1013,53 @@ async def get_featured_products():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== DIAGNOSTIC ENDPOINT ====================
+
+@ecommerce_router.get("/debug/products-status")
+async def debug_products_status():
+    """Diagnostic endpoint to check product and image status"""
+    try:
+        # Get admin settings
+        settings = await db.admin_settings.find_one({"_id": "global"})
+        show_only_with_images = settings.get("show_only_products_with_images", False) if settings else False
+        
+        # Count products
+        total_grouped = await db.shop_products_grouped.count_documents({})
+        total_with_stock = await db.shop_products_grouped.count_documents({"total_stock": {"$gt": 0}})
+        
+        # Count products with images
+        with_custom_image = await db.shop_products_grouped.count_documents({
+            "custom_image": {"$ne": None, "$ne": ""}
+        })
+        with_images_array = await db.shop_products_grouped.count_documents({
+            "images.0": {"$exists": True, "$ne": None, "$ne": ""}
+        })
+        
+        # Sample products with images
+        sample_with_images = await db.shop_products_grouped.find(
+            {"$or": [
+                {"custom_image": {"$ne": None, "$ne": ""}},
+                {"images.0": {"$exists": True, "$ne": None, "$ne": ""}}
+            ]},
+            {"_id": 0, "grouped_id": 1, "base_model": 1, "custom_image": 1, "images": 1, "total_stock": 1}
+        ).limit(10).to_list(10)
+        
+        return {
+            "admin_settings": {
+                "show_only_products_with_images": show_only_with_images,
+                "settings_exists": settings is not None
+            },
+            "counts": {
+                "total_grouped_products": total_grouped,
+                "with_stock_gt_0": total_with_stock,
+                "with_custom_image": with_custom_image,
+                "with_images_array": with_images_array
+            },
+            "sample_products_with_images": sample_with_images
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 # ==================== DELIVERY CALCULATION ====================
 
 # Paraguay bounding box coordinates
