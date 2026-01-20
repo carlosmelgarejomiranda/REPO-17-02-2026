@@ -1060,6 +1060,74 @@ async def debug_products_status():
     except Exception as e:
         return {"error": str(e)}
 
+@ecommerce_router.get("/debug/storage-status")
+async def debug_storage_status():
+    """Check storage/filesystem status for image uploads"""
+    import shutil
+    
+    base_upload_dir = "/app/backend/uploads"
+    products_dir = os.path.join(base_upload_dir, "products")
+    temp_dir = os.path.join(base_upload_dir, "temp_batch")
+    
+    results = {
+        "base_dir": {
+            "path": base_upload_dir,
+            "exists": os.path.exists(base_upload_dir),
+            "is_writable": False,
+            "error": None
+        },
+        "products_dir": {
+            "path": products_dir,
+            "exists": os.path.exists(products_dir),
+            "is_writable": False,
+            "error": None
+        },
+        "temp_dir": {
+            "path": temp_dir,
+            "exists": os.path.exists(temp_dir),
+            "is_writable": False,
+            "error": None
+        }
+    }
+    
+    # Check if directories are writable
+    for key, info in results.items():
+        if info["exists"]:
+            try:
+                test_file = os.path.join(info["path"], ".write_test")
+                with open(test_file, "w") as f:
+                    f.write("test")
+                os.remove(test_file)
+                info["is_writable"] = True
+            except Exception as e:
+                info["error"] = str(e)
+        else:
+            # Try to create
+            try:
+                os.makedirs(info["path"], exist_ok=True)
+                info["exists"] = True
+                # Test write
+                test_file = os.path.join(info["path"], ".write_test")
+                with open(test_file, "w") as f:
+                    f.write("test")
+                os.remove(test_file)
+                info["is_writable"] = True
+            except Exception as e:
+                info["error"] = str(e)
+    
+    # Get disk space
+    try:
+        total, used, free = shutil.disk_usage(base_upload_dir if os.path.exists(base_upload_dir) else "/app")
+        results["disk_space"] = {
+            "total_gb": round(total / (1024**3), 2),
+            "used_gb": round(used / (1024**3), 2),
+            "free_gb": round(free / (1024**3), 2)
+        }
+    except Exception as e:
+        results["disk_space"] = {"error": str(e)}
+    
+    return results
+
 # ==================== DELIVERY CALCULATION ====================
 
 # Paraguay bounding box coordinates
