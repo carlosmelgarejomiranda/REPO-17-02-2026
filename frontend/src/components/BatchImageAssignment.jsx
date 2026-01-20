@@ -132,12 +132,18 @@ export const BatchImageAssignment = ({ onClose }) => {
           });
         }
       } else {
-        const errorData = await response.json().catch(() => ({}));
-        setMessage({ type: 'error', text: errorData.detail || 'Error al subir las imágenes' });
+        let errorText = `Error ${response.status}: `;
+        try {
+          const errorData = await response.json();
+          errorText += errorData.detail || JSON.stringify(errorData);
+        } catch {
+          errorText += response.statusText || 'Error desconocido';
+        }
+        setMessage({ type: 'error', text: errorText });
       }
     } catch (err) {
       console.error('Error uploading batch:', err);
-      setMessage({ type: 'error', text: 'Error al subir las imágenes' });
+      setMessage({ type: 'error', text: `Error de conexión: ${err.message}` });
     } finally {
       setUploadingBatch(false);
     }
