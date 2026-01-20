@@ -2351,12 +2351,23 @@ async def upload_batch_temp(request: Request, files: List[UploadFile] = File(...
     # Use base uploads directory for temp batch (not products subfolder)
     base_upload_dir = "/app/backend/uploads"
     temp_dir = os.path.join(base_upload_dir, "temp_batch")
-    os.makedirs(temp_dir, exist_ok=True)
+    
+    # Create directories with error handling
+    try:
+        os.makedirs(temp_dir, exist_ok=True)
+    except Exception as e:
+        logger.error(f"Failed to create temp_dir: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al crear directorio temporal: {str(e)}")
     
     # Generate batch ID
     batch_id = f"batch_{uuid.uuid4().hex[:12]}"
     batch_dir = os.path.join(temp_dir, batch_id)
-    os.makedirs(batch_dir, exist_ok=True)
+    
+    try:
+        os.makedirs(batch_dir, exist_ok=True)
+    except Exception as e:
+        logger.error(f"Failed to create batch_dir: {e}")
+        raise HTTPException(status_code=500, detail=f"Error al crear directorio de lote: {str(e)}")
     
     uploaded_images = []
     errors = []
