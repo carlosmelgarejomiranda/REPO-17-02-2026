@@ -2511,13 +2511,55 @@ async def serve_temp_image(batch_id: str, filename: str):
     filepath = os.path.join(temp_dir, filename)
     
     if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail=f"Image not found: {filepath}")
+        logger.error(f"Image not found: {filepath}")
+        raise HTTPException(status_code=404, detail=f"Image not found")
+    
+    # Check file size
+    file_size = os.path.getsize(filepath)
+    if file_size == 0:
+        logger.error(f"Image file is empty: {filepath}")
+        raise HTTPException(status_code=500, detail="Image file is empty")
     
     # Detect MIME type from extension
     ext = filename.split('.')[-1].lower() if '.' in filename else 'jpg'
     media_type = EXT_TO_MIME.get(ext, 'image/jpeg')
     
     return FileResponse(filepath, media_type=media_type)
+
+@ecommerce_router.get("/debug/batch-images/{batch_id}")
+async def debug_batch_images(batch_id: str):
+    """Debug endpoint to check batch images status"""
+    base_upload_dir = "/app/backend/uploads"
+    temp_dir = os.path.join(base_upload_dir, "temp_batch", batch_id)
+    
+    if not os.path.exists(temp_dir):
+        return {"error": f"Batch directory not found: {temp_dir}", "exists": False}
+    
+    files = []
+    for filename in os.listdir(temp_dir):
+        filepath = os.path.join(temp_dir, filename)
+        try:
+            size = os.path.getsize(filepath)
+            files.append({
+                "filename": filename,
+                "size_bytes": size,
+                "size_kb": round(size / 1024, 2),
+                "exists": True,
+                "readable": os.access(filepath, os.R_OK)
+            })
+        except Exception as e:
+            files.append({
+                "filename": filename,
+                "error": str(e)
+            })
+    
+    return {
+        "batch_id": batch_id,
+        "directory": temp_dir,
+        "exists": True,
+        "file_count": len(files),
+        "files": files
+    }
 
 class ImageAssignment(BaseModel):
     product_id: str
