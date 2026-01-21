@@ -235,9 +235,6 @@ export const BatchImageAssignment = ({ onClose }) => {
           type: 'success', 
           text: `✓ Asignado a: ${data.product_name || selectedProduct.base_model} (ID: ${data.product_id})` 
         }); 
-          type: 'success', 
-          text: `✓ Imágenes asignadas a ${data.product_name}` 
-        });
         setTimeout(() => setMessage(null), 2000);
       } else {
         const error = await response.json();
