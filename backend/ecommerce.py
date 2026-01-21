@@ -2531,57 +2531,25 @@ async def serve_temp_image(batch_id: str, filename: str):
         content=image_data,
         media_type=image_doc.get("content_type", "image/jpeg")
     )
-    filepath = os.path.join(temp_dir, filename)
-    
-    if not os.path.exists(filepath):
-        logger.error(f"Image not found: {filepath}")
-        raise HTTPException(status_code=404, detail=f"Image not found")
-    
-    # Check file size
-    file_size = os.path.getsize(filepath)
-    if file_size == 0:
-        logger.error(f"Image file is empty: {filepath}")
-        raise HTTPException(status_code=500, detail="Image file is empty")
-    
-    # Detect MIME type from extension
-    ext = filename.split('.')[-1].lower() if '.' in filename else 'jpg'
-    media_type = EXT_TO_MIME.get(ext, 'image/jpeg')
-    
-    return FileResponse(filepath, media_type=media_type)
 
 @ecommerce_router.get("/debug/batch-images/{batch_id}")
 async def debug_batch_images(batch_id: str):
-    """Debug endpoint to check batch images status"""
-    base_upload_dir = "/app/backend/uploads"
-    temp_dir = os.path.join(base_upload_dir, "temp_batch", batch_id)
+    """Debug endpoint to check batch images status in MongoDB"""
+    # Find images in MongoDB
+    images = await db.temp_images.find(
+        {"batch_id": batch_id},
+        {"_id": 0, "image_id": 1, "filename": 1, "temp_filename": 1, "size": 1, "extension": 1, "created_at": 1}
+    ).to_list(100)
     
-    if not os.path.exists(temp_dir):
-        return {"error": f"Batch directory not found: {temp_dir}", "exists": False}
-    
-    files = []
-    for filename in os.listdir(temp_dir):
-        filepath = os.path.join(temp_dir, filename)
-        try:
-            size = os.path.getsize(filepath)
-            files.append({
-                "filename": filename,
-                "size_bytes": size,
-                "size_kb": round(size / 1024, 2),
-                "exists": True,
-                "readable": os.access(filepath, os.R_OK)
-            })
-        except Exception as e:
-            files.append({
-                "filename": filename,
-                "error": str(e)
-            })
+    if not images:
+        return {"error": f"No images found for batch: {batch_id}", "exists": False, "storage": "mongodb"}
     
     return {
         "batch_id": batch_id,
-        "directory": temp_dir,
+        "storage": "mongodb",
         "exists": True,
-        "file_count": len(files),
-        "files": files
+        "file_count": len(images),
+        "files": images
     }
 
 class ImageAssignment(BaseModel):
@@ -2591,7 +2559,8 @@ class ImageAssignment(BaseModel):
 
 @ecommerce_router.post("/admin/assign-images")
 async def assign_images_to_product(assignment: ImageAssignment):
-    """Assign temporary images to a product (max 3)"""
+    """Assign temporary images to a product (max 3) - stores in MongoDB"""
+    import base64
     
     if len(assignment.image_ids) > 3:
         raise HTTPException(status_code=400, detail="Máximo 3 imágenes por producto")
@@ -2607,17 +2576,76 @@ async def assign_images_to_product(assignment: ImageAssignment):
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
-    # Process each temp image and move to permanent storage
-    base_upload_dir = "/app/backend/uploads"
-    temp_dir = os.path.join(base_upload_dir, "temp_batch", assignment.batch_id)
+    # Process each temp image from MongoDB
     assigned_images = []
     
-    if not os.path.exists(temp_dir):
-        raise HTTPException(status_code=400, detail=f"Batch no encontrado: {assignment.batch_id}")
-    
     for idx, img_id in enumerate(assignment.image_ids):
-        # Find the temp file
-        temp_files = [f for f in os.listdir(temp_dir) if f.startswith(img_id)]
+        # Find the temp image in MongoDB
+        temp_image = await db.temp_images.find_one({
+            "batch_id": assignment.batch_id,
+            "image_id": img_id
+        })
+        
+        if not temp_image:
+            logger.warning(f"Temp image not found: {img_id} in batch {assignment.batch_id}")
+            continue
+        
+        # Create permanent image entry
+        permanent_image_id = f"{assignment.product_id}_{idx}"
+        ext = temp_image.get("extension", "jpg")
+        
+        # Store in permanent images collection
+        await db.product_images_data.update_one(
+            {"image_id": permanent_image_id},
+            {"$set": {
+                "image_id": permanent_image_id,
+                "product_id": assignment.product_id,
+                "filename": temp_image.get("filename"),
+                "extension": ext,
+                "content_type": temp_image.get("content_type", "image/jpeg"),
+                "data": temp_image.get("data"),  # base64 data
+                "size": temp_image.get("size"),
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "position": idx
+            }},
+            upsert=True
+        )
+        
+        # Generate permanent URL
+        image_url = f"/api/shop/images/{permanent_image_id}.{ext}"
+        assigned_images.append(image_url)
+    
+    if not assigned_images:
+        raise HTTPException(status_code=400, detail="No se pudieron procesar las imágenes")
+    
+    # Update product with image URLs
+    # Pad array to 3 elements
+    images_array = assigned_images + [None] * (3 - len(assigned_images))
+    
+    update_result = await db.shop_products_grouped.update_one(
+        {"grouped_id": assignment.product_id},
+        {"$set": {
+            "images": images_array[:3],
+            "custom_image": assigned_images[0] if assigned_images else None,
+            "image_updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    if update_result.modified_count == 0:
+        logger.warning(f"Product not updated: {assignment.product_id}")
+    
+    # Clean up temp images for this batch/product
+    await db.temp_images.delete_many({
+        "batch_id": assignment.batch_id,
+        "image_id": {"$in": assignment.image_ids}
+    })
+    
+    return {
+        "success": True,
+        "product_id": assignment.product_id,
+        "images_assigned": len(assigned_images),
+        "images": images_array[:3]
+    }
         if not temp_files:
             continue
         
