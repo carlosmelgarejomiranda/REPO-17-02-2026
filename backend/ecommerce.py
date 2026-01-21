@@ -2260,13 +2260,33 @@ async def delete_all_product_images(product_id: str):
 
 @ecommerce_router.get("/images/{filename}")
 async def serve_product_image(filename: str):
-    """Serve uploaded product images"""
+    """Serve uploaded product images from MongoDB or filesystem"""
+    import base64
+    from fastapi.responses import Response
+    
+    # Extract image_id from filename (remove extension)
+    image_id = filename.rsplit('.', 1)[0] if '.' in filename else filename
+    
+    # First try to find in MongoDB (new storage)
+    image_doc = await db.product_images_data.find_one({"image_id": image_id})
+    
+    if image_doc and image_doc.get("data"):
+        try:
+            image_data = base64.b64decode(image_doc["data"])
+            return Response(
+                content=image_data,
+                media_type=image_doc.get("content_type", "image/jpeg")
+            )
+        except Exception as e:
+            logger.error(f"Error decoding product image: {e}")
+    
+    # Fallback to filesystem (legacy storage)
     filepath = os.path.join(UPLOAD_DIR, filename)
     
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail="Image not found")
+    if os.path.exists(filepath):
+        return FileResponse(filepath, media_type="image/jpeg")
     
-    return FileResponse(filepath, media_type="image/jpeg")
+    raise HTTPException(status_code=404, detail="Image not found")
 
 
 @ecommerce_router.get("/admin/export-products-for-images")
