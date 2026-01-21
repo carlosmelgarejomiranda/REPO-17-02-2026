@@ -2666,59 +2666,6 @@ async def assign_images_to_product(assignment: ImageAssignment):
         "images_assigned": len(assigned_images),
         "images": images_array[:3]
     }
-        if not temp_files:
-            continue
-        
-        temp_filename = temp_files[0]
-        temp_filepath = os.path.join(temp_dir, temp_filename)
-        
-        if os.path.exists(temp_filepath):
-            # Read and process image
-            with open(temp_filepath, "rb") as f:
-                content = f.read()
-            
-            # Save to permanent storage with product ID
-            image_url = await process_and_save_image(
-                content, 
-                temp_filename, 
-                f"{assignment.product_id}_{idx}"
-            )
-            assigned_images.append(image_url)
-            
-            # Delete temp file
-            os.remove(temp_filepath)
-    
-    if not assigned_images:
-        raise HTTPException(status_code=400, detail="No se pudieron procesar las imágenes")
-    
-    # Prepare images array (pad to 3 elements)
-    images = assigned_images + [None] * (3 - len(assigned_images))
-    
-    # Update product with new images
-    await db.shop_products_grouped.update_one(
-        {"grouped_id": assignment.product_id},
-        {"$set": {
-            "images": images,
-            "custom_image": images[0],
-            "image_updated_at": datetime.now(timezone.utc).isoformat()
-        }}
-    )
-    
-    # Update batch info - remove assigned images
-    await db.temp_image_batches.update_one(
-        {"batch_id": assignment.batch_id},
-        {"$pull": {"images": {"$in": [f"{img_id}.jpg" for img_id in assignment.image_ids] + 
-                              [f"{img_id}.png" for img_id in assignment.image_ids] +
-                              [f"{img_id}.jpeg" for img_id in assignment.image_ids] +
-                              [f"{img_id}.webp" for img_id in assignment.image_ids]}}}
-    )
-    
-    return {
-        "message": "Imágenes asignadas correctamente",
-        "product_id": assignment.product_id,
-        "assigned_images": assigned_images,
-        "product_name": product.get("base_model")
-    }
 
 @ecommerce_router.delete("/admin/unlink-images/{product_id}")
 async def unlink_images_from_product(product_id: str):
