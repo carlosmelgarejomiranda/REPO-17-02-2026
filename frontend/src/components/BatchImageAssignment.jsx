@@ -246,12 +246,15 @@ export const BatchImageAssignment = ({ onClose }) => {
         setSelectedImages([]);
         setAssignedCount(prev => prev + 1);
         
-        // Show detailed success message with product name from server
+        // Show detailed success message with product name from server - ALERT for debugging
+        const confirmMsg = `✓ IMAGEN ASIGNADA\n\nProducto seleccionado: ${selectedProduct.base_model}\nID enviado: ${selectedProduct.grouped_id}\n\nProducto confirmado por servidor: ${data.product_name}\nID confirmado: ${data.product_id}`;
+        alert(confirmMsg);
+        
         setMessage({ 
           type: 'success', 
-          text: `✓ Asignado a: ${data.product_name || selectedProduct.base_model} (ID: ${data.product_id})` 
+          text: `✓ Asignado a: ${data.product_name} (ID: ${data.product_id})` 
         }); 
-        setTimeout(() => setMessage(null), 2000);
+        setTimeout(() => setMessage(null), 10000); // 10 seconds
       } else {
         const error = await response.json();
         setMessage({ type: 'error', text: error.detail || 'Error al asignar imágenes' });
