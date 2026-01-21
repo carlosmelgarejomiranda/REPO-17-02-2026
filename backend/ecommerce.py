@@ -2413,29 +2413,11 @@ async def get_products_without_images(
 
 @ecommerce_router.post("/admin/upload-batch-temp")
 async def upload_batch_temp(request: Request, files: List[UploadFile] = File(...)):
-    """Upload batch of images to temporary storage for visual assignment"""
-    import shutil
-    
-    # Use base uploads directory for temp batch (not products subfolder)
-    base_upload_dir = "/app/backend/uploads"
-    temp_dir = os.path.join(base_upload_dir, "temp_batch")
-    
-    # Create directories with error handling
-    try:
-        os.makedirs(temp_dir, exist_ok=True)
-    except Exception as e:
-        logger.error(f"Failed to create temp_dir: {e}")
-        raise HTTPException(status_code=500, detail=f"Error al crear directorio temporal: {str(e)}")
+    """Upload batch of images to MongoDB for visual assignment (persistent in production)"""
+    import base64
     
     # Generate batch ID
     batch_id = f"batch_{uuid.uuid4().hex[:12]}"
-    batch_dir = os.path.join(temp_dir, batch_id)
-    
-    try:
-        os.makedirs(batch_dir, exist_ok=True)
-    except Exception as e:
-        logger.error(f"Failed to create batch_dir: {e}")
-        raise HTTPException(status_code=500, detail=f"Error al crear directorio de lote: {str(e)}")
     
     uploaded_images = []
     errors = []
@@ -2463,19 +2445,30 @@ async def upload_batch_temp(request: Request, files: List[UploadFile] = File(...
                 errors.append(f"{file.filename}: Archivo muy grande (máx 15MB)")
                 continue
             
-            # Generate unique filename preserving extension
-            temp_filename = f"{uuid.uuid4().hex[:8]}.{ext}"
-            temp_filepath = os.path.join(batch_dir, temp_filename)
+            # Generate unique image ID
+            image_id = uuid.uuid4().hex[:8]
+            temp_filename = f"{image_id}.{ext}"
             
-            # Save file
-            with open(temp_filepath, "wb") as f:
-                f.write(content)
+            # Store image in MongoDB as base64
+            image_doc = {
+                "image_id": image_id,
+                "batch_id": batch_id,
+                "filename": file.filename,
+                "temp_filename": temp_filename,
+                "extension": ext,
+                "content_type": EXT_TO_MIME.get(ext, 'image/jpeg'),
+                "data": base64.b64encode(content).decode('utf-8'),
+                "size": len(content),
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
             
-            # Generate relative URL for preview (works in any environment)
+            await db.temp_images.insert_one(image_doc)
+            
+            # Generate URL for preview
             image_url = f"/api/shop/temp-images/{batch_id}/{temp_filename}"
             
             uploaded_images.append({
-                "id": temp_filename.replace(f".{ext}", ""),
+                "id": image_id,
                 "filename": file.filename,
                 "temp_filename": temp_filename,
                 "url": image_url,
@@ -2485,15 +2478,20 @@ async def upload_batch_temp(request: Request, files: List[UploadFile] = File(...
             })
             
         except Exception as e:
+            logger.error(f"Error uploading {file.filename}: {str(e)}")
             errors.append(f"{file.filename}: Error - {str(e)}")
     
-    # Store batch info in database for cleanup later
-    await db.temp_image_batches.insert_one({
-        "batch_id": batch_id,
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "image_count": len(uploaded_images),
-        "images": [img["temp_filename"] for img in uploaded_images]
-    })
+    # Store batch info in database
+    await db.temp_image_batches.update_one(
+        {"batch_id": batch_id},
+        {"$set": {
+            "batch_id": batch_id,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "image_count": len(uploaded_images),
+            "images": [img["temp_filename"] for img in uploaded_images]
+        }},
+        upsert=True
+    )
     
     return {
         "batch_id": batch_id,
@@ -2505,9 +2503,34 @@ async def upload_batch_temp(request: Request, files: List[UploadFile] = File(...
 
 @ecommerce_router.get("/temp-images/{batch_id}/{filename}")
 async def serve_temp_image(batch_id: str, filename: str):
-    """Serve temporary batch images with correct MIME type"""
-    base_upload_dir = "/app/backend/uploads"
-    temp_dir = os.path.join(base_upload_dir, "temp_batch", batch_id)
+    """Serve temporary batch images from MongoDB"""
+    import base64
+    
+    # Extract image_id from filename
+    image_id = filename.rsplit('.', 1)[0] if '.' in filename else filename
+    
+    # Find image in MongoDB
+    image_doc = await db.temp_images.find_one({
+        "batch_id": batch_id,
+        "image_id": image_id
+    })
+    
+    if not image_doc:
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    # Decode base64 data
+    try:
+        image_data = base64.b64decode(image_doc["data"])
+    except Exception as e:
+        logger.error(f"Error decoding image: {e}")
+        raise HTTPException(status_code=500, detail="Error decoding image")
+    
+    # Return image with correct content type
+    from fastapi.responses import Response
+    return Response(
+        content=image_data,
+        media_type=image_doc.get("content_type", "image/jpeg")
+    )
     filepath = os.path.join(temp_dir, filename)
     
     if not os.path.exists(filepath):
