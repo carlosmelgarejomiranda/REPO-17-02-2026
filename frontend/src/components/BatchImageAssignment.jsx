@@ -210,6 +210,9 @@ export const BatchImageAssignment = ({ onClose }) => {
       if (response.ok) {
         const data = await response.json();
         
+        // Verify the backend assigned to the correct product
+        console.log('Assignment response:', data);
+        
         // Save to history for undo
         setAssignmentHistory(prev => [{
           product: selectedProduct,
@@ -227,7 +230,11 @@ export const BatchImageAssignment = ({ onClose }) => {
         setSelectedImages([]);
         setAssignedCount(prev => prev + 1);
         
+        // Show detailed success message with product name from server
         setMessage({ 
+          type: 'success', 
+          text: `✓ Asignado a: ${data.product_name || selectedProduct.base_model} (ID: ${data.product_id})` 
+        }); 
           type: 'success', 
           text: `✓ Imágenes asignadas a ${data.product_name}` 
         });
