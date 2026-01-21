@@ -379,6 +379,16 @@ export const BatchImageAssignment = ({ onClose }) => {
           </div>
           
           <div className="flex items-center gap-4">
+            {/* Reset button */}
+            <button
+              onClick={handleResetAllImages}
+              disabled={resetting}
+              className="px-3 py-2 rounded-lg bg-red-900/30 border border-red-500/30 text-red-400 text-sm hover:bg-red-900/50 disabled:opacity-50 flex items-center gap-2"
+            >
+              {resetting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+              Reset Todas
+            </button>
+            
             {/* Brand selector */}
             <div className="flex items-center gap-2">
               <label className="text-gray-400 text-sm">Marca/Categoría:</label>
