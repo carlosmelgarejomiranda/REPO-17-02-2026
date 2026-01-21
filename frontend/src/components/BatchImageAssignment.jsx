@@ -197,6 +197,21 @@ export const BatchImageAssignment = ({ onClose }) => {
   const handleConfirmAssignment = async () => {
     if (!selectedProduct || selectedImages.length === 0) return;
     
+    // LOG EVERYTHING for debugging
+    console.log('=== CONFIRMING ASSIGNMENT ===');
+    console.log('selectedProduct:', selectedProduct);
+    console.log('selectedProduct.grouped_id:', selectedProduct.grouped_id);
+    console.log('selectedProduct.base_model:', selectedProduct.base_model);
+    console.log('selectedImages:', selectedImages);
+    console.log('batchId:', batchId);
+    
+    const payload = {
+      product_id: selectedProduct.grouped_id,
+      image_ids: selectedImages.map(img => img.id),
+      batch_id: batchId
+    };
+    console.log('SENDING PAYLOAD:', JSON.stringify(payload, null, 2));
+    
     setSaving(true);
     try {
       const response = await fetch(`${API_URL}/api/shop/admin/assign-images`, {
@@ -205,11 +220,7 @@ export const BatchImageAssignment = ({ onClose }) => {
           ...getAuthHeaders(),
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          product_id: selectedProduct.grouped_id,
-          image_ids: selectedImages.map(img => img.id),
-          batch_id: batchId
-        })
+        body: JSON.stringify(payload)
       });
       
       if (response.ok) {
