@@ -2669,6 +2669,7 @@ async def assign_images_to_product(assignment: ImageAssignment):
     return {
         "success": True,
         "product_id": assignment.product_id,
+        "product_name": product.get("base_model"),  # Return product name for verification
         "images_assigned": len(assigned_images),
         "images": images_array[:3]
     }
