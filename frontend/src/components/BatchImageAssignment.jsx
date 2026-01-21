@@ -184,10 +184,6 @@ export const BatchImageAssignment = ({ onClose }) => {
 
   // Handle product selection
   const handleProductClick = (product) => {
-    console.log('PRODUCT CLICKED:', product);
-    console.log('Product grouped_id:', product.grouped_id);
-    console.log('Product base_model:', product.base_model);
-    
     if (selectedProduct?.grouped_id === product.grouped_id) {
       // Deselect product
       setSelectedProduct(null);
@@ -197,9 +193,12 @@ export const BatchImageAssignment = ({ onClose }) => {
       setMessage({ type: 'warning', text: 'Confirma o deselecciona las imágenes antes de cambiar de producto' });
       setTimeout(() => setMessage(null), 3000);
     } else {
-      // Select new product
-      console.log('SETTING SELECTED PRODUCT:', product.grouped_id, product.base_model);
+      // Select new product - show alert with product info
       setSelectedProduct(product);
+      setMessage({ 
+        type: 'success', 
+        text: `Producto seleccionado: ${product.base_model} (ID: ${product.grouped_id})` 
+      });
     }
   };
 
