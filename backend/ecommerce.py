@@ -2713,6 +2713,43 @@ async def unlink_images_from_product(product_id: str):
     }
 
 
+@ecommerce_router.delete("/admin/reset-all-product-images")
+async def reset_all_product_images():
+    """Reset ALL product images - clears custom_image from all products and deletes image data"""
+    
+    # Count affected products
+    affected = await db.shop_products_grouped.count_documents({
+        "$or": [
+            {"custom_image": {"$exists": True, "$ne": None, "$ne": ""}},
+            {"images.0": {"$exists": True, "$ne": None, "$ne": ""}}
+        ]
+    })
+    
+    # Clear all product images
+    result = await db.shop_products_grouped.update_many(
+        {},
+        {"$set": {
+            "images": [None, None, None],
+            "custom_image": None,
+            "image_updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Delete all image data from MongoDB
+    deleted_images = await db.product_images_data.delete_many({})
+    deleted_temp = await db.temp_images.delete_many({})
+    deleted_batches = await db.temp_image_batches.delete_many({})
+    
+    return {
+        "message": "Todas las imágenes de productos han sido reseteadas",
+        "products_affected": affected,
+        "products_updated": result.modified_count,
+        "images_deleted": deleted_images.deleted_count,
+        "temp_images_deleted": deleted_temp.deleted_count,
+        "batches_deleted": deleted_batches.deleted_count
+    }
+
+
 @ecommerce_router.delete("/admin/delete-product-image/{product_id}")
 async def delete_product_custom_image(product_id: str):
     """Delete custom image from a product (used by ProductImagesManager)"""
