@@ -2582,6 +2582,9 @@ async def assign_images_to_product(assignment: ImageAssignment):
     """Assign temporary images to a product (max 3) - stores in MongoDB"""
     import base64
     
+    # Log the incoming request for debugging
+    logger.info(f"ASSIGN-IMAGES REQUEST: product_id={assignment.product_id}, batch_id={assignment.batch_id}, image_ids={assignment.image_ids}")
+    
     if len(assignment.image_ids) > 3:
         raise HTTPException(status_code=400, detail="Máximo 3 imágenes por producto")
     
@@ -2594,7 +2597,10 @@ async def assign_images_to_product(assignment: ImageAssignment):
         {"_id": 0}
     )
     if not product:
+        logger.error(f"ASSIGN-IMAGES ERROR: Product not found: {assignment.product_id}")
         raise HTTPException(status_code=404, detail="Producto no encontrado")
+    
+    logger.info(f"ASSIGN-IMAGES PRODUCT FOUND: {product.get('base_model')} (ID: {assignment.product_id})")
     
     # Process each temp image from MongoDB
     assigned_images = []
