@@ -2669,7 +2669,7 @@ async def assign_images_to_product(assignment: ImageAssignment):
 
 @ecommerce_router.delete("/admin/unlink-images/{product_id}")
 async def unlink_images_from_product(product_id: str):
-    """Remove all images from a product (for undo functionality)"""
+    """Remove all images from a product"""
     
     # Get product
     product = await db.shop_products_grouped.find_one(
@@ -2679,13 +2679,15 @@ async def unlink_images_from_product(product_id: str):
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
-    # Get current images to delete from filesystem
+    # Delete images from MongoDB
+    await db.product_images_data.delete_many({"product_id": product_id})
+    
+    # Also try to delete from filesystem (legacy)
     current_images = product.get("images", [])
     base_upload_dir = "/app/backend/uploads/products"
     
     for img_url in current_images:
         if img_url:
-            # Extract filename from URL
             filename = img_url.split("/")[-1] if "/" in img_url else img_url
             filepath = os.path.join(base_upload_dir, filename)
             if os.path.exists(filepath):
