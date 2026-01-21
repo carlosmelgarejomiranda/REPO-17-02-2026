@@ -29,6 +29,7 @@ export const BatchImageAssignment = ({ onClose }) => {
   const [assignedCount, setAssignedCount] = useState(0);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
+  const [resetting, setResetting] = useState(false);
   
   // State for undo history (recent assignments in this session)
   const [assignmentHistory, setAssignmentHistory] = useState([]);
@@ -37,6 +38,38 @@ export const BatchImageAssignment = ({ onClose }) => {
   const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token');
     return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
+
+  // Reset all product images
+  const handleResetAllImages = async () => {
+    if (!window.confirm('⚠️ ADVERTENCIA: Esto eliminará TODAS las imágenes de TODOS los productos. ¿Estás seguro?')) {
+      return;
+    }
+    if (!window.confirm('¿Realmente quieres continuar? Esta acción no se puede deshacer.')) {
+      return;
+    }
+    
+    setResetting(true);
+    try {
+      const response = await fetch(`${API_URL}/api/shop/admin/reset-all-product-images`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        alert(`✓ Reset completado!\n\nProductos afectados: ${data.products_affected}\nImágenes eliminadas: ${data.images_deleted}`);
+        // Refresh products list
+        fetchProducts();
+      } else {
+        const error = await response.json();
+        alert('Error: ' + (error.detail || 'No se pudo resetear'));
+      }
+    } catch (err) {
+      alert('Error de conexión: ' + err.message);
+    } finally {
+      setResetting(false);
+    }
   };
 
   // Fetch brands/categories
