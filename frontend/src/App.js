@@ -700,6 +700,15 @@ function AppRouter() {
               t={t}
             />
           } />
+          
+          {/* Admin Campaign Applications Page */}
+          <Route path="/admin/campaigns/:campaignId/applications" element={
+            user?.role === 'admin' || user?.role === 'superadmin' ? (
+              <CampaignApplicationsPage />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          } />
 
           {/* Auth Callback Route */}
           <Route path="/auth/callback" element={
