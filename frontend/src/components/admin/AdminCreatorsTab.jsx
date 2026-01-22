@@ -24,7 +24,6 @@ const formatNumber = (num) => {
 const LevelBadge = ({ level }) => {
   const configs = {
     rookie: { color: 'text-gray-400 bg-gray-500/20', label: 'Rookie' },
-    rising: { color: 'text-blue-400 bg-blue-500/20', label: 'Rising' },
     trusted: { color: 'text-blue-400 bg-blue-500/20', label: 'Trusted' },
     pro: { color: 'text-purple-400 bg-purple-500/20', label: 'Pro' },
     elite: { color: 'text-yellow-400 bg-yellow-500/20', label: 'Elite' }
