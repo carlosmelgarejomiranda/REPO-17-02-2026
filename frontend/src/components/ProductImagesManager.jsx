@@ -147,6 +147,7 @@ export const ProductImagesManager = () => {
   const [filterHasImage, setFilterHasImage] = useState('all'); // all, with, without
   const [stats, setStats] = useState({ total: 0, with_image: 0, without_image: 0 });
   const [showBatchAssignment, setShowBatchAssignment] = useState(false);
+  const [showImageManager, setShowImageManager] = useState(false);
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem('auth_token');
