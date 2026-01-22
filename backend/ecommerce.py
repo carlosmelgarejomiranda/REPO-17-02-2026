@@ -2621,7 +2621,21 @@ async def assign_images_to_product(assignment: ImageAssignment):
         logger.error(f"ASSIGN-IMAGES ERROR: Product not found: {assignment.product_id}")
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
-    logger.info(f"ASSIGN-IMAGES PRODUCT FOUND: {product.get('base_model')} (ID: {assignment.product_id})")
+    product_name = product.get('base_model', 'Unknown')
+    product_brand = product.get('brand') or product.get('category', 'Unknown')
+    
+    logger.info(f"ASSIGN-IMAGES PRODUCT FOUND: {product_name} | Brand: {product_brand} | ID: {assignment.product_id}")
+    
+    # Save audit log for debugging
+    await db.image_assignment_logs.insert_one({
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "product_id": assignment.product_id,
+        "product_name": product_name,
+        "product_brand": product_brand,
+        "batch_id": assignment.batch_id,
+        "image_ids": assignment.image_ids,
+        "action": "assign"
+    })
     
     # Process each temp image from MongoDB
     assigned_images = []
