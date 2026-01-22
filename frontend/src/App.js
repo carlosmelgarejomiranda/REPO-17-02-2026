@@ -64,6 +64,7 @@ import BrandCampaignReports from "./pages/ugc/BrandCampaignReports";
 import CampaignApplications from "./pages/ugc/CampaignApplications";
 import CreatorApplications from "./pages/ugc/CreatorApplications";
 import CreatorFeedback from "./pages/ugc/CreatorFeedback";
+import CampaignApplicationsPage from "./pages/admin/CampaignApplicationsPage";
 import MyProfile from "./pages/MyProfile";
 
 // Auth context helper
