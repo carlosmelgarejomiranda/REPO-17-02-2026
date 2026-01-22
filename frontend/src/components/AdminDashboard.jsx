@@ -515,7 +515,8 @@ export const AdminDashboard = ({ user }) => {
           {activeModule === 'ecommerce' && currentSubTab === 'coupons' && <CouponsManager />}
 
           {/* UGC */}
-          {activeModule === 'ugc' && <UGCAdminPanel />}
+          {activeModule === 'ugc' && currentSubTab === 'overview' && <UGCAdminPanel />}
+          {activeModule === 'ugc' && currentSubTab === 'creators-report' && <AdminCreatorsReport />}
 
           {/* Studio */}
           {activeModule === 'studio' && <ReservationsPanel reservations={reservations} loading={loading} onRefresh={fetchData} stats={stats.reservations} />}
