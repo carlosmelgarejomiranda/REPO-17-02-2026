@@ -225,21 +225,9 @@ export const BatchImageAssignment = ({ onClose }) => {
     }
   };
 
-  // Confirm assignment with explicit confirmation
+  // Confirm assignment - streamlined flow
   const handleConfirmAssignment = async () => {
     if (!selectedProduct || selectedImages.length === 0) return;
-    
-    // STEP 1: Show explicit confirmation with product details
-    const confirmMessage = `¿CONFIRMAR ASIGNACIÓN?\n\n` +
-      `📦 PRODUCTO: ${selectedProduct.base_model}\n` +
-      `🔑 ID: ${selectedProduct.grouped_id}\n` +
-      `🏷️ MARCA: ${selectedProduct.brand || selectedProduct.category || 'Sin marca'}\n\n` +
-      `📷 IMÁGENES: ${selectedImages.length}\n\n` +
-      `¿Es correcto este producto?`;
-    
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
     
     // Store product info at this exact moment to prevent any race conditions
     const productToAssign = {
@@ -268,34 +256,24 @@ export const BatchImageAssignment = ({ onClose }) => {
       if (response.ok) {
         const data = await response.json();
         
-        // CRITICAL: Verify the backend assigned to the correct product
+        // Check for mismatch - ONLY alert if there's an error
         const serverProductId = data.product_id;
-        const serverProductName = data.product_name;
         const sentProductId = productToAssign.id;
-        const sentProductName = productToAssign.name;
         
-        // Check for mismatch
         if (serverProductId !== sentProductId) {
-          // CRITICAL ERROR - Product mismatch!
+          // CRITICAL ERROR - Product mismatch! Alert the user
           alert(
-            `⚠️ ERROR CRÍTICO - DISCREPANCIA DETECTADA!\n\n` +
-            `Enviado: ${sentProductName} (${sentProductId})\n` +
-            `Servidor recibió: ${serverProductName} (${serverProductId})\n\n` +
-            `La imagen fue asignada al producto INCORRECTO.\n` +
+            `⚠️ ERROR: DISCREPANCIA DETECTADA!\n\n` +
+            `Enviado: ${productToAssign.name} (${sentProductId})\n` +
+            `Servidor: ${data.product_name} (${serverProductId})\n\n` +
             `Por favor reporta este error.`
           );
-          setMessage({ type: 'error', text: `ERROR: Discrepancia de producto detectada` });
+          setMessage({ type: 'error', text: `ERROR: Discrepancia detectada` });
         } else {
-          // Success - products match
-          alert(
-            `✅ ASIGNACIÓN EXITOSA\n\n` +
-            `Producto: ${serverProductName}\n` +
-            `ID: ${serverProductId}\n\n` +
-            `La imagen fue asignada correctamente.`
-          );
+          // Success - just show message, no alert
           setMessage({ 
             type: 'success', 
-            text: `✓ Asignado correctamente a: ${serverProductName}` 
+            text: `✓ ${data.product_name}` 
           });
         }
         
@@ -316,7 +294,7 @@ export const BatchImageAssignment = ({ onClose }) => {
         setSelectedImages([]);
         setAssignedCount(prev => prev + 1);
         
-        setTimeout(() => setMessage(null), 10000);
+        setTimeout(() => setMessage(null), 3000);
       } else {
         const error = await response.json();
         setMessage({ type: 'error', text: error.detail || 'Error al asignar imágenes' });
