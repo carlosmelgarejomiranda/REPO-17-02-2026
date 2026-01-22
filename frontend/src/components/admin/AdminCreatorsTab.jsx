@@ -82,6 +82,17 @@ const AdminCreatorsTab = ({
         </div>
       ) : (
         <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+          {/* Total Count Header */}
+          <div className="px-4 py-3 bg-white/5 border-b border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#d4a968]" />
+                <span className="text-white font-medium">{creators.length}</span>
+                <span className="text-gray-400 text-sm">Creators registrados</span>
+              </div>
+            </div>
+          </div>
+          
           {/* Table Header */}
           <div className="grid grid-cols-[40px_180px_70px_130px_130px_200px_160px] gap-2 px-3 py-2 bg-white/5 border-b border-white/10 text-[10px] text-gray-500 uppercase tracking-wide">
             <div></div>
