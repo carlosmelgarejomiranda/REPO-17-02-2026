@@ -476,30 +476,9 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
     }
   };
 
-  const handleViewApplications = async (campaign) => {
-    setSelectedCampaign(campaign);
-    setShowApplications(true);
-    setLoadingApplications(true);
-    
-    const token = localStorage.getItem('auth_token');
-    try {
-      // Use admin endpoint to get applications
-      const res = await fetch(`${API_URL}/api/ugc/admin/campaigns/${campaign.id}/applications`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setApplications(data.applications || []);
-      } else {
-        console.error('Error fetching applications:', await res.text());
-        setApplications([]);
-      }
-    } catch (err) {
-      console.error(err);
-      setApplications([]);
-    } finally {
-      setLoadingApplications(false);
-    }
+  const handleViewApplications = (campaign) => {
+    // Navigate to full page instead of modal
+    navigate(`/admin/campaigns/${campaign.id}/applications`);
   };
 
   const handleUpdateApplicationStatus = async (applicationId, newStatus) => {
