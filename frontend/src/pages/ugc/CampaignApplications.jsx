@@ -2,18 +2,25 @@ import { getApiUrl } from '../../utils/api';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
-  ArrowLeft, Users, Star, Loader2, CheckCircle, XCircle, 
-  Clock, UserCheck, AlertCircle
+  ArrowLeft, Users, Star, Loader2, CheckCircle, 
+  Clock, UserCheck, Instagram, Music2, Eye, TrendingUp, Award, BadgeCheck, MapPin, Lock
 } from 'lucide-react';
 
 const API_URL = getApiUrl();
+
+// Format numbers
+const formatNumber = (num) => {
+  if (!num) return '0';
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toLocaleString();
+};
 
 const CampaignApplications = () => {
   const { campaignId } = useParams();
   const [campaign, setCampaign] = useState(null);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [actionLoading, setActionLoading] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -47,35 +54,11 @@ const CampaignApplications = () => {
     }
   };
 
-  const handleUpdateStatus = async (applicationId, newStatus, reason = null) => {
-    setActionLoading(applicationId);
-    try {
-      const token = localStorage.getItem('auth_token');
-      const res = await fetch(`${API_URL}/api/ugc/applications/${applicationId}/status`, {
-        method: 'PUT',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ status: newStatus, reason })
-      });
-      if (res.ok) {
-        fetchData();
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
   const getStatusBadge = (status) => {
     const badges = {
       applied: { color: 'bg-blue-500/20 text-blue-400', label: 'Pendiente', icon: Clock },
       shortlisted: { color: 'bg-purple-500/20 text-purple-400', label: 'Preseleccionado', icon: UserCheck },
       confirmed: { color: 'bg-green-500/20 text-green-400', label: 'Confirmado', icon: CheckCircle },
-      rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado', icon: XCircle },
-      withdrawn: { color: 'bg-gray-500/20 text-gray-400', label: 'Retirada', icon: AlertCircle }
     };
     const badge = badges[status] || badges.applied;
     const Icon = badge.icon;
@@ -104,7 +87,15 @@ const CampaignApplications = () => {
     );
   }
 
-  const slotsAvailable = (campaign?.slots || 0) - (campaign?.slots_filled || 0);
+  // Filter applications - brands can only see shortlisted and confirmed
+  const visibleApplications = applications.filter(app => 
+    app.status === 'shortlisted' || app.status === 'confirmed'
+  );
+  
+  // Count pending for info display
+  const pendingCount = applications.filter(app => app.status === 'applied').length;
+  const shortlistedCount = applications.filter(app => app.status === 'shortlisted').length;
+  const confirmedCount = applications.filter(app => app.status === 'confirmed').length;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -126,31 +117,58 @@ const CampaignApplications = () => {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-light mb-2">
-            Aplicaciones de <span className="text-[#d4a968] italic">{campaign?.name}</span>
+            Creadores de <span className="text-[#d4a968] italic">{campaign?.name}</span>
           </h1>
-          <div className="flex items-center gap-4 text-gray-400">
-            <span>{applications.length} aplicaciones totales</span>
-            <span>•</span>
-            <span>{campaign?.slots_filled || 0}/{campaign?.slots} cupos ocupados</span>
-            {slotsAvailable > 0 && (
-              <>
-                <span>•</span>
-                <span className="text-green-400">{slotsAvailable} cupos disponibles</span>
-              </>
-            )}
+          <p className="text-gray-400 text-sm mb-4">
+            Creadores preseleccionados y confirmados para tu campaña
+          </p>
+          
+          {/* Stats */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg">
+              <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+              <span className="text-sm text-gray-400">{pendingCount} pendientes</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 rounded-lg border border-purple-500/20">
+              <UserCheck className="w-4 h-4 text-purple-400" />
+              <span className="text-sm text-purple-400 font-medium">{shortlistedCount} preseleccionados</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-lg border border-green-500/20">
+              <CheckCircle className="w-4 h-4 text-green-400" />
+              <span className="text-sm text-green-400 font-medium">{confirmedCount} confirmados</span>
+            </div>
+            <div className="text-sm text-gray-500">
+              {campaign?.slots_filled || 0}/{campaign?.slots || 0} cupos ocupados
+            </div>
+          </div>
+        </div>
+
+        {/* Info Notice */}
+        <div className="mb-6 p-4 bg-[#d4a968]/10 border border-[#d4a968]/20 rounded-xl flex items-start gap-3">
+          <Lock className="w-5 h-5 text-[#d4a968] flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm text-gray-300">
+              <span className="text-[#d4a968] font-medium">Solo visualización:</span> La selección y gestión de creadores es realizada por el equipo de Avenue. 
+              Aquí puedes ver los creadores que han sido preseleccionados o confirmados para tu campaña.
+            </p>
           </div>
         </div>
 
         {/* Applications List */}
-        {applications.length === 0 ? (
+        {visibleApplications.length === 0 ? (
           <div className="p-12 bg-white/5 border border-white/10 rounded-2xl text-center">
             <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium mb-2">No hay aplicaciones</h3>
-            <p className="text-gray-400">Todavía no hay creadores que hayan aplicado a esta campaña</p>
+            <h3 className="text-xl font-medium mb-2">Sin creadores asignados aún</h3>
+            <p className="text-gray-400">
+              {pendingCount > 0 
+                ? `Hay ${pendingCount} aplicaciones pendientes de revisión por el equipo de Avenue.`
+                : 'Todavía no hay creadores que hayan aplicado a esta campaña.'
+              }
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {applications.map(app => (
+            {visibleApplications.map(app => (
               <div 
                 key={app.id}
                 className="p-6 bg-white/5 border border-white/10 rounded-xl hover:border-white/20 transition-all"
@@ -158,96 +176,92 @@ const CampaignApplications = () => {
                 <div className="flex items-start justify-between">
                   {/* Creator Info */}
                   <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-xl">
-                      {app.creator_name?.charAt(0) || 'C'}
+                    <div className="relative">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-xl">
+                        {app.creator_name?.charAt(0) || 'C'}
+                      </div>
+                      {app.creator?.is_verified && (
+                        <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-0.5">
+                          <BadgeCheck className="w-4 h-4 text-white" />
+                        </div>
+                      )}
                     </div>
                     <div>
-                      <h3 className="font-medium text-lg text-white">{app.creator_name}</h3>
-                      <p className="text-gray-400">@{app.creator_username}</p>
+                      <div className="flex items-center gap-3 mb-1">
+                        <h3 className="font-medium text-lg text-white">{app.creator_name}</h3>
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium uppercase ${
+                          app.creator_level === 'pro' ? 'bg-purple-500/20 text-purple-400' :
+                          app.creator_level === 'trusted' ? 'bg-blue-500/20 text-blue-400' :
+                          app.creator_level === 'elite' ? 'bg-yellow-500/20 text-yellow-400' :
+                          'bg-gray-500/20 text-gray-400'
+                        }`}>
+                          {app.creator_level || 'rookie'}
+                        </span>
+                      </div>
+                      <p className="text-gray-400 text-sm">@{app.creator_username}</p>
+                      
+                      {/* Social Links */}
+                      <div className="flex items-center gap-3 mt-3">
+                        {app.creator?.social_accounts?.instagram && (
+                          <a 
+                            href={`https://instagram.com/${app.creator.social_accounts.instagram.username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-500/20 text-pink-400 text-sm hover:bg-pink-500/30 transition-colors"
+                          >
+                            <Instagram className="w-4 h-4" />
+                            @{app.creator.social_accounts.instagram.username}
+                          </a>
+                        )}
+                        {app.creator?.social_accounts?.tiktok && (
+                          <a 
+                            href={`https://tiktok.com/@${app.creator.social_accounts.tiktok.username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-400 text-sm hover:bg-cyan-500/30 transition-colors"
+                          >
+                            <Music2 className="w-4 h-4" />
+                            @{app.creator.social_accounts.tiktok.username}
+                          </a>
+                        )}
+                      </div>
                       
                       {/* Stats Row */}
-                      <div className="flex items-center gap-4 mt-2 text-sm">
-                        <span className="text-gray-400 flex items-center gap-1">
-                          <Users className="w-4 h-4" />
-                          {app.creator_followers?.toLocaleString() || 0} seguidores
-                        </span>
+                      <div className="flex items-center gap-4 mt-3 text-sm">
                         <span className="flex items-center gap-1 text-yellow-400">
                           <Star className="w-4 h-4 fill-current" />
                           {app.creator_rating?.toFixed(1) || '0.0'}
                         </span>
-                        <span className="px-2 py-0.5 rounded bg-white/10 text-xs capitalize text-gray-300">
-                          {app.creator_level || 'rookie'}
+                        <span className="flex items-center gap-1 text-gray-400">
+                          <Users className="w-4 h-4" />
+                          {formatNumber(app.creator_followers)} seguidores
                         </span>
+                        {app.creator?.campaigns_participated > 0 && (
+                          <span className="flex items-center gap-1 text-blue-400">
+                            <Award className="w-4 h-4" />
+                            {app.creator.campaigns_participated} campañas
+                          </span>
+                        )}
                       </div>
 
                       {/* Motivation */}
                       {app.motivation && (
-                        <p className="mt-3 text-gray-300 italic text-sm max-w-xl">
+                        <p className="mt-3 text-gray-300 italic text-sm max-w-xl bg-white/5 p-3 rounded-lg">
                           "{app.motivation}"
                         </p>
                       )}
 
-                      <p className="text-xs text-gray-500 mt-2">
-                        Aplicó el {formatDate(app.applied_at)}
+                      <p className="text-xs text-gray-500 mt-3">
+                        {app.status === 'confirmed' ? 'Confirmado' : 'Preseleccionado'} el {formatDate(app.updated_at || app.applied_at)}
                       </p>
                     </div>
                   </div>
 
-                  {/* Status & Actions */}
-                  <div className="flex flex-col items-end gap-3">
+                  {/* Status Badge */}
+                  <div className="flex flex-col items-end gap-2">
                     {getStatusBadge(app.status)}
-
-                    {/* Action Buttons */}
-                    {app.status === 'applied' && (
-                      <div className="flex gap-2 mt-2">
-                        <button
-                          onClick={() => handleUpdateStatus(app.id, 'shortlisted')}
-                          disabled={actionLoading === app.id}
-                          className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-400 text-sm hover:bg-purple-500/30 transition-colors disabled:opacity-50"
-                        >
-                          Preseleccionar
-                        </button>
-                        <button
-                          onClick={() => handleUpdateStatus(app.id, 'confirmed')}
-                          disabled={actionLoading === app.id || slotsAvailable === 0}
-                          className="px-4 py-2 rounded-lg bg-green-500/20 text-green-400 text-sm hover:bg-green-500/30 transition-colors disabled:opacity-50"
-                        >
-                          {actionLoading === app.id ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar'}
-                        </button>
-                        <button
-                          onClick={() => handleUpdateStatus(app.id, 'rejected', 'No cumple requisitos')}
-                          disabled={actionLoading === app.id}
-                          className="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-sm hover:bg-red-500/30 transition-colors disabled:opacity-50"
-                        >
-                          Rechazar
-                        </button>
-                      </div>
-                    )}
-
-                    {app.status === 'shortlisted' && (
-                      <div className="flex gap-2 mt-2">
-                        <button
-                          onClick={() => handleUpdateStatus(app.id, 'confirmed')}
-                          disabled={actionLoading === app.id || slotsAvailable === 0}
-                          className="px-4 py-2 rounded-lg bg-green-500/20 text-green-400 text-sm hover:bg-green-500/30 transition-colors disabled:opacity-50"
-                        >
-                          {actionLoading === app.id ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirmar'}
-                        </button>
-                        <button
-                          onClick={() => handleUpdateStatus(app.id, 'rejected', 'No seleccionado')}
-                          disabled={actionLoading === app.id}
-                          className="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-sm hover:bg-red-500/30 transition-colors disabled:opacity-50"
-                        >
-                          Rechazar
-                        </button>
-                      </div>
-                    )}
-
                     {app.status === 'confirmed' && (
-                      <div className="flex items-center gap-2 text-green-400 text-sm mt-2">
-                        <CheckCircle className="w-4 h-4" />
-                        Creador confirmado
-                      </div>
+                      <span className="text-xs text-green-400/70">Listo para crear contenido</span>
                     )}
                   </div>
                 </div>
