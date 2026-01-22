@@ -225,24 +225,34 @@ export const BatchImageAssignment = ({ onClose }) => {
     }
   };
 
-  // Confirm assignment
+  // Confirm assignment with explicit confirmation
   const handleConfirmAssignment = async () => {
     if (!selectedProduct || selectedImages.length === 0) return;
     
-    // LOG EVERYTHING for debugging
-    console.log('=== CONFIRMING ASSIGNMENT ===');
-    console.log('selectedProduct:', selectedProduct);
-    console.log('selectedProduct.grouped_id:', selectedProduct.grouped_id);
-    console.log('selectedProduct.base_model:', selectedProduct.base_model);
-    console.log('selectedImages:', selectedImages);
-    console.log('batchId:', batchId);
+    // STEP 1: Show explicit confirmation with product details
+    const confirmMessage = `¿CONFIRMAR ASIGNACIÓN?\n\n` +
+      `📦 PRODUCTO: ${selectedProduct.base_model}\n` +
+      `🔑 ID: ${selectedProduct.grouped_id}\n` +
+      `🏷️ MARCA: ${selectedProduct.brand || selectedProduct.category || 'Sin marca'}\n\n` +
+      `📷 IMÁGENES: ${selectedImages.length}\n\n` +
+      `¿Es correcto este producto?`;
+    
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+    
+    // Store product info at this exact moment to prevent any race conditions
+    const productToAssign = {
+      id: selectedProduct.grouped_id,
+      name: selectedProduct.base_model,
+      brand: selectedProduct.brand || selectedProduct.category
+    };
     
     const payload = {
-      product_id: selectedProduct.grouped_id,
+      product_id: productToAssign.id,
       image_ids: selectedImages.map(img => img.id),
       batch_id: batchId
     };
-    console.log('SENDING PAYLOAD:', JSON.stringify(payload, null, 2));
     
     setSaving(true);
     try {
