@@ -268,8 +268,36 @@ export const BatchImageAssignment = ({ onClose }) => {
       if (response.ok) {
         const data = await response.json();
         
-        // Verify the backend assigned to the correct product
-        console.log('Assignment response:', data);
+        // CRITICAL: Verify the backend assigned to the correct product
+        const serverProductId = data.product_id;
+        const serverProductName = data.product_name;
+        const sentProductId = productToAssign.id;
+        const sentProductName = productToAssign.name;
+        
+        // Check for mismatch
+        if (serverProductId !== sentProductId) {
+          // CRITICAL ERROR - Product mismatch!
+          alert(
+            `⚠️ ERROR CRÍTICO - DISCREPANCIA DETECTADA!\n\n` +
+            `Enviado: ${sentProductName} (${sentProductId})\n` +
+            `Servidor recibió: ${serverProductName} (${serverProductId})\n\n` +
+            `La imagen fue asignada al producto INCORRECTO.\n` +
+            `Por favor reporta este error.`
+          );
+          setMessage({ type: 'error', text: `ERROR: Discrepancia de producto detectada` });
+        } else {
+          // Success - products match
+          alert(
+            `✅ ASIGNACIÓN EXITOSA\n\n` +
+            `Producto: ${serverProductName}\n` +
+            `ID: ${serverProductId}\n\n` +
+            `La imagen fue asignada correctamente.`
+          );
+          setMessage({ 
+            type: 'success', 
+            text: `✓ Asignado correctamente a: ${serverProductName}` 
+          });
+        }
         
         // Save to history for undo
         setAssignmentHistory(prev => [{
@@ -277,7 +305,7 @@ export const BatchImageAssignment = ({ onClose }) => {
           images: selectedImages,
           assignedImages: data.assigned_images,
           timestamp: new Date()
-        }, ...prev].slice(0, 20)); // Keep last 20
+        }, ...prev].slice(0, 20));
         
         // Remove assigned product and images from lists
         setProducts(prev => prev.filter(p => p.grouped_id !== selectedProduct.grouped_id));
@@ -288,15 +316,7 @@ export const BatchImageAssignment = ({ onClose }) => {
         setSelectedImages([]);
         setAssignedCount(prev => prev + 1);
         
-        // Show detailed success message with product name from server - ALERT for debugging
-        const confirmMsg = `✓ IMAGEN ASIGNADA\n\nProducto seleccionado: ${selectedProduct.base_model}\nID enviado: ${selectedProduct.grouped_id}\n\nProducto confirmado por servidor: ${data.product_name}\nID confirmado: ${data.product_id}`;
-        alert(confirmMsg);
-        
-        setMessage({ 
-          type: 'success', 
-          text: `✓ Asignado a: ${data.product_name} (ID: ${data.product_id})` 
-        }); 
-        setTimeout(() => setMessage(null), 10000); // 10 seconds
+        setTimeout(() => setMessage(null), 10000);
       } else {
         const error = await response.json();
         setMessage({ type: 'error', text: error.detail || 'Error al asignar imágenes' });
