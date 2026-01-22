@@ -27,7 +27,6 @@ export const UGCNavbar = ({ type = 'creator' }) => {
   const brandLinks = [
     { href: '/ugc/brand/dashboard', label: 'Dashboard', icon: Home },
     { href: '/ugc/brand/campaigns', label: 'Campañas', icon: Briefcase },
-    { href: '/ugc/brand/packages', label: 'Mi Paquete', icon: Building2 },
   ];
 
   const links = isCreator ? creatorLinks : brandLinks;
