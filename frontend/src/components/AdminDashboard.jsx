@@ -421,7 +421,8 @@ export const AdminDashboard = ({ user }) => {
       { id: 'coupons', label: 'Cupones', icon: Tag }
     ]},
     { id: 'ugc', label: 'UGC Platform', icon: Sparkles, color: 'from-purple-500 to-pink-500', stats: [`${stats.ugc.campaigns} campañas`, stats.ugc.applications > 0 ? `${stats.ugc.applications} aplicaciones` : null], permission: 'ugc', subtabs: [
-      { id: 'overview', label: 'Panel UGC', icon: LayoutDashboard }
+      { id: 'overview', label: 'Panel UGC', icon: LayoutDashboard },
+      { id: 'creators-report', label: 'Reporte Creadores', icon: BarChart3 }
     ]},
     { id: 'studio', label: 'Studio', icon: Camera, color: 'from-amber-500 to-orange-500', stats: [`${stats.reservations.total} reservas`, stats.reservations.pending > 0 ? `${stats.reservations.pending} pendientes` : null], permission: 'reservations', subtabs: [
       { id: 'reservations', label: 'Reservas', icon: Calendar }
