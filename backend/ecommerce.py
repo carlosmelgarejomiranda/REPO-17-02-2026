@@ -2712,6 +2712,21 @@ async def assign_images_to_product(assignment: ImageAssignment):
         "images": images_array[:3]
     }
 
+
+@ecommerce_router.get("/debug/assignment-logs")
+async def get_assignment_logs(limit: int = 50):
+    """Get recent image assignment logs for debugging"""
+    logs = await db.image_assignment_logs.find(
+        {},
+        {"_id": 0}
+    ).sort("timestamp", -1).limit(limit).to_list(limit)
+    
+    return {
+        "logs": logs,
+        "total": len(logs)
+    }
+
+
 @ecommerce_router.delete("/admin/unlink-images/{product_id}")
 async def unlink_images_from_product(product_id: str):
     """Remove all images from a product"""
