@@ -2385,6 +2385,27 @@ async def get_brands_categories():
         "total": len(brands)
     }
 
+@ecommerce_router.get("/admin/products-with-images")
+async def get_products_with_images():
+    """Get all products that have images assigned"""
+    query = {
+        "$or": [
+            {"custom_image": {"$exists": True, "$type": "string", "$ne": ""}},
+            {"images.0": {"$exists": True, "$type": "string", "$ne": ""}}
+        ]
+    }
+    
+    products = await db.shop_products_grouped.find(
+        query,
+        {"_id": 0, "grouped_id": 1, "base_model": 1, "category": 1, "brand": 1, 
+         "custom_image": 1, "images": 1, "price": 1, "total_stock": 1}
+    ).sort("base_model", 1).to_list(5000)
+    
+    return {
+        "products": products,
+        "total": len(products)
+    }
+
 @ecommerce_router.get("/admin/products-without-images")
 async def get_products_without_images(
     brand: Optional[str] = None,
