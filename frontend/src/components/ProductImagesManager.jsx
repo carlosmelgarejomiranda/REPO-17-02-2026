@@ -184,6 +184,19 @@ export const ProductImagesManager = () => {
     fetchProducts();
   }, [fetchProducts]);
 
+  // Show image manager panel
+  if (showImageManager) {
+    return (
+      <ImageManager 
+        onClose={() => {
+          setShowImageManager(false);
+          // Refresh products after managing images
+          setTimeout(() => fetchProducts(), 100);
+        }} 
+      />
+    );
+  }
+
   // Show batch assignment panel
   if (showBatchAssignment) {
     return (
