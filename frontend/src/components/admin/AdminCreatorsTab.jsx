@@ -167,7 +167,7 @@ const AdminCreatorsTab = ({
                 
                 {/* Social Accounts Row */}
                 <div className="flex flex-wrap gap-3 mb-4 pb-4 border-b border-white/10">
-                  {/* Instagram */}
+                  {/* Instagram - Verified */}
                   {verifiedIG ? (
                     <a 
                       href={`https://instagram.com/${verifiedIG.username}`}
@@ -180,6 +180,22 @@ const AdminCreatorsTab = ({
                       <span className="text-sm text-white">@{verifiedIG.username}</span>
                       <span className="text-xs text-gray-400">{formatNumber(verifiedIG.follower_count || verifiedIG.followers)}</span>
                       <BadgeCheck className="w-3.5 h-3.5 text-green-400" title="Verificado" />
+                      <ExternalLink className="w-3 h-3 text-gray-500" />
+                    </a>
+                  ) : creator.unverified_instagram ? (
+                    <a 
+                      href={creator.unverified_instagram.url || `https://instagram.com/${creator.unverified_instagram.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
+                      data-testid={`ig-link-unverified-${creator.id}`}
+                    >
+                      <Instagram className="w-4 h-4 text-pink-400" />
+                      <span className="text-sm text-gray-300">@{creator.unverified_instagram.username}</span>
+                      {creator.unverified_instagram.followers && (
+                        <span className="text-xs text-gray-500">{formatNumber(creator.unverified_instagram.followers)}</span>
+                      )}
+                      <span className="text-xs text-gray-600">(sin verificar)</span>
                       <ExternalLink className="w-3 h-3 text-gray-500" />
                     </a>
                   ) : creator.social_accounts?.instagram ? (
@@ -196,7 +212,7 @@ const AdminCreatorsTab = ({
                     </a>
                   ) : null}
                   
-                  {/* TikTok */}
+                  {/* TikTok - Verified */}
                   {verifiedTT ? (
                     <a 
                       href={`https://tiktok.com/@${verifiedTT.username}`}
@@ -209,6 +225,22 @@ const AdminCreatorsTab = ({
                       <span className="text-sm text-white">@{verifiedTT.username}</span>
                       <span className="text-xs text-gray-400">{formatNumber(verifiedTT.follower_count || verifiedTT.followers)}</span>
                       <BadgeCheck className="w-3.5 h-3.5 text-green-400" title="Verificado" />
+                      <ExternalLink className="w-3 h-3 text-gray-500" />
+                    </a>
+                  ) : creator.unverified_tiktok ? (
+                    <a 
+                      href={creator.unverified_tiktok.url || `https://tiktok.com/@${creator.unverified_tiktok.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
+                      data-testid={`tt-link-unverified-${creator.id}`}
+                    >
+                      <Music2 className="w-4 h-4 text-cyan-400" />
+                      <span className="text-sm text-gray-300">@{creator.unverified_tiktok.username}</span>
+                      {creator.unverified_tiktok.followers && (
+                        <span className="text-xs text-gray-500">{formatNumber(creator.unverified_tiktok.followers)}</span>
+                      )}
+                      <span className="text-xs text-gray-600">(sin verificar)</span>
                       <ExternalLink className="w-3 h-3 text-gray-500" />
                     </a>
                   ) : creator.social_accounts?.tiktok ? (
@@ -225,9 +257,10 @@ const AdminCreatorsTab = ({
                     </a>
                   ) : null}
                   
-                  {/* No social accounts */}
-                  {!verifiedIG && !verifiedTT && !creator.social_accounts?.instagram && !creator.social_accounts?.tiktok && (
-                    <span className="text-xs text-gray-500 italic px-3 py-1.5">Sin redes verificadas</span>
+                  {/* No social accounts at all */}
+                  {!verifiedIG && !verifiedTT && !creator.unverified_instagram && !creator.unverified_tiktok && 
+                   !creator.social_accounts?.instagram && !creator.social_accounts?.tiktok && (
+                    <span className="text-xs text-gray-500 italic px-3 py-1.5">Sin redes registradas</span>
                   )}
                 </div>
                 
