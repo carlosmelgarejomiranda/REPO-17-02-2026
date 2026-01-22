@@ -61,7 +61,6 @@ const AdminCreatorsTab = ({
           >
             <option value="">Todos los niveles</option>
             <option value="rookie">Rookie</option>
-            <option value="rising">Rising</option>
             <option value="trusted">Trusted</option>
             <option value="pro">Pro</option>
             <option value="elite">Elite</option>
