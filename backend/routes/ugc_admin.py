@@ -139,10 +139,33 @@ async def get_all_creators(
     for creator in creators:
         creator_id = creator.get("id")
         
-        # Get verified social accounts
+        # Get verified social accounts (from AI verification)
         social_accounts = creator.get("social_accounts", {})
         creator["verified_instagram"] = social_accounts.get("instagram")
         creator["verified_tiktok"] = social_accounts.get("tiktok")
+        
+        # Get unverified social networks (from onboarding)
+        social_networks = creator.get("social_networks", [])
+        unverified_ig = None
+        unverified_tt = None
+        for sn in social_networks:
+            if sn.get("platform") == "instagram" and not creator["verified_instagram"]:
+                unverified_ig = {
+                    "username": sn.get("username"),
+                    "url": sn.get("url"),
+                    "followers": sn.get("followers"),
+                    "verified": False
+                }
+            elif sn.get("platform") == "tiktok" and not creator["verified_tiktok"]:
+                unverified_tt = {
+                    "username": sn.get("username"),
+                    "url": sn.get("url"),
+                    "followers": sn.get("followers"),
+                    "verified": False
+                }
+        
+        creator["unverified_instagram"] = unverified_ig
+        creator["unverified_tiktok"] = unverified_tt
         
         # Get campaigns participated count
         campaigns_participated = await db.ugc_applications.count_documents({
