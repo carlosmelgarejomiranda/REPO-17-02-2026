@@ -17,6 +17,7 @@ import { AdminSettings } from './AdminSettings';
 import { MFASettings } from './MFAComponents';
 import { AuditLogViewer } from './AuditLogViewer';
 import UGCAdminPanel from './UGCAdminPanel';
+import { AdminCreatorsReport } from './AdminCreatorsReport';
 
 const API_URL = getApiUrl();
 
