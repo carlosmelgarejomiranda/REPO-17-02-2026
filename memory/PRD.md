@@ -18,6 +18,31 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-22
+
+#### ✅ Completed
+- **Enhanced "View Applicants" Screen (P0)**
+  - Redesigned applicant cards in AdminCampaignManager with rich creator data
+  - New information displayed per applicant:
+    - **Social Accounts**: Instagram/TikTok links with username, follower count, verification badge
+    - **Level Badge**: Rookie (gray), Rising (blue), Pro (purple) with color coding
+    - **Location**: Creator's city with map pin icon
+    - **Stats Grid (4 columns)**: Rating, Campaigns Participated, Avg Views, Avg Interactions
+    - **Motivation Quote**: Styled in dedicated card
+  - Backend endpoint `/api/ugc/admin/campaigns/{campaign_id}/applications` enriched with:
+    - `verified_instagram`, `verified_tiktok` (from social_accounts)
+    - `campaigns_participated` (count of confirmed/completed campaigns)
+    - `avg_views`, `avg_reach`, `avg_interactions` (from ugc_metrics)
+    - `avg_rating`, `total_reviews` (from ugc_ratings)
+  - Social links open in new tabs with proper `target="_blank"` and `rel="noopener noreferrer"`
+  - Added `data-testid` attributes for testing
+  - Files modified:
+    - `/app/frontend/src/components/AdminCampaignManager.jsx` - Redesigned applicant cards (lines 1313-1565)
+    - `/app/backend/routes/ugc_admin.py` - Enhanced applications endpoint (lines 357-439)
+  - Test report: `/app/test_reports/iteration_5.json` (Backend: 82%, Frontend: 100%)
+
+---
+
 ### Session: 2026-01-17
 
 #### ✅ Completed
