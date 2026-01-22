@@ -41,6 +41,24 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
     - `/app/backend/routes/ugc_admin.py` - Enhanced applications endpoint (lines 357-439)
   - Test report: `/app/test_reports/iteration_5.json` (Backend: 82%, Frontend: 100%)
 
+- **Enhanced Admin Creators Tab (P0)**
+  - Completely redesigned creator cards with enriched data
+  - New information displayed per creator:
+    - **Clickable Social Links**: Instagram/TikTok @usernames that open in new tab
+    - **Follower Counts**: Displayed next to each social account
+    - **Verification Badges**: Green badge for AI-verified accounts
+    - **Level Badge**: Rookie (gray), Trusted (blue), Pro (purple), Elite (yellow)
+    - **Stats Grid (5 columns)**: Rating, Campaigns, Avg Views, Avg Reach, Avg Interactions
+  - New action buttons:
+    - **Ver Métricas Completas**: Opens modal with full metrics history
+    - **Ver Reviews**: Opens modal with all reviews and brand names
+  - New backend endpoint: `GET /api/ugc/admin/creators/{id}/reviews`
+  - Backend endpoint `GET /api/ugc/admin/creators` now returns enriched data
+  - Files modified:
+    - `/app/frontend/src/components/admin/AdminCreatorsTab.jsx` - Complete redesign
+    - `/app/backend/routes/ugc_admin.py` - Enriched creators endpoint + reviews endpoint
+  - Test report: `/app/test_reports/iteration_6.json` (Backend: 58%, Frontend: 100%)
+
 ---
 
 ### Session: 2026-01-17
