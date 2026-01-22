@@ -232,6 +232,42 @@ async def verify_creator(
     
     return {"success": True, "message": "Verificación actualizada"}
 
+@router.get("/creators/{creator_id}/reviews", response_model=dict)
+async def get_creator_reviews(
+    creator_id: str,
+    request: Request
+):
+    """Get all reviews for a specific creator"""
+    await require_admin(request)
+    db = await get_db()
+    
+    # Verify creator exists
+    creator = await db.ugc_creators.find_one({"id": creator_id})
+    if not creator:
+        raise HTTPException(status_code=404, detail="Creator not found")
+    
+    # Get all ratings/reviews for this creator
+    reviews = await db.ugc_ratings.find(
+        {"creator_id": creator_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Enrich with brand names
+    for review in reviews:
+        if review.get("brand_id"):
+            brand = await db.ugc_brands.find_one(
+                {"id": review["brand_id"]},
+                {"_id": 0, "company_name": 1, "contact_name": 1}
+            )
+            if brand:
+                review["brand_name"] = brand.get("company_name") or brand.get("contact_name")
+    
+    return {
+        "reviews": reviews,
+        "total": len(reviews),
+        "creator_name": creator.get("name")
+    }
+
 # ==================== BRANDS MANAGEMENT ====================
 
 @router.get("/brands", response_model=dict)
