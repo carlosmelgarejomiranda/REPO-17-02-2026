@@ -397,6 +397,15 @@ export const ProductImagesManager = () => {
         >
           <Layers className="w-4 h-4 mr-2" /> Asignación Visual por Lote
         </Button>
+        <Button
+          onClick={() => setShowImageManager(true)}
+          style={{ 
+            backgroundColor: '#7c3aed',
+            color: '#ffffff'
+          }}
+        >
+          <Settings className="w-4 h-4 mr-2" /> Editar/Eliminar Fotos
+        </Button>
         
         {/* Download Reports */}
         <div className="ml-auto flex gap-2">
