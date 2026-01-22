@@ -3,7 +3,8 @@ import {
   Plus, X, Building2, Calendar, Users, Target, MapPin, Upload,
   Instagram, Music2, Loader2, CheckCircle, AlertCircle, Clock,
   RefreshCw, Eye, EyeOff, ChevronDown, Image as ImageIcon,
-  UserCheck, XCircle, Star, ClipboardList, List, Type, Minus, Pencil, ArrowRightLeft
+  UserCheck, XCircle, Star, ClipboardList, List, Type, Minus, Pencil, ArrowRightLeft,
+  BadgeCheck, TrendingUp, Heart, MessageCircle, Share2, Bookmark, BarChart3, Award
 } from 'lucide-react';
 import { getApiUrl } from '../utils/api';
 
