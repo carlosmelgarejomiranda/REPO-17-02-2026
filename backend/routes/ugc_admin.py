@@ -118,7 +118,7 @@ async def get_all_creators(
     city: Optional[str] = None,
     is_active: Optional[bool] = None
 ):
-    """Get all creators with filters"""
+    """Get all creators with filters and enriched data (social accounts, metrics, reviews)"""
     await require_admin(request)
     db = await get_db()
     
@@ -134,6 +134,49 @@ async def get_all_creators(
         query,
         {"_id": 0}
     ).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    # Enrich each creator with metrics and reviews
+    for creator in creators:
+        creator_id = creator.get("id")
+        
+        # Get verified social accounts
+        social_accounts = creator.get("social_accounts", {})
+        creator["verified_instagram"] = social_accounts.get("instagram")
+        creator["verified_tiktok"] = social_accounts.get("tiktok")
+        
+        # Get campaigns participated count
+        campaigns_participated = await db.ugc_applications.count_documents({
+            "creator_id": creator_id,
+            "status": {"$in": ["confirmed", "completed"]}
+        })
+        creator["campaigns_participated"] = campaigns_participated
+        
+        # Get creator metrics for averages
+        all_metrics = await db.ugc_metrics.find(
+            {"creator_id": creator_id},
+            {"_id": 0, "views": 1, "reach": 1, "likes": 1, "comments": 1, "shares": 1, "saves": 1}
+        ).to_list(100)
+        
+        num_metrics = len(all_metrics) or 1
+        total_views = sum(m.get("views", 0) for m in all_metrics)
+        total_reach = sum(m.get("reach", 0) for m in all_metrics)
+        total_interactions = sum(
+            m.get("likes", 0) + m.get("comments", 0) + m.get("shares", 0) + m.get("saves", 0)
+            for m in all_metrics
+        )
+        
+        creator["avg_views"] = round(total_views / num_metrics) if all_metrics else 0
+        creator["avg_reach"] = round(total_reach / num_metrics) if all_metrics else 0
+        creator["avg_interactions"] = round(total_interactions / num_metrics) if all_metrics else 0
+        creator["total_metrics"] = len(all_metrics)
+        
+        # Get creator ratings/reviews
+        ratings = await db.ugc_ratings.find(
+            {"creator_id": creator_id},
+            {"_id": 0, "rating": 1}
+        ).to_list(100)
+        creator["avg_rating"] = round(sum(r.get("rating", 0) for r in ratings) / len(ratings), 1) if ratings else 0
+        creator["total_reviews"] = len(ratings)
     
     total = await db.ugc_creators.count_documents(query)
     
