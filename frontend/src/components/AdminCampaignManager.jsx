@@ -1313,43 +1313,172 @@ Ejemplo de formato:
                 <div className="space-y-4">
                   {applications.map(app => {
                     const canConfirm = (selectedCampaign.available_slots || 0) > (selectedCampaign.slots_filled || 0);
+                    const creator = app.creator || {};
+                    const socialAccounts = creator.social_accounts || {};
+                    const verifiedIG = creator.verified_instagram;
+                    const verifiedTT = creator.verified_tiktok;
+                    
+                    // Format large numbers
+                    const formatNumber = (num) => {
+                      if (!num) return '0';
+                      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+                      return num.toLocaleString();
+                    };
                     
                     return (
                       <div 
                         key={app.id}
-                        className="p-4 bg-white/5 border border-white/10 rounded-xl hover:border-white/20 transition-all"
+                        data-testid={`applicant-card-${app.id}`}
+                        className="p-5 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all"
                       >
-                        <div className="flex items-start justify-between">
-                          {/* Creator Info */}
+                        {/* Top Row: Avatar + Name + Level + Status */}
+                        <div className="flex items-start justify-between gap-4 mb-4">
                           <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-lg">
-                              {app.creator_name?.charAt(0) || 'C'}
+                            {/* Avatar */}
+                            <div className="relative">
+                              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-xl">
+                                {app.creator_name?.charAt(0) || 'C'}
+                              </div>
+                              {creator.is_verified && (
+                                <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-0.5">
+                                  <BadgeCheck className="w-4 h-4 text-white" />
+                                </div>
+                              )}
                             </div>
+                            
+                            {/* Name + Username + Level */}
                             <div>
-                              <h4 className="font-medium text-white">{app.creator_name}</h4>
-                              <p className="text-sm text-gray-400">@{app.creator_username}</p>
-                              
-                              <div className="flex items-center gap-4 mt-2 text-sm">
-                                <span className="text-gray-400 flex items-center gap-1">
-                                  <Users className="w-3.5 h-3.5" />
-                                  {(app.creator_followers || 0).toLocaleString()}
-                                </span>
-                                <span className="flex items-center gap-1 text-yellow-400">
-                                  <Star className="w-3.5 h-3.5 fill-current" />
-                                  {app.creator_rating?.toFixed(1) || '0.0'}
-                                </span>
-                                <span className="px-2 py-0.5 rounded bg-white/10 text-xs capitalize">
-                                  {app.creator_level || 'rookie'}
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-white text-lg">{app.creator_name}</h4>
+                                <span className={`px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wide ${
+                                  (creator.level || app.creator_level) === 'pro' ? 'bg-purple-500/20 text-purple-400' :
+                                  (creator.level || app.creator_level) === 'rising' ? 'bg-blue-500/20 text-blue-400' :
+                                  'bg-gray-500/20 text-gray-400'
+                                }`}>
+                                  {creator.level || app.creator_level || 'rookie'}
                                 </span>
                               </div>
-
-                              {app.motivation && (
-                                <p className="mt-2 text-sm text-gray-300 italic max-w-md">
-                                  &ldquo;{app.motivation}&rdquo;
+                              <p className="text-sm text-gray-400">@{app.creator_username}</p>
+                              
+                              {/* Location if available */}
+                              {creator.city && (
+                                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" />
+                                  {creator.city}
                                 </p>
                               )}
                             </div>
                           </div>
+                          
+                          {/* Status Badge */}
+                          <div>
+                            {getApplicationStatusBadge(app.status)}
+                          </div>
+                        </div>
+                        
+                        {/* Social Accounts Row */}
+                        <div className="flex flex-wrap gap-3 mb-4 pb-4 border-b border-white/10">
+                          {/* Instagram */}
+                          {verifiedIG ? (
+                            <a 
+                              href={`https://instagram.com/${verifiedIG.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:border-purple-400/50 transition-colors"
+                            >
+                              <Instagram className="w-4 h-4 text-pink-400" />
+                              <span className="text-sm text-white">@{verifiedIG.username}</span>
+                              <span className="text-xs text-gray-400">{formatNumber(verifiedIG.followers)}</span>
+                              <BadgeCheck className="w-3.5 h-3.5 text-green-400" title="Verificado" />
+                            </a>
+                          ) : socialAccounts.instagram ? (
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                              <Instagram className="w-4 h-4 text-pink-400" />
+                              <span className="text-sm text-gray-300">@{socialAccounts.instagram.username || 'instagram'}</span>
+                              <span className="text-xs text-gray-500">{formatNumber(socialAccounts.instagram.followers)}</span>
+                            </div>
+                          ) : null}
+                          
+                          {/* TikTok */}
+                          {verifiedTT ? (
+                            <a 
+                              href={`https://tiktok.com/@${verifiedTT.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/30 border border-white/20 hover:border-white/40 transition-colors"
+                            >
+                              <Music2 className="w-4 h-4 text-cyan-400" />
+                              <span className="text-sm text-white">@{verifiedTT.username}</span>
+                              <span className="text-xs text-gray-400">{formatNumber(verifiedTT.followers)}</span>
+                              <BadgeCheck className="w-3.5 h-3.5 text-green-400" title="Verificado" />
+                            </a>
+                          ) : socialAccounts.tiktok ? (
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                              <Music2 className="w-4 h-4 text-cyan-400" />
+                              <span className="text-sm text-gray-300">@{socialAccounts.tiktok.username || 'tiktok'}</span>
+                              <span className="text-xs text-gray-500">{formatNumber(socialAccounts.tiktok.followers)}</span>
+                            </div>
+                          ) : null}
+                          
+                          {/* No social accounts */}
+                          {!verifiedIG && !verifiedTT && !socialAccounts.instagram && !socialAccounts.tiktok && (
+                            <span className="text-xs text-gray-500 italic">Sin redes verificadas</span>
+                          )}
+                        </div>
+                        
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                          {/* Rating */}
+                          <div className="bg-white/5 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-yellow-400 mb-1">
+                              <Star className="w-4 h-4 fill-current" />
+                              <span className="font-semibold">{creator.avg_rating?.toFixed(1) || app.creator_rating?.toFixed(1) || '0.0'}</span>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                              {creator.total_reviews || 0} reseñas
+                            </p>
+                          </div>
+                          
+                          {/* Campaigns */}
+                          <div className="bg-white/5 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-blue-400 mb-1">
+                              <Award className="w-4 h-4" />
+                              <span className="font-semibold">{creator.campaigns_participated || 0}</span>
+                            </div>
+                            <p className="text-xs text-gray-500">Campañas</p>
+                          </div>
+                          
+                          {/* Avg Views */}
+                          <div className="bg-white/5 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-purple-400 mb-1">
+                              <Eye className="w-4 h-4" />
+                              <span className="font-semibold">{formatNumber(creator.avg_views)}</span>
+                            </div>
+                            <p className="text-xs text-gray-500">Prom. vistas</p>
+                          </div>
+                          
+                          {/* Avg Interactions */}
+                          <div className="bg-white/5 rounded-lg p-3 text-center">
+                            <div className="flex items-center justify-center gap-1 text-green-400 mb-1">
+                              <TrendingUp className="w-4 h-4" />
+                              <span className="font-semibold">{formatNumber(creator.avg_interactions)}</span>
+                            </div>
+                            <p className="text-xs text-gray-500">Prom. interacc.</p>
+                          </div>
+                        </div>
+
+                        {/* Motivation Quote */}
+                        {app.motivation && (
+                          <div className="mb-4 p-3 bg-[#d4a968]/10 border border-[#d4a968]/20 rounded-lg">
+                            <p className="text-sm text-gray-300 italic">
+                              &ldquo;{app.motivation}&rdquo;
+                            </p>
+                          </div>
+                        )}
+                        
+                        {/* Action Buttons Row */}
+                        <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/5">
 
                           {/* Status & Actions */}
                           <div className="flex flex-col items-end gap-3">
