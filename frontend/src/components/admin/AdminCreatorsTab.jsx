@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Users, Star, Award, RefreshCw, Instagram, Music2, Eye, TrendingUp, 
-  BarChart3, MessageSquare, ExternalLink, BadgeCheck, MapPin
+  BarChart3, MessageSquare, ExternalLink, BadgeCheck, MapPin, ChevronDown, ChevronUp
 } from 'lucide-react';
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return '-';
-  return new Date(dateStr).toLocaleDateString('es-PY', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  });
-};
 
 // Format large numbers
 const formatNumber = (num) => {
@@ -31,7 +22,7 @@ const LevelBadge = ({ level }) => {
 
   const config = configs[level] || configs.rookie;
   return (
-    <span className={`px-2 py-1 rounded-full text-xs font-medium uppercase ${config.color}`}>
+    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium uppercase ${config.color}`}>
       {config.label}
     </span>
   );
@@ -50,14 +41,14 @@ const AdminCreatorsTab = ({
   const [showReviewsModal, setShowReviewsModal] = useState(null);
 
   return (
-    <div className="space-y-6" data-testid="admin-creators-tab">
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex gap-4">
+    <div className="space-y-4" data-testid="admin-creators-tab">
+      {/* Filters - Compact */}
+      <div className="flex flex-wrap gap-3 items-center justify-between">
+        <div className="flex gap-2">
           <select
             value={creatorFilter.level}
             onChange={(e) => { setCreatorFilter({...creatorFilter, level: e.target.value}); fetchCreators(); }}
-            className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
           >
             <option value="">Todos los niveles</option>
             <option value="rookie">Rookie</option>
@@ -68,7 +59,7 @@ const AdminCreatorsTab = ({
           <select
             value={creatorFilter.verified}
             onChange={(e) => { setCreatorFilter({...creatorFilter, verified: e.target.value}); fetchCreators(); }}
-            className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
           >
             <option value="">Todos</option>
             <option value="true">Verificados</option>
@@ -77,75 +68,163 @@ const AdminCreatorsTab = ({
         </div>
         <button 
           onClick={fetchCreators}
-          className="p-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10"
+          className="p-1.5 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10"
           data-testid="refresh-creators-btn"
         >
-          <RefreshCw className="w-4 h-4" />
+          <RefreshCw className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      {/* Creators Grid */}
+      {/* Creators List - Compact */}
       {creators.length === 0 ? (
-        <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-          <Users className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-          <p className="text-gray-400">No hay creators registrados</p>
+        <div className="bg-white/5 border border-white/10 rounded-xl p-8 text-center">
+          <Users className="w-12 h-12 mx-auto mb-3 text-gray-600" />
+          <p className="text-gray-400 text-sm">No hay creators registrados</p>
         </div>
       ) : (
-        <div className="grid gap-4">
-          {creators.map((creator) => {
+        <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+          {creators.map((creator, idx) => {
             const verifiedIG = creator.verified_instagram;
             const verifiedTT = creator.verified_tiktok;
+            const unverifiedIG = creator.unverified_instagram;
+            const unverifiedTT = creator.unverified_tiktok;
+            const isExpanded = expandedCreator === creator.id;
             
             return (
               <div 
                 key={creator.id}
                 data-testid={`creator-card-${creator.id}`}
-                className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-[#d4a968]/30 transition-all"
+                className={`${idx !== 0 ? 'border-t border-white/5' : ''} hover:bg-white/5 transition-colors`}
               >
-                {/* Header Row */}
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  {/* Avatar + Name + Level */}
-                  <div className="flex items-start gap-4">
-                    <div className="relative">
-                      {creator.profile_pic ? (
-                        <img 
-                          src={creator.profile_pic} 
-                          alt={creator.name} 
-                          className="w-14 h-14 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-xl">
-                          {creator.name?.charAt(0) || 'C'}
-                        </div>
-                      )}
-                      {creator.is_verified && (
-                        <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-0.5">
-                          <BadgeCheck className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h4 className="font-semibold text-white text-lg">{creator.name}</h4>
-                        <LevelBadge level={creator.level} />
+                {/* Main Row - Compact */}
+                <div className="px-4 py-2.5 flex items-center gap-3">
+                  {/* Avatar */}
+                  <div className="relative flex-shrink-0">
+                    {creator.profile_pic ? (
+                      <img 
+                        src={creator.profile_pic} 
+                        alt={creator.name} 
+                        className="w-9 h-9 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-sm">
+                        {creator.name?.charAt(0) || 'C'}
                       </div>
-                      <p className="text-sm text-gray-400">{creator.email}</p>
+                    )}
+                    {creator.is_verified && (
+                      <div className="absolute -bottom-0.5 -right-0.5 bg-blue-500 rounded-full p-0.5">
+                        <BadgeCheck className="w-2.5 h-2.5 text-white" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Name + Level + Location */}
+                  <div className="min-w-[140px] flex-shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-white text-sm truncate max-w-[100px]">{creator.name}</span>
+                      <LevelBadge level={creator.level} />
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] text-gray-500">
                       {creator.city && (
-                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {creator.city}
-                        </p>
+                        <>
+                          <MapPin className="w-2.5 h-2.5" />
+                          <span className="truncate max-w-[80px]">{creator.city}</span>
+                        </>
                       )}
                     </div>
                   </div>
                   
-                  {/* Actions */}
-                  <div className="flex items-center gap-2">
+                  {/* Social Links - Compact */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {/* Instagram */}
+                    {(verifiedIG || unverifiedIG) && (
+                      <a 
+                        href={verifiedIG ? `https://instagram.com/${verifiedIG.username}` : (unverifiedIG?.url || `https://instagram.com/${unverifiedIG?.username}`)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+                          verifiedIG 
+                            ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30' 
+                            : 'bg-white/5 text-gray-400 border border-white/10'
+                        }`}
+                        title={verifiedIG ? 'Instagram verificado' : 'Instagram sin verificar'}
+                      >
+                        <Instagram className="w-3 h-3" />
+                        <span className="max-w-[60px] truncate">@{verifiedIG?.username || unverifiedIG?.username}</span>
+                        {verifiedIG && <BadgeCheck className="w-2.5 h-2.5 text-green-400" />}
+                      </a>
+                    )}
+                    
+                    {/* TikTok */}
+                    {(verifiedTT || unverifiedTT) && (
+                      <a 
+                        href={verifiedTT ? `https://tiktok.com/@${verifiedTT.username}` : (unverifiedTT?.url || `https://tiktok.com/@${unverifiedTT?.username}`)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
+                          verifiedTT 
+                            ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' 
+                            : 'bg-white/5 text-gray-400 border border-white/10'
+                        }`}
+                        title={verifiedTT ? 'TikTok verificado' : 'TikTok sin verificar'}
+                      >
+                        <Music2 className="w-3 h-3" />
+                        <span className="max-w-[60px] truncate">@{verifiedTT?.username || unverifiedTT?.username}</span>
+                        {verifiedTT && <BadgeCheck className="w-2.5 h-2.5 text-green-400" />}
+                      </a>
+                    )}
+                    
+                    {!verifiedIG && !unverifiedIG && !verifiedTT && !unverifiedTT && (
+                      <span className="text-[10px] text-gray-600 italic">Sin redes</span>
+                    )}
+                  </div>
+                  
+                  {/* Stats - Compact inline */}
+                  <div className="flex items-center gap-3 text-xs flex-grow justify-center">
+                    <div className="flex items-center gap-1 text-yellow-400" title="Rating">
+                      <Star className="w-3 h-3 fill-current" />
+                      <span>{(creator.avg_rating || 0).toFixed(1)}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-blue-400" title="Campañas">
+                      <Award className="w-3 h-3" />
+                      <span>{creator.campaigns_participated || 0}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-purple-400" title="Prom. Vistas">
+                      <Eye className="w-3 h-3" />
+                      <span>{formatNumber(creator.avg_views)}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-green-400" title="Prom. Alcance">
+                      <Users className="w-3 h-3" />
+                      <span>{formatNumber(creator.avg_reach)}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-orange-400" title="Prom. Interacciones">
+                      <TrendingUp className="w-3 h-3" />
+                      <span>{formatNumber(creator.avg_interactions)}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Actions - Compact */}
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <button
+                      onClick={() => setShowMetricsModal(creator)}
+                      className="p-1.5 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors"
+                      title="Ver Métricas"
+                      data-testid={`metrics-btn-${creator.id}`}
+                    >
+                      <BarChart3 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setShowReviewsModal(creator)}
+                      className="p-1.5 bg-yellow-500/20 text-yellow-400 rounded hover:bg-yellow-500/30 transition-colors"
+                      title={`Ver Reviews (${creator.total_reviews || 0})`}
+                      data-testid={`reviews-btn-${creator.id}`}
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                    </button>
                     {!creator.is_verified && (
                       <button
                         onClick={() => handleVerifyCreator(creator.id)}
-                        className="px-3 py-1.5 bg-green-500/20 text-green-400 rounded-lg text-xs hover:bg-green-500/30 transition-colors"
+                        className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-[10px] hover:bg-green-500/30 transition-colors"
                         data-testid={`verify-btn-${creator.id}`}
                       >
                         Verificar
@@ -153,7 +232,7 @@ const AdminCreatorsTab = ({
                     )}
                     <button
                       onClick={() => handleToggleCreatorStatus(creator.id, !creator.is_active)}
-                      className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                      className={`px-2 py-1 rounded text-[10px] transition-colors ${
                         creator.is_active 
                           ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
                           : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
@@ -163,173 +242,6 @@ const AdminCreatorsTab = ({
                       {creator.is_active ? 'Desactivar' : 'Activar'}
                     </button>
                   </div>
-                </div>
-                
-                {/* Social Accounts Row */}
-                <div className="flex flex-wrap gap-3 mb-4 pb-4 border-b border-white/10">
-                  {/* Instagram - Verified */}
-                  {verifiedIG ? (
-                    <a 
-                      href={`https://instagram.com/${verifiedIG.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:border-purple-400/50 transition-colors"
-                      data-testid={`ig-link-${creator.id}`}
-                    >
-                      <Instagram className="w-4 h-4 text-pink-400" />
-                      <span className="text-sm text-white">@{verifiedIG.username}</span>
-                      <span className="text-xs text-gray-400">{formatNumber(verifiedIG.follower_count || verifiedIG.followers)}</span>
-                      <BadgeCheck className="w-3.5 h-3.5 text-green-400" title="Verificado" />
-                      <ExternalLink className="w-3 h-3 text-gray-500" />
-                    </a>
-                  ) : creator.unverified_instagram ? (
-                    <a 
-                      href={creator.unverified_instagram.url || `https://instagram.com/${creator.unverified_instagram.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
-                      data-testid={`ig-link-unverified-${creator.id}`}
-                    >
-                      <Instagram className="w-4 h-4 text-pink-400" />
-                      <span className="text-sm text-gray-300">@{creator.unverified_instagram.username}</span>
-                      {creator.unverified_instagram.followers && (
-                        <span className="text-xs text-gray-500">{formatNumber(creator.unverified_instagram.followers)}</span>
-                      )}
-                      <span className="text-xs text-gray-600">(sin verificar)</span>
-                      <ExternalLink className="w-3 h-3 text-gray-500" />
-                    </a>
-                  ) : creator.social_accounts?.instagram ? (
-                    <a 
-                      href={`https://instagram.com/${creator.social_accounts.instagram.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
-                    >
-                      <Instagram className="w-4 h-4 text-pink-400" />
-                      <span className="text-sm text-gray-300">@{creator.social_accounts.instagram.username}</span>
-                      <span className="text-xs text-gray-500">{formatNumber(creator.social_accounts.instagram.followers)}</span>
-                      <ExternalLink className="w-3 h-3 text-gray-500" />
-                    </a>
-                  ) : null}
-                  
-                  {/* TikTok - Verified */}
-                  {verifiedTT ? (
-                    <a 
-                      href={`https://tiktok.com/@${verifiedTT.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/30 border border-white/20 hover:border-white/40 transition-colors"
-                      data-testid={`tt-link-${creator.id}`}
-                    >
-                      <Music2 className="w-4 h-4 text-cyan-400" />
-                      <span className="text-sm text-white">@{verifiedTT.username}</span>
-                      <span className="text-xs text-gray-400">{formatNumber(verifiedTT.follower_count || verifiedTT.followers)}</span>
-                      <BadgeCheck className="w-3.5 h-3.5 text-green-400" title="Verificado" />
-                      <ExternalLink className="w-3 h-3 text-gray-500" />
-                    </a>
-                  ) : creator.unverified_tiktok ? (
-                    <a 
-                      href={creator.unverified_tiktok.url || `https://tiktok.com/@${creator.unverified_tiktok.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
-                      data-testid={`tt-link-unverified-${creator.id}`}
-                    >
-                      <Music2 className="w-4 h-4 text-cyan-400" />
-                      <span className="text-sm text-gray-300">@{creator.unverified_tiktok.username}</span>
-                      {creator.unverified_tiktok.followers && (
-                        <span className="text-xs text-gray-500">{formatNumber(creator.unverified_tiktok.followers)}</span>
-                      )}
-                      <span className="text-xs text-gray-600">(sin verificar)</span>
-                      <ExternalLink className="w-3 h-3 text-gray-500" />
-                    </a>
-                  ) : creator.social_accounts?.tiktok ? (
-                    <a 
-                      href={`https://tiktok.com/@${creator.social_accounts.tiktok.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
-                    >
-                      <Music2 className="w-4 h-4 text-cyan-400" />
-                      <span className="text-sm text-gray-300">@{creator.social_accounts.tiktok.username}</span>
-                      <span className="text-xs text-gray-500">{formatNumber(creator.social_accounts.tiktok.followers)}</span>
-                      <ExternalLink className="w-3 h-3 text-gray-500" />
-                    </a>
-                  ) : null}
-                  
-                  {/* No social accounts at all */}
-                  {!verifiedIG && !verifiedTT && !creator.unverified_instagram && !creator.unverified_tiktok && 
-                   !creator.social_accounts?.instagram && !creator.social_accounts?.tiktok && (
-                    <span className="text-xs text-gray-500 italic px-3 py-1.5">Sin redes registradas</span>
-                  )}
-                </div>
-                
-                {/* Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-                  {/* Rating */}
-                  <div className="bg-white/5 rounded-lg p-3 text-center">
-                    <div className="flex items-center justify-center gap-1 text-yellow-400 mb-1">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="font-semibold">{creator.avg_rating?.toFixed(1) || (creator.stats?.avg_rating || 0).toFixed(1)}</span>
-                    </div>
-                    <p className="text-xs text-gray-500">{creator.total_reviews || 0} reseñas</p>
-                  </div>
-                  
-                  {/* Campaigns */}
-                  <div className="bg-white/5 rounded-lg p-3 text-center">
-                    <div className="flex items-center justify-center gap-1 text-blue-400 mb-1">
-                      <Award className="w-4 h-4" />
-                      <span className="font-semibold">{creator.campaigns_participated || 0}</span>
-                    </div>
-                    <p className="text-xs text-gray-500">Campañas</p>
-                  </div>
-                  
-                  {/* Avg Views */}
-                  <div className="bg-white/5 rounded-lg p-3 text-center">
-                    <div className="flex items-center justify-center gap-1 text-purple-400 mb-1">
-                      <Eye className="w-4 h-4" />
-                      <span className="font-semibold">{formatNumber(creator.avg_views)}</span>
-                    </div>
-                    <p className="text-xs text-gray-500">Prom. Vistas</p>
-                  </div>
-                  
-                  {/* Avg Reach */}
-                  <div className="bg-white/5 rounded-lg p-3 text-center">
-                    <div className="flex items-center justify-center gap-1 text-green-400 mb-1">
-                      <Users className="w-4 h-4" />
-                      <span className="font-semibold">{formatNumber(creator.avg_reach)}</span>
-                    </div>
-                    <p className="text-xs text-gray-500">Prom. Alcance</p>
-                  </div>
-                  
-                  {/* Avg Interactions */}
-                  <div className="bg-white/5 rounded-lg p-3 text-center">
-                    <div className="flex items-center justify-center gap-1 text-orange-400 mb-1">
-                      <TrendingUp className="w-4 h-4" />
-                      <span className="font-semibold">{formatNumber(creator.avg_interactions)}</span>
-                    </div>
-                    <p className="text-xs text-gray-500">Prom. Interacc.</p>
-                  </div>
-                </div>
-                
-                {/* Action Buttons Row */}
-                <div className="flex items-center gap-3 pt-3 border-t border-white/5">
-                  <button
-                    onClick={() => setShowMetricsModal(creator)}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-sm hover:bg-purple-500/30 transition-colors"
-                    data-testid={`metrics-btn-${creator.id}`}
-                  >
-                    <BarChart3 className="w-4 h-4" />
-                    Ver Métricas Completas
-                  </button>
-                  <button
-                    onClick={() => setShowReviewsModal(creator)}
-                    className="flex items-center gap-2 px-4 py-2 bg-yellow-500/20 text-yellow-400 rounded-lg text-sm hover:bg-yellow-500/30 transition-colors"
-                    data-testid={`reviews-btn-${creator.id}`}
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    Ver Reviews ({creator.total_reviews || 0})
-                  </button>
                 </div>
               </div>
             );
@@ -390,63 +302,63 @@ const CreatorMetricsModal = ({ creator, onClose }) => {
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div>
-            <h3 className="text-xl font-semibold text-white">Métricas de {creator.name}</h3>
-            <p className="text-sm text-gray-400 mt-1">{metrics.length} entregas reportadas</p>
+            <h3 className="text-lg font-semibold text-white">Métricas de {creator.name}</h3>
+            <p className="text-xs text-gray-400">{metrics.length} entregas reportadas</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-            <span className="text-gray-400 text-2xl">&times;</span>
+          <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
+            <span className="text-gray-400 text-xl">&times;</span>
           </button>
         </div>
         
         {/* Content */}
-        <div className="p-6 max-h-[60vh] overflow-y-auto">
+        <div className="p-4 max-h-[60vh] overflow-y-auto">
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <RefreshCw className="w-8 h-8 text-[#d4a968] animate-spin" />
+            <div className="flex items-center justify-center py-8">
+              <RefreshCw className="w-6 h-6 text-[#d4a968] animate-spin" />
             </div>
           ) : metrics.length === 0 ? (
-            <div className="text-center py-12">
-              <BarChart3 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-400">No hay métricas registradas</p>
+            <div className="text-center py-8">
+              <BarChart3 className="w-10 h-10 text-gray-600 mx-auto mb-2" />
+              <p className="text-gray-400 text-sm">No hay métricas registradas</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {metrics.map((metric, idx) => (
-                <div key={metric.id || idx} className="bg-white/5 border border-white/10 rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-gray-400">
+                <div key={metric.id || idx} className="bg-white/5 border border-white/10 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-gray-400">
                       {new Date(metric.submitted_at || metric.created_at).toLocaleDateString('es-PY')}
                     </span>
-                    <span className="text-xs px-2 py-1 rounded bg-white/10 text-gray-300">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-300">
                       {metric.platform || 'N/A'}
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 md:grid-cols-6 gap-3 text-center">
+                  <div className="grid grid-cols-6 gap-2 text-center text-xs">
                     <div>
-                      <p className="text-lg font-semibold text-white">{formatNumber(metric.views)}</p>
-                      <p className="text-xs text-gray-500">Views</p>
+                      <p className="font-semibold text-white">{formatNumber(metric.views)}</p>
+                      <p className="text-[10px] text-gray-500">Views</p>
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-white">{formatNumber(metric.reach)}</p>
-                      <p className="text-xs text-gray-500">Reach</p>
+                      <p className="font-semibold text-white">{formatNumber(metric.reach)}</p>
+                      <p className="text-[10px] text-gray-500">Reach</p>
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-white">{formatNumber(metric.likes)}</p>
-                      <p className="text-xs text-gray-500">Likes</p>
+                      <p className="font-semibold text-white">{formatNumber(metric.likes)}</p>
+                      <p className="text-[10px] text-gray-500">Likes</p>
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-white">{formatNumber(metric.comments)}</p>
-                      <p className="text-xs text-gray-500">Comments</p>
+                      <p className="font-semibold text-white">{formatNumber(metric.comments)}</p>
+                      <p className="text-[10px] text-gray-500">Comments</p>
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-white">{formatNumber(metric.shares)}</p>
-                      <p className="text-xs text-gray-500">Shares</p>
+                      <p className="font-semibold text-white">{formatNumber(metric.shares)}</p>
+                      <p className="text-[10px] text-gray-500">Shares</p>
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-white">{formatNumber(metric.saves)}</p>
-                      <p className="text-xs text-gray-500">Saves</p>
+                      <p className="font-semibold text-white">{formatNumber(metric.saves)}</p>
+                      <p className="text-[10px] text-gray-500">Saves</p>
                     </div>
                   </div>
                 </div>
@@ -456,10 +368,10 @@ const CreatorMetricsModal = ({ creator, onClose }) => {
         </div>
         
         {/* Footer */}
-        <div className="flex items-center justify-end p-6 border-t border-white/10">
+        <div className="flex items-center justify-end p-4 border-t border-white/10">
           <button
             onClick={onClose}
-            className="px-6 py-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors text-white"
+            className="px-4 py-1.5 rounded-lg border border-white/20 hover:bg-white/5 transition-colors text-white text-sm"
           >
             Cerrar
           </button>
@@ -501,54 +413,54 @@ const CreatorReviewsModal = ({ creator, onClose }) => {
   
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+      <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-xl max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div>
-            <h3 className="text-xl font-semibold text-white">Reviews de {creator.name}</h3>
-            <p className="text-sm text-gray-400 mt-1">
-              Rating promedio: <span className="text-yellow-400">{creator.avg_rating?.toFixed(1) || '0.0'}</span> ({reviews.length} reviews)
+            <h3 className="text-lg font-semibold text-white">Reviews de {creator.name}</h3>
+            <p className="text-xs text-gray-400">
+              Rating: <span className="text-yellow-400">{creator.avg_rating?.toFixed(1) || '0.0'}</span> ({reviews.length} reviews)
             </p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-            <span className="text-gray-400 text-2xl">&times;</span>
+          <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
+            <span className="text-gray-400 text-xl">&times;</span>
           </button>
         </div>
         
         {/* Content */}
-        <div className="p-6 max-h-[60vh] overflow-y-auto">
+        <div className="p-4 max-h-[60vh] overflow-y-auto">
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <RefreshCw className="w-8 h-8 text-[#d4a968] animate-spin" />
+            <div className="flex items-center justify-center py-8">
+              <RefreshCw className="w-6 h-6 text-[#d4a968] animate-spin" />
             </div>
           ) : reviews.length === 0 ? (
-            <div className="text-center py-12">
-              <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-400">No hay reviews registrados</p>
+            <div className="text-center py-8">
+              <MessageSquare className="w-10 h-10 text-gray-600 mx-auto mb-2" />
+              <p className="text-gray-400 text-sm">No hay reviews registrados</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {reviews.map((review, idx) => (
-                <div key={review.id || idx} className="bg-white/5 border border-white/10 rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
+                <div key={review.id || idx} className="bg-white/5 border border-white/10 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star 
                           key={star}
-                          className={`w-4 h-4 ${star <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
+                          className={`w-3 h-3 ${star <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
                         />
                       ))}
-                      <span className="text-white font-medium ml-2">{review.rating}/5</span>
+                      <span className="text-white text-xs ml-1">{review.rating}/5</span>
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-[10px] text-gray-500">
                       {new Date(review.created_at).toLocaleDateString('es-PY')}
                     </span>
                   </div>
                   {review.comment && (
-                    <p className="text-gray-300 text-sm mt-2 italic">"{review.comment}"</p>
+                    <p className="text-gray-300 text-xs italic">"{review.comment}"</p>
                   )}
                   {review.brand_name && (
-                    <p className="text-xs text-gray-500 mt-2">— {review.brand_name}</p>
+                    <p className="text-[10px] text-gray-500 mt-1">— {review.brand_name}</p>
                   )}
                 </div>
               ))}
@@ -557,10 +469,10 @@ const CreatorReviewsModal = ({ creator, onClose }) => {
         </div>
         
         {/* Footer */}
-        <div className="flex items-center justify-end p-6 border-t border-white/10">
+        <div className="flex items-center justify-end p-4 border-t border-white/10">
           <button
             onClick={onClose}
-            className="px-6 py-2 rounded-lg border border-white/20 hover:bg-white/5 transition-colors text-white"
+            className="px-4 py-1.5 rounded-lg border border-white/20 hover:bg-white/5 transition-colors text-white text-sm"
           >
             Cerrar
           </button>
