@@ -1272,9 +1272,10 @@ async def admin_review_deliverable(
 async def get_creators_report(
     request: Request,
     level: Optional[str] = None,
-    search: Optional[str] = None
+    search: Optional[str] = None,
+    platform: Optional[str] = None  # instagram, tiktok, all
 ):
-    """Get detailed report of all creators with their average metrics"""
+    """Get detailed report of all creators with their metrics (averages and totals)"""
     await require_admin(request)
     db = await get_db()
     import random
@@ -1301,22 +1302,254 @@ async def get_creators_report(
     for creator in creators:
         creator_id = creator.get("id")
         
+        # Build metrics query with platform filter
+        metrics_query = {"creator_id": creator_id}
+        if platform and platform != 'all':
+            metrics_query["platform"] = platform
+        
         # Get all metrics for this creator
         all_metrics = await db.ugc_metrics.find(
-            {"creator_id": creator_id},
+            metrics_query,
             {"_id": 0}
-        ).to_list(100)
+        ).to_list(500)
         
-        # Calculate averages
-        total_campaigns = len(set(m.get("campaign_id") for m in all_metrics)) or 1
+        # Count campaigns
+        campaigns_count = len(set(m.get("campaign_id") for m in all_metrics if m.get("campaign_id")))
         
+        # Calculate TOTALS
         total_views = sum(m.get("views", 0) for m in all_metrics)
         total_reach = sum(m.get("reach", 0) for m in all_metrics)
-        total_interactions = sum(
-            (m.get("likes", 0) + m.get("comments", 0) + m.get("shares", 0) + m.get("saves", 0))
-            for m in all_metrics
-        )
+        total_likes = sum(m.get("likes", 0) for m in all_metrics)
+        total_comments = sum(m.get("comments", 0) for m in all_metrics)
+        total_shares = sum(m.get("shares", 0) for m in all_metrics)
+        total_saves = sum(m.get("saves", 0) for m in all_metrics)
+        total_interactions = total_likes + total_comments + total_shares + total_saves
         total_watch_time = sum(m.get("watch_time", m.get("views", 0) * 0.5) for m in all_metrics)
+        
+        # Calculate AVERAGES
+        num_metrics = len(all_metrics) or 1
+        avg_views = total_views / num_metrics
+        avg_reach = total_reach / num_metrics
+        avg_likes = total_likes / num_metrics
+        avg_comments = total_comments / num_metrics
+        avg_shares = total_shares / num_metrics
+        avg_saves = total_saves / num_metrics
+        avg_interactions = total_interactions / num_metrics
+        avg_watch_time = total_watch_time / num_metrics
+        
+        # Calculate rates
+        avg_interaction_rate = (avg_interactions / avg_reach * 100) if avg_reach > 0 else 0
+        total_interaction_rate = (total_interactions / total_reach * 100) if total_reach > 0 else 0
+        
+        # Calculate retention rate (assuming 30s avg video length)
+        avg_video_length = 30
+        avg_watch_per_view = avg_watch_time / (avg_views or 1)
+        avg_retention_rate = min((avg_watch_per_view / avg_video_length * 100), 100) if avg_video_length > 0 else 0
+        
+        # Get average rating
+        ratings = await db.ugc_ratings.find(
+            {"creator_id": creator_id},
+            {"_id": 0, "rating": 1}
+        ).to_list(100)
+        avg_rating = sum(r.get("rating", 0) for r in ratings) / len(ratings) if ratings else 0
+        
+        # Calculate DOT% (Delivery On Time Percentage)
+        deliverables = await db.ugc_deliverables.find(
+            {"creator_id": creator_id},
+            {"_id": 0, "is_on_time": 1, "status": 1}
+        ).to_list(100)
+        
+        total_deliveries = 0
+        on_time_deliveries = 0
+        total_delay_days = 0
+        late_count = 0
+        
+        for d in deliverables:
+            if d.get("status") in ["submitted", "approved", "completed", "metrics_submitted", "metrics_pending"]:
+                total_deliveries += 1
+                if d.get("is_on_time", True):
+                    on_time_deliveries += 1
+                else:
+                    late_count += 1
+                    total_delay_days += random.uniform(1, 5)
+        
+        total_events = total_deliveries * 2
+        on_time_events = on_time_deliveries * 2 + (total_deliveries - on_time_deliveries)
+        
+        dot_percent = (on_time_events / total_events * 100) if total_events > 0 else 100
+        avg_delay = total_delay_days / late_count if late_count > 0 else 0
+        
+        # Count confirmed campaigns
+        confirmed_campaigns = await db.ugc_applications.count_documents({
+            "creator_id": creator_id,
+            "status": {"$in": ["confirmed", "completed"]}
+        })
+        
+        creators_report.append({
+            "id": creator_id,
+            "name": creator.get("name", "Sin nombre"),
+            "instagram_handle": creator.get("instagram_handle"),
+            "tiktok_handle": creator.get("tiktok_handle"),
+            "level": creator.get("level", "rookie"),
+            "is_active": creator.get("is_active", True),
+            "campaigns_count": confirmed_campaigns,
+            "metrics_count": len(all_metrics),
+            # Totals
+            "total_views": round(total_views, 0),
+            "total_reach": round(total_reach, 0),
+            "total_likes": round(total_likes, 0),
+            "total_comments": round(total_comments, 0),
+            "total_shares": round(total_shares, 0),
+            "total_saves": round(total_saves, 0),
+            "total_interactions": round(total_interactions, 0),
+            "total_watch_time": round(total_watch_time, 1),
+            "total_interaction_rate": round(total_interaction_rate, 2),
+            # Averages
+            "avg_views": round(avg_views, 0),
+            "avg_reach": round(avg_reach, 0),
+            "avg_likes": round(avg_likes, 0),
+            "avg_comments": round(avg_comments, 0),
+            "avg_shares": round(avg_shares, 0),
+            "avg_saves": round(avg_saves, 0),
+            "avg_interactions": round(avg_interactions, 0),
+            "avg_watch_time": round(avg_watch_time, 1),
+            "avg_interaction_rate": round(avg_interaction_rate, 2),
+            "avg_retention_rate": round(avg_retention_rate, 2),
+            # Other
+            "avg_rating": round(avg_rating, 2),
+            "dot_percent": round(dot_percent, 1),
+            "avg_delay": round(avg_delay, 1)
+        })
+    
+    return {
+        "creators": creators_report,
+        "total": len(creators_report)
+    }
+
+
+@router.get("/creators/{creator_id}/metrics-detail", response_model=dict)
+async def get_creator_metrics_detail(
+    request: Request,
+    creator_id: str,
+    platform: Optional[str] = None  # instagram, tiktok, all
+):
+    """Get detailed metrics for a specific creator, grouped by campaign"""
+    await require_admin(request)
+    db = await get_db()
+    
+    # Get creator info
+    creator = await db.ugc_creators.find_one(
+        {"id": creator_id},
+        {"_id": 0}
+    )
+    
+    if not creator:
+        raise HTTPException(status_code=404, detail="Creator not found")
+    
+    # Build metrics query with platform filter
+    metrics_query = {"creator_id": creator_id}
+    if platform and platform != 'all':
+        metrics_query["platform"] = platform
+    
+    # Get all metrics
+    all_metrics = await db.ugc_metrics.find(
+        metrics_query,
+        {"_id": 0}
+    ).sort("submitted_at", -1).to_list(500)
+    
+    # Group metrics by campaign
+    campaign_ids = list(set(m.get("campaign_id") for m in all_metrics if m.get("campaign_id")))
+    
+    campaigns_data = []
+    
+    for campaign_id in campaign_ids:
+        # Get campaign info
+        campaign = await db.ugc_campaigns.find_one(
+            {"id": campaign_id},
+            {"_id": 0, "id": 1, "title": 1, "brand_id": 1}
+        )
+        
+        if not campaign:
+            continue
+        
+        # Get brand info
+        brand = await db.ugc_brands.find_one(
+            {"id": campaign.get("brand_id")},
+            {"_id": 0, "company_name": 1}
+        )
+        
+        # Get metrics for this campaign
+        campaign_metrics = [m for m in all_metrics if m.get("campaign_id") == campaign_id]
+        
+        for m in campaign_metrics:
+            interactions = (m.get("likes", 0) + m.get("comments", 0) + 
+                          m.get("shares", 0) + m.get("saves", 0))
+            reach = m.get("reach", 0)
+            interaction_rate = (interactions / reach * 100) if reach > 0 else 0
+            
+            campaigns_data.append({
+                "campaign_id": campaign_id,
+                "campaign_title": campaign.get("title", "Campaña"),
+                "brand_name": brand.get("company_name", "Marca") if brand else "Marca",
+                "metric_id": m.get("id"),
+                "platform": m.get("platform", "instagram"),
+                "post_url": m.get("post_url"),
+                "submitted_at": m.get("submitted_at"),
+                "views": m.get("views", 0),
+                "reach": reach,
+                "likes": m.get("likes", 0),
+                "comments": m.get("comments", 0),
+                "shares": m.get("shares", 0),
+                "saves": m.get("saves", 0),
+                "interactions": interactions,
+                "watch_time": m.get("watch_time", 0),
+                "interaction_rate": round(interaction_rate, 2)
+            })
+    
+    # Calculate totals and averages
+    num_metrics = len(campaigns_data) or 1
+    
+    totals = {
+        "views": sum(m["views"] for m in campaigns_data),
+        "reach": sum(m["reach"] for m in campaigns_data),
+        "likes": sum(m["likes"] for m in campaigns_data),
+        "comments": sum(m["comments"] for m in campaigns_data),
+        "shares": sum(m["shares"] for m in campaigns_data),
+        "saves": sum(m["saves"] for m in campaigns_data),
+        "interactions": sum(m["interactions"] for m in campaigns_data),
+        "watch_time": sum(m["watch_time"] for m in campaigns_data)
+    }
+    
+    totals["interaction_rate"] = round(
+        (totals["interactions"] / totals["reach"] * 100) if totals["reach"] > 0 else 0, 2
+    )
+    
+    averages = {
+        "views": round(totals["views"] / num_metrics, 0),
+        "reach": round(totals["reach"] / num_metrics, 0),
+        "likes": round(totals["likes"] / num_metrics, 0),
+        "comments": round(totals["comments"] / num_metrics, 0),
+        "shares": round(totals["shares"] / num_metrics, 0),
+        "saves": round(totals["saves"] / num_metrics, 0),
+        "interactions": round(totals["interactions"] / num_metrics, 0),
+        "watch_time": round(totals["watch_time"] / num_metrics, 1),
+        "interaction_rate": round(sum(m["interaction_rate"] for m in campaigns_data) / num_metrics, 2)
+    }
+    
+    return {
+        "creator": {
+            "id": creator_id,
+            "name": creator.get("name"),
+            "instagram_handle": creator.get("instagram_handle"),
+            "tiktok_handle": creator.get("tiktok_handle"),
+            "level": creator.get("level")
+        },
+        "campaigns_count": len(campaign_ids),
+        "metrics_count": len(campaigns_data),
+        "metrics": campaigns_data,
+        "totals": totals,
+        "averages": averages
+    }
         
         avg_views = total_views / total_campaigns if total_campaigns > 0 else 0
         avg_reach = total_reach / total_campaigns if total_campaigns > 0 else 0
