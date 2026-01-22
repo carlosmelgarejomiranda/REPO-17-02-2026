@@ -413,7 +413,12 @@ const CampaignApplicationsPage = () => {
                         )}
                         
                         {(app.status === 'rejected' || app.status === 'cancelled') && (
-                          <span className="text-[10px] text-gray-500 italic">Sin acciones</span>
+                          <button
+                            onClick={() => handleUpdateStatus(app.id, 'applied')}
+                            className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-[10px] hover:bg-blue-500/30 transition-colors"
+                          >
+                            Reactivar
+                          </button>
                         )}
                       </>
                     )}
