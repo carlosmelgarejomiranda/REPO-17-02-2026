@@ -69,6 +69,7 @@ const CATEGORY_LABELS = {
 };
 
 const AdminCampaignManager = ({ onClose, onSuccess }) => {
+  const navigate = useNavigate();
   const [brands, setBrands] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
