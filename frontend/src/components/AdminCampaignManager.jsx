@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Plus, X, Building2, Calendar, Users, Target, MapPin, Upload,
   Instagram, Music2, Loader2, CheckCircle, AlertCircle, Clock,
