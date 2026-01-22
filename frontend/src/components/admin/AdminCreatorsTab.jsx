@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Users, Star, Award, RefreshCw, Instagram, Music2, Eye, TrendingUp, 
-  BarChart3, MessageSquare, ExternalLink, BadgeCheck, MapPin, ChevronDown, ChevronUp
+  BarChart3, MessageSquare, ExternalLink, BadgeCheck, MapPin
 } from 'lucide-react';
 
 // Format large numbers
@@ -22,7 +22,7 @@ const LevelBadge = ({ level }) => {
 
   const config = configs[level] || configs.rookie;
   return (
-    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium uppercase ${config.color}`}>
+    <span className={`inline-block w-16 text-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase ${config.color}`}>
       {config.label}
     </span>
   );
@@ -36,13 +36,12 @@ const AdminCreatorsTab = ({
   handleVerifyCreator,
   handleToggleCreatorStatus
 }) => {
-  const [expandedCreator, setExpandedCreator] = useState(null);
   const [showMetricsModal, setShowMetricsModal] = useState(null);
   const [showReviewsModal, setShowReviewsModal] = useState(null);
 
   return (
     <div className="space-y-4" data-testid="admin-creators-tab">
-      {/* Filters - Compact */}
+      {/* Filters */}
       <div className="flex flex-wrap gap-3 items-center justify-between">
         <div className="flex gap-2">
           <select
@@ -75,7 +74,7 @@ const AdminCreatorsTab = ({
         </button>
       </div>
 
-      {/* Creators List - Compact */}
+      {/* Creators Table */}
       {creators.length === 0 ? (
         <div className="bg-white/5 border border-white/10 rounded-xl p-8 text-center">
           <Users className="w-12 h-12 mx-auto mb-3 text-gray-600" />
@@ -83,165 +82,181 @@ const AdminCreatorsTab = ({
         </div>
       ) : (
         <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+          {/* Table Header */}
+          <div className="grid grid-cols-[40px_180px_70px_130px_130px_200px_160px] gap-2 px-3 py-2 bg-white/5 border-b border-white/10 text-[10px] text-gray-500 uppercase tracking-wide">
+            <div></div>
+            <div>Nombre</div>
+            <div className="text-center">Nivel</div>
+            <div className="text-center">Instagram</div>
+            <div className="text-center">TikTok</div>
+            <div className="text-center">Métricas</div>
+            <div className="text-center">Acciones</div>
+          </div>
+          
+          {/* Table Body */}
           {creators.map((creator, idx) => {
             const verifiedIG = creator.verified_instagram;
             const verifiedTT = creator.verified_tiktok;
             const unverifiedIG = creator.unverified_instagram;
             const unverifiedTT = creator.unverified_tiktok;
-            const isExpanded = expandedCreator === creator.id;
+            
+            const igUsername = verifiedIG?.username || unverifiedIG?.username;
+            const ttUsername = verifiedTT?.username || unverifiedTT?.username;
+            const igVerified = !!verifiedIG;
+            const ttVerified = !!verifiedTT;
             
             return (
               <div 
                 key={creator.id}
-                data-testid={`creator-card-${creator.id}`}
-                className={`${idx !== 0 ? 'border-t border-white/5' : ''} hover:bg-white/5 transition-colors`}
+                data-testid={`creator-row-${creator.id}`}
+                className={`grid grid-cols-[40px_180px_70px_130px_130px_200px_160px] gap-2 px-3 py-2 items-center hover:bg-white/5 transition-colors ${idx !== 0 ? 'border-t border-white/5' : ''}`}
               >
-                {/* Main Row - Compact */}
-                <div className="px-4 py-2.5 flex items-center gap-3">
-                  {/* Avatar */}
-                  <div className="relative flex-shrink-0">
-                    {creator.profile_pic ? (
-                      <img 
-                        src={creator.profile_pic} 
-                        alt={creator.name} 
-                        className="w-9 h-9 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-sm">
-                        {creator.name?.charAt(0) || 'C'}
-                      </div>
-                    )}
-                    {creator.is_verified && (
-                      <div className="absolute -bottom-0.5 -right-0.5 bg-blue-500 rounded-full p-0.5">
-                        <BadgeCheck className="w-2.5 h-2.5 text-white" />
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Name + Level + Location */}
-                  <div className="min-w-[140px] flex-shrink-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-medium text-white text-sm truncate max-w-[100px]">{creator.name}</span>
-                      <LevelBadge level={creator.level} />
+                {/* Avatar */}
+                <div className="relative">
+                  {creator.profile_pic ? (
+                    <img 
+                      src={creator.profile_pic} 
+                      alt={creator.name} 
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-xs">
+                      {creator.name?.charAt(0) || 'C'}
                     </div>
-                    <div className="flex items-center gap-1 text-[10px] text-gray-500">
-                      {creator.city && (
-                        <>
-                          <MapPin className="w-2.5 h-2.5" />
-                          <span className="truncate max-w-[80px]">{creator.city}</span>
-                        </>
-                      )}
+                  )}
+                  {creator.is_verified && (
+                    <div className="absolute -bottom-0.5 -right-0.5 bg-blue-500 rounded-full p-0.5">
+                      <BadgeCheck className="w-2 h-2 text-white" />
                     </div>
-                  </div>
-                  
-                  {/* Social Links - Compact */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Instagram */}
-                    {(verifiedIG || unverifiedIG) && (
-                      <a 
-                        href={verifiedIG ? `https://instagram.com/${verifiedIG.username}` : (unverifiedIG?.url || `https://instagram.com/${unverifiedIG?.username}`)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
-                          verifiedIG 
-                            ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30' 
-                            : 'bg-white/5 text-gray-400 border border-white/10'
-                        }`}
-                        title={verifiedIG ? 'Instagram verificado' : 'Instagram sin verificar'}
-                      >
-                        <Instagram className="w-3 h-3" />
-                        <span className="max-w-[60px] truncate">@{verifiedIG?.username || unverifiedIG?.username}</span>
-                        {verifiedIG && <BadgeCheck className="w-2.5 h-2.5 text-green-400" />}
-                      </a>
-                    )}
-                    
-                    {/* TikTok */}
-                    {(verifiedTT || unverifiedTT) && (
-                      <a 
-                        href={verifiedTT ? `https://tiktok.com/@${verifiedTT.username}` : (unverifiedTT?.url || `https://tiktok.com/@${unverifiedTT?.username}`)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`flex items-center gap-1 px-2 py-1 rounded text-xs ${
-                          verifiedTT 
-                            ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' 
-                            : 'bg-white/5 text-gray-400 border border-white/10'
-                        }`}
-                        title={verifiedTT ? 'TikTok verificado' : 'TikTok sin verificar'}
-                      >
-                        <Music2 className="w-3 h-3" />
-                        <span className="max-w-[60px] truncate">@{verifiedTT?.username || unverifiedTT?.username}</span>
-                        {verifiedTT && <BadgeCheck className="w-2.5 h-2.5 text-green-400" />}
-                      </a>
-                    )}
-                    
-                    {!verifiedIG && !unverifiedIG && !verifiedTT && !unverifiedTT && (
-                      <span className="text-[10px] text-gray-600 italic">Sin redes</span>
-                    )}
-                  </div>
-                  
-                  {/* Stats - Compact inline */}
-                  <div className="flex items-center gap-3 text-xs flex-grow justify-center">
-                    <div className="flex items-center gap-1 text-yellow-400" title="Rating">
-                      <Star className="w-3 h-3 fill-current" />
-                      <span>{(creator.avg_rating || 0).toFixed(1)}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-blue-400" title="Campañas">
-                      <Award className="w-3 h-3" />
-                      <span>{creator.campaigns_participated || 0}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-purple-400" title="Prom. Vistas">
-                      <Eye className="w-3 h-3" />
-                      <span>{formatNumber(creator.avg_views)}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-green-400" title="Prom. Alcance">
-                      <Users className="w-3 h-3" />
-                      <span>{formatNumber(creator.avg_reach)}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-orange-400" title="Prom. Interacciones">
-                      <TrendingUp className="w-3 h-3" />
-                      <span>{formatNumber(creator.avg_interactions)}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Actions - Compact */}
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <button
-                      onClick={() => setShowMetricsModal(creator)}
-                      className="p-1.5 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors"
-                      title="Ver Métricas"
-                      data-testid={`metrics-btn-${creator.id}`}
-                    >
-                      <BarChart3 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setShowReviewsModal(creator)}
-                      className="p-1.5 bg-yellow-500/20 text-yellow-400 rounded hover:bg-yellow-500/30 transition-colors"
-                      title={`Ver Reviews (${creator.total_reviews || 0})`}
-                      data-testid={`reviews-btn-${creator.id}`}
-                    >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                    </button>
-                    {!creator.is_verified && (
-                      <button
-                        onClick={() => handleVerifyCreator(creator.id)}
-                        className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-[10px] hover:bg-green-500/30 transition-colors"
-                        data-testid={`verify-btn-${creator.id}`}
-                      >
-                        Verificar
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleToggleCreatorStatus(creator.id, !creator.is_active)}
-                      className={`px-2 py-1 rounded text-[10px] transition-colors ${
-                        creator.is_active 
-                          ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
-                          : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                  )}
+                </div>
+                
+                {/* Name + Location */}
+                <div className="overflow-hidden">
+                  <p className="font-medium text-white text-xs truncate" title={creator.name}>
+                    {creator.name}
+                  </p>
+                  {creator.city && (
+                    <p className="text-[10px] text-gray-500 flex items-center gap-0.5 truncate">
+                      <MapPin className="w-2.5 h-2.5 flex-shrink-0" />
+                      <span className="truncate">{creator.city}</span>
+                    </p>
+                  )}
+                </div>
+                
+                {/* Level */}
+                <div className="text-center">
+                  <LevelBadge level={creator.level} />
+                </div>
+                
+                {/* Instagram */}
+                <div className="text-center">
+                  {igUsername ? (
+                    <a 
+                      href={`https://instagram.com/${igUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] max-w-full ${
+                        igVerified 
+                          ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30' 
+                          : 'bg-white/5 text-gray-400 border border-white/10'
                       }`}
-                      data-testid={`toggle-status-btn-${creator.id}`}
+                      title={igVerified ? 'Verificado' : 'Sin verificar'}
                     >
-                      {creator.is_active ? 'Desactivar' : 'Activar'}
-                    </button>
+                      <Instagram className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate max-w-[70px]">@{igUsername}</span>
+                      {igVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 flex-shrink-0" />}
+                    </a>
+                  ) : (
+                    <span className="text-[10px] text-gray-600">—</span>
+                  )}
+                </div>
+                
+                {/* TikTok */}
+                <div className="text-center">
+                  {ttUsername ? (
+                    <a 
+                      href={`https://tiktok.com/@${ttUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] max-w-full ${
+                        ttVerified 
+                          ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' 
+                          : 'bg-white/5 text-gray-400 border border-white/10'
+                      }`}
+                      title={ttVerified ? 'Verificado' : 'Sin verificar'}
+                    >
+                      <Music2 className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate max-w-[70px]">@{ttUsername}</span>
+                      {ttVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 flex-shrink-0" />}
+                    </a>
+                  ) : (
+                    <span className="text-[10px] text-gray-600">—</span>
+                  )}
+                </div>
+                
+                {/* Metrics */}
+                <div className="flex items-center justify-center gap-3 text-[10px]">
+                  <div className="flex items-center gap-0.5 text-yellow-400 w-8" title="Rating">
+                    <Star className="w-3 h-3 fill-current" />
+                    <span>{(creator.avg_rating || 0).toFixed(1)}</span>
                   </div>
+                  <div className="flex items-center gap-0.5 text-blue-400 w-6" title="Campañas">
+                    <Award className="w-3 h-3" />
+                    <span>{creator.campaigns_participated || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-0.5 text-purple-400 w-10" title="Prom. Vistas">
+                    <Eye className="w-3 h-3" />
+                    <span>{formatNumber(creator.avg_views)}</span>
+                  </div>
+                  <div className="flex items-center gap-0.5 text-green-400 w-10" title="Prom. Alcance">
+                    <Users className="w-3 h-3" />
+                    <span>{formatNumber(creator.avg_reach)}</span>
+                  </div>
+                  <div className="flex items-center gap-0.5 text-orange-400 w-10" title="Prom. Interacc.">
+                    <TrendingUp className="w-3 h-3" />
+                    <span>{formatNumber(creator.avg_interactions)}</span>
+                  </div>
+                </div>
+                
+                {/* Actions */}
+                <div className="flex items-center justify-center gap-1">
+                  <button
+                    onClick={() => setShowMetricsModal(creator)}
+                    className="p-1 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors"
+                    title="Ver Métricas"
+                    data-testid={`metrics-btn-${creator.id}`}
+                  >
+                    <BarChart3 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setShowReviewsModal(creator)}
+                    className="p-1 bg-yellow-500/20 text-yellow-400 rounded hover:bg-yellow-500/30 transition-colors"
+                    title={`Reviews (${creator.total_reviews || 0})`}
+                    data-testid={`reviews-btn-${creator.id}`}
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                  </button>
+                  {!creator.is_verified && (
+                    <button
+                      onClick={() => handleVerifyCreator(creator.id)}
+                      className="px-1.5 py-0.5 bg-green-500/20 text-green-400 rounded text-[9px] hover:bg-green-500/30 transition-colors"
+                      data-testid={`verify-btn-${creator.id}`}
+                    >
+                      Verificar
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleToggleCreatorStatus(creator.id, !creator.is_active)}
+                    className={`px-1.5 py-0.5 rounded text-[9px] transition-colors ${
+                      creator.is_active 
+                        ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
+                        : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                    }`}
+                    data-testid={`toggle-status-btn-${creator.id}`}
+                  >
+                    {creator.is_active ? 'Desactivar' : 'Activar'}
+                  </button>
                 </div>
               </div>
             );
@@ -301,7 +316,6 @@ const CreatorMetricsModal = ({ creator, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-3xl max-h-[80vh] overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div>
             <h3 className="text-lg font-semibold text-white">Métricas de {creator.name}</h3>
@@ -312,7 +326,6 @@ const CreatorMetricsModal = ({ creator, onClose }) => {
           </button>
         </div>
         
-        {/* Content */}
         <div className="p-4 max-h-[60vh] overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center py-8">
@@ -367,7 +380,6 @@ const CreatorMetricsModal = ({ creator, onClose }) => {
           )}
         </div>
         
-        {/* Footer */}
         <div className="flex items-center justify-end p-4 border-t border-white/10">
           <button
             onClick={onClose}
@@ -414,7 +426,6 @@ const CreatorReviewsModal = ({ creator, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-xl max-h-[80vh] overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div>
             <h3 className="text-lg font-semibold text-white">Reviews de {creator.name}</h3>
@@ -427,7 +438,6 @@ const CreatorReviewsModal = ({ creator, onClose }) => {
           </button>
         </div>
         
-        {/* Content */}
         <div className="p-4 max-h-[60vh] overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center py-8">
@@ -468,7 +478,6 @@ const CreatorReviewsModal = ({ creator, onClose }) => {
           )}
         </div>
         
-        {/* Footer */}
         <div className="flex items-center justify-end p-4 border-t border-white/10">
           <button
             onClick={onClose}
