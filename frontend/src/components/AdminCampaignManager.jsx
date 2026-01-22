@@ -1479,11 +1479,6 @@ Ejemplo de formato:
                         
                         {/* Action Buttons Row */}
                         <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/5">
-
-                          {/* Status & Actions */}
-                          <div className="flex flex-col items-end gap-3">
-                            {getApplicationStatusBadge(app.status)}
-
                             {/* Action Buttons */}
                             {actionLoading === app.id ? (
                               <Loader2 className="w-5 h-5 animate-spin text-[#d4a968]" />
@@ -1492,12 +1487,14 @@ Ejemplo de formato:
                                 {app.status === 'applied' && (
                                   <div className="flex gap-2">
                                     <button
+                                      data-testid={`shortlist-btn-${app.id}`}
                                       onClick={() => handleUpdateApplicationStatus(app.id, 'shortlisted')}
                                       className="px-3 py-1.5 rounded-lg bg-purple-500/20 text-purple-400 text-xs hover:bg-purple-500/30 transition-colors"
                                     >
                                       Preseleccionar
                                     </button>
                                     <button
+                                      data-testid={`confirm-btn-${app.id}`}
                                       onClick={() => handleUpdateApplicationStatus(app.id, 'confirmed')}
                                       disabled={!canConfirm}
                                       className="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-400 text-xs hover:bg-green-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1506,6 +1503,7 @@ Ejemplo de formato:
                                       Confirmar
                                     </button>
                                     <button
+                                      data-testid={`reject-btn-${app.id}`}
                                       onClick={() => handleUpdateApplicationStatus(app.id, 'rejected')}
                                       className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs hover:bg-red-500/30 transition-colors"
                                     >
@@ -1517,6 +1515,7 @@ Ejemplo de formato:
                                 {app.status === 'shortlisted' && (
                                   <div className="flex gap-2">
                                     <button
+                                      data-testid={`confirm-btn-${app.id}`}
                                       onClick={() => handleUpdateApplicationStatus(app.id, 'confirmed')}
                                       disabled={!canConfirm}
                                       className="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-400 text-xs hover:bg-green-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1525,6 +1524,7 @@ Ejemplo de formato:
                                       Confirmar
                                     </button>
                                     <button
+                                      data-testid={`reject-btn-${app.id}`}
                                       onClick={() => handleUpdateApplicationStatus(app.id, 'rejected')}
                                       className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs hover:bg-red-500/30 transition-colors"
                                     >
@@ -1539,6 +1539,7 @@ Ejemplo de formato:
                                       <CheckCircle className="w-3.5 h-3.5" /> Confirmado
                                     </span>
                                     <button
+                                      data-testid={`cancel-btn-${app.id}`}
                                       onClick={() => {
                                         if (window.confirm('¿Estás seguro de cancelar la participación de este creador? Se liberará el cupo.')) {
                                           handleUpdateApplicationStatus(app.id, 'cancelled');
@@ -1558,7 +1559,6 @@ Ejemplo de formato:
                                 )}
                               </>
                             )}
-                          </div>
                         </div>
                       </div>
                     );
