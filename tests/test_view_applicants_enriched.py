@@ -31,7 +31,9 @@ class TestAdminLogin:
         assert response.status_code == 200, f"Login failed: {response.text}"
         data = response.json()
         assert "token" in data, "No token in response"
-        assert data.get("user", {}).get("email") == ADMIN_EMAIL
+        # Email can be at root level or nested under user
+        email = data.get("email") or data.get("user", {}).get("email")
+        assert email == ADMIN_EMAIL, f"Expected {ADMIN_EMAIL}, got {email}"
         print(f"✓ Admin login successful, token received")
 
 
