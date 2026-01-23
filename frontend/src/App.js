@@ -729,6 +729,15 @@ function AppRouter() {
             }} />
           } />
 
+          {/* Login Route - Shows auth modal */}
+          <Route path="/login" element={
+            <LoginPage 
+              user={user}
+              onLoginClick={() => setShowAuthModal(true)}
+              onLogout={logout}
+            />
+          } />
+
           {/* E-commerce Routes */}
           <Route path="/shop" element={
             <>
