@@ -243,49 +243,39 @@ def _fallback_confirmation_email(
     rookie_notice = ""
     if creator_level and creator_level.lower() == 'rookie':
         rookie_notice = """
-        <div style="background-color: #2d2006; border: 1px solid #d4a968; border-radius: 8px; padding: 15px; margin: 15px 0;">
-            <p style="color: #d4a968; font-size: 14px; margin: 0; font-weight: 600;">
-                🎁 Importante - Creador Rookie
-            </p>
-            <p style="color: #cccccc; font-size: 13px; margin: 8px 0 0 0; line-height: 1.5;">
-                Vení a Avenue a crear tu contenido. Como sos Rookie, el canje se retira <strong style="color: #ffffff;">después</strong> de subir el URL y las métricas a la plataforma.
+        <div style="background-color: #1a1a0a; border: 2px solid #d4a968; border-radius: 8px; padding: 12px; margin: 15px 0;">
+            <p style="color: #d4a968; font-size: 14px; margin: 0; line-height: 1.4;">
+                <strong>Rookie:</strong> El canje se retira después de subir contenido, URL y métricas a la plataforma.
             </p>
         </div>
         """
     
     return f"""
-        <h1 style="color: #ffffff; font-size: 22px; margin: 0 0 15px 0; font-weight: 600;">
-            ¡Felicitaciones {creator_name}! 🎉
-        </h1>
-        <p style="color: #cccccc; font-size: 15px; line-height: 1.5; margin: 0 0 20px 0;">
-            Fuiste seleccionado para <strong style="color: #d4a968;">{campaign_name}</strong> de {brand_name}.
-        </p>
-        
-        {rookie_notice}
-        
-        <!-- FECHA DESTACADA -->
-        <div style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center;">
-            <p style="color: #ffffff; font-size: 12px; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 1px;">
-                Fecha límite para publicar
+        <div style="width: 100%; padding: 5px;">
+            <p style="color: #ffffff; font-size: 20px; margin: 0 0 10px 0;">
+                ¡Hola {creator_name}!
             </p>
-            <p style="color: #ffffff; font-size: 24px; font-weight: 700; margin: 0;">
-                {deadline_formatted}
+            <p style="color: #cccccc; font-size: 15px; line-height: 1.4; margin: 0 0 15px 0;">
+                Confirmado para <strong style="color: #d4a968;">{campaign_name}</strong> de {brand_name}.
             </p>
-            <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 10px 0 0 0;">
-                (7 días desde hoy)
+            
+            <div style="background: #22c55e; border-radius: 8px; padding: 15px; margin: 0 0 15px 0; text-align: center;">
+                <p style="color: #ffffff; font-size: 13px; margin: 0 0 5px 0;">FECHA LÍMITE</p>
+                <p style="color: #ffffff; font-size: 20px; font-weight: 700; margin: 0;">{deadline_formatted}</p>
+            </div>
+            
+            {delivery_info}
+            {rookie_notice}
+            
+            <p style="color: #888888; font-size: 13px; margin: 0 0 15px 0;">
+                Después tenés 14 días para subir métricas.
             </p>
-        </div>
-        
-        {delivery_info}
-        
-        <p style="color: #888888; font-size: 13px; line-height: 1.5; margin: 15px 0;">
-            Después de publicar, tendrás 14 días desde tu confirmación para subir los screenshots de métricas.
-        </p>
-        
-        <div style="margin: 25px 0; text-align: center;">
-            <a href="https://avenue.com.py/login?redirect=/ugc/creator/workspace" 
-               style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
-                Ir a mi Workspace
-            </a>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <a href="https://avenue.com.py/login?redirect=/ugc/creator/workspace" 
+                   style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
+                    Ir a mi Workspace
+                </a>
+            </div>
         </div>
     """
