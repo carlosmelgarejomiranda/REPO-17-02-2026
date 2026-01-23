@@ -18,7 +18,9 @@ resend.api_key = os.environ.get('RESEND_API_KEY')
 # Senders por tipo de destinatario
 SENDER_CREATORS = 'AVENUE UGC <creadoresUGC@avenue.com.py>'
 SENDER_BRANDS = 'AVENUE Marcas <infobrands@avenue.com.py>'
+# Admin emails by type
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'avenuepy@gmail.com')
+ADMIN_EMAIL_UGC = os.environ.get('ADMIN_EMAIL_UGC', 'avenue.ugc@gmail.com')
 
 # Base template - Dark theme design
 def get_base_template(content: str, title: str = "Avenue UGC") -> str:
