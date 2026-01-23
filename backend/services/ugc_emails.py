@@ -22,7 +22,7 @@ SENDER_BRANDS = 'AVENUE Marcas <infobrands@avenue.com.py>'
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'avenuepy@gmail.com')
 ADMIN_EMAIL_UGC = os.environ.get('ADMIN_EMAIL_UGC', 'avenue.ugc@gmail.com')
 
-# Base template - Dark theme design
+# Base template - Dark theme design - MOBILE OPTIMIZED
 def get_base_template(content: str, title: str = "Avenue UGC") -> str:
     return f"""
     <!DOCTYPE html>
@@ -34,29 +34,26 @@ def get_base_template(content: str, title: str = "Avenue UGC") -> str:
     <body style="margin: 0; padding: 0; background-color: #000000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #000000;">
             <tr>
-                <td style="padding: 30px 15px;">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #111111; border-radius: 16px; overflow: hidden;">
+                <td style="padding: 15px 10px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 500px; margin: 0 auto; background-color: #111111; border-radius: 12px; overflow: hidden;">
                         <!-- Header -->
                         <tr>
-                            <td style="padding: 25px 30px; border-bottom: 1px solid #222222;">
-                                <span style="color: #d4a968; font-size: 24px; font-style: italic;">Avenue</span>
-                                <span style="color: #ffffff; font-size: 24px;"> UGC</span>
+                            <td style="padding: 15px 20px; border-bottom: 1px solid #222222;">
+                                <span style="color: #d4a968; font-size: 20px; font-style: italic;">Avenue</span>
+                                <span style="color: #ffffff; font-size: 20px;"> UGC</span>
                             </td>
                         </tr>
                         <!-- Content -->
                         <tr>
-                            <td style="padding: 30px;">
+                            <td style="padding: 20px;">
                                 {content}
                             </td>
                         </tr>
                         <!-- Footer -->
                         <tr>
-                            <td style="padding: 25px 30px; background-color: #0a0a0a; border-top: 1px solid #222222;">
-                                <p style="color: #666666; font-size: 12px; margin: 0;">
-                                    © {datetime.now().year} Avenue UGC. Todos los derechos reservados.
-                                </p>
-                                <p style="color: #666666; font-size: 11px; margin: 8px 0 0 0;">
-                                    Este es un email automático.
+                            <td style="padding: 15px 20px; background-color: #0a0a0a; border-top: 1px solid #222222;">
+                                <p style="color: #555555; font-size: 11px; margin: 0;">
+                                    © {datetime.now().year} Avenue UGC
                                 </p>
                             </td>
                         </tr>
