@@ -165,7 +165,9 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
       let errorMessage = err.message || 'Error al procesar la imagen';
       if (errorMessage.toLowerCase().includes('disturbed') || 
           errorMessage.toLowerCase().includes('locked') ||
-          errorMessage.toLowerCase().includes('stream')) {
+          errorMessage.toLowerCase().includes('stream') ||
+          errorMessage.toLowerCase().includes('clone') ||
+          errorMessage.toLowerCase().includes('body is already used')) {
         errorMessage = 'Error al procesar la imagen. Por favor, intentá con otro screenshot.';
       } else if (errorMessage.toLowerCase().includes('network') || 
                  errorMessage.toLowerCase().includes('fetch')) {
