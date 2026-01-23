@@ -65,32 +65,32 @@ const CreatorWorkspace = () => {
   const reviewCount = deliverables.filter(d => ['submitted', 'resubmitted', 'under_review'].includes(d.status)).length;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white pb-20 md:pb-0">
       {/* UGC Navbar */}
       <UGCNavbar type="creator" />
 
       {/* Main Content */}
-      <div className="pt-20 max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="pt-16 md:pt-20 max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Title */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-light mb-1">
+        <div className="mb-5">
+          <h1 className="text-xl sm:text-3xl font-light mb-0.5">
             Mis <span className="text-[#d4a968] italic">Entregas</span>
           </h1>
-          <p className="text-sm text-gray-400">Gestiona tus entregas de contenido UGC</p>
+          <p className="text-xs sm:text-sm text-gray-400">Gestiona tus entregas de contenido UGC</p>
         </div>
 
         {/* Stats - Mobile optimized 2x2 grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <div className="p-3 sm:p-4 bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20 rounded-xl">
-            <p className="text-2xl sm:text-3xl font-semibold text-yellow-400">{pendingCount}</p>
-            <p className="text-xs sm:text-sm text-yellow-400/70">Pendientes</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-5">
+          <div className="p-2.5 sm:p-4 bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20 rounded-lg sm:rounded-xl">
+            <p className="text-xl sm:text-3xl font-semibold text-yellow-400">{pendingCount}</p>
+            <p className="text-[10px] sm:text-sm text-yellow-400/70">Pendientes</p>
           </div>
-          <div className="p-3 sm:p-4 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 rounded-xl">
-            <p className="text-2xl sm:text-3xl font-semibold text-purple-400">{reviewCount}</p>
-            <p className="text-xs sm:text-sm text-purple-400/70">En Revisión</p>
+          <div className="p-2.5 sm:p-4 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 rounded-lg sm:rounded-xl">
+            <p className="text-xl sm:text-3xl font-semibold text-purple-400">{reviewCount}</p>
+            <p className="text-[10px] sm:text-sm text-purple-400/70">En Revisión</p>
           </div>
-          <div className="p-3 sm:p-4 bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl">
-            <p className="text-2xl sm:text-3xl font-semibold text-green-400">
+          <div className="p-2.5 sm:p-4 bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-lg sm:rounded-xl">
+            <p className="text-xl sm:text-3xl font-semibold text-green-400">
               {deliverables.filter(d => ['approved', 'completed'].includes(d.status)).length}
             </p>
             <p className="text-xs sm:text-sm text-green-400/70">Completados</p>
