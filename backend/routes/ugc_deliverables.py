@@ -116,9 +116,11 @@ async def get_deliverable_detail(
 async def mark_as_published(
     deliverable_id: str,
     post_url: str,
-    request: Request
+    request: Request,
+    instagram_url: Optional[str] = None,
+    tiktok_url: Optional[str] = None
 ):
-    """Creator marks content as published (registers the post URL)"""
+    """Creator marks content as published (registers the post URLs)"""
     db = await get_db()
     user, creator = await require_creator(request)
     
@@ -130,7 +132,7 @@ async def mark_as_published(
     if not deliverable:
         raise HTTPException(status_code=404, detail="Deliverable not found")
     
-    if deliverable["status"] != DeliverableStatus.AWAITING_PUBLISH:
+    if deliverable["status"] not in [DeliverableStatus.AWAITING_PUBLISH, DeliverableStatus.CHANGES_REQUESTED]:
         raise HTTPException(status_code=400, detail="El contenido ya fue marcado como publicado")
     
     now = datetime.now(timezone.utc)
@@ -145,6 +147,8 @@ async def mark_as_published(
             "$set": {
                 "status": DeliverableStatus.PUBLISHED,
                 "post_url": post_url,
+                "instagram_url": instagram_url or "",
+                "tiktok_url": tiktok_url or "",
                 "published_at": now.isoformat(),
                 "metrics_window_opens": metrics_opens.isoformat(),
                 "metrics_window_closes": metrics_closes.isoformat(),
