@@ -20,7 +20,7 @@ SENDER_CREATORS = 'AVENUE UGC <creadoresUGC@avenue.com.py>'
 SENDER_BRANDS = 'AVENUE Marcas <infobrands@avenue.com.py>'
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'avenuepy@gmail.com')
 
-# Base template - Neutral design that works in both light and dark mode
+# Base template - Dark theme design
 def get_base_template(content: str, title: str = "Avenue UGC") -> str:
     return f"""
     <!DOCTYPE html>
@@ -29,16 +29,16 @@ def get_base_template(content: str, title: str = "Avenue UGC") -> str:
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+    <body style="margin: 0; padding: 0; background-color: #000000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #000000;">
             <tr>
-                <td style="padding: 20px 10px;">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <td style="padding: 30px 15px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #111111; border-radius: 16px; overflow: hidden;">
                         <!-- Header -->
                         <tr>
-                            <td style="padding: 24px 30px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-bottom: 3px solid #d4a968;">
-                                <span style="color: #d4a968; font-size: 22px; font-style: italic; font-weight: 600;">Avenue</span>
-                                <span style="color: #ffffff; font-size: 22px; font-weight: 300;"> UGC</span>
+                            <td style="padding: 25px 30px; border-bottom: 1px solid #222222;">
+                                <span style="color: #d4a968; font-size: 24px; font-style: italic;">Avenue</span>
+                                <span style="color: #ffffff; font-size: 24px;"> UGC</span>
                             </td>
                         </tr>
                         <!-- Content -->
@@ -49,11 +49,11 @@ def get_base_template(content: str, title: str = "Avenue UGC") -> str:
                         </tr>
                         <!-- Footer -->
                         <tr>
-                            <td style="padding: 20px 30px; background-color: #f8f8f8; border-top: 1px solid #e0e0e0;">
-                                <p style="color: #888888; font-size: 11px; margin: 0; text-align: center;">
+                            <td style="padding: 25px 30px; background-color: #0a0a0a; border-top: 1px solid #222222;">
+                                <p style="color: #666666; font-size: 12px; margin: 0;">
                                     © {datetime.now().year} Avenue UGC. Todos los derechos reservados.
                                 </p>
-                                <p style="color: #aaaaaa; font-size: 10px; margin: 8px 0 0 0; text-align: center;">
+                                <p style="color: #666666; font-size: 11px; margin: 8px 0 0 0;">
                                     Este es un email automático.
                                 </p>
                             </td>
