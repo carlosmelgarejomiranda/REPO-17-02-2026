@@ -67,84 +67,73 @@ const BrandDashboard = () => {
       <UGCNavbar type="brand" />
 
       {/* Main Content - with top padding for fixed navbar */}
-      <div className="pt-20 max-w-6xl mx-auto px-6 py-8">
-        {/* Page Header */}
-        <div className="mb-10">
-          <h1 className="text-3xl font-light mb-2">
+      <div className="pt-20 max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Page Header - Mobile optimized */}
+        <div className="mb-6 sm:mb-10">
+          <h1 className="text-2xl sm:text-3xl font-light mb-1">
             Mis <span className="text-[#d4a968] italic">Campañas</span>
           </h1>
-          <p className="text-gray-400">Accede a los reportes y métricas de tus campañas</p>
+          <p className="text-sm text-gray-400">Reportes y métricas de tus campañas</p>
         </div>
 
-        {/* Campaigns Grid */}
+        {/* Campaigns Grid - Mobile optimized */}
         {campaigns.length === 0 ? (
-          <div className="p-12 bg-white/5 border border-white/10 rounded-2xl text-center max-w-lg mx-auto">
-            <AlertCircle className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium mb-2">No tenés campañas activas</h3>
-            <p className="text-gray-400">Contactá con Avenue para activar tu primera campaña</p>
+          <div className="p-8 sm:p-12 bg-white/5 border border-white/10 rounded-xl text-center">
+            <AlertCircle className="w-12 h-12 sm:w-16 sm:h-16 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg sm:text-xl font-medium mb-2">No tenés campañas activas</h3>
+            <p className="text-sm text-gray-400">Contactá con Avenue para activar tu primera campaña</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-5">
             {campaigns.map(campaign => (
               <Link
                 key={campaign.id}
                 to={`/ugc/brand/campaigns/${campaign.id}/reports`}
-                className="group p-6 bg-white/5 border border-white/10 rounded-2xl hover:border-[#d4a968]/50 hover:bg-white/[0.07] transition-all"
+                className="block p-4 sm:p-5 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 hover:bg-white/[0.07] active:scale-[0.99] transition-all"
                 data-testid={`campaign-card-${campaign.id}`}
               >
                 {/* Header */}
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start gap-3 mb-4">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-white text-lg mb-1 truncate group-hover:text-[#d4a968] transition-colors">
+                    <h3 className="font-medium text-white text-base sm:text-lg leading-tight line-clamp-2">
                       {campaign.name}
                     </h3>
-                    <p className="text-sm text-gray-500">{campaign.category} • {campaign.city}</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">{campaign.category} • {campaign.city}</p>
                   </div>
                   {getStatusBadge(campaign.status)}
                 </div>
 
-                {/* Stats */}
-                <div className="space-y-2.5 mb-5">
-                  {/* Aplicaciones */}
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">Aplicaciones</span>
-                    <span className="text-white font-medium">
-                      {campaign.applications_count || 0}
-                    </span>
+                {/* Stats - Mobile optimized grid */}
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="p-2.5 bg-white/5 rounded-lg">
+                    <p className="text-lg sm:text-xl font-semibold text-white">{campaign.applications_count || 0}</p>
+                    <p className="text-[10px] sm:text-xs text-gray-500">Aplicaciones</p>
                   </div>
-                  
-                  {/* Confirmados */}
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">Confirmados</span>
-                    <span className="text-white font-medium">
-                      {campaign.confirmed_count || 0} / {campaign.total_deliverables || campaign.slots || 0}
-                    </span>
+                  <div className="p-2.5 bg-white/5 rounded-lg">
+                    <p className="text-lg sm:text-xl font-semibold text-white">
+                      {campaign.confirmed_count || 0}<span className="text-gray-500 text-sm">/{campaign.slots || 0}</span>
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-500">Confirmados</p>
                   </div>
-                  
-                  {/* Posteos */}
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">Posteos</span>
-                    <span className="text-white font-medium">
-                      {campaign.posteos_count || 0} / {campaign.total_deliverables || campaign.slots || 0}
-                    </span>
+                  <div className="p-2.5 bg-white/5 rounded-lg">
+                    <p className="text-lg sm:text-xl font-semibold text-white">
+                      {campaign.posteos_count || 0}<span className="text-gray-500 text-sm">/{campaign.slots || 0}</span>
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-gray-500">Posteos</p>
                   </div>
-                  
-                  {/* Métricas */}
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">Métricas</span>
-                    <span className="text-[#d4a968] font-medium">
-                      {campaign.metrics_count || 0} / {campaign.total_deliverables || campaign.slots || 0}
-                    </span>
+                  <div className="p-2.5 bg-[#d4a968]/10 rounded-lg">
+                    <p className="text-lg sm:text-xl font-semibold text-[#d4a968]">
+                      {campaign.metrics_count || 0}<span className="text-[#d4a968]/50 text-sm">/{campaign.slots || 0}</span>
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-[#d4a968]/70">Métricas</p>
                   </div>
                 </div>
 
-                {/* CTA */}
-                <div className="pt-4 border-t border-white/10">
-                  <div className="flex items-center justify-center gap-2 py-2 rounded-lg bg-[#d4a968]/10 text-[#d4a968] text-sm font-medium group-hover:bg-[#d4a968]/20 transition-colors">
-                    <BarChart3 className="w-4 h-4" />
-                    Ver Reportes
-                  </div>
-                </div>
+                {/* CTA Button */}
+                <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#d4a968]/10 text-[#d4a968] text-sm font-medium hover:bg-[#d4a968]/20 transition-colors">
+                  <BarChart3 className="w-4 h-4" />
+                  Ver Reportes
+                </button>
               </Link>
             ))}
           </div>
