@@ -1,13 +1,15 @@
 import { getApiUrl } from '../../utils/api';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Upload, Camera, BarChart3, Eye, Heart, MessageCircle,
   Share2, Bookmark, CheckCircle, AlertCircle, Loader2, HelpCircle,
-  Instagram, Music2, Sparkles, Clock, Users, Globe, PieChart, Play
+  Instagram, Music2, Sparkles, Clock, Users, Globe, PieChart, Play,
+  X, Plus, Image as ImageIcon
 } from 'lucide-react';
 
 const API_URL = getApiUrl();
+const MAX_IMAGES = 10;
 
 const MetricsSubmit = () => {
   const { deliverableId } = useParams();
@@ -19,9 +21,21 @@ const MetricsSubmit = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Form data
-  const [screenshotUrl, setScreenshotUrl] = useState('');
-  const [demographicsUrl, setDemographicsUrl] = useState('');
+  // Screenshots state - separate for each platform
+  const [instagramScreenshots, setInstagramScreenshots] = useState([]);
+  const [tiktokScreenshots, setTiktokScreenshots] = useState([]);
+  const [instagramPreviews, setInstagramPreviews] = useState([]);
+  const [tiktokPreviews, setTiktokPreviews] = useState([]);
+  
+  // Upload progress
+  const [uploadingInstagram, setUploadingInstagram] = useState(false);
+  const [uploadingTiktok, setUploadingTiktok] = useState(false);
+
+  // File input refs
+  const instagramInputRef = useRef(null);
+  const tiktokInputRef = useRef(null);
+
+  // Manual input fallback
   const [metrics, setMetrics] = useState({
     views: '',
     reach: '',
@@ -60,9 +74,152 @@ const MetricsSubmit = () => {
     fetchDeliverable();
   }, [fetchDeliverable]);
 
+  // Convert file to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        // Extract base64 without data URL prefix
+        const base64 = result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle file selection for Instagram
+  const handleInstagramFiles = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    const remainingSlots = MAX_IMAGES - instagramScreenshots.length;
+    const filesToAdd = files.slice(0, remainingSlots);
+
+    if (filesToAdd.length === 0) {
+      setError(`Máximo ${MAX_IMAGES} imágenes permitidas para Instagram`);
+      return;
+    }
+
+    setUploadingInstagram(true);
+    setError('');
+
+    try {
+      const newScreenshots = [];
+      const newPreviews = [];
+
+      for (const file of filesToAdd) {
+        if (!file.type.startsWith('image/')) {
+          continue;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          setError('Una imagen es muy grande. Máximo 10MB por imagen.');
+          continue;
+        }
+
+        const base64 = await fileToBase64(file);
+        const previewUrl = URL.createObjectURL(file);
+        
+        newScreenshots.push({
+          base64,
+          filename: file.name,
+          type: file.type
+        });
+        newPreviews.push(previewUrl);
+      }
+
+      setInstagramScreenshots(prev => [...prev, ...newScreenshots]);
+      setInstagramPreviews(prev => [...prev, ...newPreviews]);
+    } catch (err) {
+      console.error('Error processing files:', err);
+      setError('Error al procesar las imágenes');
+    } finally {
+      setUploadingInstagram(false);
+      // Reset input
+      if (instagramInputRef.current) {
+        instagramInputRef.current.value = '';
+      }
+    }
+  };
+
+  // Handle file selection for TikTok
+  const handleTiktokFiles = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    const remainingSlots = MAX_IMAGES - tiktokScreenshots.length;
+    const filesToAdd = files.slice(0, remainingSlots);
+
+    if (filesToAdd.length === 0) {
+      setError(`Máximo ${MAX_IMAGES} imágenes permitidas para TikTok`);
+      return;
+    }
+
+    setUploadingTiktok(true);
+    setError('');
+
+    try {
+      const newScreenshots = [];
+      const newPreviews = [];
+
+      for (const file of filesToAdd) {
+        if (!file.type.startsWith('image/')) {
+          continue;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          setError('Una imagen es muy grande. Máximo 10MB por imagen.');
+          continue;
+        }
+
+        const base64 = await fileToBase64(file);
+        const previewUrl = URL.createObjectURL(file);
+        
+        newScreenshots.push({
+          base64,
+          filename: file.name,
+          type: file.type
+        });
+        newPreviews.push(previewUrl);
+      }
+
+      setTiktokScreenshots(prev => [...prev, ...newScreenshots]);
+      setTiktokPreviews(prev => [...prev, ...newPreviews]);
+    } catch (err) {
+      console.error('Error processing files:', err);
+      setError('Error al procesar las imágenes');
+    } finally {
+      setUploadingTiktok(false);
+      // Reset input
+      if (tiktokInputRef.current) {
+        tiktokInputRef.current.value = '';
+      }
+    }
+  };
+
+  // Remove screenshot
+  const removeInstagramScreenshot = (index) => {
+    setInstagramScreenshots(prev => prev.filter((_, i) => i !== index));
+    setInstagramPreviews(prev => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  const removeTiktokScreenshot = (index) => {
+    setTiktokScreenshots(prev => prev.filter((_, i) => i !== index));
+    setTiktokPreviews(prev => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
   const handleSubmit = async () => {
-    if (!screenshotUrl.trim()) {
-      setError('Ingresa la URL del screenshot de métricas');
+    const hasInstagram = instagramScreenshots.length > 0;
+    const hasTiktok = tiktokScreenshots.length > 0;
+
+    if (!hasInstagram && !hasTiktok) {
+      setError('Sube al menos un screenshot de Instagram o TikTok');
       return;
     }
 
@@ -77,20 +234,27 @@ const MetricsSubmit = () => {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       };
 
-      const res = await fetch(`${API_URL}/api/ugc/metrics/submit/${deliverableId}`, {
+      // Prepare screenshots data
+      const instagramBase64List = instagramScreenshots.map(s => s.base64);
+      const tiktokBase64List = tiktokScreenshots.map(s => s.base64);
+
+      const res = await fetch(`${API_URL}/api/ugc/metrics/submit-v2/${deliverableId}`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          screenshot_url: screenshotUrl,
-          demographics_screenshot_url: demographicsUrl || null,
-          views: metrics.views ? parseInt(metrics.views) : null,
-          reach: metrics.reach ? parseInt(metrics.reach) : null,
-          likes: metrics.likes ? parseInt(metrics.likes) : null,
-          comments: metrics.comments ? parseInt(metrics.comments) : null,
-          shares: metrics.shares ? parseInt(metrics.shares) : null,
-          saves: metrics.saves ? parseInt(metrics.saves) : null,
-          watch_time_seconds: metrics.watch_time_seconds ? parseInt(metrics.watch_time_seconds) : null,
-          video_length_seconds: metrics.video_length_seconds ? parseInt(metrics.video_length_seconds) : null
+          instagram_screenshots: instagramBase64List,
+          tiktok_screenshots: tiktokBase64List,
+          // Manual metrics as fallback
+          manual_metrics: useManualInput ? {
+            views: metrics.views ? parseInt(metrics.views) : null,
+            reach: metrics.reach ? parseInt(metrics.reach) : null,
+            likes: metrics.likes ? parseInt(metrics.likes) : null,
+            comments: metrics.comments ? parseInt(metrics.comments) : null,
+            shares: metrics.shares ? parseInt(metrics.shares) : null,
+            saves: metrics.saves ? parseInt(metrics.saves) : null,
+            watch_time_seconds: metrics.watch_time_seconds ? parseInt(metrics.watch_time_seconds) : null,
+            video_length_seconds: metrics.video_length_seconds ? parseInt(metrics.video_length_seconds) : null
+          } : null
         })
       });
 
@@ -111,20 +275,6 @@ const MetricsSubmit = () => {
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const formatNumber = (num) => {
-    if (!num) return '-';
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-    return num.toString();
-  };
-
-  const formatTime = (seconds) => {
-    if (!seconds) return '-';
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
   };
 
   const getWindowStatus = () => {
@@ -158,6 +308,105 @@ const MetricsSubmit = () => {
     return { status: 'open', message: 'Podés subir tus métricas' };
   };
 
+  // Screenshot upload card component
+  const ScreenshotUploadCard = ({ 
+    platform, 
+    icon: Icon, 
+    iconColor, 
+    bgColor, 
+    borderColor,
+    screenshots, 
+    previews, 
+    onFilesSelect, 
+    onRemove, 
+    inputRef,
+    uploading 
+  }) => (
+    <div className={`p-6 bg-white/5 border ${borderColor} rounded-xl`}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className={`w-12 h-12 rounded-xl ${bgColor} flex items-center justify-center`}>
+          <Icon className={`w-6 h-6 ${iconColor}`} />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-white font-medium text-lg">Screenshots de {platform}</h3>
+          <p className="text-sm text-gray-400">
+            Métricas + Demografía ({screenshots.length}/{MAX_IMAGES} imágenes)
+          </p>
+        </div>
+      </div>
+
+      {/* Preview Grid */}
+      {previews.length > 0 && (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 mb-4">
+          {previews.map((preview, index) => (
+            <div key={index} className="relative group aspect-square">
+              <img 
+                src={preview} 
+                alt={`Screenshot ${index + 1}`}
+                className="w-full h-full object-cover rounded-lg border border-white/10"
+              />
+              <button
+                onClick={() => onRemove(index)}
+                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+              <div className="absolute bottom-1 left-1 bg-black/70 px-1.5 py-0.5 rounded text-xs text-white">
+                {index + 1}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Upload Area */}
+      {screenshots.length < MAX_IMAGES && (
+        <div 
+          onClick={() => inputRef.current?.click()}
+          className={`border-2 border-dashed ${borderColor} rounded-xl p-6 text-center cursor-pointer hover:bg-white/5 transition-colors`}
+        >
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={onFilesSelect}
+            className="hidden"
+          />
+          
+          {uploading ? (
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className={`w-8 h-8 ${iconColor} animate-spin`} />
+              <p className="text-gray-400 text-sm">Procesando imágenes...</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <div className={`w-12 h-12 rounded-full ${bgColor} flex items-center justify-center`}>
+                <Plus className={`w-6 h-6 ${iconColor}`} />
+              </div>
+              <p className="text-white font-medium">
+                {screenshots.length === 0 ? 'Subir screenshots' : 'Agregar más'}
+              </p>
+              <p className="text-gray-500 text-sm">
+                Arrastra o hacé click • Hasta {MAX_IMAGES - screenshots.length} imágenes más
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Info tags */}
+      <div className="mt-4 p-3 bg-black/50 rounded-lg">
+        <p className="text-xs text-gray-500 mb-2">La IA extraerá de todas las imágenes:</p>
+        <div className="flex flex-wrap gap-2">
+          {['Views', 'Reach', 'Likes', 'Comments', 'Shares', 'Saves', 'Watch Time', 'Género', 'Países', 'Ciudades', 'Edad'].map(metric => (
+            <span key={metric} className={`px-2 py-1 ${bgColor} rounded text-xs ${iconColor}`}>{metric}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -181,24 +430,26 @@ const MetricsSubmit = () => {
   }
 
   const windowStatus = getWindowStatus();
-  const platform = deliverable.platform || 'instagram';
+  const totalScreenshots = instagramScreenshots.length + tiktokScreenshots.length;
 
   return (
     <div className="min-h-screen bg-black text-white" data-testid="metrics-submit-page">
       {/* Header */}
-      <div className="border-b border-white/10">
+      <div className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-sm z-10">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/ugc/creator/workspace" className="flex items-center gap-2 text-gray-400 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
             Mi Workspace
           </Link>
-          <div className="flex items-center gap-2">
-            {platform === 'instagram' ? (
-              <Instagram className="w-5 h-5 text-pink-400" />
-            ) : (
-              <Music2 className="w-5 h-5 text-cyan-400" />
-            )}
-            <span className="text-[#d4a968] italic capitalize">{platform}</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <Instagram className="w-4 h-4 text-pink-400" />
+              <span className="text-sm text-gray-400">{instagramScreenshots.length}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Music2 className="w-4 h-4 text-cyan-400" />
+              <span className="text-sm text-gray-400">{tiktokScreenshots.length}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -209,11 +460,13 @@ const MetricsSubmit = () => {
           <h1 className="text-3xl font-light mb-2">
             Subir <span className="text-[#d4a968] italic">Métricas</span>
           </h1>
-          <p className="text-gray-400">Sube capturas de las estadísticas de tu contenido</p>
+          <p className="text-gray-400">
+            Sube capturas de tus estadísticas de Instagram y/o TikTok
+          </p>
         </div>
 
         {/* Window Status */}
-        <div className={`p-4 rounded-xl mb-8 ${
+        <div className={`p-4 rounded-xl mb-6 ${
           windowStatus.status === 'open' ? 'bg-green-500/10 border border-green-500/30' :
           windowStatus.status === 'urgent' ? 'bg-yellow-500/10 border border-yellow-500/30' :
           windowStatus.status === 'late' ? 'bg-orange-500/10 border border-orange-500/30' :
@@ -241,14 +494,14 @@ const MetricsSubmit = () => {
         </div>
 
         {/* AI Feature Banner */}
-        <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl mb-8">
+        <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl mb-6">
           <div className="flex items-start gap-3">
             <Sparkles className="w-6 h-6 text-purple-400 flex-shrink-0 mt-1" />
             <div>
               <p className="text-purple-400 font-medium">Extracción Automática con IA</p>
               <p className="text-sm text-gray-400 mt-1">
-                Sube tus capturas y nuestra IA extraerá automáticamente: views, reach, likes, comments, shares, saves, 
-                tiempo de visualización, y datos demográficos (género, país, edad).
+                Sube múltiples capturas por plataforma y nuestra IA extraerá todas las métricas 
+                y datos demográficos automáticamente.
               </p>
             </div>
           </div>
@@ -271,67 +524,35 @@ const MetricsSubmit = () => {
 
         {/* Screenshots Upload Section */}
         <div className="space-y-6 mb-8">
-          {/* Metrics Screenshot */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-[#d4a968]/20 flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-[#d4a968]" />
-              </div>
-              <div>
-                <h3 className="text-white font-medium">Screenshot de Métricas *</h3>
-                <p className="text-sm text-gray-400">Captura de la pantalla de estadísticas (obligatorio)</p>
-              </div>
-            </div>
-            
-            <input
-              type="text"
-              value={screenshotUrl}
-              onChange={(e) => setScreenshotUrl(e.target.value)}
-              placeholder="https://ejemplo.com/screenshot-metricas.jpg"
-              className="w-full px-4 py-3 bg-black border border-white/20 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
-              data-testid="metrics-screenshot-input"
-            />
+          {/* Instagram Upload */}
+          <ScreenshotUploadCard
+            platform="Instagram"
+            icon={Instagram}
+            iconColor="text-pink-400"
+            bgColor="bg-pink-500/20"
+            borderColor="border-pink-500/30"
+            screenshots={instagramScreenshots}
+            previews={instagramPreviews}
+            onFilesSelect={handleInstagramFiles}
+            onRemove={removeInstagramScreenshot}
+            inputRef={instagramInputRef}
+            uploading={uploadingInstagram}
+          />
 
-            <div className="mt-3 p-3 bg-black/50 rounded-lg">
-              <p className="text-xs text-gray-500 mb-2">La IA extraerá automáticamente:</p>
-              <div className="flex flex-wrap gap-2">
-                {['Views', 'Reach', 'Likes', 'Comments', 'Shares', 'Saves', 'Watch Time', 'Video Duration'].map(metric => (
-                  <span key={metric} className="px-2 py-1 bg-white/5 rounded text-xs text-gray-400">{metric}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Demographics Screenshot */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                <Users className="w-5 h-5 text-purple-400" />
-              </div>
-              <div>
-                <h3 className="text-white font-medium">Screenshot de Demografía</h3>
-                <p className="text-sm text-gray-400">Captura de audiencia (opcional pero recomendado)</p>
-              </div>
-            </div>
-            
-            <input
-              type="text"
-              value={demographicsUrl}
-              onChange={(e) => setDemographicsUrl(e.target.value)}
-              placeholder="https://ejemplo.com/screenshot-demografia.jpg"
-              className="w-full px-4 py-3 bg-black border border-white/20 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
-              data-testid="demographics-screenshot-input"
-            />
-
-            <div className="mt-3 p-3 bg-black/50 rounded-lg">
-              <p className="text-xs text-gray-500 mb-2">La IA extraerá automáticamente:</p>
-              <div className="flex flex-wrap gap-2">
-                {['Género (M/F)', 'Países', 'Ciudades', 'Rangos de Edad'].map(metric => (
-                  <span key={metric} className="px-2 py-1 bg-purple-500/10 rounded text-xs text-purple-300">{metric}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+          {/* TikTok Upload */}
+          <ScreenshotUploadCard
+            platform="TikTok"
+            icon={Music2}
+            iconColor="text-cyan-400"
+            bgColor="bg-cyan-500/20"
+            borderColor="border-cyan-500/30"
+            screenshots={tiktokScreenshots}
+            previews={tiktokPreviews}
+            onFilesSelect={handleTiktokFiles}
+            onRemove={removeTiktokScreenshot}
+            inputRef={tiktokInputRef}
+            uploading={uploadingTiktok}
+          />
         </div>
 
         {/* Manual Input Toggle */}
@@ -462,14 +683,14 @@ const MetricsSubmit = () => {
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
-          disabled={submitting || !screenshotUrl.trim()}
+          disabled={submitting || totalScreenshots === 0}
           className="w-full py-4 bg-[#d4a968] text-black font-semibold rounded-xl hover:bg-[#c49958] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           data-testid="submit-metrics-btn"
         >
           {aiProcessing ? (
             <>
               <Sparkles className="w-5 h-5 animate-pulse" />
-              Procesando con IA...
+              Procesando {totalScreenshots} imágenes con IA...
             </>
           ) : submitting ? (
             <>
@@ -479,7 +700,7 @@ const MetricsSubmit = () => {
           ) : (
             <>
               <Upload className="w-5 h-5" />
-              Enviar Métricas
+              Enviar Métricas ({totalScreenshots} {totalScreenshots === 1 ? 'imagen' : 'imágenes'})
             </>
           )}
         </button>
@@ -492,18 +713,24 @@ const MetricsSubmit = () => {
           </h3>
           
           <div className="space-y-4 text-sm text-gray-400">
-            <div>
-              <p className="text-white font-medium mb-1">📊 Screenshot de Métricas:</p>
-              <p>En {platform === 'instagram' ? 'Instagram' : 'TikTok'}, ve a tu publicación → Estadísticas → Captura la pantalla donde aparecen views, likes, comentarios, etc.</p>
+            <div className="flex items-start gap-3">
+              <Instagram className="w-5 h-5 text-pink-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-white font-medium mb-1">Instagram</p>
+                <p>Ve a tu Reel/Post → Estadísticas → Toma capturas de: métricas generales, alcance, y audiencia (demografía). Podés subir varias capturas.</p>
+              </div>
             </div>
             
-            <div>
-              <p className="text-white font-medium mb-1">👥 Screenshot de Demografía:</p>
-              <p>En la misma sección de estadísticas, busca &quot;Audiencia&quot; o &quot;Seguidores&quot; → Captura donde aparece distribución por género, edad y ubicación.</p>
+            <div className="flex items-start gap-3">
+              <Music2 className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-white font-medium mb-1">TikTok</p>
+                <p>Ve a tu video → Estadísticas → Captura: views, engagement, y datos de audiencia. Múltiples capturas te dan métricas más completas.</p>
+              </div>
             </div>
             
             <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-              <p className="text-yellow-400">💡 Tip: Sube las imágenes a un servicio como Imgur o Google Drive y pega el enlace directo.</p>
+              <p className="text-yellow-400">💡 Tip: Mientras más capturas subas, más datos podrá extraer la IA. Incluí capturas de métricas generales Y de demografía.</p>
             </div>
           </div>
         </div>
