@@ -222,11 +222,22 @@ async def send_application_confirmed(
         
         # Pickup location
         pickup_address = canje.get("pickup_address", "")
+        pickup_maps_url = canje.get("pickup_maps_url", "")
+        
         if pickup_address:
+            maps_button = ""
+            if pickup_maps_url:
+                maps_button = f"""
+                <a href="{pickup_maps_url}" target="_blank" style="display: inline-block; background: #4285f4; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-weight: 600; font-size: 13px; margin-top: 10px;">
+                    📍 Ver en Google Maps
+                </a>
+                """
+            
             pickup_info = f"""
             <div style="background: #1a1a1a; border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #d4a968;">
                 <p style="color: #ffffff; font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">📍 LUGAR DE RETIRO</p>
                 <p style="color: #ffffff; font-size: 14px; margin: 0; line-height: 1.4;">{pickup_address}</p>
+                {maps_button}
             </div>
             """
     
