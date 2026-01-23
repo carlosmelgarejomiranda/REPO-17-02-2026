@@ -200,23 +200,16 @@ const CreatorWorkspace = () => {
                     
                     <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0" />
                   </div>
-                      <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs sm:text-sm ${statusConfig.color}`}>
-                        <StatusIcon className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline">{statusConfig.label}</span>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-gray-500" />
-                    </div>
-                  </div>
 
-                  {/* Action hint - Mobile friendly */}
+                  {/* Action hint - Compact */}
                   {needsAction && (
-                    <div className="mt-3 pt-3 border-t border-white/5">
-                      <p className="text-xs sm:text-sm text-yellow-400 flex items-center gap-2">
-                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    <div className="mt-2 pt-2 border-t border-white/5">
+                      <p className="text-[10px] sm:text-xs text-yellow-400 flex items-center gap-1.5">
+                        <AlertCircle className="w-3 h-3 flex-shrink-0" />
                         <span>
-                          {del.status === 'awaiting_publish' && 'Registra la URL de tu publicación'}
-                          {del.status === 'changes_requested' && 'La marca solicitó cambios'}
-                          {del.status === 'metrics_pending' && 'Subí tus métricas'}
+                          {del.status === 'awaiting_publish' && 'Registra tu URL'}
+                          {del.status === 'changes_requested' && 'Cambios solicitados'}
+                          {del.status === 'metrics_pending' && 'Subí métricas'}
                         </span>
                       </p>
                     </div>
