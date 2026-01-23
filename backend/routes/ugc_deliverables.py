@@ -294,12 +294,8 @@ async def mark_as_published(
         
     except Exception as e:
         logger.error(f"[PUBLISH EMAIL] Error crítico en notificaciones: {e}", exc_info=True)
-        
-        logger.info(f"[PUBLISH] All notifications sent successfully")
-    except Exception as e:
-        logger.error(f"[PUBLISH] Failed to send notification: {e}", exc_info=True)
     
-    return {"success": True, "message": "Contenido enviado para revisión"}
+    return {"success": True, "message": "Contenido registrado. Ya podés subir tus métricas."}
 
 @router.post("/{deliverable_id}/submit", response_model=dict)
 async def submit_deliverable(
