@@ -262,6 +262,8 @@ def _fallback_confirmation_email(
             Fuiste seleccionado para <strong style="color: #d4a968;">{campaign_name}</strong> de {brand_name}.
         </p>
         
+        {rookie_notice}
+        
         <!-- FECHA DESTACADA -->
         <div style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center;">
             <p style="color: #ffffff; font-size: 12px; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 1px;">
@@ -278,7 +280,7 @@ def _fallback_confirmation_email(
         {delivery_info}
         
         <p style="color: #888888; font-size: 13px; line-height: 1.5; margin: 15px 0;">
-            Después de publicar, tendrás 7 días más para subir los screenshots de métricas.
+            Después de publicar, tendrás 14 días desde tu confirmación para subir los screenshots de métricas.
         </p>
         
         <div style="margin: 25px 0; text-align: center;">
