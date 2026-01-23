@@ -1018,6 +1018,85 @@ Ejemplo de formato:
                 </div>
               </div>
 
+              {/* Delivery/Pickup Section - NEW */}
+              <div className="border-t border-white/10 pt-6">
+                <h4 className="text-lg font-medium mb-4 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-[#d4a968]" />
+                  Entrega del Canje
+                </h4>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Método de Entrega</label>
+                    <select
+                      value={formData.delivery_method}
+                      onChange={(e) => setFormData(prev => ({ ...prev, delivery_method: e.target.value }))}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                      style={{ colorScheme: 'dark' }}
+                    >
+                      <option value="pickup" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Retiro en local</option>
+                      <option value="delivery" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Delivery (envío al creador)</option>
+                      <option value="not_applicable" style={{ backgroundColor: '#1a1a1a', color: '#fff' }}>Experiencia en ubicación</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Contacto Comercial (Nombre)</label>
+                    <input
+                      type="text"
+                      value={formData.brand_contact_name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, brand_contact_name: e.target.value }))}
+                      placeholder="Nombre del contacto de la marca"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Teléfono de Contacto</label>
+                    <input
+                      type="tel"
+                      value={formData.brand_contact_phone}
+                      onChange={(e) => setFormData(prev => ({ ...prev, brand_contact_phone: e.target.value }))}
+                      placeholder="+595 9XX XXX XXX"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
+                    />
+                  </div>
+                  {(formData.delivery_method === 'pickup' || formData.delivery_method === 'not_applicable') && (
+                    <>
+                      <div className="md:col-span-2">
+                        <label className="block text-sm text-gray-400 mb-2">
+                          Dirección de {formData.delivery_method === 'pickup' ? 'Retiro' : 'la Experiencia'}
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.pickup_address}
+                          onChange={(e) => setFormData(prev => ({ ...prev, pickup_address: e.target.value }))}
+                          placeholder="Ej: Av. España 1234, Asunción"
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-2">URL Google Maps</label>
+                        <input
+                          type="url"
+                          value={formData.pickup_maps_url}
+                          onChange={(e) => setFormData(prev => ({ ...prev, pickup_maps_url: e.target.value }))}
+                          placeholder="https://maps.google.com/..."
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-2">Horario de Atención</label>
+                        <input
+                          type="text"
+                          value={formData.pickup_hours}
+                          onChange={(e) => setFormData(prev => ({ ...prev, pickup_hours: e.target.value }))}
+                          placeholder="Ej: Lunes a Viernes 9:00 - 18:00"
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
               {/* Timeline Section */}
               <div className="border-t border-white/10 pt-6">
                 <h4 className="text-lg font-medium mb-4 flex items-center gap-2">
