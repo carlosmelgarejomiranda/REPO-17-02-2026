@@ -244,6 +244,8 @@ async def submit_deliverable(
         brand_name = brand.get("company_name", "Marca") if brand else "Marca"
         brand_email = brand.get("email") if brand else None
         
+        logger.info(f"[PUBLISH NOTIFICATION] Creator: {creator.get('name')}, Campaign: {campaign_name}, Brand: {brand_name}, Brand Email: {brand_email}")
+        
         from services.ugc_emails import (
             send_content_submitted_to_creator,
             send_content_submitted_to_brand,
@@ -252,30 +254,40 @@ async def submit_deliverable(
         
         # 1. Email al creador confirmando su entrega
         if creator.get("email"):
-            await send_content_submitted_to_creator(
+            logger.info(f"[PUBLISH NOTIFICATION] Sending email to creator: {creator.get('email')}")
+            result = await send_content_submitted_to_creator(
                 to_email=creator.get("email"),
                 creator_name=creator.get("name", "Creator"),
                 campaign_name=campaign_name,
                 brand_name=brand_name
             )
+            logger.info(f"[PUBLISH NOTIFICATION] Creator email result: {result}")
+        else:
+            logger.warning(f"[PUBLISH NOTIFICATION] Creator has no email configured")
         
         # 2. Email a la marca notificando nueva entrega
         if brand_email:
-            await send_content_submitted_to_brand(
+            logger.info(f"[PUBLISH NOTIFICATION] Sending email to brand: {brand_email}")
+            result = await send_content_submitted_to_brand(
                 to_email=brand_email,
                 brand_name=brand_name,
                 campaign_name=campaign_name,
                 creator_name=creator.get("name", "Creator")
             )
+            logger.info(f"[PUBLISH NOTIFICATION] Brand email result: {result}")
+        else:
+            logger.warning(f"[PUBLISH NOTIFICATION] Brand has no email configured")
         
         # 3. WhatsApp notification to admin
+        logger.info(f"[PUBLISH NOTIFICATION] Sending WhatsApp notification")
         await notify_deliverable_submitted_whatsapp(
             creator_name=creator.get("name", "Creator"),
             campaign_name=campaign_name,
             brand_name=brand_name
         )
+        logger.info(f"[PUBLISH NOTIFICATION] All notifications sent successfully")
     except Exception as e:
-        logger.error(f"Failed to send submit notification: {e}")
+        logger.error(f"[PUBLISH NOTIFICATION] Failed to send notification: {e}", exc_info=True)
     
     return {"success": True, "message": "Entrega enviada para revisión"}
 
