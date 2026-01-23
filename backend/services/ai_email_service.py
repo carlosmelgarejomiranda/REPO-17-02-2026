@@ -132,10 +132,11 @@ DISEÑO OBLIGATORIO - MOBILE FIRST:
 ESTRUCTURA (TODO EN MÁXIMO 400px de alto visible):
 1. Saludo: "¡Hola [nombre]!" (1 línea, 20px, blanco)
 2. Confirmación: "Confirmado para [campaña]" (2 líneas max, dorado)
-3. FECHA LÍMITE: caja verde grande, fecha en negrita 18px
+3. FECHA LÍMITE URL: caja verde grande con texto "FECHA LÍMITE PARA SUBIR URL" + fecha en negrita 18px
 4. Info canje: 2-3 líneas máximo, directo al punto
 5. SI ES ROOKIE: caja dorada con borde, mensaje corto sobre retiro de canje
-6. Botón dorado: "Ir a mi Workspace"
+6. Métricas: "Tenés 14 días desde hoy para subir métricas."
+7. Botón dorado: "Ir a mi Workspace"
 
 REGLAS:
 - Español Paraguay (vos, sos, tenés)
