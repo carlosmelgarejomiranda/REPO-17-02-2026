@@ -755,21 +755,44 @@ async def submit_metrics_v2(
     
     all_extractions = []
     
-    # Process Instagram screenshots
-    for i, img_b64 in enumerate(data.instagram_screenshots[:10]):  # Max 10
-        ai_logger.info(f"Processing Instagram screenshot {i+1}/{len(data.instagram_screenshots)}")
-        extraction = await extract_metrics_from_base64(img_b64, "instagram")
-        extraction["platform"] = "instagram"
-        extraction["image_index"] = i
-        all_extractions.append(extraction)
+    # Process all screenshots in PARALLEL for speed
+    ai_logger.info(f"Processing V2 submission in PARALLEL: {len(data.instagram_screenshots)} IG, {len(data.tiktok_screenshots)} TT")
     
-    # Process TikTok screenshots
-    for i, img_b64 in enumerate(data.tiktok_screenshots[:10]):  # Max 10
-        ai_logger.info(f"Processing TikTok screenshot {i+1}/{len(data.tiktok_screenshots)}")
-        extraction = await extract_metrics_from_base64(img_b64, "tiktok")
-        extraction["platform"] = "tiktok"
-        extraction["image_index"] = i
-        all_extractions.append(extraction)
+    import asyncio
+    
+    async def process_screenshot(img_b64: str, platform: str, index: int) -> dict:
+        """Process a single screenshot and return extraction with metadata"""
+        try:
+            ai_logger.info(f"Processing {platform} screenshot {index+1}")
+            extraction = await extract_metrics_from_base64(img_b64, platform)
+            extraction["platform"] = platform
+            extraction["image_index"] = index
+            return extraction
+        except Exception as e:
+            ai_logger.error(f"Error processing {platform} screenshot {index+1}: {e}")
+            return {"error": str(e), "platform": platform, "image_index": index, "confidence": 0}
+    
+    # Create tasks for all images
+    tasks = []
+    
+    # Instagram tasks
+    for i, img_b64 in enumerate(data.instagram_screenshots[:10]):
+        tasks.append(process_screenshot(img_b64, "instagram", i))
+    
+    # TikTok tasks
+    for i, img_b64 in enumerate(data.tiktok_screenshots[:10]):
+        tasks.append(process_screenshot(img_b64, "tiktok", i))
+    
+    # Process all in parallel (with semaphore to limit concurrency)
+    if tasks:
+        ai_logger.info(f"Starting parallel processing of {len(tasks)} images...")
+        all_extractions = await asyncio.gather(*tasks, return_exceptions=True)
+        # Filter out exceptions and convert to list
+        all_extractions = [
+            e if isinstance(e, dict) else {"error": str(e), "confidence": 0}
+            for e in all_extractions
+        ]
+        ai_logger.info(f"Parallel processing complete. Got {len(all_extractions)} results.")
     
     # Merge all extracted data
     merged_result = await merge_extracted_data(all_extractions)
