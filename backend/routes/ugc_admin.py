@@ -644,7 +644,10 @@ async def admin_update_application_status(
         from services.ugc_emails import (
             send_application_confirmed, 
             send_application_rejected,
-            send_creator_confirmed_to_brand
+            send_application_cancelled_by_admin,
+            send_creator_confirmed_to_brand,
+            send_admin_notification,
+            send_admin_creator_cancelled
         )
         
         creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
@@ -678,6 +681,16 @@ async def admin_update_application_status(
                         creator_name=creator_name
                     )
                     print(f"[Email] Brand notified: {brand_email}")
+                
+                # Email al admin UGC notificando la confirmación
+                admin_content = f"""
+                    <h2 style="color: #22c55e; margin: 0 0 15px 0;">✅ Creador Confirmado</h2>
+                    <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name} ({creator_email})</p>
+                    <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+                    <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+                """
+                await send_admin_notification(f"✅ Confirmado: {creator_name} → {campaign_name}", admin_content)
+                print(f"[Email] Admin UGC notified of confirmation")
                     
             elif status == "rejected" and creator_email:
                 await send_application_rejected(
@@ -688,14 +701,23 @@ async def admin_update_application_status(
                 )
                 print(f"[Email] Rejection sent to {creator_email}")
             elif status == "cancelled" and creator_email:
-                # Send cancellation email
-                await send_application_rejected(
+                # Send cancellation email usando la nueva función
+                await send_application_cancelled_by_admin(
                     to_email=creator_email,
                     creator_name=creator_name,
                     campaign_name=campaign_name,
-                    reason=reason or "Tu participación ha sido cancelada por el administrador."
+                    brand_name=brand_name,
+                    reason=reason
                 )
                 print(f"[Email] Cancellation sent to {creator_email}")
+                
+                # Notificar al admin también
+                await send_admin_creator_cancelled(
+                    creator_name=creator_name,
+                    creator_email=creator_email,
+                    campaign_name=campaign_name,
+                    brand_name=brand_name
+                )
     except Exception as e:
         print(f"[Email Error] Failed to send notification: {e}")
     
