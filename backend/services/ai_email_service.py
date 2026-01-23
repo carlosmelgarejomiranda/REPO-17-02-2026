@@ -77,6 +77,7 @@ async def generate_confirmation_email(
         # Build context for AI
         context_parts = [
             f"Nombre del creador: {creator_name}",
+            f"Nivel del creador: {creator_level or 'No especificado'}",
             f"Nombre de la campaña: {campaign_name}",
             f"Marca: {brand_name}",
             f"Descripción de la campaña: {campaign_description}",
@@ -84,6 +85,10 @@ async def generate_confirmation_email(
             f"Descripción del canje: {canje_description}",
             f"Fecha límite para subir contenido: {content_deadline_str}",
         ]
+        
+        # Add rookie-specific information
+        if creator_level and creator_level.lower() == 'rookie':
+            context_parts.append("IMPORTANTE - CREADOR ROOKIE: Los rookies solo pueden retirar su canje DESPUÉS de: 1) Subir contenido a redes, 2) Registrar URL en plataforma, 3) Subir métricas a plataforma")
         
         if delivery_method == 'delivery':
             context_parts.append("Método de entrega: DELIVERY (el producto será enviado al creador)")
