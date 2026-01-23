@@ -283,7 +283,7 @@ async def mark_as_published(
                 subject=f"📤 Contenido Entregado: {creator_name} → {campaign_name}",
                 html_content=admin_content
             )
-            emails_sent.append(f"Admin ({ADMIN_EMAIL})")
+            emails_sent.append(f"Admin UGC ({ADMIN_EMAIL_UGC})")
         except Exception as e:
             logger.error(f"[PUBLISH EMAIL] Error enviando a admin: {e}")
             emails_failed.append(f"Admin: {str(e)}")
