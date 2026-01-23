@@ -324,18 +324,32 @@ async def submit_metrics(
     
     now = datetime.now(timezone.utc)
     
-    # Calculate screenshot day (days since publish)
+    # Calculate screenshot day and on-time status based on CONFIRMATION date (not publish date)
     screenshot_day = 0
     is_late = False
-    if deliverable.get("published_at"):
-        published = datetime.fromisoformat(deliverable["published_at"].replace('Z', '+00:00'))
-        delta = now - published
+    
+    # Get confirmation date from deliverable or application
+    confirmed_at = None
+    if deliverable.get("confirmed_at"):
+        confirmed_at = datetime.fromisoformat(deliverable["confirmed_at"].replace('Z', '+00:00'))
+    else:
+        # Fallback: try to get from application
+        application = await db.ugc_applications.find_one({
+            "campaign_id": deliverable["campaign_id"],
+            "creator_id": creator["id"]
+        })
+        if application and application.get("confirmed_at"):
+            confirmed_at = datetime.fromisoformat(application["confirmed_at"].replace('Z', '+00:00'))
+        elif deliverable.get("created_at"):
+            # Last fallback: deliverable creation date
+            confirmed_at = datetime.fromisoformat(deliverable["created_at"].replace('Z', '+00:00'))
+    
+    if confirmed_at:
+        delta = now - confirmed_at
         screenshot_day = delta.days
         
-        # Check if late (after day 14)
-        if deliverable.get("metrics_window_closes"):
-            closes = datetime.fromisoformat(deliverable["metrics_window_closes"].replace('Z', '+00:00'))
-            is_late = now > closes
+        # On-time = within 14 days of confirmation
+        is_late = delta.days > 14
     
     platform = deliverable.get("platform", "instagram")
     

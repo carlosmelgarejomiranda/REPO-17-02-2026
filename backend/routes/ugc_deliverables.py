@@ -137,14 +137,29 @@ async def mark_as_published(
     
     now = datetime.now(timezone.utc)
     
-    # Calculate metrics window (7-14 days from publish)
-    metrics_opens = now + timedelta(days=7)
-    metrics_closes = now + timedelta(days=14)
+    # Get confirmed_at from the application to calculate metrics deadline
+    application = await db.ugc_applications.find_one({
+        "campaign_id": deliverable["campaign_id"],
+        "creator_id": creator["id"]
+    })
     
-    # Update to SUBMITTED status (not just PUBLISHED) so it goes for review
-    new_status = DeliverableStatus.SUBMITTED
-    if deliverable["status"] == DeliverableStatus.CHANGES_REQUESTED:
-        new_status = DeliverableStatus.RESUBMITTED
+    # Calculate metrics deadline: 14 days from confirmation date
+    confirmed_at = None
+    if application and application.get("confirmed_at"):
+        confirmed_at = datetime.fromisoformat(application["confirmed_at"].replace('Z', '+00:00'))
+    elif deliverable.get("created_at"):
+        # Fallback to deliverable creation date if no confirmation date
+        confirmed_at = datetime.fromisoformat(deliverable["created_at"].replace('Z', '+00:00'))
+    else:
+        confirmed_at = now
+    
+    # Metrics can be uploaded immediately after publishing URL
+    metrics_opens = now  # Available immediately
+    metrics_closes = confirmed_at + timedelta(days=14)  # 14 days from confirmation
+    
+    # Status: PUBLISHED (content URL registered, ready for metrics upload)
+    # No longer requires brand approval to upload metrics
+    new_status = DeliverableStatus.PUBLISHED
     
     await db.ugc_deliverables.update_one(
         {"id": deliverable_id},
@@ -156,6 +171,7 @@ async def mark_as_published(
                 "tiktok_url": tiktok_url or "",
                 "published_at": now.isoformat(),
                 "submitted_at": now.isoformat(),
+                "confirmed_at": confirmed_at.isoformat() if confirmed_at else now.isoformat(),
                 "metrics_window_opens": metrics_opens.isoformat(),
                 "metrics_window_closes": metrics_closes.isoformat(),
                 "updated_at": now.isoformat()
