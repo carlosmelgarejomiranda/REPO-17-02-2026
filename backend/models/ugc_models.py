@@ -343,10 +343,18 @@ class CampaignCanje(BaseModel):
     type: CanjeType
     description: str
     value: int  # Value in Gs
-    # For products
+    # Delivery method
+    delivery_method: DeliveryMethod = DeliveryMethod.NOT_APPLICABLE
+    # For pickup/experience location
+    pickup_address: Optional[str] = None
+    pickup_maps_url: Optional[str] = None  # Google Maps URL
+    pickup_hours: Optional[str] = None  # e.g., "Lunes a Viernes 9:00 - 18:00"
+    # Brand contact for coordination
+    brand_contact_name: Optional[str] = None
+    brand_contact_phone: Optional[str] = None
+    # Legacy fields (kept for backwards compatibility)
     requires_shipping: bool = False
     shipping_notes: Optional[str] = None
-    # For services
     requires_scheduling: bool = False
     location: Optional[str] = None
     scheduling_notes: Optional[str] = None
