@@ -53,6 +53,11 @@ const CreatorWorkspace = () => {
     return configs[status] || { color: 'bg-gray-500/20 text-gray-400', label: status, icon: Clock };
   };
 
+  // Check if metrics can be uploaded (published but not yet submitted)
+  const canUploadMetrics = (status) => {
+    return ['published', 'submitted', 'resubmitted', 'under_review', 'approved', 'metrics_pending'].includes(status);
+  };
+
   const filteredDeliverables = deliverables.filter(d => {
     if (activeFilter === 'all') return true;
     if (activeFilter === 'pending') return ['awaiting_publish', 'changes_requested'].includes(d.status);
