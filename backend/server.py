@@ -59,8 +59,19 @@ JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 168  # 7 days for regular users
 JWT_EXPIRATION_HOURS_ADMIN = 12  # 12 hours for admins
 
-# Admin email
+# Admin emails by type
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'avenuepy@gmail.com')
+ADMIN_EMAIL_UGC = os.environ.get('ADMIN_EMAIL_UGC', 'avenue.ugc@gmail.com')
+ADMIN_EMAIL_STUDIO = os.environ.get('ADMIN_EMAIL_STUDIO', 'avenue.studio@gmail.com')
+
+def get_admin_email(sender_type: str = 'general') -> str:
+    """Get the appropriate admin email based on sender type"""
+    if sender_type == 'ugc':
+        return ADMIN_EMAIL_UGC
+    elif sender_type == 'studio':
+        return ADMIN_EMAIL_STUDIO
+    else:
+        return ADMIN_EMAIL
 
 # Create the main app
 app = FastAPI()
