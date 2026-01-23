@@ -88,7 +88,7 @@ async def generate_confirmation_email(
         
         # Add rookie-specific information
         if creator_level and creator_level.lower() == 'rookie':
-            context_parts.append("IMPORTANTE - CREADOR ROOKIE: Los rookies solo pueden retirar su canje DESPUÉS de: 1) Subir contenido a redes, 2) Registrar URL en plataforma, 3) Subir métricas a plataforma")
+            context_parts.append("IMPORTANTE - CREADOR ROOKIE: Debe venir a Avenue a crear el contenido. El canje se retira DESPUÉS de subir URL y métricas a la plataforma (no el mismo día). Mencioná esto de forma BREVE y clara.")
         
         if delivery_method == 'delivery':
             context_parts.append("Método de entrega: DELIVERY (el producto será enviado al creador)")
