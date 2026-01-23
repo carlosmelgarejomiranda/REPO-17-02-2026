@@ -128,37 +128,34 @@ const MetricsSubmit = () => {
   };
 
   const getWindowStatus = () => {
-    if (!deliverable?.metrics_window_opens) {
-      return { status: 'not_ready', message: 'La ventana de métricas aún no está configurada' };
+    if (!deliverable?.confirmed_at && !deliverable?.metrics_window_closes) {
+      return { status: 'open', message: 'Podés subir tus métricas ahora' };
     }
     
     const now = new Date();
-    const opens = new Date(deliverable.metrics_window_opens);
     const closes = deliverable.metrics_window_closes ? new Date(deliverable.metrics_window_closes) : null;
     
-    if (now < opens) {
-      const daysUntil = Math.ceil((opens - now) / (1000 * 60 * 60 * 24));
-      return { 
-        status: 'pending', 
-        message: `La ventana abre en ${daysUntil} día${daysUntil !== 1 ? 's' : ''}`,
-        date: opens.toLocaleDateString('es-PY')
-      };
-    }
-    
     if (closes && now > closes) {
-      return { status: 'late', message: 'La ventana cerró - envío tardío' };
+      return { status: 'late', message: 'Fecha límite pasada - envío tardío' };
     }
     
     if (closes) {
       const daysLeft = Math.ceil((closes - now) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= 3) {
+        return { 
+          status: 'urgent', 
+          message: `¡Solo ${daysLeft} día${daysLeft !== 1 ? 's' : ''} restante${daysLeft !== 1 ? 's' : ''}!`,
+          date: closes.toLocaleDateString('es-PY')
+        };
+      }
       return { 
         status: 'open', 
-        message: `${daysLeft} día${daysLeft !== 1 ? 's' : ''} restantes`,
+        message: `${daysLeft} días restantes`,
         date: closes.toLocaleDateString('es-PY')
       };
     }
     
-    return { status: 'open', message: 'Ventana abierta' };
+    return { status: 'open', message: 'Podés subir tus métricas' };
   };
 
   if (loading) {
