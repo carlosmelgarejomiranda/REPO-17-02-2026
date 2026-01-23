@@ -21,6 +21,25 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 ### Session: 2026-01-23
 
 #### ✅ Completed
+- **Persistent Image Storage with MongoDB GridFS (CRITICAL)**
+  - Implemented MongoDB GridFS for persistent image storage
+  - Images now stored in MongoDB, surviving deployments and pod restarts
+  - Created service: `/app/backend/services/gridfs_storage.py`
+  - New endpoints:
+    - `POST /api/upload` - Upload images to GridFS
+    - `GET /api/images/{file_id}` - Serve images from GridFS
+    - `DELETE /api/images/{file_id}` - Delete images (admin only)
+    - `GET /api/storage/stats` - Storage statistics
+    - `GET /api/shop/images/gridfs/{file_id}` - Product images from GridFS
+  - Migration script: `/app/backend/scripts/migrate_to_gridfs.py`
+  - Migrated 19 existing images (17 product images, 2 general uploads)
+  - Legacy URLs (`/api/uploads/*`, `/api/shop/images/*`) continue to work
+  - **Buckets**: `images` (general), `product_images` (e-commerce)
+
+- **Deployment Health Check Fix**
+  - Added `/health` endpoint to server.py for Kubernetes probes
+  - Fixed `.env` SENDER_EMAIL formatting issue
+
 - **DeliverableDetail Page Redesign (P1)**
   - Complete redesign of creator's deliverable submission page
   - Separated URL submission flow for Instagram and TikTok
