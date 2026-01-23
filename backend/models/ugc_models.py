@@ -67,8 +67,14 @@ class CreatorLevel(str, Enum):
     ELITE = "elite"
 
 class CanjeType(str, Enum):
-    PRODUCT = "product"  # Physical product, requires shipping
-    SERVICE = "service"  # Experience/service, requires scheduling
+    PRODUCT = "product"  # Physical product
+    SERVICE = "service"  # Experience/service
+    EXPERIENCE = "experience"  # Alias for service
+
+class DeliveryMethod(str, Enum):
+    DELIVERY = "delivery"  # Product shipped to creator
+    PICKUP = "pickup"  # Creator picks up at location
+    NOT_APPLICABLE = "not_applicable"  # For experiences at specific location
 
 # ==================== CREATOR MODELS ====================
 
