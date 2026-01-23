@@ -400,17 +400,24 @@ function AppRouter() {
     
     // Check for redirect parameter from email links
     const redirectParam = params.get('redirect');
-    if (redirectParam && !user) {
+    if (redirectParam) {
+      // Always save the redirect path
       sessionStorage.setItem('redirect_after_login', redirectParam);
-      setShowAuthModal(true);
-      // Clean up URL
-      navigate('/login', { replace: true });
+      
+      if (!user) {
+        // If not logged in, show auth modal
+        setShowAuthModal(true);
+      } else {
+        // If already logged in, redirect immediately
+        sessionStorage.removeItem('redirect_after_login');
+        navigate(redirectParam, { replace: true });
+        return;
+      }
     }
     
     // Legacy: creator login parameter
     if (params.get('login') === 'creator' && !user) {
       setShowAuthModal(true);
-      // Clean up URL
       navigate(location.pathname, { replace: true });
     }
   }, [location.search, user, navigate, location.pathname]);
