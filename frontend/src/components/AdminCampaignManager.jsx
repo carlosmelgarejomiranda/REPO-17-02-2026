@@ -232,8 +232,14 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
         type: formData.canje_type,
         description: formData.canje_description,
         value: parseInt(formData.canje_value) || 0,
-        requires_shipping: formData.canje_type === 'product',
-        requires_scheduling: formData.canje_type === 'service'
+        delivery_method: formData.delivery_method,
+        pickup_address: formData.pickup_address,
+        pickup_maps_url: formData.pickup_maps_url,
+        pickup_hours: formData.pickup_hours,
+        brand_contact_name: formData.brand_contact_name,
+        brand_contact_phone: formData.brand_contact_phone,
+        requires_shipping: formData.delivery_method === 'delivery',
+        requires_scheduling: formData.canje_type === 'service' || formData.delivery_method === 'not_applicable'
       },
       timeline: {
         applications_deadline: new Date(formData.applications_deadline).toISOString(),
@@ -353,8 +359,14 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
         type: formData.canje_type,
         description: formData.canje_description,
         value: parseInt(formData.canje_value) || 0,
-        requires_shipping: formData.canje_type === 'product',
-        requires_scheduling: formData.canje_type === 'service'
+        delivery_method: formData.delivery_method,
+        pickup_address: formData.pickup_address,
+        pickup_maps_url: formData.pickup_maps_url,
+        pickup_hours: formData.pickup_hours,
+        brand_contact_name: formData.brand_contact_name,
+        brand_contact_phone: formData.brand_contact_phone,
+        requires_shipping: formData.delivery_method === 'delivery',
+        requires_scheduling: formData.canje_type === 'service' || formData.delivery_method === 'not_applicable'
       },
       timeline: {
         applications_deadline: new Date(formData.applications_deadline).toISOString(),
