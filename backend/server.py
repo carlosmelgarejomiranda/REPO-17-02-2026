@@ -344,8 +344,9 @@ def can_manage_users(role: str) -> bool:
     return role in ["superadmin"]
 
 async def send_confirmation_email(reservation: dict):
-    """Send confirmation email for a reservation"""
+    """Send confirmation email for a reservation to both customer and admin"""
     try:
+        # Email content for customer
         html_content = f"""
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #f5ede4; padding: 40px;">
             <div style="text-align: center; margin-bottom: 30px;">
@@ -393,6 +394,7 @@ async def send_confirmation_email(reservation: dict):
         </div>
         """
         
+        # 1. Send to customer
         params = {
             "from": "AVENUE Studio <reservas@avenue.com.py>",
             "to": [reservation['email']],
@@ -401,7 +403,72 @@ async def send_confirmation_email(reservation: dict):
         }
         
         await asyncio.to_thread(resend.Emails.send, params)
-        logger.info(f"Confirmation email sent to {reservation['email']}")
+        logger.info(f"Confirmation email sent to customer: {reservation['email']}")
+        
+        # 2. Send confirmation to admin (studio)
+        admin_html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #f5ede4; padding: 40px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #d4a968; font-style: italic; font-weight: 300; margin: 0;">Avenue Studio</h1>
+                <p style="color: #22c55e; margin-top: 10px;">✅ Reserva Confirmada</p>
+            </div>
+            
+            <div style="background-color: #1a1a1a; padding: 30px; border: 1px solid #22c55e; margin-bottom: 20px;">
+                <h2 style="color: #22c55e; margin-top: 0;">Reserva Confirmada</h2>
+                
+                <h3 style="color: #d4a968; margin-top: 20px;">Datos del Cliente:</h3>
+                <table style="width: 100%; color: #f5ede4;">
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Nombre:</strong></td>
+                        <td style="padding: 8px 0; color: #d4a968;">{reservation['name']}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Email:</strong></td>
+                        <td style="padding: 8px 0;">{reservation['email']}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Teléfono:</strong></td>
+                        <td style="padding: 8px 0;">{reservation.get('phone', 'N/A')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Empresa:</strong></td>
+                        <td style="padding: 8px 0;">{reservation.get('company', 'N/A')}</td>
+                    </tr>
+                </table>
+                
+                <h3 style="color: #d4a968; margin-top: 20px;">Detalles de la Reserva:</h3>
+                <table style="width: 100%; color: #f5ede4;">
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Fecha:</strong></td>
+                        <td style="padding: 8px 0; color: #d4a968;">{reservation['date']}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Horario:</strong></td>
+                        <td style="padding: 8px 0; color: #d4a968;">{reservation['start_time']} - {reservation['end_time']}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Duración:</strong></td>
+                        <td style="padding: 8px 0;">{reservation['duration_hours']} horas</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Precio:</strong></td>
+                        <td style="padding: 8px 0; color: #22c55e; font-size: 18px;">{reservation['price']:,} Gs</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        """
+        
+        admin_params = {
+            "from": "AVENUE Studio <reservas@avenue.com.py>",
+            "to": [ADMIN_EMAIL_STUDIO],
+            "subject": f"✅ CONFIRMADA - {reservation['name']} - {reservation['date']} {reservation['start_time']}",
+            "html": admin_html
+        }
+        
+        await asyncio.to_thread(resend.Emails.send, admin_params)
+        logger.info(f"Confirmation email sent to admin: {ADMIN_EMAIL_STUDIO}")
+        
     except Exception as e:
         logger.error(f"Failed to send confirmation email: {str(e)}")
 
