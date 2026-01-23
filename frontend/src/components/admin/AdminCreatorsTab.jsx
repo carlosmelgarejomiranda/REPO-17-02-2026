@@ -337,6 +337,44 @@ const CreatorMetricsModal = ({ creator, onClose }) => {
           </button>
         </div>
         
+        {/* Summary Stats */}
+        {creator.stats && (
+          <div className="px-4 py-3 border-b border-white/10 bg-white/5">
+            <div className="grid grid-cols-4 gap-3 text-center">
+              <div>
+                <p className={`text-lg font-semibold ${
+                  (creator.stats.delivery_on_time_rate || 100) >= 90 ? 'text-green-400' :
+                  (creator.stats.delivery_on_time_rate || 100) >= 70 ? 'text-yellow-400' :
+                  'text-orange-400'
+                }`}>
+                  {creator.stats.delivery_on_time_rate || 100}%
+                </p>
+                <p className="text-[10px] text-gray-500">Entregas a tiempo</p>
+              </div>
+              <div>
+                <p className="text-lg font-semibold text-purple-400">
+                  {creator.stats.avg_delivery_lag_hours 
+                    ? `${Math.round(creator.stats.avg_delivery_lag_hours / 24)}d`
+                    : '0d'}
+                </p>
+                <p className="text-[10px] text-gray-500">Prom. días entrega</p>
+              </div>
+              <div>
+                <p className="text-lg font-semibold text-yellow-400">
+                  {(creator.avg_rating || 0).toFixed(1)}
+                </p>
+                <p className="text-[10px] text-gray-500">Rating promedio</p>
+              </div>
+              <div>
+                <p className="text-lg font-semibold text-blue-400">
+                  {creator.campaigns_participated || 0}
+                </p>
+                <p className="text-[10px] text-gray-500">Campañas</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="p-4 max-h-[60vh] overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center py-8">
