@@ -200,7 +200,7 @@ async def mark_as_published(
         creator_email = creator.get("email")
         creator_name = creator.get("name", "Creador")
         
-        logger.info(f"[PUBLISH EMAIL] === NOTIFICACIÓN DE CONTENIDO ===")
+        logger.info("[PUBLISH EMAIL] === NOTIFICACIÓN DE CONTENIDO ===")
         logger.info(f"[PUBLISH EMAIL] Creador: {creator_name} | Email: {creator_email or 'NO CONFIGURADO'}")
         logger.info(f"[PUBLISH EMAIL] Campaña: {campaign_name}")
         logger.info(f"[PUBLISH EMAIL] Marca: {brand_name} | Email: {brand_email or 'NO CONFIGURADO'}")
@@ -233,7 +233,7 @@ async def mark_as_published(
                 emails_failed.append(f"Creador ({creator_email}): {str(e)}")
         else:
             logger.warning(f"[PUBLISH EMAIL] ⚠️ Creador {creator_name} NO tiene email configurado")
-            emails_failed.append(f"Creador (sin email)")
+            emails_failed.append("Creador (sin email)")
         
         # 2. Email a la MARCA notificando nueva entrega
         if brand_email:
@@ -251,7 +251,7 @@ async def mark_as_published(
                 emails_failed.append(f"Marca ({brand_email}): {str(e)}")
         else:
             logger.warning(f"[PUBLISH EMAIL] ⚠️ Marca {brand_name} NO tiene email configurado")
-            emails_failed.append(f"Marca (sin email)")
+            emails_failed.append("Marca (sin email)")
         
         # 3. Email al ADMIN - SIEMPRE (usando ADMIN_EMAIL de .env)
         try:
@@ -288,7 +288,7 @@ async def mark_as_published(
             logger.error(f"[PUBLISH EMAIL] Error enviando a admin: {e}")
             emails_failed.append(f"Admin: {str(e)}")
         
-        logger.info(f"[PUBLISH EMAIL] === RESUMEN ===")
+        logger.info("[PUBLISH EMAIL] === RESUMEN ===")
         logger.info(f"[PUBLISH EMAIL] ✅ Enviados: {emails_sent}")
         logger.info(f"[PUBLISH EMAIL] ❌ Fallidos: {emails_failed}")
         
@@ -394,7 +394,7 @@ async def submit_deliverable(
             )
             logger.info(f"[PUBLISH NOTIFICATION] Creator email result: {result}")
         else:
-            logger.warning(f"[PUBLISH NOTIFICATION] Creator has no email configured")
+            logger.warning("[PUBLISH NOTIFICATION] Creator has no email configured")
         
         # 2. Email a la marca notificando nueva entrega
         if brand_email:
@@ -407,16 +407,16 @@ async def submit_deliverable(
             )
             logger.info(f"[PUBLISH NOTIFICATION] Brand email result: {result}")
         else:
-            logger.warning(f"[PUBLISH NOTIFICATION] Brand has no email configured")
+            logger.warning("[PUBLISH NOTIFICATION] Brand has no email configured")
         
         # 3. WhatsApp notification to admin
-        logger.info(f"[PUBLISH NOTIFICATION] Sending WhatsApp notification")
+        logger.info("[PUBLISH NOTIFICATION] Sending WhatsApp notification")
         await notify_deliverable_submitted_whatsapp(
             creator_name=creator.get("name", "Creator"),
             campaign_name=campaign_name,
             brand_name=brand_name
         )
-        logger.info(f"[PUBLISH NOTIFICATION] All notifications sent successfully")
+        logger.info("[PUBLISH NOTIFICATION] All notifications sent successfully")
     except Exception as e:
         logger.error(f"[PUBLISH NOTIFICATION] Failed to send notification: {e}", exc_info=True)
     
