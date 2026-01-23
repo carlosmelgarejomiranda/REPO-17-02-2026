@@ -217,15 +217,25 @@ async def mark_as_published(
         emails_sent = []
         emails_failed = []
         
-        # 1. Email al CREADOR confirmando su entrega
+        # 1. Email al CREADOR confirmando su entrega con fecha límite de métricas
         if creator_email:
             try:
+                # Format metrics deadline for display
+                metrics_deadline_formatted = None
+                if metrics_closes:
+                    deadline_dt = metrics_closes if isinstance(metrics_closes, datetime) else datetime.fromisoformat(metrics_closes.isoformat())
+                    days_es = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+                    months_es = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                                'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+                    metrics_deadline_formatted = f"{days_es[deadline_dt.weekday()]} {deadline_dt.day} de {months_es[deadline_dt.month - 1]}"
+                
                 logger.info(f"[PUBLISH EMAIL] Enviando a creador: {creator_email}")
                 await send_content_submitted_to_creator(
                     to_email=creator_email,
                     creator_name=creator_name,
                     campaign_name=campaign_name,
-                    brand_name=brand_name
+                    brand_name=brand_name,
+                    metrics_deadline=metrics_deadline_formatted
                 )
                 emails_sent.append(f"Creador ({creator_email})")
             except Exception as e:
