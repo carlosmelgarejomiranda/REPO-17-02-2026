@@ -210,12 +210,13 @@ async def send_application_confirmed(
     deadline_date = content_deadline.day
     deadline_month = months_es[content_deadline.month - 1]
     
-    # Extract canje info from campaign data
+    # Extract canje info from campaign data - USAR DESCRIPCIÓN EXACTA
     canje_description = ""
     pickup_info = ""
     
     if campaign_data:
         canje = campaign_data.get("canje", {})
+        # Usar la descripción exacta del canje de la campaña
         if canje.get("description"):
             canje_description = canje.get("description")
         
@@ -224,12 +225,12 @@ async def send_application_confirmed(
         if pickup_address:
             pickup_info = f"""
             <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #d4a968;">
-                <p style="color: #888; font-size: 11px; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px;">📍 Retiro</p>
+                <p style="color: #888; font-size: 11px; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px;">📍 Lugar de retiro</p>
                 <p style="color: #fff; font-size: 14px; margin: 0; line-height: 1.4;">{pickup_address}</p>
             </div>
             """
     
-    # Canje info section
+    # Canje info section - MOSTRAR DESCRIPCIÓN EXACTA
     canje_section = ""
     if canje_description:
         canje_section = f"""
@@ -245,7 +246,7 @@ async def send_application_confirmed(
         rookie_notice = """
         <div style="background: linear-gradient(135deg, #2d2006 0%, #1a1a0a 100%); border: 1px solid #d4a968; border-radius: 10px; padding: 14px; margin: 12px 0;">
             <p style="color: #d4a968; font-size: 13px; margin: 0; line-height: 1.5;">
-                <strong style="color: #fff;">⚡ Rookie:</strong> Tu canje se retira después de subir contenido, URL y métricas a la plataforma.
+                <strong style="color: #fff;">⚡ Rookie:</strong> Tu canje se retira después de publicar tu contenido, registrar el link en la plataforma y subir tus métricas.
             </p>
         </div>
         """
@@ -260,8 +261,10 @@ async def send_application_confirmed(
         </div>
         
         <div style="background: linear-gradient(135deg, #166534 0%, #15803d 50%, #166534 100%); border-radius: 12px; padding: 18px; margin: 15px 0; text-align: center; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);">
-            <p style="color: rgba(255,255,255,0.8); font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 1px;">Fecha límite para subir URL</p>
-            <p style="color: #fff; font-size: 24px; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            <p style="color: rgba(255,255,255,0.9); font-size: 12px; margin: 0 0 8px 0; line-height: 1.4;">
+                Fecha límite para publicar en tus redes<br>y registrar el link en tu panel
+            </p>
+            <p style="color: #fff; font-size: 22px; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                 {deadline_day} {deadline_date} de {deadline_month}
             </p>
         </div>
@@ -272,7 +275,7 @@ async def send_application_confirmed(
         
         <div style="background: #0a0a0a; border-radius: 8px; padding: 12px; margin: 12px 0; text-align: center;">
             <p style="color: #888; font-size: 13px; margin: 0;">
-                📊 Tenés <span style="color: #22c55e; font-weight: 600;">14 días</span> desde hoy para subir métricas
+                📊 Tenés <span style="color: #22c55e; font-weight: 600;">14 días</span> desde hoy para subir tus métricas
             </p>
         </div>
         
