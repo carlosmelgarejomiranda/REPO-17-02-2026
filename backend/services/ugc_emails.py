@@ -193,69 +193,96 @@ async def send_application_confirmed(
     campaign_data: dict = None,
     creator_level: str = None
 ):
-    """3. Cuando se les confirma una aplicación - with AI-generated content"""
-    from services.ai_email_service import generate_confirmation_email
+    """3. Cuando se les confirma una aplicación - Template optimizado sin AI"""
+    from datetime import datetime, timedelta
     
     subject = f"¡Felicitaciones! Fuiste seleccionado - {campaign_name}"
     
-    # Generate personalized email content using AI
+    # Calculate deadline
+    confirmation_date = datetime.now()
+    content_deadline = confirmation_date + timedelta(days=7)
+    
+    days_es = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+    months_es = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+    
+    deadline_day = days_es[content_deadline.weekday()]
+    deadline_date = content_deadline.day
+    deadline_month = months_es[content_deadline.month - 1]
+    
+    # Extract canje info from campaign data
+    canje_description = ""
+    pickup_info = ""
+    
     if campaign_data:
-        content = await generate_confirmation_email(
-            creator_name=creator_name,
-            campaign_name=campaign_name,
-            brand_name=brand_name,
-            campaign_data=campaign_data,
-            creator_level=creator_level
-        )
-    else:
-        # Fallback to basic template if no campaign data
-        from datetime import datetime, timedelta
+        canje = campaign_data.get("canje", {})
+        if canje.get("description"):
+            canje_description = canje.get("description")
         
-        confirmation_date = datetime.now()
-        content_deadline = confirmation_date + timedelta(days=7)
-        deadline_formatted = content_deadline.strftime("%A %d/%m/%Y").replace(
-            "Monday", "Lunes"
-        ).replace("Tuesday", "Martes").replace("Wednesday", "Miércoles").replace(
-            "Thursday", "Jueves"
-        ).replace("Friday", "Viernes").replace("Saturday", "Sábado").replace("Sunday", "Domingo")
-        
-        # Mensaje especial para rookies sobre el retiro de canjes
-        rookie_notice = ""
-        if creator_level and creator_level.lower() == "rookie":
-            rookie_notice = """
-            <div style="background-color: #1a1a0a; border: 2px solid #d4a968; border-radius: 8px; padding: 12px; margin: 15px 0;">
-                <p style="color: #d4a968; font-size: 14px; margin: 0; line-height: 1.4;">
-                    <strong>Rookie:</strong> El canje se retira después de subir contenido, URL y métricas.
-                </p>
+        # Pickup location
+        pickup_address = canje.get("pickup_address", "")
+        if pickup_address:
+            pickup_info = f"""
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #d4a968;">
+                <p style="color: #888; font-size: 11px; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px;">📍 Retiro</p>
+                <p style="color: #fff; font-size: 14px; margin: 0; line-height: 1.4;">{pickup_address}</p>
             </div>
             """
-        
-        content = f"""
-            <p style="color: #ffffff; font-size: 20px; margin: 0 0 10px 0;">
-                ¡Hola {creator_name}!
-            </p>
-            <p style="color: #cccccc; font-size: 15px; line-height: 1.4; margin: 0 0 15px 0;">
-                Confirmado para <strong style="color: #d4a968;">{campaign_name}</strong> de {brand_name}.
-            </p>
-            
-            <div style="background: #22c55e; border-radius: 8px; padding: 15px; margin: 0 0 15px 0; text-align: center;">
-                <p style="color: #ffffff; font-size: 12px; margin: 0 0 5px 0;">FECHA LÍMITE PARA SUBIR URL</p>
-                <p style="color: #ffffff; font-size: 20px; font-weight: 700; margin: 0;">{deadline_formatted}</p>
-            </div>
-            
-            <p style="color: #888888; font-size: 13px; margin: 0 0 10px 0;">
-                Tenés 14 días desde hoy para subir métricas.
-            </p>
-            
-            {rookie_notice}
-            
-            <div style="text-align: center; margin: 20px 0 10px 0;">
-                <a href="https://avenue.com.py/login?redirect=/ugc/creator/workspace" 
-                   style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
-                    Ir a mi Workspace
-                </a>
-            </div>
+    
+    # Canje info section
+    canje_section = ""
+    if canje_description:
+        canje_section = f"""
+        <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #22c55e;">
+            <p style="color: #888; font-size: 11px; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px;">🎁 Tu canje</p>
+            <p style="color: #fff; font-size: 14px; margin: 0; line-height: 1.4;">{canje_description}</p>
+        </div>
         """
+    
+    # Rookie notice
+    rookie_notice = ""
+    if creator_level and creator_level.lower() == "rookie":
+        rookie_notice = """
+        <div style="background: linear-gradient(135deg, #2d2006 0%, #1a1a0a 100%); border: 1px solid #d4a968; border-radius: 10px; padding: 14px; margin: 12px 0;">
+            <p style="color: #d4a968; font-size: 13px; margin: 0; line-height: 1.5;">
+                <strong style="color: #fff;">⚡ Rookie:</strong> Tu canje se retira después de subir contenido, URL y métricas a la plataforma.
+            </p>
+        </div>
+        """
+    
+    content = f"""
+        <div style="text-align: center; padding: 5px 0 15px 0;">
+            <p style="color: #22c55e; font-size: 13px; margin: 0 0 5px 0; letter-spacing: 1px;">✓ CONFIRMADO</p>
+            <p style="color: #fff; font-size: 22px; margin: 0 0 5px 0; font-weight: 600;">¡Hola {creator_name}!</p>
+            <p style="color: #888; font-size: 14px; margin: 0;">
+                Fuiste seleccionado para <span style="color: #d4a968;">{campaign_name}</span>
+            </p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #166534 0%, #15803d 50%, #166534 100%); border-radius: 12px; padding: 18px; margin: 15px 0; text-align: center; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);">
+            <p style="color: rgba(255,255,255,0.8); font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 1px;">Fecha límite para subir URL</p>
+            <p style="color: #fff; font-size: 24px; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                {deadline_day} {deadline_date} de {deadline_month}
+            </p>
+        </div>
+        
+        {canje_section}
+        {pickup_info}
+        {rookie_notice}
+        
+        <div style="background: #0a0a0a; border-radius: 8px; padding: 12px; margin: 12px 0; text-align: center;">
+            <p style="color: #888; font-size: 13px; margin: 0;">
+                📊 Tenés <span style="color: #22c55e; font-weight: 600;">14 días</span> desde hoy para subir métricas
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0 10px 0;">
+            <a href="https://avenue.com.py/login?redirect=/ugc/creator/workspace" 
+               style="display: inline-block; background: linear-gradient(135deg, #d4a968 0%, #c49a5a 100%); color: #000; padding: 14px 32px; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 15px rgba(212, 169, 104, 0.3);">
+                Ir a mi Workspace →
+            </a>
+        </div>
+    """
     
     return await send_email(to_email, subject, content, SENDER_CREATORS)
 
