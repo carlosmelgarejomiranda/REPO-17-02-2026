@@ -190,7 +190,8 @@ def _fallback_confirmation_email(
     creator_name: str,
     campaign_name: str,
     brand_name: str,
-    campaign_data: dict
+    campaign_data: dict,
+    creator_level: str = None
 ) -> str:
     """Fallback template when AI is not available - dark theme with emphasis on dates"""
     from datetime import datetime, timedelta
