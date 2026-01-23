@@ -183,7 +183,7 @@ Recordá:
         
     except Exception as e:
         logger.error(f"Error generating AI email: {e}")
-        return _fallback_confirmation_email(creator_name, campaign_name, brand_name, campaign_data)
+        return _fallback_confirmation_email(creator_name, campaign_name, brand_name, campaign_data, creator_level)
 
 
 def _fallback_confirmation_email(
