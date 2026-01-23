@@ -92,8 +92,8 @@ async def send_email(to_email: str, subject: str, html_content: str, sender: str
 
 
 async def send_admin_notification(subject: str, html_content: str, sender: str = None) -> dict:
-    """Send notification to Avenue admin"""
-    return await send_email(ADMIN_EMAIL, f"[AVENUE] {subject}", html_content, sender)
+    """Send notification to Avenue UGC admin"""
+    return await send_email(ADMIN_EMAIL_UGC, f"[AVENUE UGC] {subject}", html_content, sender)
 
 
 # ============================================================================
