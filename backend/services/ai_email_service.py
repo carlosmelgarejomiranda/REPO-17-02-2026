@@ -235,6 +235,25 @@ def _fallback_confirmation_email(
         </div>
         """
     
+    # Mensaje especial para rookies
+    rookie_notice = ""
+    if creator_level and creator_level.lower() == 'rookie':
+        rookie_notice = """
+        <div style="background-color: #2d2006; border: 1px solid #d4a968; border-radius: 8px; padding: 15px; margin: 15px 0;">
+            <p style="color: #d4a968; font-size: 14px; margin: 0 0 10px 0; font-weight: 600;">
+                🎁 Sobre el retiro de tu canje:
+            </p>
+            <p style="color: #cccccc; font-size: 13px; margin: 0; line-height: 1.6;">
+                Como creador <strong style="color: #d4a968;">Rookie</strong>, podrás retirar tu canje una vez que completes:
+            </p>
+            <ol style="color: #cccccc; font-size: 13px; margin: 10px 0 0 0; padding-left: 20px; line-height: 1.8;">
+                <li>Subir el contenido a tus redes sociales</li>
+                <li>Registrar el URL en la plataforma</li>
+                <li>Subir las métricas a la plataforma</li>
+            </ol>
+        </div>
+        """
+    
     return f"""
         <h1 style="color: #ffffff; font-size: 22px; margin: 0 0 15px 0; font-weight: 600;">
             ¡Felicitaciones {creator_name}! 🎉
