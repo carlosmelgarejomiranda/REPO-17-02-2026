@@ -72,16 +72,43 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
     }
 
     setError(null);
+    setImagePreview(null);
+    setImageBase64(null);
 
-    // Crear preview
+    // Crear preview con manejo de errores
     const reader = new FileReader();
+    
     reader.onloadend = () => {
-      const result = reader.result;
-      setImagePreview(result);
-      // Extraer solo el base64 sin el prefijo
-      const base64 = result.split(',')[1];
-      setImageBase64(base64);
+      try {
+        const result = reader.result;
+        if (!result || typeof result !== 'string') {
+          setError('Error al leer la imagen. Intentá con otra.');
+          return;
+        }
+        setImagePreview(result);
+        // Extraer solo el base64 sin el prefijo
+        const base64Parts = result.split(',');
+        if (base64Parts.length !== 2) {
+          setError('Formato de imagen no válido. Intentá con otra.');
+          return;
+        }
+        const base64 = base64Parts[1];
+        if (!base64 || base64.length < 100) {
+          setError('La imagen parece estar vacía o corrupta.');
+          return;
+        }
+        setImageBase64(base64);
+      } catch (err) {
+        console.error('Error processing image:', err);
+        setError('Error al procesar la imagen. Intentá con otra.');
+      }
     };
+    
+    reader.onerror = () => {
+      console.error('FileReader error:', reader.error);
+      setError('Error al leer el archivo. Intentá de nuevo.');
+    };
+    
     reader.readAsDataURL(file);
   }, []);
 
