@@ -324,26 +324,27 @@ const DeliverableDetail = () => {
           </div>
         )}
 
-        {/* Metrics Upload Section */}
-        {['approved', 'metrics_pending', 'metrics_submitted', 'completed'].includes(deliverable.status) && (
+        {/* Metrics Upload Section - Available immediately after publishing URL */}
+        {['published', 'submitted', 'resubmitted', 'under_review', 'approved', 'metrics_pending', 'metrics_submitted', 'completed'].includes(deliverable.status) && (
           <div className="mt-6 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-medium text-cyan-400 text-sm">Métricas</h3>
+                <h3 className="font-medium text-cyan-400 text-sm">Métricas de Rendimiento</h3>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  {deliverable.status === 'metrics_pending' 
-                    ? 'Tenés 7 días para subir tus métricas'
-                    : deliverable.status === 'metrics_submitted'
-                    ? 'En revisión'
-                    : 'Completado ✓'}
+                  {deliverable.status === 'metrics_submitted' || deliverable.status === 'completed'
+                    ? '✓ Métricas enviadas'
+                    : deliverable.metrics_window_closes
+                    ? `Fecha límite: ${new Date(deliverable.metrics_window_closes).toLocaleDateString('es-PY')}`
+                    : 'Subí capturas de tus estadísticas'}
                 </p>
               </div>
-              {deliverable.status === 'metrics_pending' && (
+              {!['metrics_submitted', 'completed', 'metrics_verified'].includes(deliverable.status) && (
                 <Link
                   to={`/ugc/creator/metrics/${id}`}
-                  className="px-4 py-2 bg-cyan-500 text-black rounded-lg text-sm font-medium"
+                  className="px-4 py-2 bg-cyan-500 text-black rounded-lg text-sm font-medium hover:bg-cyan-400 transition-colors"
+                  data-testid="upload-metrics-btn"
                 >
-                  Subir
+                  Subir Métricas
                 </Link>
               )}
             </div>
