@@ -318,6 +318,14 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
       canje_type: canje.type || 'product',
       canje_description: canje.description || '',
       canje_value: canje.value || 0,
+      // New canje fields
+      delivery_method: canje.delivery_method || 'pickup',
+      pickup_address: canje.pickup_address || '',
+      pickup_maps_url: canje.pickup_maps_url || '',
+      pickup_hours: canje.pickup_hours || '',
+      brand_contact_name: canje.brand_contact_name || '',
+      brand_contact_phone: canje.brand_contact_phone || '',
+      // End new fields
       applications_deadline: timeline.applications_deadline ? new Date(timeline.applications_deadline).toISOString().split('T')[0] : '',
       publish_start: timeline.publish_start ? new Date(timeline.publish_start).toISOString().split('T')[0] : '',
       publish_end: timeline.publish_end ? new Date(timeline.publish_end).toISOString().split('T')[0] : '',
