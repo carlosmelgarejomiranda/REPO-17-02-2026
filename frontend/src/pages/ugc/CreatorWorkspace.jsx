@@ -200,25 +200,17 @@ const CreatorWorkspace = () => {
                       <ChevronRight className="w-5 h-5 text-gray-500" />
                     </div>
                   </div>
-                </Link>
 
-                  {/* Action hint */}
+                  {/* Action hint - Mobile friendly */}
                   {needsAction && (
-                    <div className="mt-4 pt-4 border-t border-white/5">
-                      <p className="text-sm text-yellow-400 flex items-center gap-2">
-                        <AlertCircle className="w-4 h-4" />
-                        {del.status === 'awaiting_publish' && 'Registra la URL de tu publicación'}
-                        {del.status === 'changes_requested' && 'La marca solicitó cambios - revisa y reenvía'}
-                        {del.status === 'metrics_pending' && 'Subí tus métricas cuando la ventana se abra'}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Review notes if changes requested */}
-                  {del.status === 'changes_requested' && del.review_notes?.length > 0 && (
-                    <div className="mt-3 p-3 bg-orange-500/10 rounded-lg">
-                      <p className="text-sm text-orange-400">
-                        <span className="font-medium">Feedback:</span> {del.review_notes[del.review_notes.length - 1]?.note}
+                    <div className="mt-3 pt-3 border-t border-white/5">
+                      <p className="text-xs sm:text-sm text-yellow-400 flex items-center gap-2">
+                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>
+                          {del.status === 'awaiting_publish' && 'Registra la URL de tu publicación'}
+                          {del.status === 'changes_requested' && 'La marca solicitó cambios'}
+                          {del.status === 'metrics_pending' && 'Subí tus métricas'}
+                        </span>
                       </p>
                     </div>
                   )}
