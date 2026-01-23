@@ -2418,7 +2418,17 @@ from fastapi import UploadFile, File
 import base64
 import hashlib
 
-# Create uploads directory
+# GridFS-based persistent image storage
+from services.gridfs_storage import (
+    upload_image as gridfs_upload,
+    get_image as gridfs_get,
+    delete_image as gridfs_delete,
+    get_image_url as gridfs_url,
+    get_storage_stats as gridfs_stats,
+    list_images as gridfs_list
+)
+
+# Legacy: Keep uploads directory for backwards compatibility during migration
 UPLOAD_DIR = Path("/app/backend/uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
@@ -2427,11 +2437,11 @@ async def upload_file(
     request: Request,
     file: UploadFile = File(...)
 ):
-    """Upload a file and return its URL"""
+    """Upload a file to persistent GridFS storage and return its URL"""
     user = await require_auth(request)
     
     # Validate file type
-    allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+    allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/avif"]
     if file.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail="Tipo de archivo no permitido. Solo imágenes.")
     
@@ -2440,25 +2450,66 @@ async def upload_file(
     if len(contents) > 5 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="Archivo demasiado grande. Máximo 5MB.")
     
-    # Generate unique filename
-    file_hash = hashlib.md5(contents).hexdigest()[:8]
-    ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
-    filename = f"{uuid.uuid4().hex[:12]}_{file_hash}.{ext}"
+    # Upload to GridFS (persistent storage)
+    file_id = await gridfs_upload(
+        file_content=contents,
+        filename=file.filename,
+        content_type=file.content_type,
+        metadata={"uploaded_by": user.get("user_id", "unknown")}
+    )
     
-    # Save file
-    file_path = UPLOAD_DIR / filename
-    with open(file_path, "wb") as f:
-        f.write(contents)
-    
-    # Return URL
+    # Return URL using the new GridFS endpoint
     base_url = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
-    file_url = f"{base_url}/api/uploads/{filename}"
+    file_url = f"{base_url}/api/images/{file_id}"
     
-    return {"url": file_url, "filename": filename}
+    return {"url": file_url, "file_id": file_id, "filename": file.filename}
 
+@api_router.get("/images/{file_id}")
+async def serve_gridfs_image(file_id: str):
+    """Serve images from GridFS persistent storage"""
+    content, content_type, filename = await gridfs_get(file_id)
+    
+    if content is None:
+        raise HTTPException(status_code=404, detail="Imagen no encontrada")
+    
+    return Response(
+        content=content,
+        media_type=content_type,
+        headers={
+            "Content-Disposition": f"inline; filename={filename}",
+            "Cache-Control": "public, max-age=31536000"  # Cache for 1 year
+        }
+    )
+
+@api_router.delete("/images/{file_id}")
+async def delete_gridfs_image(file_id: str, request: Request):
+    """Delete an image from GridFS storage"""
+    user = await require_auth(request)
+    
+    # Only admins can delete images
+    if not is_admin_role(user.get("role", "")):
+        raise HTTPException(status_code=403, detail="No autorizado")
+    
+    success = await gridfs_delete(file_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Imagen no encontrada")
+    
+    return {"message": "Imagen eliminada", "file_id": file_id}
+
+@api_router.get("/storage/stats")
+async def get_storage_statistics(request: Request):
+    """Get storage statistics (admin only)"""
+    user = await require_auth(request)
+    if not is_admin_role(user.get("role", "")):
+        raise HTTPException(status_code=403, detail="No autorizado")
+    
+    stats = await gridfs_stats()
+    return stats
+
+# Legacy endpoint: Serve uploads from local filesystem (backwards compatibility)
 @api_router.get("/uploads/{filename}")
 async def serve_upload(filename: str):
-    """Serve uploaded files"""
+    """Serve uploaded files from local storage (legacy, for backwards compatibility)"""
     from fastapi.responses import FileResponse
     
     # Sanitize filename
@@ -2475,7 +2526,8 @@ async def serve_upload(filename: str):
         "jpeg": "image/jpeg",
         "png": "image/png",
         "gif": "image/gif",
-        "webp": "image/webp"
+        "webp": "image/webp",
+        "avif": "image/avif"
     }
     content_type = content_types.get(ext, "application/octet-stream")
     
