@@ -20,7 +20,7 @@ SENDER_CREATORS = 'AVENUE UGC <creadoresUGC@avenue.com.py>'
 SENDER_BRANDS = 'AVENUE Marcas <infobrands@avenue.com.py>'
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'avenuepy@gmail.com')
 
-# Base template
+# Base template - Neutral design that works in both light and dark mode
 def get_base_template(content: str, title: str = "Avenue UGC") -> str:
     return f"""
     <!DOCTYPE html>
@@ -29,21 +29,21 @@ def get_base_template(content: str, title: str = "Avenue UGC") -> str:
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body style="margin: 0; padding: 0; background-color: #000000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #000000;">
+    <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
             <tr>
-                <td style="padding: 40px 20px;">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #111111; border-radius: 16px; overflow: hidden;">
+                <td style="padding: 20px 10px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <!-- Header -->
                         <tr>
-                            <td style="padding: 30px 40px; border-bottom: 1px solid #222222;">
-                                <span style="color: #d4a968; font-size: 24px; font-style: italic;">Avenue</span>
-                                <span style="color: #ffffff; font-size: 24px;"> UGC</span>
+                            <td style="padding: 24px 30px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-bottom: 3px solid #d4a968;">
+                                <span style="color: #d4a968; font-size: 22px; font-style: italic; font-weight: 600;">Avenue</span>
+                                <span style="color: #ffffff; font-size: 22px; font-weight: 300;"> UGC</span>
                             </td>
                         </tr>
                         <!-- Content -->
                         <tr>
-                            <td style="padding: 40px;">
+                            <td style="padding: 30px;">
                                 {content}
                             </td>
                         </tr>
