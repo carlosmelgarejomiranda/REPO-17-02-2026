@@ -389,10 +389,20 @@ const MetricsSubmit = () => {
         }
         setError(errorMessage);
       }
-      }
     } catch (err) {
       setAiProcessing(false);
-      setError('Error de conexión');
+      // Better error handling for different error types
+      let errorMessage = 'Error de conexión';
+      if (err.name === 'AbortError') {
+        errorMessage = 'El procesamiento tardó demasiado. Intentá con menos imágenes.';
+      } else if (err.message) {
+        if (err.message.includes('network') || err.message.includes('Network')) {
+          errorMessage = 'Error de red. Verificá tu conexión e intentá de nuevo.';
+        } else if (err.message.includes('timeout') || err.message.includes('Timeout')) {
+          errorMessage = 'Tiempo de espera agotado. Intentá con menos imágenes.';
+        }
+      }
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }
