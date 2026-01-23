@@ -503,6 +503,433 @@ async def submit_metrics(
         "message": "Métricas enviadas" + (" (tarde)" if is_late else "")
     }
 
+
+# ==================== V2: MULTI-IMAGE METRICS SUBMISSION ====================
+
+from pydantic import BaseModel
+from typing import List, Optional as OptionalType
+
+class MetricsSubmitV2(BaseModel):
+    instagram_screenshots: List[str] = []  # List of base64 images
+    tiktok_screenshots: List[str] = []  # List of base64 images
+    manual_metrics: OptionalType[dict] = None
+
+async def extract_metrics_from_base64(image_base64: str, platform: str) -> dict:
+    """
+    Use AI to extract metrics from a base64 image
+    """
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
+        
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            ai_logger.warning("EMERGENT_LLM_KEY not configured")
+            return {"error": "AI not configured", "confidence": 0}
+        
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=f"metrics-v2-{uuid.uuid4().hex[:8]}",
+            system_message="You are an expert at extracting metrics and demographic data from social media analytics screenshots. Always respond with valid JSON only."
+        ).with_model("gemini", "gemini-2.5-flash")
+        
+        prompt = f"""Analyze this {platform.upper()} analytics screenshot and extract ALL available data.
+
+Return ONLY a valid JSON object with these fields (use null if not visible):
+{{
+    "metrics": {{
+        "views": <integer or null>,
+        "reach": <integer or null>,
+        "likes": <integer or null>,
+        "comments": <integer or null>,
+        "shares": <integer or null>,
+        "saves": <integer or null>,
+        "watch_time_seconds": <integer in seconds or null>,
+        "video_length_seconds": <integer in seconds or null>,
+        "retention_rate": <float percentage or null>
+    }},
+    "demographics": {{
+        "gender": {{
+            "male": <percentage as float or null>,
+            "female": <percentage as float or null>
+        }},
+        "countries": [
+            {{"country": "<country>", "percentage": <float>}}
+        ],
+        "cities": [
+            {{"city": "<city>", "percentage": <float>}}
+        ],
+        "age_ranges": [
+            {{"range": "18-24", "percentage": <float>}},
+            {{"range": "25-34", "percentage": <float>}},
+            {{"range": "35-44", "percentage": <float>}}
+        ]
+    }},
+    "screenshot_type": "<metrics|demographics|mixed>",
+    "confidence": <float 0.0 to 1.0>
+}}
+
+CONVERSION RULES:
+- K = thousands (10.5K = 10500)
+- M = millions (1.2M = 1200000)  
+- mil = thousands in Spanish
+- Time: "1:30" = 90 seconds, "2m 15s" = 135 seconds
+- Spanish labels: "Reproducciones"=views, "Alcance"=reach, "Me gusta"=likes, "Hombres"=male, "Mujeres"=female
+
+Return ONLY the JSON, no explanation."""
+
+        image_content = ImageContent(image_base64=image_base64)
+        user_message = UserMessage(
+            text=prompt,
+            file_contents=[image_content]
+        )
+        
+        response = await chat.send_message(user_message)
+        
+        import json
+        import re
+        
+        response_text = str(response)
+        response_text = re.sub(r'```json\s*', '', response_text)
+        response_text = re.sub(r'```\s*', '', response_text)
+        
+        json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if json_match:
+            data = json.loads(json_match.group())
+            ai_logger.info(f"AI V2 extracted: {data.get('screenshot_type', 'unknown')} with confidence {data.get('confidence', 0)}")
+            return data
+        
+        ai_logger.warning(f"Could not parse AI V2 response: {response_text[:200]}")
+        return {"error": "Could not parse AI response", "confidence": 0}
+        
+    except Exception as e:
+        ai_logger.error(f"AI V2 extraction failed: {e}")
+        return {"error": str(e), "confidence": 0}
+
+
+async def merge_extracted_data(extractions: List[dict]) -> dict:
+    """
+    Merge data extracted from multiple screenshots.
+    Takes the value with highest confidence when conflicts exist.
+    """
+    merged_metrics = {
+        "views": None,
+        "reach": None,
+        "likes": None,
+        "comments": None,
+        "shares": None,
+        "saves": None,
+        "watch_time_seconds": None,
+        "video_length_seconds": None,
+        "retention_rate": None
+    }
+    
+    merged_demographics = {
+        "gender": {"male": None, "female": None},
+        "countries": [],
+        "cities": [],
+        "age_ranges": []
+    }
+    
+    metrics_confidences = {}
+    demo_confidence = 0
+    
+    for extraction in extractions:
+        if extraction.get("error"):
+            continue
+            
+        confidence = extraction.get("confidence", 0)
+        
+        # Merge metrics
+        metrics = extraction.get("metrics", {})
+        for key, value in metrics.items():
+            if value is not None:
+                # Keep value with higher confidence or first non-null
+                if merged_metrics.get(key) is None or confidence > metrics_confidences.get(key, 0):
+                    merged_metrics[key] = value
+                    metrics_confidences[key] = confidence
+        
+        # Merge demographics
+        demo = extraction.get("demographics", {})
+        if demo:
+            demo_conf = confidence
+            
+            # Gender
+            gender = demo.get("gender", {})
+            if gender.get("male") is not None and (merged_demographics["gender"]["male"] is None or demo_conf > demo_confidence):
+                merged_demographics["gender"]["male"] = gender["male"]
+            if gender.get("female") is not None and (merged_demographics["gender"]["female"] is None or demo_conf > demo_confidence):
+                merged_demographics["gender"]["female"] = gender["female"]
+            
+            # Countries - merge and deduplicate
+            countries = demo.get("countries", [])
+            if countries:
+                existing_countries = {c["country"]: c for c in merged_demographics["countries"]}
+                for c in countries:
+                    if c.get("country"):
+                        existing_countries[c["country"]] = c
+                merged_demographics["countries"] = list(existing_countries.values())[:10]
+            
+            # Cities - merge and deduplicate
+            cities = demo.get("cities", [])
+            if cities:
+                existing_cities = {c["city"]: c for c in merged_demographics["cities"]}
+                for c in cities:
+                    if c.get("city"):
+                        existing_cities[c["city"]] = c
+                merged_demographics["cities"] = list(existing_cities.values())[:10]
+            
+            # Age ranges - take the one with more data
+            age_ranges = demo.get("age_ranges", [])
+            if len(age_ranges) > len(merged_demographics["age_ranges"]):
+                merged_demographics["age_ranges"] = age_ranges
+            
+            if demo_conf > demo_confidence:
+                demo_confidence = demo_conf
+    
+    # Calculate overall confidence
+    all_confidences = list(metrics_confidences.values()) + ([demo_confidence] if demo_confidence > 0 else [])
+    overall_confidence = sum(all_confidences) / len(all_confidences) if all_confidences else 0
+    
+    return {
+        "metrics": merged_metrics,
+        "demographics": merged_demographics,
+        "overall_confidence": overall_confidence
+    }
+
+
+@router.post("/submit-v2/{deliverable_id}", response_model=dict)
+async def submit_metrics_v2(
+    deliverable_id: str,
+    data: MetricsSubmitV2,
+    request: Request
+):
+    """
+    V2: Creator submits multiple screenshots per platform.
+    AI extracts both metrics and demographics from all images.
+    """
+    db = await get_db()
+    user, creator = await require_creator(request)
+    
+    deliverable = await db.ugc_deliverables.find_one({
+        "id": deliverable_id,
+        "creator_id": creator["id"]
+    })
+    
+    if not deliverable:
+        raise HTTPException(status_code=404, detail="Deliverable not found")
+    
+    # Check if metrics already submitted
+    existing = await db.ugc_metrics.find_one({"deliverable_id": deliverable_id})
+    if existing:
+        raise HTTPException(status_code=400, detail="Ya subiste métricas para esta entrega")
+    
+    if not data.instagram_screenshots and not data.tiktok_screenshots:
+        raise HTTPException(status_code=400, detail="Sube al menos un screenshot")
+    
+    now = datetime.now(timezone.utc)
+    
+    # Calculate screenshot day and on-time status
+    screenshot_day = 0
+    is_late = False
+    
+    confirmed_at = None
+    if deliverable.get("confirmed_at"):
+        confirmed_at = datetime.fromisoformat(deliverable["confirmed_at"].replace('Z', '+00:00'))
+    else:
+        application = await db.ugc_applications.find_one({
+            "campaign_id": deliverable["campaign_id"],
+            "creator_id": creator["id"]
+        })
+        if application and application.get("confirmed_at"):
+            confirmed_at = datetime.fromisoformat(application["confirmed_at"].replace('Z', '+00:00'))
+        elif deliverable.get("created_at"):
+            confirmed_at = datetime.fromisoformat(deliverable["created_at"].replace('Z', '+00:00'))
+    
+    if confirmed_at:
+        delta = now - confirmed_at
+        screenshot_day = delta.days
+        is_late = delta.days > 14
+    
+    # Process all screenshots with AI
+    ai_logger.info(f"Processing V2 submission: {len(data.instagram_screenshots)} IG, {len(data.tiktok_screenshots)} TT")
+    
+    all_extractions = []
+    
+    # Process Instagram screenshots
+    for i, img_b64 in enumerate(data.instagram_screenshots[:10]):  # Max 10
+        ai_logger.info(f"Processing Instagram screenshot {i+1}/{len(data.instagram_screenshots)}")
+        extraction = await extract_metrics_from_base64(img_b64, "instagram")
+        extraction["platform"] = "instagram"
+        extraction["image_index"] = i
+        all_extractions.append(extraction)
+    
+    # Process TikTok screenshots
+    for i, img_b64 in enumerate(data.tiktok_screenshots[:10]):  # Max 10
+        ai_logger.info(f"Processing TikTok screenshot {i+1}/{len(data.tiktok_screenshots)}")
+        extraction = await extract_metrics_from_base64(img_b64, "tiktok")
+        extraction["platform"] = "tiktok"
+        extraction["image_index"] = i
+        all_extractions.append(extraction)
+    
+    # Merge all extracted data
+    merged_result = await merge_extracted_data(all_extractions)
+    
+    ai_metrics = merged_result.get("metrics", {})
+    ai_demographics = merged_result.get("demographics", {})
+    
+    # Use AI data or manual input
+    manual = data.manual_metrics or {}
+    views = manual.get("views") or ai_metrics.get("views")
+    reach = manual.get("reach") or ai_metrics.get("reach")
+    likes = manual.get("likes") or ai_metrics.get("likes", 0)
+    comments = manual.get("comments") or ai_metrics.get("comments", 0)
+    shares = manual.get("shares") or ai_metrics.get("shares", 0)
+    saves = manual.get("saves") or ai_metrics.get("saves")
+    watch_time = manual.get("watch_time_seconds") or ai_metrics.get("watch_time_seconds")
+    video_length = manual.get("video_length_seconds") or ai_metrics.get("video_length_seconds")
+    retention_rate = ai_metrics.get("retention_rate")
+    
+    total_interactions = (likes or 0) + (comments or 0) + (shares or 0) + (saves or 0)
+    
+    # Determine primary platform
+    platform = "instagram" if data.instagram_screenshots else "tiktok"
+    if data.instagram_screenshots and data.tiktok_screenshots:
+        platform = "multi"  # Content on both platforms
+    
+    metrics = {
+        "id": str(uuid.uuid4()),
+        "deliverable_id": deliverable_id,
+        "creator_id": creator["id"],
+        "campaign_id": deliverable["campaign_id"],
+        "platform": platform,
+        # Basic metrics
+        "views": views,
+        "reach": reach,
+        "likes": likes,
+        "comments": comments,
+        "shares": shares,
+        "saves": saves,
+        # Video metrics
+        "watch_time_seconds": watch_time,
+        "video_length_seconds": video_length,
+        "retention_rate": retention_rate,
+        # Calculated
+        "total_interactions": total_interactions,
+        "engagement_rate": None,
+        # Demographics (from AI)
+        "demographics": ai_demographics if merged_result.get("overall_confidence", 0) > 0.3 else None,
+        # Screenshots info
+        "screenshots_count": {
+            "instagram": len(data.instagram_screenshots),
+            "tiktok": len(data.tiktok_screenshots)
+        },
+        "screenshot_day": screenshot_day,
+        # AI Processing
+        "ai_extracted": merged_result.get("overall_confidence", 0) > 0.5,
+        "ai_confidence": merged_result.get("overall_confidence", 0),
+        "ai_raw_data": {
+            "extractions": all_extractions,
+            "merged": merged_result
+        },
+        "manually_verified": False,
+        "verified_by": None,
+        "is_late": is_late,
+        "submitted_at": now.isoformat(),
+        "created_at": now.isoformat()
+    }
+    
+    # Calculate engagement rate
+    if views and views > 0:
+        metrics["engagement_rate"] = round((total_interactions / views) * 100, 2)
+    
+    # Calculate retention rate if we have both watch time and video length
+    if watch_time and video_length and video_length > 0:
+        metrics["retention_rate"] = round((watch_time / video_length) * 100, 2)
+    
+    await db.ugc_metrics.insert_one(metrics)
+    
+    # Update deliverable status
+    new_status = DeliverableStatus.METRICS_LATE if is_late else DeliverableStatus.METRICS_SUBMITTED
+    
+    await db.ugc_deliverables.update_one(
+        {"id": deliverable_id},
+        {
+            "$set": {
+                "status": new_status,
+                "metrics_submitted_at": now.isoformat(),
+                "metrics_is_late": is_late,
+                "updated_at": now.isoformat()
+            },
+            "$push": {
+                "status_history": {
+                    "status": new_status,
+                    "timestamp": now.isoformat(),
+                    "by": "creator"
+                }
+            }
+        }
+    )
+    
+    # Update creator stats
+    await update_creator_stats(db, creator["id"])
+    
+    # Send notifications
+    try:
+        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1, "brand_id": 1})
+        campaign_name = campaign.get("name", "Campaña") if campaign else "Campaña"
+        
+        brand = await db.ugc_brands.find_one({"id": campaign.get("brand_id")}, {"_id": 0, "company_name": 1, "email": 1}) if campaign else None
+        brand_name = brand.get("company_name", "Marca") if brand else "Marca"
+        brand_email = brand.get("email") if brand else None
+        
+        from services.ugc_emails import (
+            send_metrics_submitted_to_creator,
+            send_metrics_submitted_to_brand,
+            notify_metrics_submitted_whatsapp
+        )
+        
+        if creator.get("email"):
+            await send_metrics_submitted_to_creator(
+                to_email=creator.get("email"),
+                creator_name=creator.get("name", "Creator"),
+                campaign_name=campaign_name,
+                brand_name=brand_name
+            )
+        
+        if brand_email:
+            await send_metrics_submitted_to_brand(
+                to_email=brand_email,
+                brand_name=brand_name,
+                campaign_name=campaign_name,
+                creator_name=creator.get("name", "Creator")
+            )
+        
+        await notify_metrics_submitted_whatsapp(
+            creator_name=creator.get("name", "Creator"),
+            campaign_name=campaign_name,
+            brand_name=brand_name
+        )
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Failed to send metrics notification: {e}")
+    
+    return {
+        "success": True,
+        "metrics_id": metrics["id"],
+        "ai_confidence": merged_result.get("overall_confidence", 0),
+        "screenshots_processed": {
+            "instagram": len(data.instagram_screenshots),
+            "tiktok": len(data.tiktok_screenshots)
+        },
+        "extracted_data": {
+            "metrics": ai_metrics,
+            "demographics_found": bool(ai_demographics.get("gender", {}).get("male") or ai_demographics.get("countries"))
+        },
+        "is_late": is_late,
+        "message": f"Métricas enviadas - {len(data.instagram_screenshots) + len(data.tiktok_screenshots)} imágenes procesadas" + (" (tarde)" if is_late else "")
+    }
+
+
 async def update_creator_stats(db, creator_id: str):
     """Update creator's aggregate stats after new metrics"""
     # Get all verified metrics for this creator
