@@ -224,9 +224,9 @@ async def send_application_confirmed(
         pickup_address = canje.get("pickup_address", "")
         if pickup_address:
             pickup_info = f"""
-            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #d4a968;">
-                <p style="color: #888; font-size: 11px; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px;">📍 Lugar de retiro</p>
-                <p style="color: #fff; font-size: 14px; margin: 0; line-height: 1.4;">{pickup_address}</p>
+            <div style="background: #1a1a1a; border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #d4a968;">
+                <p style="color: #d4a968; font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">📍 LUGAR DE RETIRO</p>
+                <p style="color: #ffffff; font-size: 14px; margin: 0; line-height: 1.4;">{pickup_address}</p>
             </div>
             """
     
@@ -234,9 +234,9 @@ async def send_application_confirmed(
     canje_section = ""
     if canje_description:
         canje_section = f"""
-        <div style="background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #22c55e;">
-            <p style="color: #888; font-size: 11px; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: 0.5px;">🎁 Tu canje</p>
-            <p style="color: #fff; font-size: 14px; margin: 0; line-height: 1.4;">{canje_description}</p>
+        <div style="background: #1a1a1a; border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #22c55e;">
+            <p style="color: #22c55e; font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">🎁 TU CANJE</p>
+            <p style="color: #ffffff; font-size: 14px; margin: 0; line-height: 1.4;">{canje_description}</p>
         </div>
         """
     
@@ -244,9 +244,9 @@ async def send_application_confirmed(
     rookie_notice = ""
     if creator_level and creator_level.lower() == "rookie":
         rookie_notice = """
-        <div style="background: linear-gradient(135deg, #2d2006 0%, #1a1a0a 100%); border: 1px solid #d4a968; border-radius: 10px; padding: 14px; margin: 12px 0;">
-            <p style="color: #d4a968; font-size: 13px; margin: 0; line-height: 1.5;">
-                <strong style="color: #fff;">⚡ Rookie:</strong> Tu canje se retira después de publicar tu contenido, registrar el link en la plataforma y subir tus métricas.
+        <div style="background: #2d2006; border: 2px solid #d4a968; border-radius: 10px; padding: 14px; margin: 12px 0;">
+            <p style="color: #ffffff; font-size: 13px; margin: 0; line-height: 1.5;">
+                <strong style="color: #d4a968;">⚡ Rookie:</strong> Tu canje se retira después de publicar tu contenido, registrar el link en la plataforma y subir tus métricas.
             </p>
         </div>
         """
