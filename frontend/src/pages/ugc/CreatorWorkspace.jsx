@@ -93,23 +93,23 @@ const CreatorWorkspace = () => {
             <p className="text-xl sm:text-3xl font-semibold text-green-400">
               {deliverables.filter(d => ['approved', 'completed'].includes(d.status)).length}
             </p>
-            <p className="text-xs sm:text-sm text-green-400/70">Completados</p>
+            <p className="text-[10px] sm:text-sm text-green-400/70">Completados</p>
           </div>
           <Link 
             to="/ugc/creator/feedback"
-            className="p-3 sm:p-4 bg-gradient-to-br from-[#d4a968]/10 to-[#d4a968]/5 border border-[#d4a968]/20 rounded-xl hover:border-[#d4a968]/40 transition-all"
+            className="p-2.5 sm:p-4 bg-gradient-to-br from-[#d4a968]/10 to-[#d4a968]/5 border border-[#d4a968]/20 rounded-lg sm:rounded-xl hover:border-[#d4a968]/40 transition-all"
             data-testid="feedback-link"
           >
-            <div className="flex items-center gap-1.5">
-              <Star className="w-5 h-5 sm:w-6 sm:h-6 text-[#d4a968]" />
-              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-[#d4a968]" />
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 sm:w-6 sm:h-6 text-[#d4a968]" />
+              <MessageSquare className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#d4a968]" />
             </div>
-            <p className="text-xs sm:text-sm text-[#d4a968]/70 mt-1">Ver Feedback</p>
+            <p className="text-[10px] sm:text-sm text-[#d4a968]/70 mt-0.5">Feedback</p>
           </Link>
         </div>
 
         {/* Filters - Scrollable on mobile */}
-        <div className="flex items-center gap-2 mb-5 -mx-4 px-4 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-2 mb-4 -mx-4 px-4 overflow-x-auto scrollbar-hide pb-1">
           {[
             { id: 'all', label: 'Todas' },
             { id: 'pending', label: 'Pendientes' },
@@ -119,7 +119,7 @@ const CreatorWorkspace = () => {
             <button
               key={f.id}
               onClick={() => setActiveFilter(f.id)}
-              className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all flex-shrink-0 ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all flex-shrink-0 ${
                 activeFilter === f.id
                   ? 'bg-[#d4a968] text-black font-medium'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
@@ -130,7 +130,7 @@ const CreatorWorkspace = () => {
           ))}
           <button
             onClick={fetchDeliverables}
-            className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-white hover:bg-white/10 ml-auto flex-shrink-0"
+            className="p-1.5 sm:p-2 bg-white/5 rounded-full text-gray-400 hover:text-white hover:bg-white/10 ml-auto flex-shrink-0"
             title="Actualizar"
           >
             <RefreshCw className="w-4 h-4" />
