@@ -70,46 +70,46 @@ const CreatorWorkspace = () => {
       <UGCNavbar type="creator" />
 
       {/* Main Content */}
-      <div className="pt-20 max-w-5xl mx-auto px-6 py-8">
+      <div className="pt-20 max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-light mb-2">
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-light mb-1">
             Mis <span className="text-[#d4a968] italic">Entregas</span>
           </h1>
-          <p className="text-gray-400">Gestiona tus entregas de contenido UGC</p>
+          <p className="text-sm text-gray-400">Gestiona tus entregas de contenido UGC</p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-center">
-            <p className="text-2xl font-light text-yellow-400">{pendingCount}</p>
-            <p className="text-sm text-gray-400">Pendientes</p>
+        {/* Stats - Mobile optimized 2x2 grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border border-yellow-500/20 rounded-xl">
+            <p className="text-2xl sm:text-3xl font-semibold text-yellow-400">{pendingCount}</p>
+            <p className="text-xs sm:text-sm text-yellow-400/70">Pendientes</p>
           </div>
-          <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl text-center">
-            <p className="text-2xl font-light text-purple-400">{reviewCount}</p>
-            <p className="text-sm text-gray-400">En Revisión</p>
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 rounded-xl">
+            <p className="text-2xl sm:text-3xl font-semibold text-purple-400">{reviewCount}</p>
+            <p className="text-xs sm:text-sm text-purple-400/70">En Revisión</p>
           </div>
-          <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-center">
-            <p className="text-2xl font-light text-green-400">
+          <div className="p-3 sm:p-4 bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl">
+            <p className="text-2xl sm:text-3xl font-semibold text-green-400">
               {deliverables.filter(d => ['approved', 'completed'].includes(d.status)).length}
             </p>
-            <p className="text-sm text-gray-400">Completados</p>
+            <p className="text-xs sm:text-sm text-green-400/70">Completados</p>
           </div>
           <Link 
             to="/ugc/creator/feedback"
-            className="p-4 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl text-center hover:border-[#d4a968]/50 transition-all"
+            className="p-3 sm:p-4 bg-gradient-to-br from-[#d4a968]/10 to-[#d4a968]/5 border border-[#d4a968]/20 rounded-xl hover:border-[#d4a968]/40 transition-all"
             data-testid="feedback-link"
           >
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Star className="w-5 h-5 text-[#d4a968]" />
-              <MessageSquare className="w-4 h-4 text-[#d4a968]" />
+            <div className="flex items-center gap-1.5">
+              <Star className="w-5 h-5 sm:w-6 sm:h-6 text-[#d4a968]" />
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-[#d4a968]" />
             </div>
-            <p className="text-sm text-gray-400">Ver Feedback</p>
+            <p className="text-xs sm:text-sm text-[#d4a968]/70 mt-1">Ver Feedback</p>
           </Link>
         </div>
 
-        {/* Filters */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        {/* Filters - Scrollable on mobile */}
+        <div className="flex items-center gap-2 mb-5 -mx-4 px-4 overflow-x-auto scrollbar-hide">
           {[
             { id: 'all', label: 'Todas' },
             { id: 'pending', label: 'Pendientes' },
@@ -119,10 +119,10 @@ const CreatorWorkspace = () => {
             <button
               key={f.id}
               onClick={() => setActiveFilter(f.id)}
-              className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all ${
+              className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all flex-shrink-0 ${
                 activeFilter === f.id
-                  ? 'bg-[#d4a968] text-black'
-                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                  ? 'bg-[#d4a968] text-black font-medium'
+                  : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
               }`}
             >
               {f.label}
@@ -130,7 +130,8 @@ const CreatorWorkspace = () => {
           ))}
           <button
             onClick={fetchDeliverables}
-            className="p-2 bg-white/5 rounded-lg text-gray-400 hover:text-white ml-auto"
+            className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-white hover:bg-white/10 ml-auto flex-shrink-0"
+            title="Actualizar"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -142,23 +143,23 @@ const CreatorWorkspace = () => {
             <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
           </div>
         ) : filteredDeliverables.length === 0 ? (
-          <div className="p-12 bg-white/5 border border-white/10 rounded-xl text-center">
-            <Camera className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl text-white mb-2">No hay entregas</h3>
-            <p className="text-gray-400 mb-6">
+          <div className="p-8 sm:p-12 bg-white/5 border border-white/10 rounded-xl text-center">
+            <Camera className="w-12 h-12 sm:w-16 sm:h-16 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg sm:text-xl text-white mb-2">No hay entregas</h3>
+            <p className="text-sm text-gray-400 mb-6">
               {activeFilter === 'all' 
                 ? 'Aplica a campañas para empezar a crear contenido'
                 : 'No hay entregas en esta categoría'}
             </p>
             <Link
               to="/ugc/campaigns"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958]"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#d4a968] text-black text-sm font-medium rounded-full hover:bg-[#c49958] transition-all"
             >
               Ver campañas disponibles
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredDeliverables.map((del) => {
               const statusConfig = getStatusConfig(del.status);
               const StatusIcon = statusConfig.icon;
@@ -168,35 +169,38 @@ const CreatorWorkspace = () => {
                 <Link
                   key={del.id}
                   to={`/ugc/creator/deliverable/${del.id}`}
-                  className={`block p-5 bg-white/5 border rounded-xl transition-all hover:border-[#d4a968]/50 ${
+                  className={`block p-4 bg-white/5 border rounded-xl transition-all hover:bg-white/[0.07] active:scale-[0.99] ${
                     needsAction ? 'border-yellow-500/30' : 'border-white/10'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                        del.platform === 'tiktok' ? 'bg-black border border-white/20' : 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500'
-                      }`}>
-                        {del.platform === 'tiktok' ? (
-                          <Music2 className="w-6 h-6 text-white" />
-                        ) : (
-                          <Instagram className="w-6 h-6 text-white" />
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-white mb-1">{del.campaign?.name}</h3>
-                        <p className="text-sm text-gray-500">{del.brand?.company_name}</p>
-                      </div>
+                  <div className="flex items-start gap-3">
+                    {/* Platform Icon */}
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      del.platform === 'tiktok' ? 'bg-black border border-white/20' : 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500'
+                    }`}>
+                      {del.platform === 'tiktok' ? (
+                        <Music2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      ) : (
+                        <Instagram className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      )}
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-white text-sm sm:text-base leading-tight line-clamp-2">{del.campaign?.name}</h3>
+                      <p className="text-xs sm:text-sm text-gray-500 mt-0.5">{del.brand?.company_name}</p>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${statusConfig.color}`}>
-                        <StatusIcon className="w-4 h-4" />
-                        <span className="text-sm">{statusConfig.label}</span>
+                    {/* Status & Arrow */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs sm:text-sm ${statusConfig.color}`}>
+                        <StatusIcon className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">{statusConfig.label}</span>
                       </div>
                       <ChevronRight className="w-5 h-5 text-gray-500" />
                     </div>
                   </div>
+                </Link>
 
                   {/* Action hint */}
                   {needsAction && (
