@@ -2598,6 +2598,7 @@ app.add_middleware(
 
 # Import contract jobs and scheduler
 from services.contract_jobs import run_all_contract_jobs
+from services.email_scheduler import run_daily_reminders
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 
@@ -2612,6 +2613,27 @@ async def scheduled_contract_jobs():
         logger.info(f"Scheduled contract jobs completed: {result}")
     except Exception as e:
         logger.error(f"Scheduled contract jobs failed: {e}")
+
+async def scheduled_email_reminders():
+    """Wrapper for scheduled email reminders at 12:00 PM Paraguay"""
+    logger.info("Running scheduled email reminders...")
+    try:
+        result = await run_daily_reminders()
+        logger.info(f"Email reminders completed: {result}")
+    except Exception as e:
+        logger.error(f"Email reminders failed: {e}")
+
+@api_router.post("/admin/trigger-reminders")
+async def admin_trigger_reminders(request: Request):
+    """Manually trigger email reminders (admin only)"""
+    await require_admin(request)
+    
+    try:
+        result = await run_daily_reminders()
+        return {"success": True, "result": result}
+    except Exception as e:
+        logger.error(f"Manual reminder trigger failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.on_event("startup")
 async def startup_event():
@@ -2634,8 +2656,19 @@ async def startup_event():
         id="contract_jobs",
         replace_existing=True
     )
+    
+    # Schedule daily email reminders at 12:00 PM (Paraguay time, UTC-3 = 15:00 UTC)
+    scheduler.add_job(
+        scheduled_email_reminders,
+        CronTrigger(hour=15, minute=0),  # 15:00 UTC = 12:00 PM Paraguay
+        id="email_reminders",
+        replace_existing=True
+    )
+    
     scheduler.start()
-    logger.info("Scheduler started - Contract jobs will run daily at 6:00 AM Paraguay time")
+    logger.info("Scheduler started:")
+    logger.info("  - Contract jobs: daily at 6:00 AM Paraguay time")
+    logger.info("  - Email reminders: daily at 12:00 PM Paraguay time")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
