@@ -188,7 +188,7 @@ def _fallback_confirmation_email(
     brand_name: str,
     campaign_data: dict
 ) -> str:
-    """Fallback template when AI is not available"""
+    """Fallback template when AI is not available - neutral colors, emphasis on dates"""
     from datetime import datetime, timedelta
     
     confirmation_date = datetime.now()
@@ -207,76 +207,61 @@ def _fallback_confirmation_email(
     pickup_address = canje.get('pickup_address', '')
     pickup_maps_url = canje.get('pickup_maps_url', '')
     brand_contact_phone = canje.get('brand_contact_phone', '')
+    canje_description = canje.get('description', '')
     
     # Build delivery info section
     delivery_info = ""
     if delivery_method == 'delivery':
         delivery_info = """
-        <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
-            <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📦 Sobre tu canje:</h3>
-            <p style="color: #ffffff; font-size: 15px; margin: 0 0 10px 0;">
-                Tu producto será enviado por <strong>delivery</strong>.
-            </p>
-            <p style="color: #888888; font-size: 14px; margin: 0; line-height: 1.5;">
-                En los próximos <strong style="color: #22c55e;">3 días</strong>, un comercial de Avenue se pondrá en contacto 
-                para confirmar la dirección de envío y coordinar la entrega.
+        <div style="background-color: #fff8e6; border: 1px solid #d4a968; border-radius: 8px; padding: 15px; margin: 15px 0;">
+            <p style="color: #333333; font-size: 14px; margin: 0; line-height: 1.5;">
+                📦 <strong>Delivery:</strong> En los próximos 3 días, un comercial de Avenue te contactará para coordinar el envío.
             </p>
         </div>
         """
     elif delivery_method == 'pickup' and pickup_address:
-        maps_link = f'<a href="{pickup_maps_url}" target="_blank" style="color: #d4a968;">Ver en Google Maps</a>' if pickup_maps_url else ''
+        maps_link = f'<a href="{pickup_maps_url}" target="_blank" style="color: #d4a968; text-decoration: underline;">Ver en Maps</a>' if pickup_maps_url else ''
         delivery_info = f"""
-        <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
-            <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📍 Retiro de tu canje:</h3>
-            <p style="color: #ffffff; font-size: 15px; margin: 0 0 10px 0;">
-                <strong>Dirección:</strong> {pickup_address}
+        <div style="background-color: #f0f0f0; border: 1px solid #d0d0d0; border-radius: 8px; padding: 15px; margin: 15px 0;">
+            <p style="color: #333333; font-size: 14px; margin: 0 0 8px 0;">
+                📍 <strong>Retiro:</strong> {pickup_address}
             </p>
-            {f'<p style="color: #888888; font-size: 14px; margin: 0 0 10px 0;">{maps_link}</p>' if maps_link else ''}
-            {f'<p style="color: #888888; font-size: 14px; margin: 0;">Contacto: {brand_contact_phone}</p>' if brand_contact_phone else ''}
+            {f'<p style="color: #666666; font-size: 13px; margin: 0;">{maps_link}</p>' if maps_link else ''}
+            {f'<p style="color: #666666; font-size: 13px; margin: 8px 0 0 0;">Tel: {brand_contact_phone}</p>' if brand_contact_phone else ''}
         </div>
         """
     
     return f"""
-        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+        <h1 style="color: #333333; font-size: 22px; margin: 0 0 15px 0; font-weight: 600;">
             ¡Felicitaciones {creator_name}! 🎉
         </h1>
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            Tu aplicación a la campaña <strong style="color: #d4a968;">{campaign_name}</strong> 
-            de <strong>{brand_name}</strong> ha sido <span style="color: #22c55e;">CONFIRMADA</span>.
+        <p style="color: #444444; font-size: 15px; line-height: 1.5; margin: 0 0 20px 0;">
+            Fuiste seleccionado para <strong style="color: #d4a968;">{campaign_name}</strong> de {brand_name}.
         </p>
+        
+        <!-- FECHA DESTACADA -->
+        <div style="background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%); border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center;">
+            <p style="color: #ffffff; font-size: 12px; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 1px;">
+                Fecha límite para publicar
+            </p>
+            <p style="color: #ffffff; font-size: 24px; font-weight: 700; margin: 0;">
+                {deadline_formatted}
+            </p>
+            <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 10px 0 0 0;">
+                (7 días desde hoy)
+            </p>
+        </div>
         
         {delivery_info}
         
-        <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
-            <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📅 Fechas importantes:</h3>
-            <p style="color: #ffffff; font-size: 15px; margin: 0 0 10px 0;">
-                <strong>Fecha límite para subir contenido:</strong> {deadline_formatted}
-            </p>
-            <p style="color: #888888; font-size: 14px; margin: 0; line-height: 1.5;">
-                Tenés <strong style="color: #22c55e;">7 días</strong> desde hoy para crear y subir tu contenido a tus redes sociales.
-            </p>
-        </div>
-        
-        <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
-            <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📊 Sobre las métricas:</h3>
-            <p style="color: #888888; font-size: 14px; margin: 0; line-height: 1.5;">
-                Una vez que subas el URL de tu contenido a la plataforma, tendrás <strong style="color: #22c55e;">7 días adicionales</strong> 
-                para subir los screenshots de las métricas de tu publicación.
-            </p>
-        </div>
-        
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 20px 0;">
-            Ingresá a tu workspace para ver los detalles completos de la campaña.
+        <p style="color: #666666; font-size: 13px; line-height: 1.5; margin: 15px 0;">
+            Después de publicar, tendrás 7 días más para subir los screenshots de métricas.
         </p>
         
-        <div style="margin: 30px 0;">
+        <div style="margin: 25px 0; text-align: center;">
             <a href="https://avenue.com.py/login?redirect=/ugc/creator/workspace" 
-               style="display: inline-block; background-color: #22c55e; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+               style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
                 Ir a mi Workspace
             </a>
         </div>
-        
-        <p style="color: #666666; font-size: 12px; margin-top: 20px;">
-            Si ya tenés sesión iniciada, el botón te llevará directamente a tu workspace.
-        </p>
     """
