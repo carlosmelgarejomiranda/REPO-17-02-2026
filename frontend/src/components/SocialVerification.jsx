@@ -104,7 +104,27 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
         })
       });
 
-      const data = await response.json();
+      // Clone response before reading to avoid "body stream already read" error
+      const responseClone = response.clone();
+      
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // If JSON parsing fails, try to get text from the clone
+        let errorText = 'Error al procesar la imagen';
+        try {
+          const text = await responseClone.text();
+          console.error('Response text:', text);
+          // Check if it's an HTML error page
+          if (text.includes('<!DOCTYPE') || text.includes('<html')) {
+            errorText = 'Error de conexión con el servidor. Por favor, intentá de nuevo.';
+          }
+        } catch (textError) {
+          console.error('Failed to read response:', textError);
+        }
+        throw new Error(errorText);
+      }
 
       if (!response.ok) {
         throw new Error(data.detail || 'Error al analizar la imagen');
@@ -114,7 +134,17 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
       setStep('review');
 
     } catch (err) {
-      setError(err.message || 'Error al procesar la imagen');
+      // Improve error messages for common issues
+      let errorMessage = err.message || 'Error al procesar la imagen';
+      if (errorMessage.toLowerCase().includes('disturbed') || 
+          errorMessage.toLowerCase().includes('locked') ||
+          errorMessage.toLowerCase().includes('stream')) {
+        errorMessage = 'Error al procesar la imagen. Por favor, intentá con otro screenshot.';
+      } else if (errorMessage.toLowerCase().includes('network') || 
+                 errorMessage.toLowerCase().includes('fetch')) {
+        errorMessage = 'Error de conexión. Verificá tu internet e intentá de nuevo.';
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
