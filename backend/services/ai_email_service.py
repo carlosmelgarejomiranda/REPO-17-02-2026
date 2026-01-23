@@ -260,7 +260,7 @@ def _fallback_confirmation_email(
             </p>
             
             <div style="background: #22c55e; border-radius: 8px; padding: 15px; margin: 0 0 15px 0; text-align: center;">
-                <p style="color: #ffffff; font-size: 13px; margin: 0 0 5px 0;">FECHA LÍMITE</p>
+                <p style="color: #ffffff; font-size: 12px; margin: 0 0 5px 0;">FECHA LÍMITE PARA SUBIR URL</p>
                 <p style="color: #ffffff; font-size: 20px; font-weight: 700; margin: 0;">{deadline_formatted}</p>
             </div>
             
@@ -268,7 +268,7 @@ def _fallback_confirmation_email(
             {rookie_notice}
             
             <p style="color: #888888; font-size: 13px; margin: 0 0 15px 0;">
-                Después tenés 14 días para subir métricas.
+                Tenés 14 días desde hoy para subir métricas.
             </p>
             
             <div style="text-align: center; margin: 20px 0;">
