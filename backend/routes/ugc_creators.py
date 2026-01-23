@@ -289,25 +289,39 @@ async def get_my_active_deliverables(request: Request):
     if not profile:
         raise HTTPException(status_code=404, detail="Creator profile not found")
     
-    # Get pending deliverables
+    # Get pending deliverables - exclude completed, rejected, and cancelled
     deliverables = await db.ugc_deliverables.find(
         {
             "creator_id": profile["id"],
-            "status": {"$nin": ["completed", "rejected"]}
+            "status": {"$nin": ["completed", "rejected", "cancelled"]}
         },
         {"_id": 0}
     ).to_list(50)
     
-    # Enrich with campaign data
+    # Enrich with campaign and brand data, filtering out cancelled campaigns
     result = []
     for d in deliverables:
         campaign = await db.ugc_campaigns.find_one(
             {"id": d["campaign_id"]},
-            {"_id": 0, "name": 1, "canje": 1, "requirements": 1, "timeline": 1}
+            {"_id": 0, "name": 1, "canje": 1, "requirements": 1, "timeline": 1, "brand_id": 1, "status": 1}
         )
+        
+        # Skip if campaign is cancelled
+        if campaign and campaign.get("status") == "cancelled":
+            continue
+        
+        # Get brand info
+        brand = None
+        if campaign and campaign.get("brand_id"):
+            brand = await db.ugc_brands.find_one(
+                {"id": campaign["brand_id"]},
+                {"_id": 0, "company_name": 1, "logo_url": 1}
+            )
+        
         result.append({
             "deliverable": d,
-            "campaign": campaign
+            "campaign": campaign,
+            "brand": brand
         })
     
     return {"deliverables": result}
