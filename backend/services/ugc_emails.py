@@ -222,22 +222,16 @@ async def send_application_confirmed(
             "Thursday", "Jueves"
         ).replace("Friday", "Viernes").replace("Saturday", "Sábado").replace("Sunday", "Domingo")
         
-        # Mensaje especial para rookies sobre el retiro de canjes
+        # Mensaje especial para rookies
         rookie_notice = ""
         if creator_level and creator_level.lower() == "rookie":
             rookie_notice = """
             <div style="background-color: #2d2006; border: 1px solid #d4a968; border-radius: 12px; padding: 20px; margin: 20px 0;">
-                <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">🎁 Sobre el retiro de tu canje:</h3>
-                <p style="color: #cccccc; font-size: 14px; margin: 0; line-height: 1.6;">
-                    Como creador <strong style="color: #d4a968;">Rookie</strong>, podrás retirar tu canje una vez que completes los siguientes pasos:
+                <p style="color: #d4a968; font-size: 15px; margin: 0; font-weight: 600;">
+                    🎁 Importante - Creador Rookie
                 </p>
-                <ol style="color: #cccccc; font-size: 14px; margin: 15px 0 0 0; padding-left: 20px; line-height: 1.8;">
-                    <li>Subir el contenido a tus redes sociales</li>
-                    <li>Registrar el URL de tu publicación en la plataforma</li>
-                    <li>Subir las métricas (screenshots de estadísticas) a la plataforma</li>
-                </ol>
-                <p style="color: #888888; font-size: 13px; margin: 15px 0 0 0;">
-                    Una vez completados estos pasos, te notificaremos para coordinar el retiro de tu canje.
+                <p style="color: #cccccc; font-size: 14px; margin: 10px 0 0 0; line-height: 1.6;">
+                    Vení a Avenue a crear tu contenido. Como sos Rookie, el canje se retira <strong style="color: #ffffff;">después</strong> de subir el URL y las métricas a la plataforma.
                 </p>
             </div>
             """
