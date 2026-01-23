@@ -168,18 +168,21 @@ const CreatorWorkspace = () => {
             {filteredDeliverables.map((del) => {
               const statusConfig = getStatusConfig(del.status);
               const StatusIcon = statusConfig.icon;
-              const needsAction = ['awaiting_publish', 'changes_requested', 'metrics_pending'].includes(del.status);
+              const needsUrlAction = ['awaiting_publish', 'changes_requested'].includes(del.status);
+              const needsMetrics = canUploadMetrics(del.status) && !['metrics_submitted', 'completed'].includes(del.status);
               
               return (
-                <Link
+                <div
                   key={del.id}
-                  to={`/ugc/creator/deliverable/${del.id}`}
-                  className={`block p-3 sm:p-4 bg-white/5 border rounded-lg sm:rounded-xl transition-all hover:bg-white/[0.07] active:scale-[0.99] ${
-                    needsAction ? 'border-yellow-500/30' : 'border-white/10'
+                  className={`p-3 sm:p-4 bg-white/5 border rounded-lg sm:rounded-xl transition-all ${
+                    needsUrlAction ? 'border-yellow-500/30' : needsMetrics ? 'border-cyan-500/30' : 'border-white/10'
                   }`}
                 >
-                  {/* Main Row */}
-                  <div className="flex items-center gap-2.5 sm:gap-3">
+                  {/* Main Row - Clickable to detail */}
+                  <Link
+                    to={`/ugc/creator/deliverable/${del.id}`}
+                    className="flex items-center gap-2.5 sm:gap-3 hover:opacity-80"
+                  >
                     {/* Platform Icon */}
                     <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center flex-shrink-0 ${
                       del.platform === 'tiktok' ? 'bg-black border border-white/20' : 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500'
@@ -204,22 +207,32 @@ const CreatorWorkspace = () => {
                     </div>
                     
                     <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                  </div>
+                  </Link>
 
-                  {/* Action hint - Compact */}
-                  {needsAction && (
-                    <div className="mt-2 pt-2 border-t border-white/5">
-                      <p className="text-[10px] sm:text-xs text-yellow-400 flex items-center gap-1.5">
-                        <AlertCircle className="w-3 h-3 flex-shrink-0" />
-                        <span>
+                  {/* Action hints and buttons */}
+                  {(needsUrlAction || needsMetrics) && (
+                    <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between gap-2">
+                      <p className="text-[10px] sm:text-xs flex items-center gap-1.5">
+                        <AlertCircle className={`w-3 h-3 flex-shrink-0 ${needsUrlAction ? 'text-yellow-400' : 'text-cyan-400'}`} />
+                        <span className={needsUrlAction ? 'text-yellow-400' : 'text-cyan-400'}>
                           {del.status === 'awaiting_publish' && 'Registra tu URL'}
                           {del.status === 'changes_requested' && 'Cambios solicitados'}
-                          {del.status === 'metrics_pending' && 'Subí métricas'}
+                          {needsMetrics && !needsUrlAction && 'Subí tus métricas'}
                         </span>
                       </p>
+                      {needsMetrics && !needsUrlAction && (
+                        <Link
+                          to={`/ugc/creator/metrics/${del.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="px-3 py-1 bg-cyan-500 text-black rounded-full text-[10px] sm:text-xs font-medium hover:bg-cyan-400 transition-colors"
+                          data-testid={`upload-metrics-${del.id}`}
+                        >
+                          Subir
+                        </Link>
+                      )}
                     </div>
                   )}
-                </Link>
+                </div>
               );
             })}
           </div>
