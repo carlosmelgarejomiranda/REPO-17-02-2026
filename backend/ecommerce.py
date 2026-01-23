@@ -2306,6 +2306,24 @@ async def serve_product_image(filename: str):
     raise HTTPException(status_code=404, detail="Image not found")
 
 
+@ecommerce_router.get("/images/gridfs/{file_id}")
+async def serve_gridfs_product_image(file_id: str):
+    """Serve product images from GridFS persistent storage"""
+    content, content_type, filename = await gridfs_get(file_id, bucket_name="product_images")
+    
+    if content is None:
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    return Response(
+        content=content,
+        media_type=content_type,
+        headers={
+            "Content-Disposition": f"inline; filename={filename}",
+            "Cache-Control": "public, max-age=31536000"  # Cache for 1 year
+        }
+    )
+
+
 @ecommerce_router.get("/admin/export-products-for-images")
 async def export_products_for_images(
     has_image: Optional[bool] = None,
