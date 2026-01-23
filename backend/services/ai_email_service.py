@@ -188,7 +188,7 @@ def _fallback_confirmation_email(
     brand_name: str,
     campaign_data: dict
 ) -> str:
-    """Fallback template when AI is not available - neutral colors, emphasis on dates"""
+    """Fallback template when AI is not available - dark theme with emphasis on dates"""
     from datetime import datetime, timedelta
     
     confirmation_date = datetime.now()
@@ -207,35 +207,34 @@ def _fallback_confirmation_email(
     pickup_address = canje.get('pickup_address', '')
     pickup_maps_url = canje.get('pickup_maps_url', '')
     brand_contact_phone = canje.get('brand_contact_phone', '')
-    canje_description = canje.get('description', '')
     
     # Build delivery info section
     delivery_info = ""
     if delivery_method == 'delivery':
         delivery_info = """
-        <div style="background-color: #fff8e6; border: 1px solid #d4a968; border-radius: 8px; padding: 15px; margin: 15px 0;">
-            <p style="color: #333333; font-size: 14px; margin: 0; line-height: 1.5;">
-                📦 <strong>Delivery:</strong> En los próximos 3 días, un comercial de Avenue te contactará para coordinar el envío.
+        <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 15px; margin: 15px 0;">
+            <p style="color: #cccccc; font-size: 14px; margin: 0; line-height: 1.5;">
+                📦 <strong style="color: #ffffff;">Delivery:</strong> En los próximos 3 días, un comercial de Avenue te contactará para coordinar el envío.
             </p>
         </div>
         """
     elif delivery_method == 'pickup' and pickup_address:
         maps_link = f'<a href="{pickup_maps_url}" target="_blank" style="color: #d4a968; text-decoration: underline;">Ver en Maps</a>' if pickup_maps_url else ''
         delivery_info = f"""
-        <div style="background-color: #f0f0f0; border: 1px solid #d0d0d0; border-radius: 8px; padding: 15px; margin: 15px 0;">
-            <p style="color: #333333; font-size: 14px; margin: 0 0 8px 0;">
+        <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 15px; margin: 15px 0;">
+            <p style="color: #ffffff; font-size: 14px; margin: 0 0 8px 0;">
                 📍 <strong>Retiro:</strong> {pickup_address}
             </p>
-            {f'<p style="color: #666666; font-size: 13px; margin: 0;">{maps_link}</p>' if maps_link else ''}
-            {f'<p style="color: #666666; font-size: 13px; margin: 8px 0 0 0;">Tel: {brand_contact_phone}</p>' if brand_contact_phone else ''}
+            {f'<p style="color: #888888; font-size: 13px; margin: 0;">{maps_link}</p>' if maps_link else ''}
+            {f'<p style="color: #888888; font-size: 13px; margin: 8px 0 0 0;">Tel: {brand_contact_phone}</p>' if brand_contact_phone else ''}
         </div>
         """
     
     return f"""
-        <h1 style="color: #333333; font-size: 22px; margin: 0 0 15px 0; font-weight: 600;">
+        <h1 style="color: #ffffff; font-size: 22px; margin: 0 0 15px 0; font-weight: 600;">
             ¡Felicitaciones {creator_name}! 🎉
         </h1>
-        <p style="color: #444444; font-size: 15px; line-height: 1.5; margin: 0 0 20px 0;">
+        <p style="color: #cccccc; font-size: 15px; line-height: 1.5; margin: 0 0 20px 0;">
             Fuiste seleccionado para <strong style="color: #d4a968;">{campaign_name}</strong> de {brand_name}.
         </p>
         
@@ -254,7 +253,7 @@ def _fallback_confirmation_email(
         
         {delivery_info}
         
-        <p style="color: #666666; font-size: 13px; line-height: 1.5; margin: 15px 0;">
+        <p style="color: #888888; font-size: 13px; line-height: 1.5; margin: 15px 0;">
             Después de publicar, tendrás 7 días más para subir los screenshots de métricas.
         </p>
         
