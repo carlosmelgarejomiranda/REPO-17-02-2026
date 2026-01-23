@@ -662,15 +662,19 @@ async def admin_update_application_status(
             brand_email = brand.get("email") if brand else None
             
             if status == "confirmed" and creator_email:
+                # Get creator level
+                creator_level = creator.get("level", "rookie")
+                
                 # Email al creador con datos de campaña para IA
                 await send_application_confirmed(
                     to_email=creator_email,
                     creator_name=creator_name,
                     campaign_name=campaign_name,
                     brand_name=brand_name,
-                    campaign_data=campaign  # Pass full campaign data for AI email generation
+                    campaign_data=campaign,  # Pass full campaign data for AI email generation
+                    creator_level=creator_level
                 )
-                print(f"[Email] Confirmation sent to {creator_email}")
+                print(f"[Email] Confirmation sent to {creator_email} (level: {creator_level})")
                 
                 # Email a la marca notificando que se confirmó
                 if brand_email:
