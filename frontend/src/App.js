@@ -396,6 +396,17 @@ function AppRouter() {
   // Handle login redirect from other pages (e.g., creator onboarding)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
+    
+    // Check for redirect parameter from email links
+    const redirectParam = params.get('redirect');
+    if (redirectParam && !user) {
+      sessionStorage.setItem('redirect_after_login', redirectParam);
+      setShowAuthModal(true);
+      // Clean up URL
+      navigate('/login', { replace: true });
+    }
+    
+    // Legacy: creator login parameter
     if (params.get('login') === 'creator' && !user) {
       setShowAuthModal(true);
       // Clean up URL
