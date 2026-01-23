@@ -18,6 +18,37 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-23
+
+#### ✅ Completed
+- **DeliverableDetail Page Redesign (P1)**
+  - Complete redesign of creator's deliverable submission page
+  - Separated URL submission flow for Instagram and TikTok
+  - Visual improvements:
+    - Sticky header with back button and status badge
+    - Clean campaign card with brand info
+    - Separate input cards for Instagram and TikTok with platform icons
+    - Green checkmarks when valid URLs are entered
+    - Tip message encouraging posting on both platforms
+    - Success message "¡Excelente! Contenido en ambas plataformas" when both URLs entered
+  - URL validation (must contain instagram.com or tiktok.com)
+  - Submit button disabled until at least one valid URL entered
+  - Responsive mobile-first design
+  - Files modified:
+    - `/app/frontend/src/pages/ugc/DeliverableDetail.jsx` - Complete redesign
+  - Test report: `/app/test_reports/iteration_7.json` (Frontend: 100%, Backend: 71%)
+
+- **Login Redirect Flow Fix (P0)**
+  - Fixed race condition between useEffect and Google OAuth callback
+  - The redirect parameter from email links now works correctly
+  - Flow: Save redirect to sessionStorage → Login → Read and navigate to saved path
+  - OAuth callback now extracts redirect path BEFORE calling login() to avoid race condition
+  - Added check to skip redirect useEffect during OAuth callback
+  - Files modified:
+    - `/app/frontend/src/App.js` - Fixed useEffect and OAuth callback (lines 425-460)
+
+---
+
 ### Session: 2026-01-22
 
 #### ✅ Completed
