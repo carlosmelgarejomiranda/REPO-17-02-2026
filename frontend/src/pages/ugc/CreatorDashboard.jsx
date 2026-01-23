@@ -268,22 +268,53 @@ const CreatorDashboard = () => {
                     <Link
                       key={item.deliverable.id}
                       to={`/ugc/creator/deliverable/${item.deliverable.id}`}
-                      className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all"
+                      className="block p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all"
                     >
-                      <div className="w-10 h-10 rounded-lg bg-[#d4a968]/20 flex items-center justify-center flex-shrink-0">
-                        {item.deliverable.platform === 'tiktok' ? (
-                          <Music2 className="w-5 h-5 text-[#d4a968]" />
-                        ) : (
-                          <Instagram className="w-5 h-5 text-[#d4a968]" />
-                        )}
+                      <div className="flex items-start gap-3">
+                        {/* Platform Icon */}
+                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                          item.deliverable.platform === 'tiktok' 
+                            ? 'bg-black border border-white/20' 
+                            : 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500'
+                        }`}>
+                          {item.deliverable.platform === 'tiktok' ? (
+                            <Music2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                          ) : (
+                            <Instagram className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                          )}
+                        </div>
+                        
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium text-sm md:text-base text-white leading-tight line-clamp-1">
+                                {item.campaign?.name || 'Campaña'}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-0.5">
+                                {item.brand?.company_name || '-'}
+                              </p>
+                            </div>
+                            <span className={`px-2 py-1 rounded-full text-[10px] md:text-xs whitespace-nowrap flex-shrink-0 ${getStatusColor(item.deliverable.status)}`}>
+                              {getStatusLabel(item.deliverable.status)}
+                            </span>
+                          </div>
+                          
+                          {/* Action hint for pending items */}
+                          {['awaiting_publish', 'changes_requested', 'published'].includes(item.deliverable.status) && (
+                            <div className="mt-2 flex items-center gap-1.5">
+                              <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></div>
+                              <span className="text-[10px] md:text-xs text-yellow-400">
+                                {item.deliverable.status === 'awaiting_publish' && 'Registrá tu URL'}
+                                {item.deliverable.status === 'changes_requested' && 'Revisá los cambios'}
+                                {item.deliverable.status === 'published' && 'Podés subir métricas'}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0 mt-1" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{item.campaign?.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{item.brand?.company_name}</p>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-[10px] md:text-xs whitespace-nowrap ${getStatusColor(item.deliverable.status)}`}>
-                        {getStatusLabel(item.deliverable.status)}
-                      </span>
                     </Link>
                   ))}
                 </div>
