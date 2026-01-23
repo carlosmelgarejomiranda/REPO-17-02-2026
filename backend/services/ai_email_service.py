@@ -24,7 +24,8 @@ async def generate_confirmation_email(
     creator_name: str,
     campaign_name: str,
     brand_name: str,
-    campaign_data: dict
+    campaign_data: dict,
+    creator_level: str = None
 ) -> str:
     """
     Generate personalized confirmation email using AI
@@ -34,16 +35,17 @@ async def generate_confirmation_email(
         campaign_name: Name of the campaign
         brand_name: Name of the brand
         campaign_data: Full campaign data including canje details
+        creator_level: Level of the creator (rookie, established, etc.)
     """
     
     if not AI_AVAILABLE:
-        return _fallback_confirmation_email(creator_name, campaign_name, brand_name, campaign_data)
+        return _fallback_confirmation_email(creator_name, campaign_name, brand_name, campaign_data, creator_level)
     
     try:
         api_key = os.environ.get('EMERGENT_LLM_KEY')
         if not api_key:
             logger.warning("EMERGENT_LLM_KEY not found, using fallback template")
-            return _fallback_confirmation_email(creator_name, campaign_name, brand_name, campaign_data)
+            return _fallback_confirmation_email(creator_name, campaign_name, brand_name, campaign_data, creator_level)
         
         # Extract canje details
         canje = campaign_data.get('canje', {})
