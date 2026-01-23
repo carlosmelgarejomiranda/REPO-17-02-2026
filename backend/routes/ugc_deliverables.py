@@ -141,22 +141,28 @@ async def mark_as_published(
     metrics_opens = now + timedelta(days=7)
     metrics_closes = now + timedelta(days=14)
     
+    # Update to SUBMITTED status (not just PUBLISHED) so it goes for review
+    new_status = DeliverableStatus.SUBMITTED
+    if deliverable["status"] == DeliverableStatus.CHANGES_REQUESTED:
+        new_status = DeliverableStatus.RESUBMITTED
+    
     await db.ugc_deliverables.update_one(
         {"id": deliverable_id},
         {
             "$set": {
-                "status": DeliverableStatus.PUBLISHED,
+                "status": new_status,
                 "post_url": post_url,
                 "instagram_url": instagram_url or "",
                 "tiktok_url": tiktok_url or "",
                 "published_at": now.isoformat(),
+                "submitted_at": now.isoformat(),
                 "metrics_window_opens": metrics_opens.isoformat(),
                 "metrics_window_closes": metrics_closes.isoformat(),
                 "updated_at": now.isoformat()
             },
             "$push": {
                 "status_history": {
-                    "status": DeliverableStatus.PUBLISHED,
+                    "status": new_status,
                     "timestamp": now.isoformat(),
                     "by": "creator"
                 }
@@ -164,7 +170,70 @@ async def mark_as_published(
         }
     )
     
-    return {"success": True, "message": "Contenido marcado como publicado"}
+    # Send notifications to creator, brand, and admin
+    try:
+        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1, "brand_id": 1})
+        campaign_name = campaign.get("name", "Campaña") if campaign else "Campaña"
+        
+        # Get brand info
+        brand = await db.ugc_brands.find_one({"id": campaign.get("brand_id")}, {"_id": 0, "company_name": 1, "email": 1}) if campaign else None
+        brand_name = brand.get("company_name", "Marca") if brand else "Marca"
+        brand_email = brand.get("email") if brand else None
+        
+        logger.info(f"[PUBLISH] Creator: {creator.get('name')}, Campaign: {campaign_name}, Brand: {brand_name}, Brand Email: {brand_email}")
+        
+        from services.ugc_emails import (
+            send_content_submitted_to_creator,
+            send_content_submitted_to_brand,
+            send_admin_notification
+        )
+        
+        # 1. Email al creador confirmando su entrega
+        if creator.get("email"):
+            logger.info(f"[PUBLISH] Sending email to creator: {creator.get('email')}")
+            await send_content_submitted_to_creator(
+                to_email=creator.get("email"),
+                creator_name=creator.get("name", "Creator"),
+                campaign_name=campaign_name,
+                brand_name=brand_name
+            )
+        
+        # 2. Email a la marca notificando nueva entrega
+        if brand_email:
+            logger.info(f"[PUBLISH] Sending email to brand: {brand_email}")
+            await send_content_submitted_to_brand(
+                to_email=brand_email,
+                brand_name=brand_name,
+                campaign_name=campaign_name,
+                creator_name=creator.get("name", "Creator")
+            )
+        
+        # 3. Email notification to admin (ALWAYS)
+        logger.info(f"[PUBLISH] Sending email to admin")
+        admin_content = f"""
+            <h2 style="color: #d4a968; margin: 0 0 15px 0;">📤 Nuevo Contenido Entregado</h2>
+            <p style="color: #cccccc;"><strong>Creador:</strong> {creator.get('name', 'N/A')} ({creator.get('email', 'N/A')})</p>
+            <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+            <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+            <p style="color: #cccccc;"><strong>Instagram:</strong> {instagram_url or 'No proporcionado'}</p>
+            <p style="color: #cccccc;"><strong>TikTok:</strong> {tiktok_url or 'No proporcionado'}</p>
+            <div style="margin: 20px 0;">
+                <a href="https://avenue.com.py/ugc/admin" 
+                   style="display: inline-block; background-color: #d4a968; color: #000000; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Ver en Admin
+                </a>
+            </div>
+        """
+        await send_admin_notification(
+            subject=f"Contenido Entregado: {creator.get('name', 'Creador')} - {campaign_name}",
+            html_content=admin_content
+        )
+        
+        logger.info(f"[PUBLISH] All notifications sent successfully")
+    except Exception as e:
+        logger.error(f"[PUBLISH] Failed to send notification: {e}", exc_info=True)
+    
+    return {"success": True, "message": "Contenido enviado para revisión"}
 
 @router.post("/{deliverable_id}/submit", response_model=dict)
 async def submit_deliverable(
