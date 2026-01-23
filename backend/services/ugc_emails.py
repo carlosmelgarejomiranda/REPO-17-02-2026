@@ -193,6 +193,17 @@ async def send_application_confirmed(
     brand_name: str
 ):
     """3. Cuando se les confirma una aplicación"""
+    from datetime import datetime, timedelta
+    
+    # Calculate deadline (7 days from now)
+    confirmation_date = datetime.now()
+    content_deadline = confirmation_date + timedelta(days=7)
+    deadline_formatted = content_deadline.strftime("%A %d/%m/%Y").replace(
+        "Monday", "Lunes"
+    ).replace("Tuesday", "Martes").replace("Wednesday", "Miércoles").replace(
+        "Thursday", "Jueves"
+    ).replace("Friday", "Viernes").replace("Saturday", "Sábado").replace("Sunday", "Domingo")
+    
     subject = f"¡Felicitaciones! Fuiste seleccionado - {campaign_name}"
     content = f"""
         <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
@@ -202,15 +213,39 @@ async def send_application_confirmed(
             Tu aplicación a la campaña <strong style="color: #d4a968;">{campaign_name}</strong> 
             de <strong>{brand_name}</strong> ha sido <span style="color: #22c55e;">CONFIRMADA</span>.
         </p>
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            Ingresá a tu workspace para ver los detalles de la campaña y las instrucciones para crear tu contenido.
+        
+        <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
+            <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📅 Fechas importantes:</h3>
+            <p style="color: #ffffff; font-size: 15px; margin: 0 0 10px 0;">
+                <strong>Fecha límite para subir contenido:</strong> {deadline_formatted}
+            </p>
+            <p style="color: #888888; font-size: 14px; margin: 0; line-height: 1.5;">
+                Tenés <strong style="color: #22c55e;">7 días</strong> desde hoy para crear y subir tu contenido a tus redes sociales.
+            </p>
+        </div>
+        
+        <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
+            <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📊 Sobre las métricas:</h3>
+            <p style="color: #888888; font-size: 14px; margin: 0; line-height: 1.5;">
+                Una vez que subas el URL de tu contenido a la plataforma, tendrás <strong style="color: #22c55e;">7 días adicionales</strong> 
+                para subir los screenshots de las métricas de tu publicación.
+            </p>
+        </div>
+        
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 20px 0;">
+            Ingresá a tu workspace para ver los detalles completos de la campaña y las instrucciones para crear tu contenido.
         </p>
+        
         <div style="margin: 30px 0;">
-            <a href="https://avenue.com.py/ugc/creator/workspace" 
+            <a href="https://avenue.com.py/login?redirect=/ugc/creator/workspace" 
                style="display: inline-block; background-color: #22c55e; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
                 Ir a mi Workspace
             </a>
         </div>
+        
+        <p style="color: #666666; font-size: 12px; margin-top: 20px;">
+            Si ya tenés sesión iniciada, el botón te llevará directamente a tu workspace.
+        </p>
     """
     return await send_email(to_email, subject, content, SENDER_CREATORS)
 
