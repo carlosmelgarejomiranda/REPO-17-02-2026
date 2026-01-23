@@ -225,7 +225,7 @@ async def send_application_confirmed(
         if pickup_address:
             pickup_info = f"""
             <div style="background: #1a1a1a; border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #d4a968;">
-                <p style="color: #d4a968; font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">📍 LUGAR DE RETIRO</p>
+                <p style="color: #ffffff; font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">📍 LUGAR DE RETIRO</p>
                 <p style="color: #ffffff; font-size: 14px; margin: 0; line-height: 1.4;">{pickup_address}</p>
             </div>
             """
@@ -235,7 +235,7 @@ async def send_application_confirmed(
     if canje_description:
         canje_section = f"""
         <div style="background: #1a1a1a; border-radius: 10px; padding: 14px; margin: 12px 0; border-left: 3px solid #22c55e;">
-            <p style="color: #22c55e; font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">🎁 TU CANJE</p>
+            <p style="color: #ffffff; font-size: 11px; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">🎁 TU CANJE</p>
             <p style="color: #ffffff; font-size: 14px; margin: 0; line-height: 1.4;">{canje_description}</p>
         </div>
         """
