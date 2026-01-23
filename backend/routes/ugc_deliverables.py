@@ -170,64 +170,114 @@ async def mark_as_published(
         }
     )
     
-    # Send notifications to creator, brand, and admin
+    # Send notifications to creator, brand, and admin - ALWAYS
     try:
         campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1, "brand_id": 1})
         campaign_name = campaign.get("name", "Campaña") if campaign else "Campaña"
         
-        # Get brand info
+        # Get brand info - fetch email from brand document
         brand = await db.ugc_brands.find_one({"id": campaign.get("brand_id")}, {"_id": 0, "company_name": 1, "email": 1}) if campaign else None
         brand_name = brand.get("company_name", "Marca") if brand else "Marca"
         brand_email = brand.get("email") if brand else None
         
-        logger.info(f"[PUBLISH] Creator: {creator.get('name')}, Campaign: {campaign_name}, Brand: {brand_name}, Brand Email: {brand_email}")
+        # Get creator email from creator document (already have creator from require_creator)
+        creator_email = creator.get("email")
+        creator_name = creator.get("name", "Creador")
+        
+        logger.info(f"[PUBLISH EMAIL] === NOTIFICACIÓN DE CONTENIDO ===")
+        logger.info(f"[PUBLISH EMAIL] Creador: {creator_name} | Email: {creator_email or 'NO CONFIGURADO'}")
+        logger.info(f"[PUBLISH EMAIL] Campaña: {campaign_name}")
+        logger.info(f"[PUBLISH EMAIL] Marca: {brand_name} | Email: {brand_email or 'NO CONFIGURADO'}")
+        logger.info(f"[PUBLISH EMAIL] Instagram: {instagram_url or 'N/A'} | TikTok: {tiktok_url or 'N/A'}")
         
         from services.ugc_emails import (
             send_content_submitted_to_creator,
             send_content_submitted_to_brand,
-            send_admin_notification
+            send_admin_notification,
+            send_email,
+            ADMIN_EMAIL
         )
         
-        # 1. Email al creador confirmando su entrega
-        if creator.get("email"):
-            logger.info(f"[PUBLISH] Sending email to creator: {creator.get('email')}")
-            await send_content_submitted_to_creator(
-                to_email=creator.get("email"),
-                creator_name=creator.get("name", "Creator"),
-                campaign_name=campaign_name,
-                brand_name=brand_name
-            )
+        emails_sent = []
+        emails_failed = []
         
-        # 2. Email a la marca notificando nueva entrega
+        # 1. Email al CREADOR confirmando su entrega
+        if creator_email:
+            try:
+                logger.info(f"[PUBLISH EMAIL] Enviando a creador: {creator_email}")
+                await send_content_submitted_to_creator(
+                    to_email=creator_email,
+                    creator_name=creator_name,
+                    campaign_name=campaign_name,
+                    brand_name=brand_name
+                )
+                emails_sent.append(f"Creador ({creator_email})")
+            except Exception as e:
+                logger.error(f"[PUBLISH EMAIL] Error enviando a creador: {e}")
+                emails_failed.append(f"Creador ({creator_email}): {str(e)}")
+        else:
+            logger.warning(f"[PUBLISH EMAIL] ⚠️ Creador {creator_name} NO tiene email configurado")
+            emails_failed.append(f"Creador (sin email)")
+        
+        # 2. Email a la MARCA notificando nueva entrega
         if brand_email:
-            logger.info(f"[PUBLISH] Sending email to brand: {brand_email}")
-            await send_content_submitted_to_brand(
-                to_email=brand_email,
-                brand_name=brand_name,
-                campaign_name=campaign_name,
-                creator_name=creator.get("name", "Creator")
-            )
+            try:
+                logger.info(f"[PUBLISH EMAIL] Enviando a marca: {brand_email}")
+                await send_content_submitted_to_brand(
+                    to_email=brand_email,
+                    brand_name=brand_name,
+                    campaign_name=campaign_name,
+                    creator_name=creator_name
+                )
+                emails_sent.append(f"Marca ({brand_email})")
+            except Exception as e:
+                logger.error(f"[PUBLISH EMAIL] Error enviando a marca: {e}")
+                emails_failed.append(f"Marca ({brand_email}): {str(e)}")
+        else:
+            logger.warning(f"[PUBLISH EMAIL] ⚠️ Marca {brand_name} NO tiene email configurado")
+            emails_failed.append(f"Marca (sin email)")
         
-        # 3. Email notification to admin (ALWAYS)
-        logger.info(f"[PUBLISH] Sending email to admin")
-        admin_content = f"""
-            <h2 style="color: #d4a968; margin: 0 0 15px 0;">📤 Nuevo Contenido Entregado</h2>
-            <p style="color: #cccccc;"><strong>Creador:</strong> {creator.get('name', 'N/A')} ({creator.get('email', 'N/A')})</p>
-            <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
-            <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
-            <p style="color: #cccccc;"><strong>Instagram:</strong> {instagram_url or 'No proporcionado'}</p>
-            <p style="color: #cccccc;"><strong>TikTok:</strong> {tiktok_url or 'No proporcionado'}</p>
-            <div style="margin: 20px 0;">
-                <a href="https://avenue.com.py/ugc/admin" 
-                   style="display: inline-block; background-color: #d4a968; color: #000000; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                    Ver en Admin
-                </a>
-            </div>
-        """
-        await send_admin_notification(
-            subject=f"Contenido Entregado: {creator.get('name', 'Creador')} - {campaign_name}",
-            html_content=admin_content
-        )
+        # 3. Email al ADMIN - SIEMPRE (usando ADMIN_EMAIL de .env)
+        try:
+            logger.info(f"[PUBLISH EMAIL] Enviando a admin: {ADMIN_EMAIL}")
+            admin_content = f"""
+                <h2 style="color: #d4a968; margin: 0 0 15px 0;">📤 Nuevo Contenido Entregado</h2>
+                <table style="color: #cccccc; width: 100%; border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0;"><strong>Creador:</strong></td><td>{creator_name}</td></tr>
+                    <tr><td style="padding: 8px 0;"><strong>Email Creador:</strong></td><td>{creator_email or 'No configurado'}</td></tr>
+                    <tr><td style="padding: 8px 0;"><strong>Campaña:</strong></td><td>{campaign_name}</td></tr>
+                    <tr><td style="padding: 8px 0;"><strong>Marca:</strong></td><td>{brand_name}</td></tr>
+                    <tr><td style="padding: 8px 0;"><strong>Email Marca:</strong></td><td>{brand_email or 'No configurado'}</td></tr>
+                    <tr><td style="padding: 8px 0;"><strong>Instagram:</strong></td><td><a href="{instagram_url}" style="color: #d4a968;">{instagram_url or 'No proporcionado'}</a></td></tr>
+                    <tr><td style="padding: 8px 0;"><strong>TikTok:</strong></td><td><a href="{tiktok_url}" style="color: #d4a968;">{tiktok_url or 'No proporcionado'}</a></td></tr>
+                </table>
+                <div style="margin: 20px 0; padding: 15px; background: #1a1a1a; border-radius: 8px;">
+                    <p style="color: #888; margin: 0 0 5px 0; font-size: 12px;">Resumen de notificaciones:</p>
+                    <p style="color: #22c55e; margin: 0;">✅ Enviados: {', '.join(emails_sent) if emails_sent else 'Ninguno'}</p>
+                    <p style="color: #ef4444; margin: 5px 0 0 0;">❌ Fallidos: {', '.join(emails_failed) if emails_failed else 'Ninguno'}</p>
+                </div>
+                <div style="margin: 20px 0;">
+                    <a href="https://avenue.com.py/ugc/admin" 
+                       style="display: inline-block; background-color: #d4a968; color: #000000; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Ver en Admin
+                    </a>
+                </div>
+            """
+            await send_admin_notification(
+                subject=f"📤 Contenido Entregado: {creator_name} → {campaign_name}",
+                html_content=admin_content
+            )
+            emails_sent.append(f"Admin ({ADMIN_EMAIL})")
+        except Exception as e:
+            logger.error(f"[PUBLISH EMAIL] Error enviando a admin: {e}")
+            emails_failed.append(f"Admin: {str(e)}")
+        
+        logger.info(f"[PUBLISH EMAIL] === RESUMEN ===")
+        logger.info(f"[PUBLISH EMAIL] ✅ Enviados: {emails_sent}")
+        logger.info(f"[PUBLISH EMAIL] ❌ Fallidos: {emails_failed}")
+        
+    except Exception as e:
+        logger.error(f"[PUBLISH EMAIL] Error crítico en notificaciones: {e}", exc_info=True)
         
         logger.info(f"[PUBLISH] All notifications sent successfully")
     except Exception as e:
