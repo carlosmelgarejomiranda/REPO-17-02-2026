@@ -115,23 +115,20 @@ async def generate_confirmation_email(
 
 Tu tarea es generar el CONTENIDO HTML del cuerpo de un email de confirmación de participación en una campaña.
 
-REGLAS DE DISEÑO VISUAL:
-1. Usá colores NEUTROS que funcionen en modo claro Y oscuro:
-   - Fondo de secciones: #f0f0f0 o #e8e8e8
-   - Texto principal: #333333
-   - Texto secundario: #666666
-   - Color de marca Avenue (dorado): #d4a968
-   - Color de éxito/confirmado: #16a34a (verde)
-   - Bordes: #d0d0d0
-2. NO uses fondos muy oscuros (#000, #111) ni muy claros (#fff) en secciones
-3. El ancho del contenido ya está controlado por el template (max 650px)
-4. Usa padding generoso (20-25px) para que no se vea apretado
+REGLAS DE DISEÑO VISUAL (TEMA OSCURO):
+1. El fondo del email es oscuro (#111111), usá colores claros para el texto
+2. Texto principal: #ffffff (blanco)
+3. Texto secundario: #cccccc o #888888
+4. Color de marca Avenue (dorado): #d4a968
+5. Color de éxito/confirmado: #22c55e (verde)
+6. Fondos de secciones: #1a1a1a con borde #333333
+7. El botón principal debe ser dorado (#d4a968) con texto negro
 
 REGLAS DE CONTENIDO:
 1. El tono debe ser amigable, profesional pero CONCISO - máximo 3-4 párrafos cortos
 2. Usa "vos" en lugar de "tú" (español de Paraguay/Argentina)
 3. ENFATIZÁ MUCHO las fechas límite - deben ser el elemento más visible
-4. Las fechas deben estar en una caja destacada con borde grueso de color
+4. Las fechas deben estar en una caja verde destacada (#22c55e) con texto blanco grande
 5. Si es DELIVERY: mencioná brevemente que un comercial contactará en 3 días
 6. Si es RETIRO: incluí dirección y link de Google Maps
 7. NO incluyas el asunto del email, solo el contenido HTML del body
@@ -140,9 +137,9 @@ REGLAS DE CONTENIDO:
 ESTRUCTURA OBLIGATORIA:
 1. Saludo breve (1 línea)
 2. Confirmación de la campaña (1-2 líneas)
-3. **CAJA DE FECHAS DESTACADA** - Esto debe ser LO MÁS VISIBLE del email
+3. **CAJA DE FECHAS DESTACADA** - Fondo verde, texto blanco grande, centrado
 4. Info del canje (breve)
-5. Botón de acción
+5. Botón de acción dorado
 6. Nota pequeña sobre métricas"""
 
         user_prompt = f"""Generá el contenido HTML del email de confirmación con esta información:
