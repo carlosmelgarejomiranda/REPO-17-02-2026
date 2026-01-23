@@ -117,46 +117,50 @@ async def generate_confirmation_email(
         
         context = "\n".join(context_parts)
         
-        # System prompt for email generation
-        system_prompt = """Sos un experto en comunicación de marketing para una plataforma UGC llamada Avenue que conecta marcas con creadores de contenido en Paraguay.
+        # System prompt for email generation - MOBILE OPTIMIZED
+        system_prompt = """Sos un experto en emails transaccionales MOBILE-FIRST para Avenue UGC (Paraguay).
 
-Tu tarea es generar el CONTENIDO HTML del cuerpo de un email de confirmación de participación en una campaña.
+GENERAR HTML del cuerpo del email. SIN asunto, SIN wrapper externo.
 
-REGLAS DE DISEÑO VISUAL (TEMA OSCURO):
-1. El fondo del email es oscuro (#111111), usá colores claros para el texto
-2. Texto principal: #ffffff (blanco)
-3. Texto secundario: #cccccc o #888888
-4. Color de marca Avenue (dorado): #d4a968
-5. Color de éxito/confirmado: #22c55e (verde)
-6. Fondos de secciones: #1a1a1a con borde #333333
-7. El botón principal debe ser dorado (#d4a968) con texto negro
+DISEÑO OBLIGATORIO - MOBILE FIRST:
+- Ancho: 100% (se adapta al contenedor padre)
+- Padding lateral: mínimo (10-15px)
+- Fuentes: tamaño base 16px, títulos 20-22px
+- NO usar tablas complejas
+- Colores: fondo #111111, texto #ffffff, dorado #d4a968, verde #22c55e
 
-REGLAS DE CONTENIDO:
-1. El tono debe ser amigable, profesional pero CONCISO - máximo 3-4 párrafos cortos
-2. Usa "vos" en lugar de "tú" (español de Paraguay/Argentina)
-3. ENFATIZÁ MUCHO las fechas límite - deben ser el elemento más visible
-4. Las fechas deben estar en una caja verde destacada (#22c55e) con texto blanco grande
-5. Si es DELIVERY: mencioná brevemente que un comercial contactará en 3 días
-6. Si es RETIRO: incluí dirección y link de Google Maps
-7. NO incluyas el asunto del email, solo el contenido HTML del body
-8. Usá estilos inline para el HTML
+ESTRUCTURA (TODO EN MÁXIMO 400px de alto visible):
+1. Saludo: "¡Hola [nombre]!" (1 línea, 20px, blanco)
+2. Confirmación: "Confirmado para [campaña]" (2 líneas max, dorado)
+3. FECHA LÍMITE: caja verde grande, fecha en negrita 18px
+4. Info canje: 2-3 líneas máximo, directo al punto
+5. SI ES ROOKIE: caja dorada con borde, mensaje corto sobre retiro de canje
+6. Botón dorado: "Ir a mi Workspace"
 
-ESTRUCTURA OBLIGATORIA:
-1. Saludo breve (1 línea)
-2. Confirmación de la campaña (1-2 líneas)
-3. **CAJA DE FECHAS DESTACADA** - Fondo verde, texto blanco grande, centrado
-4. Info del canje (breve)
-5. Botón de acción dorado
-6. Nota pequeña sobre métricas"""
+REGLAS:
+- Español Paraguay (vos, sos, tenés)
+- SÚPER CONCISO - cada sección máximo 2-3 líneas
+- Evitar texto angosto - usar width:100%
+- NO emojis excesivos (máximo 1-2)"""
 
-        user_prompt = f"""Generá el contenido HTML del email de confirmación con esta información:
+        # Build user prompt with rookie info
+        rookie_instruction = ""
+        if creator_level and creator_level.lower() == 'rookie':
+            rookie_instruction = """
+
+⚠️ IMPORTANTE - ES ROOKIE: Agregá una caja con borde dorado (#d4a968) que diga:
+"Como Rookie, el canje se retira DESPUÉS de subir tu contenido, URL y métricas a la plataforma."
+Esta caja debe ir ANTES del botón."""
+
+        user_prompt = f"""Generá email de confirmación:
 
 {context}
+{rookie_instruction}
 
-Recordá:
-- La URL del botón debe ser: https://avenue.com.py/login?redirect=/ugc/creator/workspace
-- El botón debe decir "Ir a mi Workspace"
-- Incluí una nota pequeña al final diciendo que si ya tiene sesión iniciada, el botón lo llevará directo al workspace"""
+Botón URL: https://avenue.com.py/login?redirect=/ugc/creator/workspace
+Botón texto: "Ir a mi Workspace"
+
+Recordá: HTML limpio, mobile-first, máximo 400px alto visible, ancho 100%."""
 
         # Initialize chat
         chat = LlmChat(
