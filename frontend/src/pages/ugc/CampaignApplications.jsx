@@ -227,7 +227,7 @@ const CampaignApplications = () => {
                       </div>
                       
                       {/* Stats Row */}
-                      <div className="flex items-center gap-4 mt-3 text-sm">
+                      <div className="flex items-center gap-4 mt-3 text-sm flex-wrap">
                         <span className="flex items-center gap-1 text-yellow-400">
                           <Star className="w-4 h-4 fill-current" />
                           {app.creator_rating?.toFixed(1) || '0.0'}
@@ -240,6 +240,24 @@ const CampaignApplications = () => {
                           <span className="flex items-center gap-1 text-blue-400">
                             <Award className="w-4 h-4" />
                             {app.creator.campaigns_participated} campañas
+                          </span>
+                        )}
+                        {/* On-time delivery rate */}
+                        {app.creator?.stats?.delivery_on_time_rate !== undefined && (
+                          <span className={`flex items-center gap-1 ${
+                            app.creator.stats.delivery_on_time_rate >= 90 ? 'text-green-400' :
+                            app.creator.stats.delivery_on_time_rate >= 70 ? 'text-yellow-400' :
+                            'text-orange-400'
+                          }`}>
+                            <Clock className="w-4 h-4" />
+                            {app.creator.stats.delivery_on_time_rate}% a tiempo
+                          </span>
+                        )}
+                        {/* Average late hours */}
+                        {app.creator?.stats?.avg_delivery_lag_hours > 0 && (
+                          <span className="flex items-center gap-1 text-orange-400">
+                            <TrendingUp className="w-4 h-4" />
+                            ~{Math.round(app.creator.stats.avg_delivery_lag_hours / 24)} días prom.
                           </span>
                         )}
                       </div>
