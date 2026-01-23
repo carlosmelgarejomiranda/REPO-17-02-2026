@@ -440,18 +440,21 @@ async def send_admin_email_notification(subject: str, html_content: str, sender_
     }
     sender = senders.get(sender_type, senders['ecommerce'])
     
+    # Get the appropriate admin email based on type
+    admin_email = get_admin_email(sender_type)
+    
     try:
         params = {
             "from": sender,
-            "to": [ADMIN_EMAIL],
+            "to": [admin_email],
             "subject": subject,
             "html": html_content
         }
         await asyncio.to_thread(resend.Emails.send, params)
-        logger.info(f"Admin email notification sent: {subject}")
+        logger.info(f"Admin email notification sent to {admin_email}: {subject}")
         return True
     except Exception as e:
-        logger.error(f"Failed to send admin email notification: {str(e)}")
+        logger.error(f"Failed to send admin email notification to {admin_email}: {str(e)}")
         return False
 
 async def notify_new_reservation(reservation: dict):
