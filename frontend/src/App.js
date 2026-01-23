@@ -422,8 +422,14 @@ function AppRouter() {
     }
   }, [location.search, user, navigate, location.pathname]);
 
-  // Redirect to intended page after login
+  // Redirect to intended page after login (but NOT during OAuth callback)
+  // The OAuth callback handles its own redirect to avoid race conditions
   useEffect(() => {
+    // Skip if we're in the middle of Google OAuth callback
+    if (location.hash?.includes('session_id=')) {
+      return;
+    }
+    
     if (user) {
       const redirectPath = sessionStorage.getItem('redirect_after_login');
       if (redirectPath) {
@@ -431,16 +437,21 @@ function AppRouter() {
         navigate(redirectPath);
       }
     }
-  }, [user, navigate]);
+  }, [user, navigate, location.hash]);
 
   // Check URL fragment for session_id (Google OAuth callback)
   if (location.hash?.includes('session_id=')) {
     return <AuthCallback onAuthComplete={(userData) => {
-      login(userData);
-      // Check if there's a redirect path saved
+      // First get the redirect path BEFORE calling login
+      // This avoids race condition with the useEffect
       const redirectPath = sessionStorage.getItem('redirect_after_login');
+      sessionStorage.removeItem('redirect_after_login');
+      
+      // Now login (which will trigger useEffect, but redirect is already removed)
+      login(userData);
+      
+      // Navigate to the saved path or home
       if (redirectPath) {
-        sessionStorage.removeItem('redirect_after_login');
         navigate(redirectPath);
       } else {
         navigate('/');
