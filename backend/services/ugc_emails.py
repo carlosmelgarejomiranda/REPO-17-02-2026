@@ -242,8 +242,8 @@ async def send_application_confirmed(
             <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
                 <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📊 Sobre las métricas:</h3>
                 <p style="color: #888888; font-size: 14px; margin: 0; line-height: 1.5;">
-                    Una vez que subas el URL de tu contenido a la plataforma, tendrás <strong style="color: #22c55e;">7 días adicionales</strong> 
-                    para subir los screenshots de las métricas de tu publicación.
+                    Una vez que subas el URL de tu contenido a la plataforma, tendrás <strong style="color: #22c55e;">14 días</strong> 
+                    desde tu confirmación para subir los screenshots de las métricas de tu publicación.
                 </p>
             </div>
             
@@ -297,13 +297,59 @@ async def send_application_rejected(
     return await send_email(to_email, subject, content, SENDER_CREATORS)
 
 
+async def send_application_cancelled_by_admin(
+    to_email: str,
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str,
+    reason: str = None
+):
+    """NUEVO: Cuando el admin cancela una aplicación previamente confirmada"""
+    subject = f"Aplicación cancelada - {campaign_name}"
+    reason_text = f"<p style='color: #888888; font-size: 14px; margin-top: 15px;'><em>Motivo: {reason}</em></p>" if reason else ""
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            Hola {creator_name}
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            Lamentamos informarte que tu participación en la campaña 
+            <strong style="color: #d4a968;">{campaign_name}</strong> de <strong>{brand_name}</strong> 
+            ha sido <span style="color: #ef4444;">cancelada</span> por el equipo de Avenue.
+        </p>
+        {reason_text}
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            Si tenés alguna consulta sobre esta decisión, no dudes en contactarnos.
+        </p>
+        <div style="margin: 30px 0;">
+            <a href="https://avenue.com.py/ugc/campaigns" 
+               style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Ver otras campañas
+            </a>
+        </div>
+    """
+    return await send_email(to_email, subject, content, SENDER_CREATORS)
+
+
 async def send_content_submitted_to_creator(
     to_email: str,
     creator_name: str,
     campaign_name: str,
-    brand_name: str
+    brand_name: str,
+    metrics_deadline: str = None
 ):
-    """5. Cuando suben el link de su entrega de contenido - confirmación al creador"""
+    """5. Cuando suben el link de su entrega de contenido - ACTUALIZADO con info de métricas"""
+    deadline_text = ""
+    if metrics_deadline:
+        deadline_text = f"""
+        <div style="background-color: #0d3320; border: 1px solid #22c55e; border-radius: 12px; padding: 20px; margin: 20px 0;">
+            <h3 style="color: #22c55e; margin: 0 0 10px 0; font-size: 16px;">📊 ¡Ya podés subir tus métricas!</h3>
+            <p style="color: #cccccc; font-size: 14px; margin: 0; line-height: 1.5;">
+                Tenés tiempo hasta el <strong style="color: #ffffff;">{metrics_deadline}</strong> para subir 
+                los screenshots con las estadísticas de tu publicación.
+            </p>
+        </div>
+        """
+    
     subject = f"Contenido enviado - {campaign_name}"
     content = f"""
         <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
@@ -313,16 +359,11 @@ async def send_content_submitted_to_creator(
             Hola {creator_name}, tu entrega de contenido para la campaña 
             <strong style="color: #d4a968;">{campaign_name}</strong> ha sido recibida correctamente.
         </p>
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            La marca <strong>{brand_name}</strong> revisará tu contenido y te notificaremos cuando haya novedades.
-        </p>
-        <div style="background-color: #1a1a1a; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <p style="color: #22c55e; margin: 0; font-size: 14px;">⏳ Estado: Pendiente de revisión</p>
-        </div>
+        {deadline_text}
         <div style="margin: 30px 0;">
             <a href="https://avenue.com.py/ugc/creator/workspace" 
                style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                Ver mi Workspace
+                Subir métricas ahora
             </a>
         </div>
     """
@@ -348,7 +389,7 @@ async def send_metrics_submitted_to_creator(
     campaign_name: str,
     brand_name: str
 ):
-    """6. Cuando suben las métricas de su entrega de contenido - confirmación al creador"""
+    """6. Cuando suben las métricas de su entrega de contenido"""
     subject = f"Métricas recibidas - {campaign_name}"
     content = f"""
         <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
@@ -392,7 +433,7 @@ async def send_deliverable_rated(
     rating: int,
     comment: str = None
 ):
-    """7. Cuando reciben calificación y comentarios por parte de la marca"""
+    """7. Cuando reciben calificación por parte de la marca"""
     stars = "⭐" * rating
     comment_html = f"<p style='color: #888888; font-style: italic; margin-top: 15px;'>\"{comment}\"</p>" if comment else ""
     subject = f"Nueva calificación recibida - {campaign_name}"
@@ -529,32 +570,359 @@ async def send_changes_requested(
     return await send_email(to_email, subject, content, SENDER_CREATORS)
 
 
-async def send_metrics_window_open(
+# ============================================================================
+# RECORDATORIOS DE ENTREGA DE URL - CREADORES
+# ============================================================================
+
+async def send_url_delivery_reminder(
+    to_email: str,
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str,
+    days_until_deadline: int,
+    deadline_date: str
+):
+    """Recordatorio diario de entrega de URL (2 días antes hasta 6 días después)"""
+    
+    if days_until_deadline > 0:
+        # Antes de la fecha límite
+        urgency_color = "#d4a968" if days_until_deadline > 1 else "#f59e0b"
+        title = f"Recordatorio: {days_until_deadline} día{'s' if days_until_deadline > 1 else ''} para entregar tu contenido"
+        message = f"""
+            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Hola {creator_name}, te recordamos que tenés <strong style="color: {urgency_color};">{days_until_deadline} día{'s' if days_until_deadline > 1 else ''}</strong> 
+                para subir el URL de tu contenido para la campaña <strong style="color: #d4a968;">{campaign_name}</strong>.
+            </p>
+        """
+    elif days_until_deadline == 0:
+        # Hoy es la fecha límite
+        urgency_color = "#ef4444"
+        title = "⚠️ ¡HOY es tu fecha límite!"
+        message = f"""
+            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Hola {creator_name}, <strong style="color: #ef4444;">HOY</strong> es la fecha límite 
+                para subir el URL de tu contenido para la campaña <strong style="color: #d4a968;">{campaign_name}</strong>.
+            </p>
+        """
+    else:
+        # Después de la fecha límite
+        days_late = abs(days_until_deadline)
+        urgency_color = "#ef4444"
+        title = f"⚠️ Entrega atrasada - {days_late} día{'s' if days_late > 1 else ''}"
+        message = f"""
+            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Hola {creator_name}, tu entrega de contenido para la campaña 
+                <strong style="color: #d4a968;">{campaign_name}</strong> está 
+                <strong style="color: #ef4444;">{days_late} día{'s' if days_late > 1 else ''} atrasada</strong>.
+            </p>
+            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Por favor, subí tu URL lo antes posible para evitar sanciones.
+            </p>
+        """
+    
+    subject = f"{title} - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            {title}
+        </h1>
+        {message}
+        <div style="background-color: #1a1a1a; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <p style="color: #888888; margin: 0 0 5px 0; font-size: 12px;">FECHA LÍMITE</p>
+            <p style="color: {urgency_color}; margin: 0; font-size: 18px; font-weight: bold;">{deadline_date}</p>
+            <p style="color: #888888; margin: 10px 0 0 0; font-size: 12px;">MARCA</p>
+            <p style="color: #ffffff; margin: 0; font-size: 16px;">{brand_name}</p>
+        </div>
+        <div style="margin: 30px 0;">
+            <a href="https://avenue.com.py/ugc/creator/workspace" 
+               style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Subir URL ahora
+            </a>
+        </div>
+    """
+    return await send_email(to_email, subject, content, SENDER_CREATORS)
+
+
+async def send_url_warning_day7(
     to_email: str,
     creator_name: str,
     campaign_name: str,
     brand_name: str
 ):
-    """Cuando se abre la ventana para subir métricas"""
-    subject = f"¡Subí tus métricas! - {campaign_name}"
+    """Advertencia día 7 de retraso - Riesgo de cancelación en 24hs"""
+    subject = f"⚠️ URGENTE: Riesgo de cancelación - {campaign_name}"
     content = f"""
-        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
-            ¡Es hora de subir tus métricas! 📊
+        <h1 style="color: #ef4444; font-size: 28px; margin: 0 0 20px 0;">
+            ⚠️ ATENCIÓN URGENTE
         </h1>
         <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            Hola {creator_name}, ya podés subir las métricas de tu contenido para la campaña 
-            <strong style="color: #d4a968;">{campaign_name}</strong> de <strong>{brand_name}</strong>.
+            Hola {creator_name}, tu entrega de contenido para la campaña 
+            <strong style="color: #d4a968;">{campaign_name}</strong> de <strong>{brand_name}</strong> 
+            lleva <strong style="color: #ef4444;">7 días de retraso</strong>.
         </p>
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            Recordá incluir capturas de pantalla con las estadísticas de tu publicación.
-        </p>
-        <div style="margin: 30px 0;">
+        
+        <div style="background-color: #2d1b1b; border: 2px solid #ef4444; border-radius: 12px; padding: 20px; margin: 20px 0;">
+            <p style="color: #ef4444; font-size: 18px; font-weight: bold; margin: 0 0 10px 0;">
+                ⏰ Tenés 24 horas para:
+            </p>
+            <ul style="color: #cccccc; margin: 10px 0; padding-left: 20px;">
+                <li style="margin: 8px 0;">Subir el URL de tu contenido a la plataforma, o</li>
+                <li style="margin: 8px 0;">Comunicarte urgentemente con el equipo de Avenue</li>
+            </ul>
+            <p style="color: #ef4444; font-size: 14px; margin: 15px 0 0 0;">
+                De lo contrario, tu aplicación será <strong>CANCELADA</strong> y podrías recibir una sanción.
+            </p>
+        </div>
+        
+        <div style="margin: 30px 0; text-align: center;">
             <a href="https://avenue.com.py/ugc/creator/workspace" 
-               style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                Subir métricas
+               style="display: inline-block; background-color: #ef4444; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                Subir URL ahora
+            </a>
+            <a href="https://wa.me/595976691520" 
+               style="display: inline-block; background-color: #22c55e; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Contactar a Avenue
             </a>
         </div>
     """
+    
+    # También notificar al admin
+    admin_content = f"""
+        <h2 style="color: #ef4444; margin: 0 0 15px 0;">⚠️ Creador Advertido (Día 7)</h2>
+        <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name} ({to_email})</p>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+        <p style="color: #ef4444;"><strong>Estado:</strong> 7 días de retraso - Advertido de cancelación en 24hs</p>
+    """
+    await send_admin_notification(f"⚠️ Advertencia Día 7: {creator_name} - {campaign_name}", admin_content, SENDER_CREATORS)
+    
+    return await send_email(to_email, subject, content, SENDER_CREATORS)
+
+
+async def send_url_warning_day8(
+    to_email: str,
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str
+):
+    """Advertencia día 8 de retraso - Última advertencia"""
+    subject = f"🚨 ÚLTIMA ADVERTENCIA: Cancelación inminente - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ef4444; font-size: 28px; margin: 0 0 20px 0;">
+            🚨 ÚLTIMA ADVERTENCIA
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            Hola {creator_name}, tu entrega de contenido para la campaña 
+            <strong style="color: #d4a968;">{campaign_name}</strong> de <strong>{brand_name}</strong> 
+            lleva <strong style="color: #ef4444;">8 días de retraso</strong>.
+        </p>
+        
+        <div style="background-color: #2d1b1b; border: 2px solid #ef4444; border-radius: 12px; padding: 20px; margin: 20px 0;">
+            <p style="color: #ef4444; font-size: 18px; font-weight: bold; margin: 0 0 10px 0;">
+                🚨 ACCIÓN INMEDIATA REQUERIDA
+            </p>
+            <p style="color: #cccccc; font-size: 15px; margin: 10px 0;">
+                Si <strong>HOY</strong> no subís el URL a la plataforma o te comunicás con el equipo de Avenue:
+            </p>
+            <ul style="color: #ef4444; margin: 10px 0; padding-left: 20px; font-weight: bold;">
+                <li style="margin: 8px 0;">Tu aplicación será CANCELADA</li>
+                <li style="margin: 8px 0;">Podrías recibir una SANCIÓN en tu perfil</li>
+            </ul>
+        </div>
+        
+        <div style="margin: 30px 0; text-align: center;">
+            <a href="https://avenue.com.py/ugc/creator/workspace" 
+               style="display: inline-block; background-color: #ef4444; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                Subir URL AHORA
+            </a>
+            <a href="https://wa.me/595976691520" 
+               style="display: inline-block; background-color: #22c55e; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Contactar URGENTE
+            </a>
+        </div>
+    """
+    
+    # También notificar al admin
+    admin_content = f"""
+        <h2 style="color: #ef4444; margin: 0 0 15px 0;">🚨 Creador Advertido (Día 8) - ÚLTIMA</h2>
+        <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name} ({to_email})</p>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+        <p style="color: #ef4444;"><strong>Estado:</strong> 8 días de retraso - ÚLTIMA ADVERTENCIA enviada</p>
+    """
+    await send_admin_notification(f"🚨 ÚLTIMA Advertencia Día 8: {creator_name} - {campaign_name}", admin_content, SENDER_CREATORS)
+    
+    return await send_email(to_email, subject, content, SENDER_CREATORS)
+
+
+# ============================================================================
+# RECORDATORIOS DE ENTREGA DE MÉTRICAS - CREADORES
+# ============================================================================
+
+async def send_metrics_delivery_reminder(
+    to_email: str,
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str,
+    days_until_deadline: int,
+    deadline_date: str
+):
+    """Recordatorio diario de entrega de métricas (2 días antes hasta 6 días después)"""
+    
+    if days_until_deadline > 0:
+        urgency_color = "#d4a968" if days_until_deadline > 1 else "#f59e0b"
+        title = f"Recordatorio: {days_until_deadline} día{'s' if days_until_deadline > 1 else ''} para subir métricas"
+        message = f"""
+            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Hola {creator_name}, te recordamos que tenés <strong style="color: {urgency_color};">{days_until_deadline} día{'s' if days_until_deadline > 1 else ''}</strong> 
+                para subir las métricas de tu contenido para la campaña <strong style="color: #d4a968;">{campaign_name}</strong>.
+            </p>
+        """
+    elif days_until_deadline == 0:
+        urgency_color = "#ef4444"
+        title = "⚠️ ¡HOY es tu fecha límite para métricas!"
+        message = f"""
+            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Hola {creator_name}, <strong style="color: #ef4444;">HOY</strong> es la fecha límite 
+                para subir las métricas de tu contenido para la campaña <strong style="color: #d4a968;">{campaign_name}</strong>.
+            </p>
+        """
+    else:
+        days_late = abs(days_until_deadline)
+        urgency_color = "#ef4444"
+        title = f"⚠️ Métricas atrasadas - {days_late} día{'s' if days_late > 1 else ''}"
+        message = f"""
+            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                Hola {creator_name}, tus métricas para la campaña 
+                <strong style="color: #d4a968;">{campaign_name}</strong> están 
+                <strong style="color: #ef4444;">{days_late} día{'s' if days_late > 1 else ''} atrasadas</strong>.
+            </p>
+        """
+    
+    subject = f"{title} - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            {title}
+        </h1>
+        {message}
+        <div style="background-color: #1a1a1a; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <p style="color: #888888; margin: 0 0 5px 0; font-size: 12px;">FECHA LÍMITE MÉTRICAS</p>
+            <p style="color: {urgency_color}; margin: 0; font-size: 18px; font-weight: bold;">{deadline_date}</p>
+        </div>
+        <div style="margin: 30px 0;">
+            <a href="https://avenue.com.py/ugc/creator/workspace" 
+               style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Subir métricas ahora
+            </a>
+        </div>
+    """
+    return await send_email(to_email, subject, content, SENDER_CREATORS)
+
+
+async def send_metrics_warning_day7(
+    to_email: str,
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str
+):
+    """Advertencia día 7 de retraso de métricas"""
+    subject = f"⚠️ URGENTE: Métricas pendientes - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ef4444; font-size: 28px; margin: 0 0 20px 0;">
+            ⚠️ ATENCIÓN URGENTE
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            Hola {creator_name}, tus métricas para la campaña 
+            <strong style="color: #d4a968;">{campaign_name}</strong> de <strong>{brand_name}</strong> 
+            llevan <strong style="color: #ef4444;">7 días de retraso</strong>.
+        </p>
+        
+        <div style="background-color: #2d1b1b; border: 2px solid #ef4444; border-radius: 12px; padding: 20px; margin: 20px 0;">
+            <p style="color: #ef4444; font-size: 18px; font-weight: bold; margin: 0 0 10px 0;">
+                ⏰ Tenés 24 horas para:
+            </p>
+            <ul style="color: #cccccc; margin: 10px 0; padding-left: 20px;">
+                <li style="margin: 8px 0;">Subir las métricas de tu contenido, o</li>
+                <li style="margin: 8px 0;">Comunicarte urgentemente con el equipo de Avenue</li>
+            </ul>
+            <p style="color: #ef4444; font-size: 14px; margin: 15px 0 0 0;">
+                De lo contrario, tu aplicación será <strong>CANCELADA</strong> y podrías recibir una sanción.
+            </p>
+        </div>
+        
+        <div style="margin: 30px 0; text-align: center;">
+            <a href="https://avenue.com.py/ugc/creator/workspace" 
+               style="display: inline-block; background-color: #ef4444; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                Subir métricas ahora
+            </a>
+            <a href="https://wa.me/595976691520" 
+               style="display: inline-block; background-color: #22c55e; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Contactar a Avenue
+            </a>
+        </div>
+    """
+    
+    admin_content = f"""
+        <h2 style="color: #ef4444; margin: 0 0 15px 0;">⚠️ Métricas Atrasadas (Día 7)</h2>
+        <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name} ({to_email})</p>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+    """
+    await send_admin_notification(f"⚠️ Métricas Día 7: {creator_name} - {campaign_name}", admin_content, SENDER_CREATORS)
+    
+    return await send_email(to_email, subject, content, SENDER_CREATORS)
+
+
+async def send_metrics_warning_day8(
+    to_email: str,
+    creator_name: str,
+    campaign_name: str,
+    brand_name: str
+):
+    """Advertencia día 8 de retraso de métricas - Última advertencia"""
+    subject = f"🚨 ÚLTIMA ADVERTENCIA: Métricas pendientes - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ef4444; font-size: 28px; margin: 0 0 20px 0;">
+            🚨 ÚLTIMA ADVERTENCIA
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            Hola {creator_name}, tus métricas para la campaña 
+            <strong style="color: #d4a968;">{campaign_name}</strong> de <strong>{brand_name}</strong> 
+            llevan <strong style="color: #ef4444;">8 días de retraso</strong>.
+        </p>
+        
+        <div style="background-color: #2d1b1b; border: 2px solid #ef4444; border-radius: 12px; padding: 20px; margin: 20px 0;">
+            <p style="color: #ef4444; font-size: 18px; font-weight: bold; margin: 0 0 10px 0;">
+                🚨 ACCIÓN INMEDIATA REQUERIDA
+            </p>
+            <p style="color: #cccccc; font-size: 15px; margin: 10px 0;">
+                Si <strong>HOY</strong> no subís las métricas o te comunicás con Avenue:
+            </p>
+            <ul style="color: #ef4444; margin: 10px 0; padding-left: 20px; font-weight: bold;">
+                <li style="margin: 8px 0;">Tu aplicación será CANCELADA</li>
+                <li style="margin: 8px 0;">Podrías recibir una SANCIÓN</li>
+            </ul>
+        </div>
+        
+        <div style="margin: 30px 0; text-align: center;">
+            <a href="https://avenue.com.py/ugc/creator/workspace" 
+               style="display: inline-block; background-color: #ef4444; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                Subir métricas AHORA
+            </a>
+            <a href="https://wa.me/595976691520" 
+               style="display: inline-block; background-color: #22c55e; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Contactar URGENTE
+            </a>
+        </div>
+    """
+    
+    admin_content = f"""
+        <h2 style="color: #ef4444; margin: 0 0 15px 0;">🚨 Métricas Atrasadas (Día 8) - ÚLTIMA</h2>
+        <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name} ({to_email})</p>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+    """
+    await send_admin_notification(f"🚨 Métricas ÚLTIMA Día 8: {creator_name} - {campaign_name}", admin_content, SENDER_CREATORS)
+    
     return await send_email(to_email, subject, content, SENDER_CREATORS)
 
 
@@ -672,48 +1040,6 @@ async def send_slots_recharged(
     return result
 
 
-async def send_new_application_to_brand(
-    to_email: str,
-    brand_name: str,
-    campaign_name: str,
-    creator_name: str,
-    creator_username: str = None,
-    creator_followers: int = None
-):
-    """4. Cuando se recibe una nueva aplicación"""
-    followers_text = f"<p style='color: #cccccc;'><strong>Seguidores:</strong> {creator_followers:,}</p>" if creator_followers else ""
-    username_text = f" (@{creator_username})" if creator_username else ""
-    
-    subject = f"Nueva aplicación - {campaign_name}"
-    content = f"""
-        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
-            ¡Nueva aplicación! 📩
-        </h1>
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            Hola {brand_name}, un nuevo creador ha aplicado a tu campaña 
-            <strong style="color: #d4a968;">{campaign_name}</strong>.
-        </p>
-        <div style="background-color: #1a1a1a; border-radius: 8px; padding: 20px; margin: 20px 0;">
-            <p style="color: #888888; margin: 0 0 5px 0; font-size: 12px;">APLICANTE</p>
-            <p style="color: #ffffff; margin: 0; font-size: 18px;">{creator_name}{username_text}</p>
-            {followers_text}
-        </div>
-        <div style="margin: 30px 0;">
-            <a href="https://avenue.com.py/ugc/brand/campaigns" 
-               style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                Revisar aplicación
-            </a>
-        </div>
-    """
-    
-    # Email a la marca
-    result = await send_email(to_email, subject, content, SENDER_BRANDS)
-    
-    # Notificación a Avenue (ya se envía desde send_application_submitted)
-    
-    return result
-
-
 async def send_creator_confirmed_to_brand(
     to_email: str,
     brand_name: str,
@@ -769,13 +1095,7 @@ async def send_content_submitted_to_brand(
             </a>
         </div>
     """
-    
-    # Email a la marca
-    result = await send_email(to_email, subject, content, SENDER_BRANDS)
-    
-    # Notificación a Avenue (ya se envía desde send_content_submitted_to_creator)
-    
-    return result
+    return await send_email(to_email, subject, content, SENDER_BRANDS)
 
 
 async def send_metrics_submitted_to_brand(
@@ -801,203 +1121,137 @@ async def send_metrics_submitted_to_brand(
             </a>
         </div>
     """
-    
-    # Email a la marca
-    result = await send_email(to_email, subject, content, SENDER_BRANDS)
-    
-    # Notificación a Avenue
-    admin_content = f"""
-        <h2 style="color: #d4a968; margin: 0 0 15px 0;">📊 Métricas Recibidas</h2>
-        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
-        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
-        <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name}</p>
-    """
-    await send_admin_notification(f"Métricas: {creator_name} - {campaign_name}", admin_content, SENDER_BRANDS)
-    
-    return result
-
-
-async def send_plan_selected(
-    to_email: str,
-    brand_name: str,
-    plan_name: str,
-    plan_price: str = None
-):
-    """8. Cuando eligen un plan"""
-    price_text = f"<p style='color: #22c55e; font-size: 24px; margin: 10px 0;'>{plan_price}</p>" if plan_price else ""
-    subject = f"Plan seleccionado - {plan_name}"
-    content = f"""
-        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
-            ¡Plan seleccionado! 🎯
-        </h1>
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            Hola {brand_name}, has seleccionado el plan <strong style="color: #d4a968;">{plan_name}</strong>.
-        </p>
-        <div style="background-color: #1a1a1a; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
-            <p style="color: #ffffff; margin: 0; font-size: 24px; font-weight: bold;">{plan_name}</p>
-            {price_text}
-        </div>
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            Nos pondremos en contacto contigo para coordinar los próximos pasos.
-        </p>
-    """
-    
-    # Email a la marca
-    result = await send_email(to_email, subject, content, SENDER_BRANDS)
-    
-    # Notificación a Avenue
-    admin_content = f"""
-        <h2 style="color: #d4a968; margin: 0 0 15px 0;">🎯 Plan Seleccionado</h2>
-        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
-        <p style="color: #cccccc;"><strong>Email:</strong> {to_email}</p>
-        <p style="color: #cccccc;"><strong>Plan:</strong> {plan_name}</p>
-        <p style="color: #22c55e; font-weight: bold;">¡Contactar para cerrar venta!</p>
-    """
-    await send_admin_notification(f"💰 Plan Seleccionado: {brand_name} - {plan_name}", admin_content, SENDER_BRANDS)
-    
-    return result
-
-
-async def send_campaign_completed_to_brand(
-    to_email: str,
-    brand_name: str,
-    campaign_name: str,
-    total_creators: int = None
-):
-    """Cuando se completa una campaña"""
-    creators_text = f"<p style='color: #cccccc;'><strong>Creadores participantes:</strong> {total_creators}</p>" if total_creators else ""
-    subject = f"¡Campaña completada! - {campaign_name}"
-    content = f"""
-        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
-            ¡Campaña finalizada! 🎉
-        </h1>
-        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-            Hola {brand_name}, tu campaña <strong style="color: #d4a968;">{campaign_name}</strong> 
-            ha sido completada exitosamente.
-        </p>
-        {creators_text}
-        <div style="margin: 30px 0;">
-            <a href="https://avenue.com.py/ugc/brand/campaigns" 
-               style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
-                Ver resultados
-            </a>
-        </div>
-    """
     return await send_email(to_email, subject, content, SENDER_BRANDS)
 
 
-# ============================================================================
-# WHATSAPP NOTIFICATIONS (via Twilio)
-# ============================================================================
-
-async def send_whatsapp_ugc_notification(message: str, notification_type: str = 'ugc'):
-    """Send WhatsApp notification to admin"""
-    try:
-        from whatsapp_service import send_ugc_notification
-        return await send_ugc_notification(message)
-    except Exception as e:
-        logger.error(f"WhatsApp notification failed: {e}")
-        return {"success": False, "error": str(e)}
-
-
-# ============================================================================
-# COMBINED NOTIFICATIONS (Email + WhatsApp to Avenue)
-# ============================================================================
-
-async def notify_new_campaign_application(
-    creator_name: str,
-    campaign_name: str,
+async def send_campaign_slots_depleted(
+    to_email: str,
     brand_name: str,
-    creator_level: str = None,
-    creator_followers: int = None
-):
-    """WhatsApp notification for new application"""
-    followers_text = f"👥 Seguidores: {creator_followers:,}" if creator_followers else ""
-    level_text = f"⭐ Nivel: {creator_level}" if creator_level else ""
-    
-    wa_message = f"""👤 *NUEVA APLICACIÓN*
-
-📸 *Campaña:* {campaign_name}
-🏢 *Marca:* {brand_name}
-
-*Aplicante:*
-👤 {creator_name}
-{level_text}
-{followers_text}
-
-Revisá en el panel de admin."""
-    
-    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
-
-
-async def notify_application_cancelled(
-    creator_name: str,
     campaign_name: str,
-    brand_name: str,
-    cancelled_by: str = "creator"
+    total_delivered: int
 ):
-    """WhatsApp notification when application is cancelled"""
-    by_label = "creador" if cancelled_by == "creator" else "admin"
-    wa_message = f"""❌ *PARTICIPACIÓN CANCELADA*
-
-📸 *Campaña:* {campaign_name}
-🏢 *Marca:* {brand_name}
-👤 *Creator:* {creator_name}
-
-⚠️ Cancelado por: {by_label}
-
-Se liberó un cupo en la campaña."""
+    """NUEVO: Cuando la campaña se queda sin cupos - Confirmación de entrega completa + CTA"""
+    subject = f"🎉 ¡Campaña completada! - {campaign_name}"
+    content = f"""
+        <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+            ¡Felicitaciones {brand_name}! 🎉
+        </h1>
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+            Todos los cupos de tu campaña <strong style="color: #d4a968;">{campaign_name}</strong> 
+            han sido completados exitosamente.
+        </p>
+        
+        <div style="background-color: #0d3320; border: 1px solid #22c55e; border-radius: 12px; padding: 25px; margin: 20px 0; text-align: center;">
+            <p style="color: #22c55e; margin: 0 0 5px 0; font-size: 14px;">CONTENIDOS ENTREGADOS</p>
+            <p style="color: #ffffff; margin: 0; font-size: 48px; font-weight: bold;">{total_delivered}</p>
+            <p style="color: #22c55e; margin: 10px 0 0 0; font-size: 16px;">✅ Todo lo contratado fue entregado</p>
+        </div>
+        
+        <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 20px 0;">
+            ¿Querés seguir generando contenido de calidad con más creadores? 
+            <strong style="color: #d4a968;">¡Recargá cupos ahora!</strong>
+        </p>
+        
+        <div style="margin: 30px 0; text-align: center;">
+            <a href="https://avenue.com.py/ugc/brand/campaigns" 
+               style="display: inline-block; background-color: #22c55e; color: #000000; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 18px;">
+                🚀 Contratar más cupos
+            </a>
+        </div>
+        
+        <p style="color: #888888; font-size: 14px; margin-top: 30px; text-align: center;">
+            Contactanos para planes especiales y descuentos por volumen.
+        </p>
+    """
     
-    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
+    # Email a la marca
+    result = await send_email(to_email, subject, content, SENDER_BRANDS)
+    
+    # Notificación a Avenue - Oportunidad de venta
+    admin_content = f"""
+        <h2 style="color: #22c55e; margin: 0 0 15px 0;">🎯 Campaña Sin Cupos - Oportunidad de Venta</h2>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name} ({to_email})</p>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Entregas completadas:</strong> {total_delivered}</p>
+        <p style="color: #22c55e; margin-top: 15px;"><strong>💡 Oportunidad:</strong> Contactar para ofrecer más cupos</p>
+    """
+    await send_admin_notification(f"🎯 Sin Cupos: {brand_name} - {campaign_name}", admin_content, SENDER_BRANDS)
+    
+    return result
 
 
-async def notify_deliverable_submitted_whatsapp(
+# ============================================================================
+# NOTIFICACIONES ADMIN - Cancelaciones y Alertas
+# ============================================================================
+
+async def send_admin_creator_cancelled(
     creator_name: str,
+    creator_email: str,
     campaign_name: str,
     brand_name: str
 ):
-    """WhatsApp notification when content is submitted"""
-    wa_message = f"""📤 *CONTENIDO ENTREGADO*
+    """NUEVO: Notificar al admin cuando un creador confirmado cancela su participación"""
+    admin_content = f"""
+        <h2 style="color: #ef4444; margin: 0 0 15px 0;">❌ Creador Canceló Participación</h2>
+        <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name} ({creator_email})</p>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+        <p style="color: #888888; margin-top: 15px;">El creador canceló voluntariamente su participación.</p>
+    """
+    return await send_admin_notification(f"❌ Creador Canceló: {creator_name} - {campaign_name}", admin_content, SENDER_CREATORS)
 
-📸 *Campaña:* {campaign_name}
-🏢 *Marca:* {brand_name}
-👤 *Creator:* {creator_name}
 
-Revisá en el panel de admin."""
-    
-    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
-
-
-async def notify_metrics_submitted_whatsapp(
+async def send_admin_url_delay_reminder(
     creator_name: str,
-    campaign_name: str,
-    brand_name: str
-):
-    """WhatsApp notification when metrics are submitted"""
-    wa_message = f"""📊 *MÉTRICAS ENTREGADAS*
-
-📸 *Campaña:* {campaign_name}
-🏢 *Marca:* {brand_name}
-👤 *Creator:* {creator_name}
-
-Revisá en el panel de admin."""
-    
-    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
-
-
-async def notify_deliverable_rated_whatsapp(
-    creator_name: str,
+    creator_email: str,
     campaign_name: str,
     brand_name: str,
-    rating: int
+    days_until_deadline: int,
+    deadline_date: str
 ):
-    """WhatsApp notification when deliverable is rated"""
-    stars = "⭐" * rating
-    wa_message = f"""{stars} *CALIFICACIÓN*
-
-📸 *Campaña:* {campaign_name}
-🏢 *Marca:* {brand_name}
-👤 *Creator:* {creator_name}
-⭐ *Rating:* {rating}/5"""
+    """Recordatorio diario al admin sobre retrasos de URL"""
+    if days_until_deadline >= 0:
+        status = f"{days_until_deadline} días para la fecha límite"
+        color = "#f59e0b"
+    else:
+        days_late = abs(days_until_deadline)
+        status = f"{days_late} día{'s' if days_late > 1 else ''} de retraso"
+        color = "#ef4444"
     
-    return await send_whatsapp_ugc_notification(wa_message, 'ugc')
+    admin_content = f"""
+        <h2 style="color: {color}; margin: 0 0 15px 0;">📅 Recordatorio Entrega URL</h2>
+        <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name} ({creator_email})</p>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+        <p style="color: {color};"><strong>Estado:</strong> {status}</p>
+        <p style="color: #888888;"><strong>Fecha límite:</strong> {deadline_date}</p>
+    """
+    return await send_admin_notification(f"📅 URL: {creator_name} - {status}", admin_content, SENDER_CREATORS)
+
+
+async def send_admin_metrics_delay_reminder(
+    creator_name: str,
+    creator_email: str,
+    campaign_name: str,
+    brand_name: str,
+    days_until_deadline: int,
+    deadline_date: str
+):
+    """Recordatorio diario al admin sobre retrasos de métricas"""
+    if days_until_deadline >= 0:
+        status = f"{days_until_deadline} días para la fecha límite"
+        color = "#f59e0b"
+    else:
+        days_late = abs(days_until_deadline)
+        status = f"{days_late} día{'s' if days_late > 1 else ''} de retraso"
+        color = "#ef4444"
+    
+    admin_content = f"""
+        <h2 style="color: {color}; margin: 0 0 15px 0;">📊 Recordatorio Métricas</h2>
+        <p style="color: #cccccc;"><strong>Creador:</strong> {creator_name} ({creator_email})</p>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+        <p style="color: {color};"><strong>Estado:</strong> {status}</p>
+        <p style="color: #888888;"><strong>Fecha límite:</strong> {deadline_date}</p>
+    """
+    return await send_admin_notification(f"📊 Métricas: {creator_name} - {status}", admin_content, SENDER_CREATORS)
