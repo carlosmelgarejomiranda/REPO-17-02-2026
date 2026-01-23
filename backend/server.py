@@ -65,6 +65,12 @@ ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'avenuepy@gmail.com')
 # Create the main app
 app = FastAPI()
 
+# Health check endpoint for Kubernetes/deployment probes
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for deployment readiness probes"""
+    return {"status": "healthy"}
+
 # Security Headers Middleware
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
