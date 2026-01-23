@@ -1,7 +1,7 @@
 # E-commerce routes for Avenue Online
 # Uses MongoDB for fast local queries, syncs from ERP periodically
 
-from fastapi import APIRouter, HTTPException, Request, BackgroundTasks, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Request, BackgroundTasks, UploadFile, File, Form, Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional, Dict, Any
@@ -21,6 +21,13 @@ from dotenv import load_dotenv
 
 # Import security functions
 from security import check_rate_limit, get_rate_limit_key, RateLimitExceeded, get_client_ip
+
+# Import GridFS storage service
+from services.gridfs_storage import (
+    upload_image as gridfs_upload,
+    get_image as gridfs_get,
+    delete_image as gridfs_delete
+)
 
 # Load environment variables
 load_dotenv()
