@@ -390,9 +390,16 @@ const CreatorMetricsModal = ({ creator, onClose }) => {
               {metrics.map((metric, idx) => (
                 <div key={metric.id || idx} className="bg-white/5 border border-white/10 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-400">
-                      {new Date(metric.submitted_at || metric.created_at).toLocaleDateString('es-PY')}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">
+                        {new Date(metric.submitted_at || metric.created_at).toLocaleDateString('es-PY')}
+                      </span>
+                      {metric.is_late && (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400">
+                          Tarde
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-300">
                       {metric.platform || 'N/A'}
                     </span>
