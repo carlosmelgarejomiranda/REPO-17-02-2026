@@ -115,29 +115,35 @@ async def generate_confirmation_email(
 
 Tu tarea es generar el CONTENIDO HTML del cuerpo de un email de confirmación de participación en una campaña.
 
-REGLAS IMPORTANTES:
-1. El tono debe ser amigable, profesional y entusiasta pero no exagerado
-2. Usa "vos" en lugar de "tú" (español de Paraguay/Argentina)
-3. El email debe ser conciso pero informativo
-4. Incluí SIEMPRE la fecha límite para subir contenido
-5. Mencioná que después de subir el URL tienen 7 días para subir screenshots de métricas
-6. Si es DELIVERY: mencioná que en los próximos 3 días un comercial de Avenue se pondrá en contacto para coordinar el envío
-7. Si es RETIRO: incluí la dirección, horario y link de Google Maps si está disponible
-8. Si hay contacto de la marca, incluilo
-9. NO incluyas el asunto del email, solo el contenido HTML del body
-10. Usá estilos inline para el HTML
-11. El fondo del email es oscuro (#0a0a0a), usá colores claros para el texto
-12. El color dorado de la marca es #d4a968
-13. El botón principal debe ser verde (#22c55e) con texto negro
+REGLAS DE DISEÑO VISUAL:
+1. Usá colores NEUTROS que funcionen en modo claro Y oscuro:
+   - Fondo de secciones: #f0f0f0 o #e8e8e8
+   - Texto principal: #333333
+   - Texto secundario: #666666
+   - Color de marca Avenue (dorado): #d4a968
+   - Color de éxito/confirmado: #16a34a (verde)
+   - Bordes: #d0d0d0
+2. NO uses fondos muy oscuros (#000, #111) ni muy claros (#fff) en secciones
+3. El ancho del contenido ya está controlado por el template (max 650px)
+4. Usa padding generoso (20-25px) para que no se vea apretado
 
-ESTRUCTURA DEL EMAIL:
-1. Saludo y felicitación
-2. Información de la campaña
-3. Detalles del canje (producto/experiencia, método de entrega)
-4. Fechas importantes (con estilo destacado)
-5. Información sobre métricas
-6. Botón de acción (Ir a mi Workspace)
-7. Información de contacto si aplica"""
+REGLAS DE CONTENIDO:
+1. El tono debe ser amigable, profesional pero CONCISO - máximo 3-4 párrafos cortos
+2. Usa "vos" en lugar de "tú" (español de Paraguay/Argentina)
+3. ENFATIZÁ MUCHO las fechas límite - deben ser el elemento más visible
+4. Las fechas deben estar en una caja destacada con borde grueso de color
+5. Si es DELIVERY: mencioná brevemente que un comercial contactará en 3 días
+6. Si es RETIRO: incluí dirección y link de Google Maps
+7. NO incluyas el asunto del email, solo el contenido HTML del body
+8. Usá estilos inline para el HTML
+
+ESTRUCTURA OBLIGATORIA:
+1. Saludo breve (1 línea)
+2. Confirmación de la campaña (1-2 líneas)
+3. **CAJA DE FECHAS DESTACADA** - Esto debe ser LO MÁS VISIBLE del email
+4. Info del canje (breve)
+5. Botón de acción
+6. Nota pequeña sobre métricas"""
 
         user_prompt = f"""Generá el contenido HTML del email de confirmación con esta información:
 
