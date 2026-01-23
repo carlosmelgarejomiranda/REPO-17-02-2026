@@ -211,7 +211,7 @@ async def mark_as_published(
             send_content_submitted_to_brand,
             send_admin_notification,
             send_email,
-            ADMIN_EMAIL
+            ADMIN_EMAIL_UGC
         )
         
         emails_sent = []
@@ -253,9 +253,9 @@ async def mark_as_published(
             logger.warning(f"[PUBLISH EMAIL] ⚠️ Marca {brand_name} NO tiene email configurado")
             emails_failed.append("Marca (sin email)")
         
-        # 3. Email al ADMIN - SIEMPRE (usando ADMIN_EMAIL de .env)
+        # 3. Email al ADMIN UGC - SIEMPRE (usando ADMIN_EMAIL_UGC de .env)
         try:
-            logger.info(f"[PUBLISH EMAIL] Enviando a admin: {ADMIN_EMAIL}")
+            logger.info(f"[PUBLISH EMAIL] Enviando a admin UGC: {ADMIN_EMAIL_UGC}")
             admin_content = f"""
                 <h2 style="color: #d4a968; margin: 0 0 15px 0;">📤 Nuevo Contenido Entregado</h2>
                 <table style="color: #cccccc; width: 100%; border-collapse: collapse;">
