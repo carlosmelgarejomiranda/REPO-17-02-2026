@@ -337,9 +337,14 @@ const MetricsSubmit = () => {
       const instagramBase64List = instagramScreenshots.map(s => s.base64);
       const tiktokBase64List = tiktokScreenshots.map(s => s.base64);
 
+      // Create AbortController for timeout (5 minutes for AI processing)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000);
+
       const res = await fetch(`${API_URL}/api/ugc/metrics/submit-v2/${deliverableId}`, {
         method: 'POST',
         headers,
+        signal: controller.signal,
         body: JSON.stringify({
           instagram_screenshots: instagramBase64List,
           tiktok_screenshots: tiktokBase64List,
@@ -357,6 +362,7 @@ const MetricsSubmit = () => {
         })
       });
 
+      clearTimeout(timeoutId);
       setAiProcessing(false);
       
       if (res.ok) {
@@ -365,8 +371,24 @@ const MetricsSubmit = () => {
         setSuccess('¡Métricas enviadas exitosamente!' + (data.is_late ? ' (Nota: Envío tardío)' : ''));
         setTimeout(() => navigate('/ugc/creator/workspace'), 2000);
       } else {
-        const data = await res.json();
-        setError(data.detail || 'Error al enviar métricas');
+        // Clone response to read it safely
+        const responseClone = res.clone();
+        let errorMessage = 'Error al enviar métricas';
+        try {
+          const data = await res.json();
+          errorMessage = data.detail || errorMessage;
+        } catch {
+          try {
+            const text = await responseClone.text();
+            if (text.includes('timeout') || text.includes('Timeout')) {
+              errorMessage = 'El servidor tardó mucho en procesar. Intentá con menos imágenes.';
+            }
+          } catch {
+            // Ignore
+          }
+        }
+        setError(errorMessage);
+      }
       }
     } catch (err) {
       setAiProcessing(false);
