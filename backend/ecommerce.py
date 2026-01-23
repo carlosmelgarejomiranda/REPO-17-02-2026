@@ -1892,7 +1892,7 @@ async def export_orders_report(
 
 # ==================== ADMIN: PRODUCT IMAGE MANAGEMENT ====================
 
-# Directory for uploaded images
+# Legacy: Directory for uploaded images (backwards compatibility)
 UPLOAD_DIR = "/app/backend/uploads/products"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -1947,7 +1947,7 @@ def find_matching_product(filename: str, products: list) -> Optional[dict]:
     return None
 
 async def process_and_save_image(file_content: bytes, filename: str, product_id: str) -> str:
-    """Process image (resize if needed) and save to disk"""
+    """Process image (resize if needed) and save to GridFS for persistent storage"""
     try:
         # Open image with PIL
         img = PILImage.open(BytesIO(file_content))
@@ -1981,16 +1981,26 @@ async def process_and_save_image(file_content: bytes, filename: str, product_id:
             
             quality -= 10
         
-        # Save to disk
+        # Save to GridFS (persistent storage)
+        output.seek(0)
+        processed_content = output.read()
+        
         safe_filename = re.sub(r'[^a-zA-Z0-9_-]', '_', product_id) + '.jpg'
-        filepath = os.path.join(UPLOAD_DIR, safe_filename)
         
-        with open(filepath, 'wb') as f:
-            output.seek(0)
-            f.write(output.read())
+        file_id = await gridfs_upload(
+            file_content=processed_content,
+            filename=safe_filename,
+            content_type="image/jpeg",
+            metadata={
+                "product_id": product_id,
+                "original_filename": filename,
+                "type": "product_image"
+            },
+            bucket_name="product_images"
+        )
         
-        # Return relative URL
-        return f"/api/shop/images/{safe_filename}"
+        # Return URL using GridFS endpoint
+        return f"/api/shop/images/gridfs/{file_id}"
         
     except Exception as e:
         logger.error(f"Error processing image: {str(e)}")
