@@ -34,6 +34,23 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
     - `/app/frontend/src/components/SocialVerification.jsx` - Complete rewrite of `handleAnalyze` and `handleConfirm` functions
   - Test report: `/app/test_reports/iteration_8.json` (Frontend: 100%, Backend: 100%)
 
+- **Feature: New Multi-Image Metrics Upload System (P0)**
+  - Complete redesign of metrics submission interface
+  - New features:
+    - **Two separate upload sections**: Instagram and TikTok
+    - **Multiple images per platform**: Up to 10 screenshots each
+    - **Unified data extraction**: AI extracts BOTH metrics AND demographics from all images
+    - **Image previews**: Grid view with numbered thumbnails and delete buttons
+    - **Smart merging**: AI combines data from multiple screenshots, keeping highest confidence values
+    - **Real-time counters**: Header shows number of images uploaded per platform
+  - Files modified:
+    - `/app/frontend/src/pages/ugc/MetricsSubmit.jsx` - Complete redesign
+    - `/app/backend/routes/ugc_metrics.py` - New endpoint `POST /api/ugc/metrics/submit-v2/{deliverable_id}`
+  - New backend functions:
+    - `extract_metrics_from_base64()` - Extract all data from single base64 image
+    - `merge_extracted_data()` - Intelligently merge data from multiple extractions
+  - Data extracted: Views, Reach, Likes, Comments, Shares, Saves, Watch Time, Video Duration, Retention Rate, Gender %, Countries, Cities, Age Ranges
+
 ---
 
 ### Session: 2026-01-23
