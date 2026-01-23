@@ -131,26 +131,36 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
         })
       });
 
-      // Read response body as text first to avoid stream issues
-      let responseText;
-      try {
-        responseText = await response.text();
-      } catch (readError) {
-        console.error('Failed to read response:', readError);
-        throw new Error('Error de conexión con el servidor. Por favor, intentá de nuevo.');
-      }
-      
-      // Try to parse as JSON
+      // Handle response - try multiple approaches to read the body
       let data;
+      let responseText = '';
+      
       try {
+        // First try to clone and read as text
+        const clonedResponse = response.clone();
+        responseText = await clonedResponse.text();
         data = JSON.parse(responseText);
-      } catch (jsonError) {
-        console.error('Response text:', responseText);
-        // Check if it's an HTML error page
-        if (responseText.includes('<!DOCTYPE') || responseText.includes('<html')) {
-          throw new Error('Error de conexión con el servidor. Por favor, intentá de nuevo.');
+      } catch (cloneError) {
+        // If clone fails, try reading directly
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          // If both fail, try to get any error info
+          console.error('Failed to parse response:', cloneError, jsonError);
+          console.error('Response status:', response.status);
+          
+          // Check if it's a known error status
+          if (response.status === 400) {
+            throw new Error('No se pudieron extraer los datos del perfil. Asegúrate de que el screenshot muestre claramente el perfil con el número de seguidores visible.');
+          } else if (response.status === 401) {
+            throw new Error('Sesión expirada. Por favor, volvé a iniciar sesión.');
+          } else if (response.status === 429) {
+            throw new Error('Demasiadas solicitudes. Por favor, esperá unos segundos e intentá de nuevo.');
+          } else if (response.status >= 500) {
+            throw new Error('Error del servidor. Por favor, intentá de nuevo más tarde.');
+          }
+          throw new Error('Error al procesar la imagen. Por favor, intentá con otro screenshot.');
         }
-        throw new Error('Error al procesar la respuesta del servidor.');
       }
 
       if (!response.ok) {
