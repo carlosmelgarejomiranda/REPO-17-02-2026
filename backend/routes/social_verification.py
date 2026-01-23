@@ -53,7 +53,19 @@ async def verify_social_profile(
         )
         
         if not result["success"]:
-            raise HTTPException(status_code=400, detail=result.get("error", "Error al analizar imagen"))
+            error_msg = result.get("error", "Error al analizar imagen")
+            # Mejorar mensajes de error comunes
+            if "disturbed" in error_msg.lower() or "locked" in error_msg.lower() or "blocked" in error_msg.lower():
+                raise HTTPException(
+                    status_code=400, 
+                    detail="No se pudo procesar la imagen. Por favor, intentá con otro screenshot que muestre claramente tu perfil completo."
+                )
+            elif "rate" in error_msg.lower() or "limit" in error_msg.lower():
+                raise HTTPException(
+                    status_code=429, 
+                    detail="Demasiadas solicitudes. Por favor, esperá unos segundos e intentá de nuevo."
+                )
+            raise HTTPException(status_code=400, detail=error_msg)
         
         extracted_data = result["data"]
         
@@ -73,6 +85,12 @@ async def verify_social_profile(
     except HTTPException:
         raise
     except Exception as e:
+        error_str = str(e).lower()
+        if "disturbed" in error_str or "locked" in error_str or "blocked" in error_str:
+            raise HTTPException(
+                status_code=400, 
+                detail="No se pudo procesar la imagen. Por favor, intentá con otro screenshot más claro de tu perfil."
+            )
         raise HTTPException(status_code=500, detail=str(e))
 
 
