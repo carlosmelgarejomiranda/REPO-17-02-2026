@@ -107,6 +107,14 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
     canje_type: 'product',
     canje_description: '',
     canje_value: 0,
+    // New canje fields
+    delivery_method: 'pickup',  // delivery, pickup, not_applicable
+    pickup_address: '',
+    pickup_maps_url: '',
+    pickup_hours: '',
+    brand_contact_name: '',
+    brand_contact_phone: '',
+    // End new fields
     applications_deadline: '',
     publish_start: '',
     publish_end: '',
