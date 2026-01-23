@@ -109,20 +109,47 @@ Si algún dato no es visible o no puedes determinarlo con certeza, usa null."""
                 file_contents=[image_content]
             )
             
-            # Enviar y obtener respuesta
-            response = await chat.send_message(user_message)
+            # Enviar y obtener respuesta con retry
+            max_retries = 2
+            last_error = None
             
-            # Parsear la respuesta JSON
-            result = self._parse_ai_response(response)
-            
-            # Agregar metadata
-            result["verified_at"] = datetime.now(timezone.utc).isoformat()
-            result["verification_method"] = "ai_screenshot_analysis"
-            result["ai_model"] = "gpt-4o"
+            for attempt in range(max_retries):
+                try:
+                    response = await chat.send_message(user_message)
+                    
+                    # Verificar si la respuesta contiene errores conocidos
+                    if response and ("disturbed" in response.lower() or "locked" in response.lower()):
+                        if attempt < max_retries - 1:
+                            continue  # Reintentar
+                        else:
+                            return {
+                                "success": False,
+                                "error": "No se pudo procesar la imagen. Intentá con un screenshot más claro.",
+                                "data": None
+                            }
+                    
+                    # Parsear la respuesta JSON
+                    result = self._parse_ai_response(response)
+                    
+                    # Agregar metadata
+                    result["verified_at"] = datetime.now(timezone.utc).isoformat()
+                    result["verification_method"] = "ai_screenshot_analysis"
+                    result["ai_model"] = "gpt-4o"
+                    
+                    return {
+                        "success": True,
+                        "data": result
+                    }
+                    
+                except Exception as e:
+                    last_error = e
+                    if attempt < max_retries - 1:
+                        continue
             
             return {
-                "success": True,
-                "data": result
+                "success": False,
+                "error": str(last_error) if last_error else "Error desconocido",
+                "data": None
             }
             
         except Exception as e:
