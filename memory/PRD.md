@@ -217,18 +217,21 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## Pending Issues
 
+### P0 - Critical (Blocking)
+- [ ] **Image Mis-assignment Bug** - Intermittent bug where product images get assigned to wrong products (USER VERIFICATION PENDING)
+
 ### P1 - High Priority
-- [ ] **Verificar Dark Mode UI para Forms** - Fix aplicado, pendiente confirmación visual del usuario
-- [ ] **Mejorar mensaje error Transfer Campaign** - Cambiar mensaje genérico a "El email no corresponde a una marca registrada"
-- [ ] **Notificaciones Email Faltantes:**
-  - Brands: Campaña aprobada, slots recargados, plan comprado
-  - Creators: Notificación al subir de nivel
-  - E-commerce: Ciclo completo de órdenes
-- [ ] **"Prueba de Fuego" UGC** - Test completo del flujo E2E (USER VERIFICATION PENDING)
+- [ ] **Export Creator List** - Add CSV/Excel export button to Admin Creators panel
+- [ ] **Missing Email Notifications** - Several triggers pending:
+  - Brands: Campaign approved, slots recharged, plan purchased
+  - Creators: Level-up notification
+  - E-commerce: Full order cycle
+- [ ] **Dark Mode UI for Forms** - Fix applied, pending visual confirmation (USER VERIFICATION PENDING)
 
 ### P2 - Medium Priority  
-- [ ] **Image Upload in Create Campaign** - Integrar subida de imagen cover
-- [ ] **Creator Reports** - Métricas y reportes para creadores
+- [ ] **Mobile-First UGC Panels** - Apply mobile-first design to other UGC admin/creator pages
+- [ ] **Image Upload in Create Campaign** - Integrate cover image upload
+- [ ] **Creator Reports** - Metrics and reports for creators
 
 ### P3 - Low Priority / Backlog
 - [ ] **Progressive Creator Onboarding** - Unificar con login modal
