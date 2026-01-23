@@ -47,17 +47,39 @@ export const UGCNavbar = ({ type = 'creator' }) => {
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center flex-shrink-0">
             <img 
               src="https://customer-assets.emergentagent.com/job_avenue-shop/artifacts/zwgo3cp7_Design%20sem%20nome%20%283%29%20%281%29.png"
               alt="Avenue"
-              className="h-[80px] md:h-[120px] w-auto"
+              className="h-[60px] md:h-[120px] w-auto"
               style={{ 
                 filter: 'brightness(1.2)',
                 objectFit: 'contain'
               }}
             />
           </Link>
+
+          {/* Mobile Navigation - Visible buttons */}
+          <div className="flex md:hidden items-center gap-1 overflow-x-auto scrollbar-hide">
+            {links.slice(0, 3).map((link) => {
+              const Icon = link.icon;
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={`flex items-center gap-1 px-2 py-1.5 rounded-lg transition-all whitespace-nowrap ${
+                    active 
+                      ? 'bg-[#d4a968]/20 text-[#d4a968]' 
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="text-xs font-medium">{link.label.length > 10 ? link.label.substring(0, 8) + '..' : link.label}</span>
+                </Link>
+              );
+            })}
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
