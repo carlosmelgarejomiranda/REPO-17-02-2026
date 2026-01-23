@@ -211,16 +211,21 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
         }
       });
 
-      // Clone response before reading to avoid "body stream already read" error
-      const responseClone = response.clone();
+      // Read response body as text first to avoid stream issues
+      let responseText;
+      try {
+        responseText = await response.text();
+      } catch (readError) {
+        console.error('Failed to read response:', readError);
+        throw new Error('Error de conexión con el servidor. Por favor, intentá de nuevo.');
+      }
       
+      // Try to parse as JSON
       let data;
       try {
-        data = await response.json();
+        data = JSON.parse(responseText);
       } catch (jsonError) {
-        // If JSON parsing fails, try to get text
-        const text = await responseClone.text();
-        console.error('Response text:', text);
+        console.error('Response text:', responseText);
         throw new Error('Error al procesar la respuesta del servidor');
       }
 
