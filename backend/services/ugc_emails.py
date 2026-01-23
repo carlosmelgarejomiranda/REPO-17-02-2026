@@ -49,12 +49,12 @@ def get_base_template(content: str, title: str = "Avenue UGC") -> str:
                         </tr>
                         <!-- Footer -->
                         <tr>
-                            <td style="padding: 30px 40px; background-color: #0a0a0a; border-top: 1px solid #222222;">
-                                <p style="color: #666666; font-size: 12px; margin: 0;">
+                            <td style="padding: 20px 30px; background-color: #f8f8f8; border-top: 1px solid #e0e0e0;">
+                                <p style="color: #888888; font-size: 11px; margin: 0; text-align: center;">
                                     © {datetime.now().year} Avenue UGC. Todos los derechos reservados.
                                 </p>
-                                <p style="color: #666666; font-size: 12px; margin: 10px 0 0 0;">
-                                    Este es un email automático, por favor no respondas directamente.
+                                <p style="color: #aaaaaa; font-size: 10px; margin: 8px 0 0 0; text-align: center;">
+                                    Este es un email automático.
                                 </p>
                             </td>
                         </tr>
