@@ -219,63 +219,42 @@ async def send_application_confirmed(
             "Thursday", "Jueves"
         ).replace("Friday", "Viernes").replace("Saturday", "Sábado").replace("Sunday", "Domingo")
         
-        # Mensaje especial para rookies
+        # Mensaje especial para rookies sobre el retiro de canjes
         rookie_notice = ""
         if creator_level and creator_level.lower() == "rookie":
             rookie_notice = """
-            <div style="background-color: #2d2006; border: 1px solid #d4a968; border-radius: 12px; padding: 20px; margin: 20px 0;">
-                <p style="color: #d4a968; font-size: 15px; margin: 0; font-weight: 600;">
-                    🎁 Importante - Creador Rookie
-                </p>
-                <p style="color: #cccccc; font-size: 14px; margin: 10px 0 0 0; line-height: 1.6;">
-                    Vení a Avenue a crear tu contenido. Como sos Rookie, el canje se retira <strong style="color: #ffffff;">después</strong> de subir el URL y las métricas a la plataforma.
+            <div style="background-color: #1a1a0a; border: 2px solid #d4a968; border-radius: 8px; padding: 12px; margin: 15px 0;">
+                <p style="color: #d4a968; font-size: 14px; margin: 0; line-height: 1.4;">
+                    <strong>Rookie:</strong> El canje se retira después de subir contenido, URL y métricas.
                 </p>
             </div>
             """
         
         content = f"""
-            <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
-                ¡Felicitaciones {creator_name}! 🎉
-            </h1>
-            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                Tu aplicación a la campaña <strong style="color: #d4a968;">{campaign_name}</strong> 
-                de <strong>{brand_name}</strong> ha sido <span style="color: #22c55e;">CONFIRMADA</span>.
+            <p style="color: #ffffff; font-size: 20px; margin: 0 0 10px 0;">
+                ¡Hola {creator_name}!
+            </p>
+            <p style="color: #cccccc; font-size: 15px; line-height: 1.4; margin: 0 0 15px 0;">
+                Confirmado para <strong style="color: #d4a968;">{campaign_name}</strong> de {brand_name}.
+            </p>
+            
+            <div style="background: #22c55e; border-radius: 8px; padding: 15px; margin: 0 0 15px 0; text-align: center;">
+                <p style="color: #ffffff; font-size: 12px; margin: 0 0 5px 0;">FECHA LÍMITE</p>
+                <p style="color: #ffffff; font-size: 20px; font-weight: 700; margin: 0;">{deadline_formatted}</p>
+            </div>
+            
+            <p style="color: #888888; font-size: 13px; margin: 0 0 10px 0;">
+                Tenés 14 días desde hoy para subir métricas.
             </p>
             
             {rookie_notice}
             
-            <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
-                <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📅 Fechas importantes:</h3>
-                <p style="color: #ffffff; font-size: 15px; margin: 0 0 10px 0;">
-                    <strong>Fecha límite para subir contenido:</strong> {deadline_formatted}
-                </p>
-                <p style="color: #888888; font-size: 14px; margin: 0; line-height: 1.5;">
-                    Tenés <strong style="color: #22c55e;">7 días</strong> desde hoy para crear y subir tu contenido a tus redes sociales.
-                </p>
-            </div>
-            
-            <div style="background-color: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 20px; margin: 20px 0;">
-                <h3 style="color: #d4a968; margin: 0 0 15px 0; font-size: 16px;">📊 Sobre las métricas:</h3>
-                <p style="color: #888888; font-size: 14px; margin: 0; line-height: 1.5;">
-                    Una vez que subas el URL de tu contenido a la plataforma, tendrás <strong style="color: #22c55e;">14 días</strong> 
-                    desde tu confirmación para subir los screenshots de las métricas de tu publicación.
-                </p>
-            </div>
-            
-            <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 20px 0;">
-                Ingresá a tu workspace para ver los detalles completos de la campaña.
-            </p>
-            
-            <div style="margin: 30px 0;">
+            <div style="text-align: center; margin: 20px 0 10px 0;">
                 <a href="https://avenue.com.py/login?redirect=/ugc/creator/workspace" 
-                   style="display: inline-block; background-color: #22c55e; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                   style="display: inline-block; background-color: #d4a968; color: #000000; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
                     Ir a mi Workspace
                 </a>
             </div>
-            
-            <p style="color: #666666; font-size: 12px; margin-top: 20px;">
-                Si ya tenés sesión iniciada, el botón te llevará directamente a tu workspace.
-            </p>
         """
     
     return await send_email(to_email, subject, content, SENDER_CREATORS)
