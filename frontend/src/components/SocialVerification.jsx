@@ -221,22 +221,32 @@ const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
         }
       });
 
-      // Read response body as text first to avoid stream issues
-      let responseText;
-      try {
-        responseText = await response.text();
-      } catch (readError) {
-        console.error('Failed to read response:', readError);
-        throw new Error('Error de conexión con el servidor. Por favor, intentá de nuevo.');
-      }
-      
-      // Try to parse as JSON
+      // Handle response - try multiple approaches to read the body
       let data;
+      
       try {
+        // First try to clone and read as text
+        const clonedResponse = response.clone();
+        const responseText = await clonedResponse.text();
         data = JSON.parse(responseText);
-      } catch (jsonError) {
-        console.error('Response text:', responseText);
-        throw new Error('Error al procesar la respuesta del servidor');
+      } catch (cloneError) {
+        // If clone fails, try reading directly
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          // If both fail, check status code
+          console.error('Failed to parse response:', cloneError, jsonError);
+          console.error('Response status:', response.status);
+          
+          if (response.status === 401) {
+            throw new Error('Sesión expirada. Por favor, volvé a iniciar sesión.');
+          } else if (response.status === 404) {
+            throw new Error('Perfil de creador no encontrado. Primero debes completar el registro como creador.');
+          } else if (response.status >= 500) {
+            throw new Error('Error del servidor. Por favor, intentá de nuevo más tarde.');
+          }
+          throw new Error('Error al guardar la verificación. Por favor, intentá de nuevo.');
+        }
       }
 
       if (!response.ok) {
