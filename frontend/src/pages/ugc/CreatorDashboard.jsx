@@ -130,7 +130,14 @@ const CreatorDashboard = () => {
     );
   }
 
-  const stats = profile?.stats || {};
+  // Merge stats from profile.stats and root level fields
+  const stats = {
+    ...profile?.stats,
+    completed_campaigns: profile?.completed_campaigns || profile?.stats?.completed_campaigns || 0,
+    delivery_on_time_rate: profile?.delivery_on_time_rate || profile?.stats?.delivery_on_time_rate || 100,
+    total_reach: profile?.stats?.total_reach || 0,
+    total_views: profile?.stats?.total_views || 0
+  };
   const socialNetworks = profile?.social_networks || [];
 
   return (
