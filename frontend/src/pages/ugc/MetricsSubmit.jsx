@@ -308,6 +308,11 @@ const MetricsSubmit = () => {
   const [aiProcessing, setAiProcessing] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  
+  // Processing and success screens
+  const [showProcessing, setShowProcessing] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [extractedMetrics, setExtractedMetrics] = useState(null);
 
   // Screenshots state - separate for each platform
   const [instagramScreenshots, setInstagramScreenshots] = useState([]);
