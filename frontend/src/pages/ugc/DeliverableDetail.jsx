@@ -542,7 +542,10 @@ const DeliverableDetail = () => {
 
             {/* TikTok URL - Show if no TikTok URL exists */}
             {!hasTiktok && (
-              <div className="p-4 bg-gradient-to-br from-cyan-500/10 to-black/30 border border-cyan-500/20 rounded-xl">
+              <div className={`p-4 bg-gradient-to-br from-cyan-500/10 to-black/30 border rounded-xl transition-colors ${
+                tiktokValidation.error ? 'border-red-500/50' : 
+                tiktokValidation.valid ? 'border-green-500/50' : 'border-cyan-500/20'
+              }`}>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg bg-black border border-white/20 flex items-center justify-center">
                     <Music2 className="w-4 h-4 text-cyan-400" />
@@ -551,8 +554,11 @@ const DeliverableDetail = () => {
                     <p className="font-medium text-white text-sm">TikTok</p>
                     <p className="text-xs text-gray-400">Video</p>
                   </div>
-                  {tiktokUrl && (
+                  {tiktokValidation.valid && (
                     <CheckCircle className="w-5 h-5 text-green-400 ml-auto" />
+                  )}
+                  {tiktokValidation.error && (
+                    <XCircle className="w-5 h-5 text-red-400 ml-auto" />
                   )}
                 </div>
                 <input
@@ -560,8 +566,20 @@ const DeliverableDetail = () => {
                   value={tiktokUrl}
                   onChange={(e) => setTiktokUrl(e.target.value)}
                   placeholder="https://tiktok.com/@usuario/video/..."
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
+                  className={`w-full px-4 py-3 bg-black/50 border rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none transition-colors ${
+                    tiktokValidation.error ? 'border-red-500/50 focus:border-red-500' :
+                    tiktokValidation.valid ? 'border-green-500/50 focus:border-green-500' :
+                    'border-white/10 focus:border-cyan-500'
+                  }`}
                 />
+                
+                {/* Validation feedback */}
+                {tiktokValidation.error && (
+                  <UrlErrorMessage error={tiktokValidation.error} platform="TikTok" />
+                )}
+                {tiktokValidation.valid && (
+                  <UrlValidIndicator platform="TikTok" />
+                )}
               </div>
             )}
 
