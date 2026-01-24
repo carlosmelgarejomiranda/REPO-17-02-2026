@@ -85,6 +85,29 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
   - Files modified:
     - `/app/frontend/src/pages/ugc/BrandDeliverables.jsx` - Complete rewrite
 
+- **Feature: Platform-Specific Metrics & URL Submission (P1)**
+  - User request: Only show upload fields for platforms that have URLs submitted
+  - Changes implemented:
+    - **MetricsSubmit.jsx**:
+      - Only shows Instagram screenshot upload if deliverable has `instagram_url`
+      - Only shows TikTok screenshot upload if deliverable has `tiktok_url`
+      - Shows disabled state with message "No subiste URL de X para esta entrega" if no URL
+      - Header only shows counter icons for platforms with URLs
+      - Validation only requires screenshots for platforms that have URLs
+    - **DeliverableDetail.jsx**:
+      - Allows adding URLs independently (submit Instagram today, TikTok tomorrow)
+      - Shows "URL registrada" for already submitted platforms
+      - Shows input field only for platforms without URL
+      - Can access the form even after publishing to add the other platform's URL
+      - "Agregar URL" button when adding second platform
+  - Test scenarios covered:
+    - Instagram-only: Only shows Instagram upload field
+    - TikTok-only: Only shows TikTok upload field, Instagram disabled
+    - Both URLs: Both fields available
+  - Files modified:
+    - `/app/frontend/src/pages/ugc/MetricsSubmit.jsx`
+    - `/app/frontend/src/pages/ugc/DeliverableDetail.jsx`
+
 ### Session: 2026-01-24
 
 #### ✅ Completed
