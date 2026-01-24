@@ -108,6 +108,31 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
     - `/app/frontend/src/pages/ugc/MetricsSubmit.jsx`
     - `/app/frontend/src/pages/ugc/DeliverableDetail.jsx`
 
+- **Feature: Smart URL Validation System with Friendly Error Messages (P1)**
+  - User request: Prevent users from submitting wrong URLs with helpful guidance
+  - **Validations implemented:**
+    - **Wrong platform detection**: TikTok URL in Instagram field or vice versa
+    - **Profile vs Post detection**: Warns when user submits profile URL instead of post URL
+    - **Story URL detection**: Warns that Instagram Stories are temporary and can't be used
+    - **Invalid format detection**: Catches malformed or unrecognized URLs
+    - **Domain validation**: Ensures URLs are from instagram.com or tiktok.com only
+  - **Valid URL patterns:**
+    - Instagram: `/p/`, `/reel/`, `/tv/` paths
+    - TikTok: `/@user/video/` path or short links (vm.tiktok.com)
+  - **User-friendly error messages include:**
+    - Clear title explaining the error
+    - Detailed message about what went wrong
+    - Step-by-step instructions on how to fix it
+    - Example of correct URL format
+  - **Visual feedback:**
+    - Real-time validation as user types
+    - Green border + checkmark when URL is valid
+    - Red border + X icon when URL has error
+    - Error panel with helpful instructions
+    - Submit button disabled until errors are fixed
+  - Files modified:
+    - `/app/frontend/src/pages/ugc/DeliverableDetail.jsx` - Complete validation system
+
 ### Session: 2026-01-24
 
 #### ✅ Completed
