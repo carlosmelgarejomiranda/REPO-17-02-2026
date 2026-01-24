@@ -508,10 +508,29 @@ const MetricsSubmit = () => {
   };
 
   const handleSubmit = async () => {
-    const hasInstagram = instagramScreenshots.length > 0;
-    const hasTiktok = tiktokScreenshots.length > 0;
+    const hasInstagramUrl = !!deliverable?.instagram_url;
+    const hasTiktokUrl = !!deliverable?.tiktok_url;
+    const hasInstagramScreenshots = instagramScreenshots.length > 0;
+    const hasTiktokScreenshots = tiktokScreenshots.length > 0;
 
-    if (!hasInstagram && !hasTiktok) {
+    // Validate: must have screenshots for at least one platform that has URL
+    if (hasInstagramUrl && !hasInstagramScreenshots && hasTiktokUrl && !hasTiktokScreenshots) {
+      setError('Sube al menos un screenshot de Instagram o TikTok');
+      return;
+    }
+    
+    if (hasInstagramUrl && !hasInstagramScreenshots && !hasTiktokUrl) {
+      setError('Sube al menos un screenshot de Instagram');
+      return;
+    }
+    
+    if (hasTiktokUrl && !hasTiktokScreenshots && !hasInstagramUrl) {
+      setError('Sube al menos un screenshot de TikTok');
+      return;
+    }
+
+    // If both URLs exist, need at least one screenshot from either platform
+    if (hasInstagramUrl && hasTiktokUrl && !hasInstagramScreenshots && !hasTiktokScreenshots) {
       setError('Sube al menos un screenshot de Instagram o TikTok');
       return;
     }
