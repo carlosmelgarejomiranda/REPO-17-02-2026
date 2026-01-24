@@ -60,15 +60,18 @@ const CreatorWorkspace = () => {
   };
 
   const filteredDeliverables = deliverables.filter(d => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'pending') return ['awaiting_publish', 'changes_requested'].includes(d.status);
-    if (activeFilter === 'review') return ['submitted', 'resubmitted', 'under_review'].includes(d.status);
-    if (activeFilter === 'completed') return ['approved', 'completed'].includes(d.status);
+    if (activeFilter === 'pending') return ['awaiting_publish', 'changes_requested', 'published', 'submitted', 'resubmitted', 'metrics_pending'].includes(d.status);
+    if (activeFilter === 'completed') return ['approved', 'completed', 'metrics_submitted'].includes(d.status);
+    if (activeFilter === 'rejected') return d.status === 'rejected' || d.status === 'cancelled_by_admin';
+    if (activeFilter === 'cancelled') return d.status === 'withdrawn';
     return true;
   });
 
-  const pendingCount = deliverables.filter(d => ['awaiting_publish', 'changes_requested'].includes(d.status)).length;
-  const reviewCount = deliverables.filter(d => ['submitted', 'resubmitted', 'under_review'].includes(d.status)).length;
+  // Counts for stats cards
+  const pendingCount = deliverables.filter(d => ['awaiting_publish', 'changes_requested', 'published', 'submitted', 'resubmitted', 'metrics_pending'].includes(d.status)).length;
+  const completedCount = deliverables.filter(d => ['approved', 'completed', 'metrics_submitted'].includes(d.status)).length;
+  const rejectedCount = deliverables.filter(d => d.status === 'rejected' || d.status === 'cancelled_by_admin').length;
+  const cancelledCount = deliverables.filter(d => d.status === 'withdrawn').length;
 
   return (
     <div className="min-h-screen bg-black text-white pb-20 md:pb-0">
