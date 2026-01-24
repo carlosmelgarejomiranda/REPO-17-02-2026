@@ -54,18 +54,22 @@ const DeliverableDetail = () => {
   };
 
   const handleSubmitUrls = async () => {
-    // Validate at least one URL
-    if (!instagramUrl.trim() && !tiktokUrl.trim()) {
+    // Use existing URLs if available, or new input
+    const finalInstagramUrl = deliverable.instagram_url || instagramUrl.trim();
+    const finalTiktokUrl = deliverable.tiktok_url || tiktokUrl.trim();
+    
+    // Validate at least one URL (new or existing)
+    if (!finalInstagramUrl && !finalTiktokUrl) {
       setError('Debes ingresar al menos una URL (Instagram o TikTok)');
       return;
     }
 
-    // Validate URL formats
-    if (instagramUrl && !instagramUrl.includes('instagram.com')) {
+    // Validate new URL formats if provided
+    if (instagramUrl.trim() && !deliverable.instagram_url && !instagramUrl.includes('instagram.com')) {
       setError('La URL de Instagram no parece válida');
       return;
     }
-    if (tiktokUrl && !tiktokUrl.includes('tiktok.com')) {
+    if (tiktokUrl.trim() && !deliverable.tiktok_url && !tiktokUrl.includes('tiktok.com')) {
       setError('La URL de TikTok no parece válida');
       return;
     }
@@ -75,11 +79,11 @@ const DeliverableDetail = () => {
     try {
       // Build post_url combining both
       const urls = [];
-      if (instagramUrl.trim()) urls.push(instagramUrl.trim());
-      if (tiktokUrl.trim()) urls.push(tiktokUrl.trim());
+      if (finalInstagramUrl) urls.push(finalInstagramUrl);
+      if (finalTiktokUrl) urls.push(finalTiktokUrl);
       const combinedUrl = urls.join(' | ');
 
-      const res = await fetch(`${API_URL}/api/ugc/deliverables/${id}/publish?post_url=${encodeURIComponent(combinedUrl)}&instagram_url=${encodeURIComponent(instagramUrl)}&tiktok_url=${encodeURIComponent(tiktokUrl)}`, {
+      const res = await fetch(`${API_URL}/api/ugc/deliverables/${id}/publish?post_url=${encodeURIComponent(combinedUrl)}&instagram_url=${encodeURIComponent(finalInstagramUrl || '')}&tiktok_url=${encodeURIComponent(finalTiktokUrl || '')}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -88,7 +92,7 @@ const DeliverableDetail = () => {
       });
 
       if (res.ok) {
-        setSuccess('¡Publicación registrada con éxito!');
+        setSuccess('¡URL registrada con éxito!');
         fetchDeliverable();
       } else {
         const data = await res.json();
