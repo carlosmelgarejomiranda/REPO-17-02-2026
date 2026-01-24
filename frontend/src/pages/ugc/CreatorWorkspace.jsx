@@ -94,15 +94,13 @@ const CreatorWorkspace = () => {
             <p className="text-xl sm:text-3xl font-semibold text-yellow-400">{pendingCount}</p>
             <p className="text-[10px] sm:text-sm text-yellow-400/70">Pendientes</p>
           </div>
-          <div className="p-2.5 sm:p-4 bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 rounded-lg sm:rounded-xl">
-            <p className="text-xl sm:text-3xl font-semibold text-purple-400">{reviewCount}</p>
-            <p className="text-[10px] sm:text-sm text-purple-400/70">En Revisión</p>
-          </div>
           <div className="p-2.5 sm:p-4 bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-lg sm:rounded-xl">
-            <p className="text-xl sm:text-3xl font-semibold text-green-400">
-              {deliverables.filter(d => ['approved', 'completed'].includes(d.status)).length}
-            </p>
+            <p className="text-xl sm:text-3xl font-semibold text-green-400">{completedCount}</p>
             <p className="text-[10px] sm:text-sm text-green-400/70">Completados</p>
+          </div>
+          <div className="p-2.5 sm:p-4 bg-gradient-to-br from-red-500/10 to-red-500/5 border border-red-500/20 rounded-lg sm:rounded-xl">
+            <p className="text-xl sm:text-3xl font-semibold text-red-400">{rejectedCount}</p>
+            <p className="text-[10px] sm:text-sm text-red-400/70">Rechazados</p>
           </div>
           <Link 
             to="/ugc/creator/feedback"
