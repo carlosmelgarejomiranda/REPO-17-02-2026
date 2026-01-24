@@ -211,54 +211,104 @@ const DeliverableDetail = () => {
         {/* URL Submission Form */}
         {canSubmit && (
           <div className="space-y-4">
-            {/* Instagram URL */}
-            <div className="p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center">
-                  <Instagram className="w-4 h-4 text-white" />
+            {/* Instagram URL - Show if no Instagram URL exists */}
+            {!hasInstagram && (
+              <div className="p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center">
+                    <Instagram className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-white text-sm">Instagram</p>
+                    <p className="text-xs text-gray-400">Reels o Post</p>
+                  </div>
+                  {instagramUrl && (
+                    <CheckCircle className="w-5 h-5 text-green-400 ml-auto" />
+                  )}
                 </div>
-                <div>
-                  <p className="font-medium text-white text-sm">Instagram</p>
-                  <p className="text-xs text-gray-400">Reels o Post</p>
-                </div>
-                {instagramUrl && (
-                  <CheckCircle className="w-5 h-5 text-green-400 ml-auto" />
-                )}
+                <input
+                  type="url"
+                  value={instagramUrl}
+                  onChange={(e) => setInstagramUrl(e.target.value)}
+                  placeholder="https://instagram.com/reel/..."
+                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:border-pink-500 focus:outline-none"
+                />
               </div>
-              <input
-                type="url"
-                value={instagramUrl}
-                onChange={(e) => setInstagramUrl(e.target.value)}
-                placeholder="https://instagram.com/reel/..."
-                className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:border-pink-500 focus:outline-none"
-              />
-            </div>
+            )}
 
-            {/* TikTok URL */}
-            <div className="p-4 bg-gradient-to-br from-cyan-500/10 to-black/30 border border-cyan-500/20 rounded-xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-black border border-white/20 flex items-center justify-center">
-                  <Music2 className="w-4 h-4 text-cyan-400" />
+            {/* Instagram Already Submitted */}
+            {hasInstagram && (
+              <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center">
+                    <Instagram className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-white text-sm">Instagram</p>
+                    <p className="text-xs text-green-400">✓ URL registrada</p>
+                  </div>
+                  <a
+                    href={deliverable.instagram_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
                 </div>
-                <div>
-                  <p className="font-medium text-white text-sm">TikTok</p>
-                  <p className="text-xs text-gray-400">Video</p>
-                </div>
-                {tiktokUrl && (
-                  <CheckCircle className="w-5 h-5 text-green-400 ml-auto" />
-                )}
               </div>
-              <input
-                type="url"
-                value={tiktokUrl}
-                onChange={(e) => setTiktokUrl(e.target.value)}
-                placeholder="https://tiktok.com/@usuario/video/..."
-                className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
-              />
-            </div>
+            )}
+
+            {/* TikTok URL - Show if no TikTok URL exists */}
+            {!hasTiktok && (
+              <div className="p-4 bg-gradient-to-br from-cyan-500/10 to-black/30 border border-cyan-500/20 rounded-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-black border border-white/20 flex items-center justify-center">
+                    <Music2 className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-white text-sm">TikTok</p>
+                    <p className="text-xs text-gray-400">Video</p>
+                  </div>
+                  {tiktokUrl && (
+                    <CheckCircle className="w-5 h-5 text-green-400 ml-auto" />
+                  )}
+                </div>
+                <input
+                  type="url"
+                  value={tiktokUrl}
+                  onChange={(e) => setTiktokUrl(e.target.value)}
+                  placeholder="https://tiktok.com/@usuario/video/..."
+                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:border-cyan-500 focus:outline-none"
+                />
+              </div>
+            )}
+
+            {/* TikTok Already Submitted */}
+            {hasTiktok && (
+              <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-black border border-white/20 flex items-center justify-center">
+                    <Music2 className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-white text-sm">TikTok</p>
+                    <p className="text-xs text-green-400">✓ URL registrada</p>
+                  </div>
+                  <a
+                    href={deliverable.tiktok_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            )}
 
             {/* Incentive Message */}
-            {hasUrls && !hasBothUrls && (
+            {(hasUrls || hasInstagram || hasTiktok) && !(hasBothUrls || (hasInstagram && hasTiktok)) && (
               <div className="p-3 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl flex items-start gap-3">
                 <Star className="w-5 h-5 text-[#d4a968] flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-gray-300">
@@ -267,7 +317,7 @@ const DeliverableDetail = () => {
               </div>
             )}
 
-            {hasBothUrls && (
+            {(hasBothUrls || (hasInstagram && hasTiktok)) && (
               <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-400" />
                 <p className="text-sm text-green-400 font-medium">
@@ -276,25 +326,29 @@ const DeliverableDetail = () => {
               </div>
             )}
 
-            {/* Submit Button */}
-            <button
-              onClick={handleSubmitUrls}
-              disabled={submitting || !hasUrls}
-              className="w-full py-4 bg-gradient-to-r from-[#d4a968] to-[#c49958] text-black rounded-xl font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-[#d4a968]/20"
-            >
-              {submitting ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <Send className="w-5 h-5" />
-                  Registrar Publicación
-                </>
-              )}
-            </button>
+            {/* Submit Button - Only if there's a new URL to submit */}
+            {((!hasInstagram && instagramUrl) || (!hasTiktok && tiktokUrl)) && (
+              <>
+                <button
+                  onClick={handleSubmitUrls}
+                  disabled={submitting || !hasUrls}
+                  className="w-full py-4 bg-gradient-to-r from-[#d4a968] to-[#c49958] text-black rounded-xl font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-[#d4a968]/20"
+                >
+                  {submitting ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5" />
+                      {hasInstagram || hasTiktok ? 'Agregar URL' : 'Registrar Publicación'}
+                    </>
+                  )}
+                </button>
 
-            <p className="text-center text-xs text-gray-500">
-              Al menos una plataforma es requerida
-            </p>
+                <p className="text-center text-xs text-gray-500">
+                  {hasInstagram || hasTiktok ? 'Podés agregar la otra plataforma' : 'Al menos una plataforma es requerida'}
+                </p>
+              </>
+            )}
           </div>
         )}
 
