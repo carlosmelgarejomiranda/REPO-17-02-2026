@@ -64,6 +64,8 @@ import BrandCampaignReports from "./pages/ugc/BrandCampaignReports";
 import CampaignApplications from "./pages/ugc/CampaignApplications";
 import CreatorApplications from "./pages/ugc/CreatorApplications";
 import CreatorFeedback from "./pages/ugc/CreatorFeedback";
+import CreatorCampaigns from "./pages/ugc/CreatorCampaigns";
+import CreatorReports from "./pages/ugc/CreatorReports";
 import CampaignApplicationsPage from "./pages/admin/CampaignApplicationsPage";
 import LoginPage from "./pages/LoginPage";
 import MyProfile from "./pages/MyProfile";
