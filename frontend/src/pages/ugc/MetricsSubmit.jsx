@@ -720,14 +720,18 @@ const MetricsSubmit = () => {
               Mis Campañas
             </Link>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <Instagram className="w-4 h-4 text-pink-400" />
-                <span className="text-sm text-gray-400">{instagramScreenshots.length}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Music2 className="w-4 h-4 text-cyan-400" />
-                <span className="text-sm text-gray-400">{tiktokScreenshots.length}</span>
-              </div>
+              {deliverable?.instagram_url && (
+                <div className="flex items-center gap-1">
+                  <Instagram className="w-4 h-4 text-pink-400" />
+                  <span className="text-sm text-gray-400">{instagramScreenshots.length}</span>
+                </div>
+              )}
+              {deliverable?.tiktok_url && (
+                <div className="flex items-center gap-1">
+                  <Music2 className="w-4 h-4 text-cyan-400" />
+                  <span className="text-sm text-gray-400">{tiktokScreenshots.length}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
