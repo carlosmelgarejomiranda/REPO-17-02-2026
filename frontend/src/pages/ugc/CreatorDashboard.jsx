@@ -31,6 +31,12 @@ const CreatorDashboard = () => {
         fetch(`${API_URL}/api/ugc/creators/me/active-deliverables`, { headers })
       ]);
 
+      // Recalculate stats in the background (don't wait for response)
+      fetch(`${API_URL}/api/ugc/creators/me/recalculate-stats`, {
+        method: 'POST',
+        headers
+      }).catch(() => {}); // Ignore errors
+
       if (profileRes.ok) {
         const profileData = await profileRes.json();
         
