@@ -45,6 +45,23 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
   - Test report: `/app/test_reports/iteration_9.json` (Backend: 100%, Frontend: 100%)
   - Test file created: `/app/backend/tests/test_brand_campaign_reports.py` (20 tests)
 
+- **UX Improvement: Redesigned "Mis Entregas" Section (P1)**
+  - User request: Simplify deliverables view, remove confusing "En Revisión" status
+  - Changes implemented:
+    - **New filter tabs**: Pendientes → Completadas → Rechazadas → Canceladas (in order of priority)
+    - **Removed "En Revisión"**: Combined with Pendientes since it's still active work
+    - **New stats cards**: Pendientes, Completados, Rechazados, Feedback
+    - **Default filter**: "Pendientes" (most important for creators)
+    - **Improved empty states**: "No tenés entregas pendientes - ¡Genial! Estás al día"
+    - **New status categories**:
+      - Pendientes: awaiting_publish, changes_requested, published, submitted, resubmitted, metrics_pending
+      - Completadas: approved, completed, metrics_submitted
+      - Rechazadas: rejected, cancelled_by_admin
+      - Canceladas: withdrawn
+  - Files modified:
+    - `/app/frontend/src/pages/ugc/CreatorWorkspace.jsx` - Main deliverables page
+    - `/app/frontend/src/pages/ugc/CreatorCampaigns.jsx` - Unified campaigns page
+
 ### Session: 2026-01-24
 
 #### ✅ Completed
