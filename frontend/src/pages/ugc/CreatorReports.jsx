@@ -443,7 +443,7 @@ const CreatorReports = () => {
                     </div>
                     
                     {review.comment && (
-                      <p className="text-gray-400 mt-3 text-sm italic">"{review.comment}"</p>
+                      <p className="text-gray-400 mt-3 text-sm italic">&ldquo;{review.comment}&rdquo;</p>
                     )}
                     
                     <p className="text-xs text-gray-600 mt-3">
