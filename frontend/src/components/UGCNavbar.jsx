@@ -18,11 +18,9 @@ export const UGCNavbar = ({ type = 'creator' }) => {
 
   // Navigation links based on user type
   const creatorLinks = [
-    { href: '/ugc/creator/dashboard', label: 'Dashboard', shortLabel: 'Home', icon: Home },
-    { href: '/ugc/campaigns', label: 'Campañas', shortLabel: 'Campañas', icon: Briefcase },
-    { href: '/ugc/creator/workspace', label: 'Workspace', shortLabel: 'Entregas', icon: Camera },
-    { href: '/ugc/creator/applications', label: 'Mis Aplicaciones', shortLabel: 'Aplics.', icon: FileText },
-    { href: '/ugc/creator/profile', label: 'Mi Perfil', shortLabel: 'Perfil', icon: User },
+    { href: '/ugc/creator/dashboard', label: 'Home', shortLabel: 'Home', icon: Home },
+    { href: '/ugc/creator/campaigns', label: 'Campañas', shortLabel: 'Campañas', icon: Briefcase },
+    { href: '/ugc/creator/profile', label: 'Perfil', shortLabel: 'Perfil', icon: User },
   ];
 
   const brandLinks = [
