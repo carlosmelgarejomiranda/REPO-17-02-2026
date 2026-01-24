@@ -476,7 +476,10 @@ const DeliverableDetail = () => {
           <div className="space-y-4">
             {/* Instagram URL - Show if no Instagram URL exists */}
             {!hasInstagram && (
-              <div className="p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
+              <div className={`p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border rounded-xl transition-colors ${
+                instagramValidation.error ? 'border-red-500/50' : 
+                instagramValidation.valid ? 'border-green-500/50' : 'border-purple-500/20'
+              }`}>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center">
                     <Instagram className="w-4 h-4 text-white" />
@@ -485,8 +488,11 @@ const DeliverableDetail = () => {
                     <p className="font-medium text-white text-sm">Instagram</p>
                     <p className="text-xs text-gray-400">Reels o Post</p>
                   </div>
-                  {instagramUrl && (
+                  {instagramValidation.valid && (
                     <CheckCircle className="w-5 h-5 text-green-400 ml-auto" />
+                  )}
+                  {instagramValidation.error && (
+                    <XCircle className="w-5 h-5 text-red-400 ml-auto" />
                   )}
                 </div>
                 <input
@@ -494,8 +500,20 @@ const DeliverableDetail = () => {
                   value={instagramUrl}
                   onChange={(e) => setInstagramUrl(e.target.value)}
                   placeholder="https://instagram.com/reel/..."
-                  className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:border-pink-500 focus:outline-none"
+                  className={`w-full px-4 py-3 bg-black/50 border rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none transition-colors ${
+                    instagramValidation.error ? 'border-red-500/50 focus:border-red-500' :
+                    instagramValidation.valid ? 'border-green-500/50 focus:border-green-500' :
+                    'border-white/10 focus:border-pink-500'
+                  }`}
                 />
+                
+                {/* Validation feedback */}
+                {instagramValidation.error && (
+                  <UrlErrorMessage error={instagramValidation.error} platform="Instagram" />
+                )}
+                {instagramValidation.valid && (
+                  <UrlValidIndicator platform="Instagram" />
+                )}
               </div>
             )}
 
