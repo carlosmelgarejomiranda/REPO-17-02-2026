@@ -630,7 +630,9 @@ const DeliverableDetail = () => {
               <>
                 <button
                   onClick={handleSubmitUrls}
-                  disabled={submitting || !hasUrls}
+                  disabled={submitting || !hasUrls || 
+                    (instagramUrl && !hasInstagram && instagramValidation.error) ||
+                    (tiktokUrl && !hasTiktok && tiktokValidation.error)}
                   className="w-full py-4 bg-gradient-to-r from-[#d4a968] to-[#c49958] text-black rounded-xl font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-[#d4a968]/20"
                 >
                   {submitting ? (
@@ -644,7 +646,11 @@ const DeliverableDetail = () => {
                 </button>
 
                 <p className="text-center text-xs text-gray-500">
-                  {hasInstagram || hasTiktok ? 'Podés agregar la otra plataforma' : 'Al menos una plataforma es requerida'}
+                  {(instagramValidation.error || tiktokValidation.error) 
+                    ? 'Corregí los errores para continuar' 
+                    : hasInstagram || hasTiktok 
+                    ? 'Podés agregar la otra plataforma' 
+                    : 'Al menos una plataforma es requerida'}
                 </p>
               </>
             )}
