@@ -783,35 +783,76 @@ const MetricsSubmit = () => {
 
         {/* Screenshots Upload Section */}
         <div className="space-y-6 mb-8">
-          {/* Instagram Upload */}
-          <ScreenshotUploadCard
-            platform="Instagram"
-            icon={Instagram}
-            iconColor="text-pink-400"
-            bgColor="bg-pink-500/20"
-            borderColor="border-pink-500/30"
-            screenshots={instagramScreenshots}
-            previews={instagramPreviews}
-            onFilesSelect={handleInstagramFiles}
-            onRemove={removeInstagramScreenshot}
-            inputRef={instagramInputRef}
-            uploading={uploadingInstagram}
-          />
+          {/* Instagram Upload - Only show if has Instagram URL */}
+          {deliverable?.instagram_url ? (
+            <ScreenshotUploadCard
+              platform="Instagram"
+              icon={Instagram}
+              iconColor="text-pink-400"
+              bgColor="bg-pink-500/20"
+              borderColor="border-pink-500/30"
+              screenshots={instagramScreenshots}
+              previews={instagramPreviews}
+              onFilesSelect={handleInstagramFiles}
+              onRemove={removeInstagramScreenshot}
+              inputRef={instagramInputRef}
+              uploading={uploadingInstagram}
+            />
+          ) : (
+            <div className="p-4 bg-white/5 border border-white/10 rounded-xl opacity-60">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-pink-500/10 flex items-center justify-center">
+                  <Instagram className="w-5 h-5 text-pink-400/50" />
+                </div>
+                <div>
+                  <p className="text-gray-400">Instagram no disponible</p>
+                  <p className="text-xs text-gray-500">No subiste URL de Instagram para esta entrega</p>
+                </div>
+              </div>
+            </div>
+          )}
 
-          {/* TikTok Upload */}
-          <ScreenshotUploadCard
-            platform="TikTok"
-            icon={Music2}
-            iconColor="text-cyan-400"
-            bgColor="bg-cyan-500/20"
-            borderColor="border-cyan-500/30"
-            screenshots={tiktokScreenshots}
-            previews={tiktokPreviews}
-            onFilesSelect={handleTiktokFiles}
-            onRemove={removeTiktokScreenshot}
-            inputRef={tiktokInputRef}
-            uploading={uploadingTiktok}
-          />
+          {/* TikTok Upload - Only show if has TikTok URL */}
+          {deliverable?.tiktok_url ? (
+            <ScreenshotUploadCard
+              platform="TikTok"
+              icon={Music2}
+              iconColor="text-cyan-400"
+              bgColor="bg-cyan-500/20"
+              borderColor="border-cyan-500/30"
+              screenshots={tiktokScreenshots}
+              previews={tiktokPreviews}
+              onFilesSelect={handleTiktokFiles}
+              onRemove={removeTiktokScreenshot}
+              inputRef={tiktokInputRef}
+              uploading={uploadingTiktok}
+            />
+          ) : (
+            <div className="p-4 bg-white/5 border border-white/10 rounded-xl opacity-60">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                  <Music2 className="w-5 h-5 text-cyan-400/50" />
+                </div>
+                <div>
+                  <p className="text-gray-400">TikTok no disponible</p>
+                  <p className="text-xs text-gray-500">No subiste URL de TikTok para esta entrega</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* No URLs message */}
+          {!deliverable?.instagram_url && !deliverable?.tiktok_url && (
+            <div className="p-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-6 h-6 text-yellow-400" />
+                <div>
+                  <p className="text-yellow-400 font-medium">No hay URLs de publicación</p>
+                  <p className="text-sm text-gray-400">Primero debes subir el URL de tu publicación de Instagram y/o TikTok</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Manual Input Toggle */}
