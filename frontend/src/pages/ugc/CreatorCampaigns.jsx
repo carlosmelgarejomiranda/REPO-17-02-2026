@@ -129,12 +129,13 @@ const CreatorCampaigns = () => {
     const configs = {
       awaiting_publish: { color: 'bg-yellow-500/20 text-yellow-400', label: 'Por Publicar', icon: Upload },
       published: { color: 'bg-blue-500/20 text-blue-400', label: 'Publicado', icon: CheckCircle },
-      submitted: { color: 'bg-purple-500/20 text-purple-400', label: 'Enviado', icon: Eye },
-      resubmitted: { color: 'bg-purple-500/20 text-purple-400', label: 'Reenviado', icon: Eye },
-      under_review: { color: 'bg-purple-500/20 text-purple-400', label: 'En Revisión', icon: Eye },
+      submitted: { color: 'bg-blue-500/20 text-blue-400', label: 'Enviado', icon: CheckCircle },
+      resubmitted: { color: 'bg-blue-500/20 text-blue-400', label: 'Reenviado', icon: CheckCircle },
       changes_requested: { color: 'bg-orange-500/20 text-orange-400', label: 'Cambios Solicitados', icon: AlertCircle },
       approved: { color: 'bg-green-500/20 text-green-400', label: 'Aprobado', icon: CheckCircle },
       rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado', icon: AlertCircle },
+      cancelled_by_admin: { color: 'bg-red-500/20 text-red-400', label: 'Cancelado por Admin', icon: AlertCircle },
+      withdrawn: { color: 'bg-gray-500/20 text-gray-400', label: 'Cancelado', icon: Clock },
       metrics_pending: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas Pendientes', icon: Clock },
       metrics_submitted: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas Enviadas', icon: CheckCircle },
       completed: { color: 'bg-green-500/20 text-green-400', label: 'Completado', icon: CheckCircle }
@@ -143,12 +144,12 @@ const CreatorCampaigns = () => {
   };
 
   const canUploadMetrics = (status) => {
-    return ['published', 'submitted', 'resubmitted', 'under_review', 'approved', 'metrics_pending'].includes(status);
+    return ['published', 'submitted', 'resubmitted', 'approved', 'metrics_pending'].includes(status);
   };
 
   // Calculate counts for tabs
   const pendingApplications = applications.filter(a => a.status === 'pending').length;
-  const activeDeliverables = deliverables.filter(d => !['completed', 'rejected'].includes(d.status)).length;
+  const activeDeliverables = deliverables.filter(d => !['completed', 'rejected', 'withdrawn', 'cancelled_by_admin'].includes(d.status)).length;
 
   // Filter data based on search and status
   const filteredCampaigns = campaigns.filter(c => 
@@ -164,8 +165,12 @@ const CreatorCampaigns = () => {
 
   const filteredDeliverables = deliverables.filter(d => {
     const matchesSearch = d.campaign_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || d.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    if (statusFilter === 'all') return matchesSearch;
+    if (statusFilter === 'pending') return matchesSearch && ['awaiting_publish', 'changes_requested', 'published', 'submitted', 'resubmitted', 'metrics_pending'].includes(d.status);
+    if (statusFilter === 'completed') return matchesSearch && ['approved', 'completed', 'metrics_submitted'].includes(d.status);
+    if (statusFilter === 'rejected') return matchesSearch && (d.status === 'rejected' || d.status === 'cancelled_by_admin');
+    if (statusFilter === 'cancelled') return matchesSearch && d.status === 'withdrawn';
+    return matchesSearch && d.status === statusFilter;
   });
 
   // Handlers for tabs
