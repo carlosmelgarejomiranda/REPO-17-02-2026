@@ -159,18 +159,26 @@ const CreatorWorkspace = () => {
         ) : filteredDeliverables.length === 0 ? (
           <div className="p-6 sm:p-12 bg-white/5 border border-white/10 rounded-xl text-center">
             <Camera className="w-10 h-10 sm:w-16 sm:h-16 text-gray-600 mx-auto mb-3" />
-            <h3 className="text-base sm:text-xl text-white mb-2">No hay entregas</h3>
+            <h3 className="text-base sm:text-xl text-white mb-2">
+              {activeFilter === 'pending' ? 'No tenés entregas pendientes' :
+               activeFilter === 'completed' ? 'No tenés entregas completadas' :
+               activeFilter === 'rejected' ? 'No tenés entregas rechazadas' :
+               activeFilter === 'cancelled' ? 'No tenés entregas canceladas' :
+               'No hay entregas'}
+            </h3>
             <p className="text-xs sm:text-sm text-gray-400 mb-4">
-              {activeFilter === 'all' 
-                ? 'Aplica a campañas para empezar a crear contenido'
-                : 'No hay entregas en esta categoría'}
+              {activeFilter === 'pending' 
+                ? '¡Genial! Estás al día con tus entregas'
+                : 'Aplica a campañas para empezar a crear contenido'}
             </p>
-            <Link
-              to="/ugc/campaigns"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black text-xs sm:text-sm font-medium rounded-full hover:bg-[#c49958] transition-all"
-            >
-              Ver campañas
-            </Link>
+            {activeFilter !== 'pending' && (
+              <Link
+                to="/ugc/campaigns"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black text-xs sm:text-sm font-medium rounded-full hover:bg-[#c49958] transition-all"
+              >
+                Ver campañas
+              </Link>
+            )}
           </div>
         ) : (
           <div className="space-y-2.5">
