@@ -381,7 +381,7 @@ const MetricsSubmit = () => {
           try {
             const text = await responseClone.text();
             if (text.includes('timeout') || text.includes('Timeout')) {
-              errorMessage = 'El servidor tardó mucho en procesar. Intentá con menos imágenes.';
+              errorMessage = 'El servidor tardó mucho en procesar. Intentá con menos imágenes (máximo 3-5).';
             }
           } catch {
             // Ignore
@@ -392,16 +392,17 @@ const MetricsSubmit = () => {
     } catch (err) {
       setAiProcessing(false);
       // Better error handling for different error types
-      let errorMessage = 'Error de conexión';
+      let errorMessage = 'Error de conexión. Intentá de nuevo con menos imágenes.';
       if (err.name === 'AbortError') {
-        errorMessage = 'El procesamiento tardó demasiado. Intentá con menos imágenes.';
+        errorMessage = 'El procesamiento tardó demasiado. Intentá con menos imágenes (3-5 máximo).';
       } else if (err.message) {
-        if (err.message.includes('network') || err.message.includes('Network')) {
-          errorMessage = 'Error de red. Verificá tu conexión e intentá de nuevo.';
+        if (err.message.includes('network') || err.message.includes('Network') || err.message.includes('Failed to fetch')) {
+          errorMessage = 'Error de conexión. Verificá tu internet e intentá de nuevo con menos imágenes.';
         } else if (err.message.includes('timeout') || err.message.includes('Timeout')) {
-          errorMessage = 'Tiempo de espera agotado. Intentá con menos imágenes.';
+          errorMessage = 'Tiempo de espera agotado. Intentá con menos imágenes (3-5 máximo).';
         }
       }
+      console.error('Metrics submit error:', err);
       setError(errorMessage);
     } finally {
       setSubmitting(false);
