@@ -36,6 +36,56 @@ async def require_admin(request: Request):
     from server import require_admin as admin
     return await admin(request)
 
+
+# ==================== CREATOR METRICS ENDPOINT ====================
+
+@router.get("/me", response_model=dict)
+async def get_my_metrics(
+    request: Request,
+    time_range: str = "all"  # all, 30d, 90d, year
+):
+    """
+    Get all metrics submitted by the current creator.
+    Used for the Creator Reports page.
+    """
+    db = await get_db()
+    user, creator = await require_creator(request)
+    
+    # Build query with optional time filter
+    query = {"creator_id": creator["id"]}
+    
+    if time_range == "30d":
+        cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+        query["submitted_at"] = {"$gte": cutoff.isoformat()}
+    elif time_range == "90d":
+        cutoff = datetime.now(timezone.utc) - timedelta(days=90)
+        query["submitted_at"] = {"$gte": cutoff.isoformat()}
+    elif time_range == "year":
+        cutoff = datetime.now(timezone.utc).replace(month=1, day=1, hour=0, minute=0, second=0)
+        query["submitted_at"] = {"$gte": cutoff.isoformat()}
+    
+    # Get metrics
+    metrics_cursor = db.ugc_metrics.find(query, {"_id": 0}).sort("submitted_at", -1)
+    metrics = await metrics_cursor.to_list(100)
+    
+    # Enrich with campaign names
+    campaign_ids = list(set(m.get("campaign_id") for m in metrics if m.get("campaign_id")))
+    campaigns = {}
+    if campaign_ids:
+        campaigns_cursor = db.ugc_campaigns.find(
+            {"id": {"$in": campaign_ids}},
+            {"_id": 0, "id": 1, "name": 1}
+        )
+        campaigns_list = await campaigns_cursor.to_list(100)
+        campaigns = {c["id"]: c.get("name", "Campaña") for c in campaigns_list}
+    
+    # Add campaign names to metrics
+    for m in metrics:
+        m["campaign_name"] = campaigns.get(m.get("campaign_id"), "Campaña")
+    
+    return {"metrics": metrics}
+
+
 # ==================== AI METRICS EXTRACTION ====================
 
 import logging
