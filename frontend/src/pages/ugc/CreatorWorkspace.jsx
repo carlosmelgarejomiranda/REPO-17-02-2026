@@ -40,12 +40,13 @@ const CreatorWorkspace = () => {
     const configs = {
       awaiting_publish: { color: 'bg-yellow-500/20 text-yellow-400', label: 'Por Publicar', icon: Upload },
       published: { color: 'bg-blue-500/20 text-blue-400', label: 'Publicado', icon: CheckCircle },
-      submitted: { color: 'bg-purple-500/20 text-purple-400', label: 'Enviado', icon: Eye },
-      resubmitted: { color: 'bg-purple-500/20 text-purple-400', label: 'Reenviado', icon: Eye },
-      under_review: { color: 'bg-purple-500/20 text-purple-400', label: 'En Revisión', icon: Eye },
+      submitted: { color: 'bg-blue-500/20 text-blue-400', label: 'Enviado', icon: CheckCircle },
+      resubmitted: { color: 'bg-blue-500/20 text-blue-400', label: 'Reenviado', icon: CheckCircle },
       changes_requested: { color: 'bg-orange-500/20 text-orange-400', label: 'Cambios Solicitados', icon: AlertCircle },
       approved: { color: 'bg-green-500/20 text-green-400', label: 'Aprobado', icon: CheckCircle },
       rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado', icon: AlertCircle },
+      cancelled_by_admin: { color: 'bg-red-500/20 text-red-400', label: 'Cancelado por Admin', icon: AlertCircle },
+      withdrawn: { color: 'bg-gray-500/20 text-gray-400', label: 'Cancelado', icon: Clock },
       metrics_pending: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas Pendientes', icon: Clock },
       metrics_submitted: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas Enviadas', icon: CheckCircle },
       completed: { color: 'bg-green-500/20 text-green-400', label: 'Completado', icon: CheckCircle }
