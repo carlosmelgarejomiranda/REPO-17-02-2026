@@ -519,6 +519,7 @@ const MetricsSubmit = () => {
     setSubmitting(true);
     setError('');
     setAiProcessing(true);
+    setShowProcessing(true); // Show processing screen
 
     try {
       const token = localStorage.getItem('auth_token');
@@ -558,6 +559,7 @@ const MetricsSubmit = () => {
 
       clearTimeout(timeoutId);
       setAiProcessing(false);
+      setShowProcessing(false); // Hide processing screen
       
       if (res.ok) {
         const data = await res.json();
