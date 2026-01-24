@@ -564,8 +564,13 @@ const MetricsSubmit = () => {
       if (res.ok) {
         const data = await res.json();
         setAiResult(data);
-        setSuccess('¡Métricas enviadas exitosamente!' + (data.is_late ? ' (Nota: Envío tardío)' : ''));
-        setTimeout(() => navigate('/ugc/creator/workspace'), 2000);
+        
+        // Extract metrics for success screen
+        const extracted = data.extracted_data?.metrics || {};
+        setExtractedMetrics(extracted);
+        
+        // Show success screen instead of just a message
+        setShowSuccess(true);
       } else {
         // Clone response to read it safely
         const responseClone = res.clone();
@@ -577,7 +582,7 @@ const MetricsSubmit = () => {
           try {
             const text = await responseClone.text();
             if (text.includes('timeout') || text.includes('Timeout')) {
-              errorMessage = 'El servidor tardó mucho en procesar. Intentá con menos imágenes (máximo 3-5).';
+              errorMessage = 'El servidor tardó mucho. Por favor intentá de nuevo.';
             }
           } catch {
             // Ignore
@@ -587,15 +592,16 @@ const MetricsSubmit = () => {
       }
     } catch (err) {
       setAiProcessing(false);
+      setShowProcessing(false); // Hide processing screen on error
       // Better error handling for different error types
-      let errorMessage = 'Error de conexión. Intentá de nuevo con menos imágenes.';
+      let errorMessage = 'Error de conexión. Por favor intentá de nuevo.';
       if (err.name === 'AbortError') {
-        errorMessage = 'El procesamiento tardó demasiado. Intentá con menos imágenes (3-5 máximo).';
+        errorMessage = 'El procesamiento tardó demasiado. Por favor intentá de nuevo.';
       } else if (err.message) {
         if (err.message.includes('network') || err.message.includes('Network') || err.message.includes('Failed to fetch')) {
-          errorMessage = 'Error de conexión. Verificá tu internet e intentá de nuevo con menos imágenes.';
+          errorMessage = 'Error de conexión. Verificá tu internet e intentá de nuevo.';
         } else if (err.message.includes('timeout') || err.message.includes('Timeout')) {
-          errorMessage = 'Tiempo de espera agotado. Intentá con menos imágenes (3-5 máximo).';
+          errorMessage = 'Tiempo de espera agotado. Por favor intentá de nuevo.';
         }
       }
       console.error('Metrics submit error:', err);
@@ -603,6 +609,12 @@ const MetricsSubmit = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // Handle continue from success screen
+  const handleSuccessContinue = () => {
+    setShowSuccess(false);
+    navigate('/ugc/creator/campaigns');
   };
 
   const getWindowStatus = () => {
