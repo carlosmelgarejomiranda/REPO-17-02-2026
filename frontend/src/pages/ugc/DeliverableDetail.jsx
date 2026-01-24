@@ -3,10 +3,246 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Instagram, Music2, ExternalLink, Upload, CheckCircle,
-  Clock, AlertCircle, Send, Loader2, Star, Sparkles
+  Clock, AlertCircle, Send, Loader2, Star, Sparkles, XCircle, HelpCircle,
+  Copy, Smartphone
 } from 'lucide-react';
 
 const API_URL = getApiUrl();
+
+// ==================== URL VALIDATION SYSTEM ====================
+
+const validateInstagramUrl = (url) => {
+  if (!url || !url.trim()) {
+    return { valid: false, error: null }; // Empty is ok, not an error
+  }
+
+  const trimmedUrl = url.trim().toLowerCase();
+
+  // Check if it's a TikTok URL (wrong platform)
+  if (trimmedUrl.includes('tiktok.com')) {
+    return {
+      valid: false,
+      error: {
+        type: 'wrong_platform',
+        title: '¡Ups! Ese es un link de TikTok',
+        message: 'Parece que pegaste un link de TikTok en el campo de Instagram.',
+        help: 'Copiá el link de TikTok en el campo de abajo, y buscá tu publicación de Instagram para este campo.',
+        icon: 'swap'
+      }
+    };
+  }
+
+  // Check if it's not Instagram at all
+  if (!trimmedUrl.includes('instagram.com')) {
+    return {
+      valid: false,
+      error: {
+        type: 'wrong_site',
+        title: 'Este link no es de Instagram',
+        message: 'Solo podés subir links de publicaciones de Instagram aquí.',
+        help: 'Abrí tu publicación en Instagram, tocá los 3 puntitos (⋯) y seleccioná "Copiar enlace".',
+        icon: 'help'
+      }
+    };
+  }
+
+  // Check if it's a profile URL (not a post)
+  const profilePatterns = [
+    /instagram\.com\/[^\/]+\/?$/,  // instagram.com/username
+    /instagram\.com\/[^\/]+\/\?/,  // instagram.com/username/?...
+  ];
+  
+  const isProfile = profilePatterns.some(pattern => pattern.test(trimmedUrl)) && 
+    !trimmedUrl.includes('/p/') && 
+    !trimmedUrl.includes('/reel/') && 
+    !trimmedUrl.includes('/tv/');
+
+  if (isProfile) {
+    return {
+      valid: false,
+      error: {
+        type: 'profile_url',
+        title: 'Este es el link de tu perfil, no de tu publicación',
+        message: 'Necesitamos el link específico del post o reel que hiciste para la campaña.',
+        help: 'Andá a tu publicación, tocá los 3 puntitos (⋯) arriba a la derecha y seleccioná "Copiar enlace".',
+        example: 'El link correcto se ve así: instagram.com/p/ABC123... o instagram.com/reel/ABC123...',
+        icon: 'profile'
+      }
+    };
+  }
+
+  // Check if it's a story (temporary content)
+  if (trimmedUrl.includes('/stories/')) {
+    return {
+      valid: false,
+      error: {
+        type: 'story_url',
+        title: 'Los stories no se pueden usar',
+        message: 'Las historias de Instagram son temporales y desaparecen en 24 horas.',
+        help: 'Necesitamos el link de un Post o Reel permanente. Si subiste el contenido como historia, también publicalo como Reel para que quede guardado.',
+        icon: 'time'
+      }
+    };
+  }
+
+  // Check for valid post patterns
+  const validPatterns = [
+    /instagram\.com\/p\/[\w-]+/,      // Post: instagram.com/p/ABC123
+    /instagram\.com\/reel\/[\w-]+/,   // Reel: instagram.com/reel/ABC123
+    /instagram\.com\/tv\/[\w-]+/,     // IGTV: instagram.com/tv/ABC123
+  ];
+
+  const isValidPost = validPatterns.some(pattern => pattern.test(trimmedUrl));
+
+  if (!isValidPost) {
+    return {
+      valid: false,
+      error: {
+        type: 'invalid_format',
+        title: 'El formato del link no es correcto',
+        message: 'No pudimos reconocer este link como una publicación de Instagram.',
+        help: 'Asegurate de copiar el link completo desde la app de Instagram: tocá los 3 puntitos (⋯) en tu publicación y seleccioná "Copiar enlace".',
+        example: 'Debería verse algo así: https://www.instagram.com/reel/ABC123xyz/',
+        icon: 'help'
+      }
+    };
+  }
+
+  return { valid: true, error: null };
+};
+
+const validateTiktokUrl = (url) => {
+  if (!url || !url.trim()) {
+    return { valid: false, error: null }; // Empty is ok
+  }
+
+  const trimmedUrl = url.trim().toLowerCase();
+
+  // Check if it's an Instagram URL (wrong platform)
+  if (trimmedUrl.includes('instagram.com')) {
+    return {
+      valid: false,
+      error: {
+        type: 'wrong_platform',
+        title: '¡Ups! Ese es un link de Instagram',
+        message: 'Parece que pegaste un link de Instagram en el campo de TikTok.',
+        help: 'Copiá el link de Instagram en el campo de arriba, y buscá tu video de TikTok para este campo.',
+        icon: 'swap'
+      }
+    };
+  }
+
+  // Check if it's not TikTok at all
+  if (!trimmedUrl.includes('tiktok.com')) {
+    return {
+      valid: false,
+      error: {
+        type: 'wrong_site',
+        title: 'Este link no es de TikTok',
+        message: 'Solo podés subir links de videos de TikTok aquí.',
+        help: 'Abrí tu video en TikTok, tocá "Compartir" y luego "Copiar enlace".',
+        icon: 'help'
+      }
+    };
+  }
+
+  // Check if it's a profile URL (not a video)
+  const isProfile = (
+    trimmedUrl.match(/tiktok\.com\/@[\w.-]+\/?$/) ||
+    trimmedUrl.match(/tiktok\.com\/@[\w.-]+\?/)
+  ) && !trimmedUrl.includes('/video/');
+
+  if (isProfile) {
+    return {
+      valid: false,
+      error: {
+        type: 'profile_url',
+        title: 'Este es el link de tu perfil, no de tu video',
+        message: 'Necesitamos el link específico del video que hiciste para la campaña.',
+        help: 'Andá a tu video, tocá "Compartir" (la flecha) y seleccioná "Copiar enlace".',
+        example: 'El link correcto se ve así: tiktok.com/@tuusuario/video/123456789...',
+        icon: 'profile'
+      }
+    };
+  }
+
+  // Check for valid video pattern
+  const validPattern = /tiktok\.com\/@[\w.-]+\/video\/\d+/;
+  const isValidVideo = validPattern.test(trimmedUrl);
+
+  // Also accept short links like vm.tiktok.com
+  const isShortLink = trimmedUrl.includes('vm.tiktok.com') || trimmedUrl.includes('vt.tiktok.com');
+
+  if (!isValidVideo && !isShortLink) {
+    return {
+      valid: false,
+      error: {
+        type: 'invalid_format',
+        title: 'El formato del link no es correcto',
+        message: 'No pudimos reconocer este link como un video de TikTok.',
+        help: 'Asegurate de copiar el link completo desde la app de TikTok: tocá "Compartir" en tu video y luego "Copiar enlace".',
+        example: 'Debería verse algo así: https://www.tiktok.com/@usuario/video/7123456789...',
+        icon: 'help'
+      }
+    };
+  }
+
+  return { valid: true, error: null };
+};
+
+// Error display component with friendly messages
+const UrlErrorMessage = ({ error, platform }) => {
+  if (!error) return null;
+
+  const getIcon = () => {
+    switch (error.icon) {
+      case 'swap':
+        return <Music2 className="w-5 h-5" />;
+      case 'profile':
+        return <Smartphone className="w-5 h-5" />;
+      case 'time':
+        return <Clock className="w-5 h-5" />;
+      default:
+        return <HelpCircle className="w-5 h-5" />;
+    }
+  };
+
+  return (
+    <div className="mt-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl animate-in slide-in-from-top-2">
+      <div className="flex items-start gap-3">
+        <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0 text-red-400">
+          {getIcon()}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-red-400 text-sm">{error.title}</p>
+          <p className="text-gray-300 text-sm mt-1">{error.message}</p>
+          <div className="mt-3 p-3 bg-black/30 rounded-lg">
+            <p className="text-xs text-gray-400 mb-1">💡 ¿Cómo solucionarlo?</p>
+            <p className="text-sm text-gray-300">{error.help}</p>
+          </div>
+          {error.example && (
+            <div className="mt-2 p-2 bg-green-500/10 border border-green-500/20 rounded-lg">
+              <p className="text-xs text-green-400 font-mono break-all">{error.example}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Valid URL indicator
+const UrlValidIndicator = ({ platform }) => (
+  <div className="mt-3 p-3 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center gap-3">
+    <CheckCircle className="w-5 h-5 text-green-400" />
+    <div>
+      <p className="text-green-400 text-sm font-medium">¡Link válido!</p>
+      <p className="text-gray-400 text-xs">El formato del link de {platform} es correcto</p>
+    </div>
+  </div>
+);
+
+// ==================== MAIN COMPONENT ====================
 
 const DeliverableDetail = () => {
   const { id } = useParams();
@@ -20,10 +256,26 @@ const DeliverableDetail = () => {
   // Form states - separate URLs for each platform
   const [instagramUrl, setInstagramUrl] = useState('');
   const [tiktokUrl, setTiktokUrl] = useState('');
+  
+  // Validation states
+  const [instagramValidation, setInstagramValidation] = useState({ valid: false, error: null });
+  const [tiktokValidation, setTiktokValidation] = useState({ valid: false, error: null });
 
   useEffect(() => {
     fetchDeliverable();
   }, [id]);
+
+  // Validate Instagram URL on change
+  useEffect(() => {
+    const result = validateInstagramUrl(instagramUrl);
+    setInstagramValidation(result);
+  }, [instagramUrl]);
+
+  // Validate TikTok URL on change
+  useEffect(() => {
+    const result = validateTiktokUrl(tiktokUrl);
+    setTiktokValidation(result);
+  }, [tiktokUrl]);
 
   const fetchDeliverable = async () => {
     try {
