@@ -146,7 +146,14 @@ const DeliverableDetail = () => {
   }
 
   const statusConfig = getStatusConfig(deliverable.status);
-  const canSubmit = ['awaiting_publish', 'changes_requested'].includes(deliverable.status);
+  
+  // Can submit if awaiting_publish, changes_requested, OR if still missing one URL
+  const hasInstagram = !!deliverable.instagram_url;
+  const hasTiktok = !!deliverable.tiktok_url;
+  const canAddMoreUrls = !hasInstagram || !hasTiktok;
+  const canSubmit = ['awaiting_publish', 'changes_requested'].includes(deliverable.status) || 
+    (['published', 'submitted', 'resubmitted', 'approved', 'metrics_pending'].includes(deliverable.status) && canAddMoreUrls);
+  
   const hasUrls = instagramUrl || tiktokUrl;
   const hasBothUrls = instagramUrl && tiktokUrl;
 
