@@ -13,7 +13,7 @@ const API_URL = getApiUrl();
 const CreatorWorkspace = () => {
   const [deliverables, setDeliverables] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useState('pending'); // Start with pending (most important)
 
   useEffect(() => {
     fetchDeliverables();
