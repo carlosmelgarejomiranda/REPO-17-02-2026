@@ -213,29 +213,84 @@ const CreatorDashboard = () => {
           </div>
 
           {/* Quick Actions - Mobile */}
-          <div className="grid grid-cols-2 gap-3 mb-6 md:hidden">
+          <div className="grid grid-cols-3 gap-3 mb-6 md:hidden">
             <Link
-              to="/ugc/campaigns"
-              className="flex items-center gap-3 p-3 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl hover:bg-[#d4a968]/20 transition-all"
+              to="/ugc/creator/campaigns"
+              className="flex flex-col items-center gap-2 p-3 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl hover:bg-[#d4a968]/20 transition-all"
             >
               <div className="w-10 h-10 rounded-xl bg-[#d4a968] flex items-center justify-center">
                 <Zap className="w-5 h-5 text-black" />
               </div>
+              <p className="text-xs font-medium text-center">Campañas</p>
+            </Link>
+            <Link
+              to="/ugc/creator/reports"
+              className="flex flex-col items-center gap-2 p-3 bg-purple-500/10 border border-purple-500/30 rounded-xl hover:bg-purple-500/20 transition-all"
+            >
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-purple-400" />
+              </div>
+              <p className="text-xs font-medium text-center">Reportes</p>
+            </Link>
+            <Link
+              to="/ugc/creator/profile"
+              className="flex flex-col items-center gap-2 p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all"
+            >
+              <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                <User className="w-5 h-5 text-blue-400" />
+              </div>
+              <p className="text-xs font-medium text-center">Perfil</p>
+            </Link>
+          </div>
+
+          {/* Quick Actions - Desktop */}
+          <div className="hidden md:grid md:grid-cols-4 gap-4 mb-6">
+            <Link
+              to="/ugc/creator/campaigns"
+              className="flex items-center gap-3 p-4 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl hover:bg-[#d4a968]/20 transition-all group"
+            >
+              <div className="w-12 h-12 rounded-xl bg-[#d4a968] flex items-center justify-center">
+                <Zap className="w-6 h-6 text-black" />
+              </div>
               <div>
-                <p className="text-sm font-medium">Explorar</p>
-                <p className="text-[10px] text-gray-400">Campañas</p>
+                <p className="font-medium group-hover:text-[#d4a968] transition-colors">Explorar Campañas</p>
+                <p className="text-xs text-gray-400">Encontrar oportunidades</p>
               </div>
             </Link>
             <Link
-              to="/ugc/creator/applications"
-              className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all"
+              to="/ugc/creator/reports"
+              className="flex items-center gap-3 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl hover:bg-purple-500/20 transition-all group"
             >
-              <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-purple-400" />
+              <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-purple-400" />
               </div>
               <div>
-                <p className="text-sm font-medium">Aplicaciones</p>
-                <p className="text-[10px] text-gray-400">Ver estado</p>
+                <p className="font-medium group-hover:text-purple-400 transition-colors">Mis Reportes</p>
+                <p className="text-xs text-gray-400">Métricas y reviews</p>
+              </div>
+            </Link>
+            <Link
+              to="/ugc/creator/profile"
+              className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
+            >
+              <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                <User className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <p className="font-medium group-hover:text-blue-400 transition-colors">Mi Perfil</p>
+                <p className="text-xs text-gray-400">Editar información</p>
+              </div>
+            </Link>
+            <Link
+              to="/ugc/leaderboard"
+              className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
+            >
+              <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center">
+                <Award className="w-6 h-6 text-yellow-400" />
+              </div>
+              <div>
+                <p className="font-medium group-hover:text-yellow-400 transition-colors">Leaderboard</p>
+                <p className="text-xs text-gray-400">Ver ranking</p>
               </div>
             </Link>
           </div>
