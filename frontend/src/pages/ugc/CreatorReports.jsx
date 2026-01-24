@@ -60,6 +60,11 @@ const CreatorReports = () => {
     }
   };
 
+  useEffect(() => {
+    fetchReportData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRange]);
+
   const formatNumber = (num) => {
     if (!num) return '0';
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
