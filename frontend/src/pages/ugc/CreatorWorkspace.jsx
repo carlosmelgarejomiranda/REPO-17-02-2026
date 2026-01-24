@@ -118,21 +118,28 @@ const CreatorWorkspace = () => {
         {/* Filters - Scrollable on mobile */}
         <div className="flex items-center gap-2 mb-4 -mx-4 px-4 overflow-x-auto scrollbar-hide pb-1">
           {[
-            { id: 'all', label: 'Todas' },
-            { id: 'pending', label: 'Pendientes' },
-            { id: 'review', label: 'En Revisión' },
-            { id: 'completed', label: 'Completadas' }
+            { id: 'pending', label: 'Pendientes', count: pendingCount },
+            { id: 'completed', label: 'Completadas', count: completedCount },
+            { id: 'rejected', label: 'Rechazadas', count: rejectedCount },
+            { id: 'cancelled', label: 'Canceladas', count: cancelledCount }
           ].map(f => (
             <button
               key={f.id}
               onClick={() => setActiveFilter(f.id)}
-              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all flex-shrink-0 ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all flex-shrink-0 flex items-center gap-1.5 ${
                 activeFilter === f.id
                   ? 'bg-[#d4a968] text-black font-medium'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
               }`}
             >
               {f.label}
+              {f.count > 0 && (
+                <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                  activeFilter === f.id ? 'bg-black/20' : 'bg-white/10'
+                }`}>
+                  {f.count}
+                </span>
+              )}
             </button>
           ))}
           <button
