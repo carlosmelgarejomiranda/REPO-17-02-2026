@@ -506,6 +506,23 @@ const CreatorProfileEdit = () => {
           )}
         </div>
 
+        {/* My Reports Link */}
+        <Link
+          to="/ugc/creator/reports"
+          className="mb-8 p-5 bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 rounded-xl flex items-center justify-between hover:border-purple-500/40 transition-all group"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+              <BarChart3 className="w-6 h-6 text-purple-400" />
+            </div>
+            <div>
+              <h3 className="text-white font-medium group-hover:text-purple-400 transition-colors">Mis Reportes</h3>
+              <p className="text-sm text-gray-400">Ver métricas, reviews y rendimiento</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-purple-400 transition-colors" />
+        </Link>
+
         {/* Save Button */}
         <div className="flex gap-4">
           <button
