@@ -17,10 +17,6 @@ const CreatorReports = () => {
   const [timeRange, setTimeRange] = useState('all'); // all, 30d, 90d, year
   const [expandedMetric, setExpandedMetric] = useState(null);
 
-  useEffect(() => {
-    fetchReportData();
-  }, [timeRange]);
-
   const fetchReportData = async () => {
     setLoading(true);
     try {
