@@ -810,17 +810,21 @@ async def submit_metrics_v2(
     
     import asyncio
     
+    # Semaphore to limit concurrent AI calls (max 3 at a time)
+    semaphore = asyncio.Semaphore(3)
+    
     async def process_screenshot(img_b64: str, platform: str, index: int) -> dict:
         """Process a single screenshot and return extraction with metadata"""
-        try:
-            ai_logger.info(f"Processing {platform} screenshot {index+1}")
-            extraction = await extract_metrics_from_base64(img_b64, platform)
-            extraction["platform"] = platform
-            extraction["image_index"] = index
-            return extraction
-        except Exception as e:
-            ai_logger.error(f"Error processing {platform} screenshot {index+1}: {e}")
-            return {"error": str(e), "platform": platform, "image_index": index, "confidence": 0}
+        async with semaphore:
+            try:
+                ai_logger.info(f"Processing {platform} screenshot {index+1}")
+                extraction = await extract_metrics_from_base64(img_b64, platform)
+                extraction["platform"] = platform
+                extraction["image_index"] = index
+                return extraction
+            except Exception as e:
+                ai_logger.error(f"Error processing {platform} screenshot {index+1}: {e}")
+                return {"error": str(e), "platform": platform, "image_index": index, "confidence": 0}
     
     # Create tasks for all images
     tasks = []
@@ -833,16 +837,23 @@ async def submit_metrics_v2(
     for i, img_b64 in enumerate(data.tiktok_screenshots[:10]):
         tasks.append(process_screenshot(img_b64, "tiktok", i))
     
-    # Process all in parallel (with semaphore to limit concurrency)
+    # Process all with limited concurrency
     if tasks:
-        ai_logger.info(f"Starting parallel processing of {len(tasks)} images...")
-        all_extractions = await asyncio.gather(*tasks, return_exceptions=True)
-        # Filter out exceptions and convert to list
-        all_extractions = [
-            e if isinstance(e, dict) else {"error": str(e), "confidence": 0}
-            for e in all_extractions
-        ]
-        ai_logger.info(f"Parallel processing complete. Got {len(all_extractions)} results.")
+        ai_logger.info(f"Starting processing of {len(tasks)} images (max 3 concurrent)...")
+        try:
+            all_extractions = await asyncio.wait_for(
+                asyncio.gather(*tasks, return_exceptions=True),
+                timeout=180  # 3 minute timeout for all images
+            )
+            # Filter out exceptions and convert to list
+            all_extractions = [
+                e if isinstance(e, dict) else {"error": str(e), "confidence": 0}
+                for e in all_extractions
+            ]
+            ai_logger.info(f"Processing complete. Got {len(all_extractions)} results.")
+        except asyncio.TimeoutError:
+            ai_logger.error("Timeout processing images")
+            all_extractions = [{"error": "Timeout", "confidence": 0}]
     
     # Merge all extracted data
     merged_result = await merge_extracted_data(all_extractions)
