@@ -995,6 +995,7 @@ const MetricsSubmit = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
