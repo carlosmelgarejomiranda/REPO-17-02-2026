@@ -246,6 +246,34 @@ async def update_social_followers(
     
     return {"success": True, "message": "Followers updated"}
 
+
+@router.post("/me/recalculate-stats", response_model=dict)
+async def recalculate_my_stats(request: Request):
+    """Recalculate the current creator's stats based on their metrics and deliverables"""
+    db = await get_db()
+    user = await require_auth(request)
+    
+    creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0, "id": 1})
+    if not creator:
+        raise HTTPException(status_code=404, detail="Creator profile not found")
+    
+    # Import and call the update function
+    from routes.ugc_metrics import update_creator_stats
+    await update_creator_stats(db, creator["id"])
+    
+    # Return updated stats
+    updated = await db.ugc_creators.find_one(
+        {"id": creator["id"]}, 
+        {"_id": 0, "stats": 1, "completed_campaigns": 1, "delivery_on_time_rate": 1, "total_reach": 1}
+    )
+    
+    return {
+        "success": True, 
+        "message": "Stats recalculated",
+        "stats": updated
+    }
+
+
 # ==================== CAMPAIGNS ====================
 
 @router.get("/me/campaigns", response_model=dict)
