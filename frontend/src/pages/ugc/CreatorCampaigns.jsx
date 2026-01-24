@@ -11,6 +11,27 @@ import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
+// Tab button component - defined outside to avoid re-renders
+const TabButton = ({ id, label, count, active, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all ${
+      active 
+        ? 'border-[#d4a968] text-[#d4a968]' 
+        : 'border-transparent text-gray-400 hover:text-white'
+    }`}
+  >
+    {label}
+    {count > 0 && (
+      <span className={`px-2 py-0.5 rounded-full text-xs ${
+        active ? 'bg-[#d4a968]/20' : 'bg-white/10'
+      }`}>
+        {count}
+      </span>
+    )}
+  </button>
+);
+
 const CreatorCampaigns = () => {
   // Tab state
   const [activeTab, setActiveTab] = useState('available'); // 'available', 'applications', 'deliverables'
