@@ -19,20 +19,11 @@ async def get_db():
 
 async def require_brand(request: Request):
     from server import get_current_user
-    import logging
-    logger = logging.getLogger("brand_reports")
-    
     db = await get_db()
     user = await get_current_user(request)
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    logger.info(f"require_brand - User from token: {user.get('user_id')}, email: {user.get('email')}")
-    
     brand = await db.ugc_brands.find_one({"user_id": user["user_id"]}, {"_id": 0})
-    
-    logger.info(f"require_brand - Brand lookup for user_id '{user['user_id']}': {brand.get('id') if brand else 'NOT FOUND'}")
-    
     if not brand:
         raise HTTPException(status_code=403, detail="Brand profile required")
     return user, brand
