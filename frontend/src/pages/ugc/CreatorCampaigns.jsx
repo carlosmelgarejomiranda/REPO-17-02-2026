@@ -240,10 +240,10 @@ const CreatorCampaigns = () => {
                 )}
                 {activeTab === 'deliverables' && (
                   <>
-                    <option value="awaiting_publish">Por Publicar</option>
-                    <option value="submitted">Enviado</option>
-                    <option value="approved">Aprobado</option>
-                    <option value="completed">Completado</option>
+                    <option value="pending">Pendientes</option>
+                    <option value="completed">Completadas</option>
+                    <option value="rejected">Rechazadas</option>
+                    <option value="cancelled">Canceladas</option>
                   </>
                 )}
               </select>
