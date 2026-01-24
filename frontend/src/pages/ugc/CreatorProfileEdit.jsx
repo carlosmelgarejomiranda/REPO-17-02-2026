@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, User, MapPin, Instagram, Music2, Plus, Save, Loader2,
-  Camera, Trash2, CheckCircle, AlertCircle, Edit3, X, Shield, BadgeCheck
+  Camera, Trash2, CheckCircle, AlertCircle, Edit3, X, Shield, BadgeCheck,
+  BarChart3, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import SocialVerification from '../../components/SocialVerification';
