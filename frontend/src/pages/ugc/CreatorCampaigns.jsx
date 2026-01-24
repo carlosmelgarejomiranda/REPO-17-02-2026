@@ -168,26 +168,11 @@ const CreatorCampaigns = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Tab content components
-  const TabButton = ({ id, label, count, active }) => (
-    <button
-      onClick={() => { setActiveTab(id); setStatusFilter('all'); }}
-      className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all ${
-        active 
-          ? 'border-[#d4a968] text-[#d4a968]' 
-          : 'border-transparent text-gray-400 hover:text-white'
-      }`}
-    >
-      {label}
-      {count > 0 && (
-        <span className={`px-2 py-0.5 rounded-full text-xs ${
-          active ? 'bg-[#d4a968]/20' : 'bg-white/10'
-        }`}>
-          {count}
-        </span>
-      )}
-    </button>
-  );
+  // Handlers for tabs
+  const handleTabClick = (id) => {
+    setActiveTab(id);
+    setStatusFilter('all');
+  };
 
   if (loading) {
     return (
