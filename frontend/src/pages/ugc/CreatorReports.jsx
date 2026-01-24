@@ -32,13 +32,14 @@ const CreatorReports = () => {
 
       if (profileRes.ok) {
         const profile = await profileRes.json();
+        const profileStats = profile.stats || {};
         setStats({
-          total_campaigns: profile.completed_campaigns || 0,
-          avg_rating: profile.rating || 0,
-          total_reviews: profile.review_count || 0,
+          total_campaigns: profile.completed_campaigns || profileStats.total_completed || 0,
+          avg_rating: profile.rating || profileStats.avg_rating || 0,
+          total_reviews: profile.review_count || profileStats.total_ratings || 0,
           level: profile.level || 'rookie',
-          on_time_rate: profile.delivery_on_time_rate || 0,
-          total_views: profile.total_views || 0,
+          on_time_rate: profile.delivery_on_time_rate || profileStats.delivery_on_time_rate || 100,
+          total_views: profileStats.total_views || 0,
           total_engagement: profile.total_engagement || 0,
           verified_platforms: Object.keys(profile.social_accounts || {}).length
         });
