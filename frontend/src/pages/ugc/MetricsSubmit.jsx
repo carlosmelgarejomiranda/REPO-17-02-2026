@@ -674,30 +674,48 @@ const MetricsSubmit = () => {
   const totalScreenshots = instagramScreenshots.length + tiktokScreenshots.length;
 
   return (
-    <div className="min-h-screen bg-black text-white" data-testid="metrics-submit-page">
-      {/* Header */}
-      <div className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-sm z-10">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/ugc/creator/workspace" className="flex items-center gap-2 text-gray-400 hover:text-white">
-            <ArrowLeft className="w-5 h-5" />
-            Mi Workspace
-          </Link>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <Instagram className="w-4 h-4 text-pink-400" />
-              <span className="text-sm text-gray-400">{instagramScreenshots.length}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Music2 className="w-4 h-4 text-cyan-400" />
-              <span className="text-sm text-gray-400">{tiktokScreenshots.length}</span>
+    <>
+      {/* Processing Screen Overlay */}
+      {showProcessing && (
+        <ProcessingScreen 
+          totalImages={totalScreenshots}
+          instagramCount={instagramScreenshots.length}
+          tiktokCount={tiktokScreenshots.length}
+        />
+      )}
+      
+      {/* Success Screen Overlay */}
+      {showSuccess && (
+        <SuccessScreen 
+          onContinue={handleSuccessContinue}
+          extractedData={extractedMetrics}
+        />
+      )}
+      
+      <div className="min-h-screen bg-black text-white" data-testid="metrics-submit-page">
+        {/* Header */}
+        <div className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-sm z-10">
+          <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+            <Link to="/ugc/creator/campaigns" className="flex items-center gap-2 text-gray-400 hover:text-white">
+              <ArrowLeft className="w-5 h-5" />
+              Mis Campañas
+            </Link>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <Instagram className="w-4 h-4 text-pink-400" />
+                <span className="text-sm text-gray-400">{instagramScreenshots.length}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Music2 className="w-4 h-4 text-cyan-400" />
+                <span className="text-sm text-gray-400">{tiktokScreenshots.length}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        {/* Title */}
-        <div className="mb-8">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          {/* Title */}
+          <div className="mb-8">
           <h1 className="text-3xl font-light mb-2">
             Subir <span className="text-[#d4a968] italic">Métricas</span>
           </h1>
