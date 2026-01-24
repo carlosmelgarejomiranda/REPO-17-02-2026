@@ -1005,16 +1005,13 @@ async def submit_metrics_v2(
 
 async def update_creator_stats(db, creator_id: str):
     """Update creator's aggregate stats after new metrics"""
-    # Get all verified metrics for this creator
+    # Get all metrics for this creator
     metrics = await db.ugc_metrics.find(
         {"creator_id": creator_id},
         {"_id": 0}
     ).to_list(500)
     
-    if not metrics:
-        return
-    
-    # Calculate averages and maxes
+    # Calculate platform-specific averages
     stats = {
         "avg_views": {},
         "avg_reach": {},
@@ -1024,48 +1021,81 @@ async def update_creator_stats(db, creator_id: str):
         "max_interactions": {}
     }
     
-    platform_metrics = {}
-    for m in metrics:
-        platform = m.get("platform", "instagram")
-        if platform not in platform_metrics:
-            platform_metrics[platform] = {"views": [], "reach": [], "interactions": []}
+    total_views = 0
+    total_reach = 0
+    
+    if metrics:
+        platform_metrics = {}
+        for m in metrics:
+            platform = m.get("platform", "instagram")
+            if platform not in platform_metrics:
+                platform_metrics[platform] = {"views": [], "reach": [], "interactions": []}
+            
+            if m.get("views"):
+                platform_metrics[platform]["views"].append(m["views"])
+                total_views += m["views"]
+            if m.get("reach"):
+                platform_metrics[platform]["reach"].append(m["reach"])
+                total_reach += m["reach"]
+            if m.get("total_interactions"):
+                platform_metrics[platform]["interactions"].append(m["total_interactions"])
         
-        if m.get("views"):
-            platform_metrics[platform]["views"].append(m["views"])
-        if m.get("reach"):
-            platform_metrics[platform]["reach"].append(m["reach"])
-        if m.get("total_interactions"):
-            platform_metrics[platform]["interactions"].append(m["total_interactions"])
+        for platform, data in platform_metrics.items():
+            if data["views"]:
+                stats["avg_views"][platform] = sum(data["views"]) / len(data["views"])
+                stats["max_views"][platform] = max(data["views"])
+            if data["reach"]:
+                stats["avg_reach"][platform] = sum(data["reach"]) / len(data["reach"])
+                stats["max_reach"][platform] = max(data["reach"])
+            if data["interactions"]:
+                stats["avg_interactions"][platform] = sum(data["interactions"]) / len(data["interactions"])
+                stats["max_interactions"][platform] = max(data["interactions"])
     
-    for platform, data in platform_metrics.items():
-        if data["views"]:
-            stats["avg_views"][platform] = sum(data["views"]) / len(data["views"])
-            stats["max_views"][platform] = max(data["views"])
-        if data["reach"]:
-            stats["avg_reach"][platform] = sum(data["reach"]) / len(data["reach"])
-            stats["max_reach"][platform] = max(data["reach"])
-        if data["interactions"]:
-            stats["avg_interactions"][platform] = sum(data["interactions"]) / len(data["interactions"])
-            stats["max_interactions"][platform] = max(data["interactions"])
+    # Count completed campaigns (campaigns where creator submitted metrics)
+    completed_campaign_ids = set()
+    for m in metrics:
+        if m.get("campaign_id"):
+            completed_campaign_ids.add(m["campaign_id"])
     
-    # Get delivery stats
+    completed_campaigns = len(completed_campaign_ids)
+    
+    # Get delivery stats - include metrics_submitted status
     deliverables = await db.ugc_deliverables.find(
-        {"creator_id": creator_id, "status": {"$in": ["completed", "metrics_verified"]}},
-        {"_id": 0, "is_on_time": 1, "delivery_lag_hours": 1}
+        {
+            "creator_id": creator_id, 
+            "status": {"$in": ["completed", "metrics_verified", "metrics_submitted", "metrics_late"]}
+        },
+        {"_id": 0, "is_on_time": 1, "delivery_lag_hours": 1, "metrics_is_late": 1}
     ).to_list(500)
     
+    delivery_on_time_rate = 100  # Default to 100% if no deliverables
     if deliverables:
-        on_time_count = sum(1 for d in deliverables if d.get("is_on_time", True))
-        stats["delivery_on_time_rate"] = round((on_time_count / len(deliverables)) * 100, 1)
+        # Count on-time deliveries (not late)
+        on_time_count = sum(1 for d in deliverables if not d.get("metrics_is_late", False) and d.get("is_on_time", True))
+        delivery_on_time_rate = round((on_time_count / len(deliverables)) * 100, 1)
         
         lags = [d["delivery_lag_hours"] for d in deliverables if d.get("delivery_lag_hours")]
         if lags:
             stats["avg_delivery_lag_hours"] = round(sum(lags) / len(lags), 1)
     
-    # Update creator profile
+    # Update creator profile with all stats
+    update_data = {
+        "stats.avg_views": stats.get("avg_views", {}),
+        "stats.avg_reach": stats.get("avg_reach", {}),
+        "stats.avg_interactions": stats.get("avg_interactions", {}),
+        "stats.max_views": stats.get("max_views", {}),
+        "stats.max_reach": stats.get("max_reach", {}),
+        "stats.max_interactions": stats.get("max_interactions", {}),
+        "stats.delivery_on_time_rate": delivery_on_time_rate,
+        "stats.total_views": total_views,
+        "stats.total_reach": total_reach,
+        "completed_campaigns": completed_campaigns,
+        "delivery_on_time_rate": delivery_on_time_rate
+    }
+    
     await db.ugc_creators.update_one(
         {"id": creator_id},
-        {"$set": {f"stats.{k}": v for k, v in stats.items()}}
+        {"$set": update_data}
     )
 
 # ==================== ADMIN: ALL METRICS ====================
