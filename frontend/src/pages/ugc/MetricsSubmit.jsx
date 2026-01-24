@@ -5,11 +5,200 @@ import {
   ArrowLeft, Upload, BarChart3, Eye, Heart, MessageCircle,
   Share2, Bookmark, CheckCircle, AlertCircle, Loader2, HelpCircle,
   Instagram, Music2, Sparkles, Clock, Users, Play,
-  X, Plus
+  X, Plus, PartyPopper
 } from 'lucide-react';
 
 const API_URL = getApiUrl();
 const MAX_IMAGES = 10;
+
+// Processing messages that rotate during AI analysis
+const PROCESSING_MESSAGES = [
+  "Analizando imágenes con IA...",
+  "Detectando métricas de rendimiento...",
+  "Extrayendo datos de views y alcance...",
+  "Procesando información de engagement...",
+  "Identificando datos demográficos...",
+  "Analizando distribución por género...",
+  "Extrayendo datos de ubicación...",
+  "Procesando rangos de edad...",
+  "Consolidando información...",
+  "Casi listo..."
+];
+
+// Processing Screen Component
+const ProcessingScreen = ({ totalImages, instagramCount, tiktokCount }) => {
+  const [progress, setProgress] = useState(0);
+  const [messageIndex, setMessageIndex] = useState(0);
+  
+  useEffect(() => {
+    // Simulate progress based on estimated time (15 seconds per image)
+    const estimatedTime = totalImages * 12000; // 12 seconds per image
+    const interval = 100; // Update every 100ms
+    const increment = (100 / (estimatedTime / interval)) * 0.85; // Cap at 85%
+    
+    const progressTimer = setInterval(() => {
+      setProgress(prev => Math.min(prev + increment, 85));
+    }, interval);
+    
+    // Rotate messages every 3 seconds
+    const messageTimer = setInterval(() => {
+      setMessageIndex(prev => (prev + 1) % PROCESSING_MESSAGES.length);
+    }, 3000);
+    
+    return () => {
+      clearInterval(progressTimer);
+      clearInterval(messageTimer);
+    };
+  }, [totalImages]);
+  
+  return (
+    <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full text-center">
+        {/* Animated Icon */}
+        <div className="relative mb-8">
+          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 flex items-center justify-center animate-pulse">
+            <Sparkles className="w-12 h-12 text-purple-400 animate-bounce" />
+          </div>
+          {/* Rotating ring */}
+          <div className="absolute inset-0 w-24 h-24 mx-auto">
+            <svg className="w-full h-full animate-spin" style={{ animationDuration: '3s' }}>
+              <circle
+                cx="48"
+                cy="48"
+                r="44"
+                fill="none"
+                stroke="url(#gradient)"
+                strokeWidth="4"
+                strokeDasharray="70 200"
+                strokeLinecap="round"
+              />
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#a855f7" />
+                  <stop offset="100%" stopColor="#3b82f6" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+        
+        {/* Title */}
+        <h2 className="text-2xl font-light text-white mb-2">
+          Procesando con <span className="text-purple-400 italic">IA</span>
+        </h2>
+        
+        {/* Current message */}
+        <p className="text-gray-400 mb-6 h-6 transition-all duration-500">
+          {PROCESSING_MESSAGES[messageIndex]}
+        </p>
+        
+        {/* Image counts */}
+        <div className="flex justify-center gap-6 mb-6">
+          {instagramCount > 0 && (
+            <div className="flex items-center gap-2 text-sm">
+              <Instagram className="w-4 h-4 text-pink-400" />
+              <span className="text-gray-400">{instagramCount} imágenes</span>
+            </div>
+          )}
+          {tiktokCount > 0 && (
+            <div className="flex items-center gap-2 text-sm">
+              <Music2 className="w-4 h-4 text-cyan-400" />
+              <span className="text-gray-400">{tiktokCount} imágenes</span>
+            </div>
+          )}
+        </div>
+        
+        {/* Progress bar */}
+        <div className="w-full bg-white/10 rounded-full h-3 mb-4 overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-300 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        
+        {/* Progress percentage */}
+        <p className="text-sm text-gray-500">
+          {Math.round(progress)}% completado
+        </p>
+        
+        {/* Tip */}
+        <p className="text-xs text-gray-600 mt-6">
+          Esto puede tomar hasta {Math.ceil(totalImages * 0.2)} minutos dependiendo de la cantidad de imágenes
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// Success Screen Component
+const SuccessScreen = ({ onContinue, extractedData }) => {
+  return (
+    <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full text-center">
+        {/* Success Icon */}
+        <div className="w-24 h-24 mx-auto rounded-full bg-green-500/20 flex items-center justify-center mb-6">
+          <CheckCircle className="w-14 h-14 text-green-400" />
+        </div>
+        
+        {/* Confetti effect */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <PartyPopper className="absolute top-1/4 left-1/4 w-8 h-8 text-yellow-400 animate-bounce" />
+          <PartyPopper className="absolute top-1/3 right-1/4 w-6 h-6 text-pink-400 animate-bounce" style={{ animationDelay: '0.2s' }} />
+        </div>
+        
+        {/* Title */}
+        <h2 className="text-2xl font-light text-white mb-2">
+          ¡Métricas <span className="text-green-400 italic">Enviadas</span>!
+        </h2>
+        
+        <p className="text-gray-400 mb-6">
+          La IA procesó exitosamente tus screenshots
+        </p>
+        
+        {/* Extracted summary */}
+        {extractedData && (
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-left">
+            <p className="text-sm text-gray-400 mb-3">Datos extraídos:</p>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              {extractedData.views && (
+                <div className="flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-blue-400" />
+                  <span className="text-white">{extractedData.views?.toLocaleString()} views</span>
+                </div>
+              )}
+              {extractedData.likes && (
+                <div className="flex items-center gap-2">
+                  <Heart className="w-4 h-4 text-red-400" />
+                  <span className="text-white">{extractedData.likes?.toLocaleString()} likes</span>
+                </div>
+              )}
+              {extractedData.reach && (
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-green-400" />
+                  <span className="text-white">{extractedData.reach?.toLocaleString()} reach</span>
+                </div>
+              )}
+              {extractedData.comments && (
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4 text-cyan-400" />
+                  <span className="text-white">{extractedData.comments?.toLocaleString()} comments</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {/* Continue button */}
+        <button
+          onClick={onContinue}
+          className="w-full py-4 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors"
+        >
+          Continuar al Workspace
+        </button>
+      </div>
+    </div>
+  );
+};
 
 // Screenshot upload card component - moved outside to avoid re-renders
 const ScreenshotUploadCard = ({ 
