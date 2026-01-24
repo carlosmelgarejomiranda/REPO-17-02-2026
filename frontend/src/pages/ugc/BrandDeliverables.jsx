@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { 
   ArrowLeft, CheckCircle, XCircle, AlertCircle, Clock, ExternalLink,
   Instagram, Music2, Loader2, RefreshCw, Star, Eye, MessageSquare,
-  ChevronDown, Send, Users
+  ChevronDown, Send, Users, Link as LinkIcon, BarChart3, Calendar
 } from 'lucide-react';
 
 const API_URL = getApiUrl();
@@ -17,7 +17,7 @@ const BrandDeliverables = () => {
   const [selectedDeliverable, setSelectedDeliverable] = useState(null);
   const [reviewNotes, setReviewNotes] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
-  const [activeFilter, setActiveFilter] = useState('pending');
+  const [activeFilter, setActiveFilter] = useState('to_rate');
   // Rating state
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [ratingDeliverable, setRatingDeliverable] = useState(null);
@@ -32,7 +32,6 @@ const BrandDeliverables = () => {
   const fetchData = async () => {
     const token = localStorage.getItem('auth_token');
     try {
-      // Fetch campaign details
       const campaignRes = await fetch(`${API_URL}/api/ugc/campaigns/${campaignId}`, { 
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -41,7 +40,6 @@ const BrandDeliverables = () => {
         setCampaign(campaignData);
       }
 
-      // Fetch deliverables
       const delRes = await fetch(`${API_URL}/api/ugc/deliverables/campaign/${campaignId}`, { 
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -134,6 +132,92 @@ const BrandDeliverables = () => {
     }
   };
 
+  // Calculate deadline status for URL (7 days) and Metrics (14 days) from confirmation
+  const getDeadlineStatus = (deliverable, type) => {
+    const confirmationDate = deliverable.confirmed_at || deliverable.created_at;
+    if (!confirmationDate) return null;
+
+    const confirmed = new Date(confirmationDate);
+    const now = new Date();
+    const daysLimit = type === 'url' ? 7 : 14;
+    const deadline = new Date(confirmed);
+    deadline.setDate(deadline.getDate() + daysLimit);
+
+    const timeDiff = deadline - now;
+    const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    const daysLate = Math.abs(daysRemaining);
+
+    // Already submitted?
+    const isSubmitted = type === 'url' ? !!deliverable.post_url : !!deliverable.metrics_submitted_at;
+
+    if (isSubmitted) {
+      return { status: 'completed', color: 'text-green-400', bgColor: 'bg-green-500/20', label: 'Entregado' };
+    }
+
+    if (daysRemaining < 0) {
+      return { 
+        status: 'late', 
+        color: 'text-red-400', 
+        bgColor: 'bg-red-500/20',
+        label: `${daysLate} ${daysLate === 1 ? 'día' : 'días'} de retraso`,
+        deadline
+      };
+    }
+
+    if (daysRemaining <= 1) {
+      return { 
+        status: 'urgent', 
+        color: 'text-red-400', 
+        bgColor: 'bg-red-500/20',
+        label: daysRemaining === 0 ? 'Vence hoy' : 'Vence mañana',
+        deadline
+      };
+    }
+
+    if (daysRemaining <= 3) {
+      return { 
+        status: 'warning', 
+        color: 'text-orange-400', 
+        bgColor: 'bg-orange-500/20',
+        label: `${daysRemaining} días restantes`,
+        deadline
+      };
+    }
+
+    if (daysRemaining <= 5) {
+      return { 
+        status: 'caution', 
+        color: 'text-yellow-400', 
+        bgColor: 'bg-yellow-500/20',
+        label: `${daysRemaining} días restantes`,
+        deadline
+      };
+    }
+
+    return { 
+      status: 'ok', 
+      color: 'text-green-400', 
+      bgColor: 'bg-green-500/20',
+      label: `${daysRemaining} días restantes`,
+      deadline
+    };
+  };
+
+  // Check if deliverable is ready to be rated (URL + Metrics submitted)
+  const isReadyToRate = (del) => {
+    return del.post_url && del.metrics_submitted_at && !del.brand_rating;
+  };
+
+  // Check if deliverable is completed and rated
+  const isCompletedAndRated = (del) => {
+    return del.post_url && del.metrics_submitted_at && del.brand_rating;
+  };
+
+  // Check if still pending delivery (either URL or metrics)
+  const isPendingDelivery = (del) => {
+    return !del.post_url || !del.metrics_submitted_at;
+  };
+
   const getStatusConfig = (status) => {
     const configs = {
       awaiting_publish: { color: 'bg-gray-500/20 text-gray-400', label: 'Esperando publicación' },
@@ -144,20 +228,29 @@ const BrandDeliverables = () => {
       approved: { color: 'bg-green-500/20 text-green-400', label: 'Aprobado' },
       rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado' },
       metrics_pending: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas pendientes' },
+      metrics_submitted: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas enviadas' },
       completed: { color: 'bg-green-500/20 text-green-400', label: 'Completado' }
     };
     return configs[status] || { color: 'bg-gray-500/20 text-gray-400', label: status };
   };
 
+  // New filter logic
   const filteredDeliverables = deliverables.filter(d => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'pending') return ['submitted', 'resubmitted'].includes(d.status);
-    if (activeFilter === 'approved') return ['approved', 'completed'].includes(d.status);
-    if (activeFilter === 'changes') return d.status === 'changes_requested';
+    if (activeFilter === 'to_rate') return isReadyToRate(d);
+    if (activeFilter === 'completed') return isCompletedAndRated(d);
+    if (activeFilter === 'pending') return isPendingDelivery(d);
     return true;
   });
 
-  const pendingCount = deliverables.filter(d => ['submitted', 'resubmitted'].includes(d.status)).length;
+  // Counts for stats
+  const toRateCount = deliverables.filter(d => isReadyToRate(d)).length;
+  const completedCount = deliverables.filter(d => isCompletedAndRated(d)).length;
+  const pendingCount = deliverables.filter(d => isPendingDelivery(d)).length;
+
+  const formatDeadlineDate = (date) => {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString('es-PY', { day: '2-digit', month: 'short' });
+  };
 
   if (loading) {
     return (
@@ -190,47 +283,72 @@ const BrandDeliverables = () => {
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          <div className="p-4 bg-white/5 border border-white/10 rounded-xl text-center">
-            <p className="text-2xl font-light text-white">{deliverables.length}</p>
-            <p className="text-sm text-gray-400">Total</p>
-          </div>
-          <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-center">
-            <p className="text-2xl font-light text-yellow-400">{pendingCount}</p>
-            <p className="text-sm text-gray-400">Por revisar</p>
-          </div>
-          <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-center">
-            <p className="text-2xl font-light text-green-400">
-              {deliverables.filter(d => ['approved', 'completed'].includes(d.status)).length}
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <div 
+            onClick={() => setActiveFilter('to_rate')}
+            className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
+              activeFilter === 'to_rate' 
+                ? 'bg-[#d4a968]/20 border-2 border-[#d4a968]' 
+                : 'bg-white/5 border border-white/10 hover:border-white/20'
+            }`}
+          >
+            <p className={`text-2xl font-light ${activeFilter === 'to_rate' ? 'text-[#d4a968]' : 'text-white'}`}>
+              {toRateCount}
             </p>
-            <p className="text-sm text-gray-400">Aprobados</p>
+            <p className="text-sm text-gray-400">Por Calificar</p>
           </div>
-          <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl text-center">
-            <p className="text-2xl font-light text-orange-400">
-              {deliverables.filter(d => d.status === 'changes_requested').length}
+          <div 
+            onClick={() => setActiveFilter('completed')}
+            className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
+              activeFilter === 'completed' 
+                ? 'bg-green-500/20 border-2 border-green-500' 
+                : 'bg-white/5 border border-white/10 hover:border-white/20'
+            }`}
+          >
+            <p className={`text-2xl font-light ${activeFilter === 'completed' ? 'text-green-400' : 'text-white'}`}>
+              {completedCount}
             </p>
-            <p className="text-sm text-gray-400">Con cambios</p>
+            <p className="text-sm text-gray-400">Completadas</p>
+          </div>
+          <div 
+            onClick={() => setActiveFilter('pending')}
+            className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
+              activeFilter === 'pending' 
+                ? 'bg-yellow-500/20 border-2 border-yellow-500' 
+                : 'bg-white/5 border border-white/10 hover:border-white/20'
+            }`}
+          >
+            <p className={`text-2xl font-light ${activeFilter === 'pending' ? 'text-yellow-400' : 'text-white'}`}>
+              {pendingCount}
+            </p>
+            <p className="text-sm text-gray-400">Pendiente de Entrega</p>
           </div>
         </div>
 
         {/* Filters */}
         <div className="flex gap-2 mb-6">
           {[
-            { id: 'pending', label: `Por revisar (${pendingCount})` },
-            { id: 'all', label: 'Todas' },
-            { id: 'approved', label: 'Aprobadas' },
-            { id: 'changes', label: 'Con cambios' }
+            { id: 'to_rate', label: 'Calificar', count: toRateCount },
+            { id: 'completed', label: 'Completadas', count: completedCount },
+            { id: 'pending', label: 'Pendiente de Entrega', count: pendingCount }
           ].map(f => (
             <button
               key={f.id}
               onClick={() => setActiveFilter(f.id)}
-              className={`px-4 py-2 rounded-lg text-sm transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${
                 activeFilter === f.id
                   ? 'bg-[#d4a968] text-black'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10'
               }`}
             >
               {f.label}
+              {f.count > 0 && (
+                <span className={`px-1.5 py-0.5 rounded-full text-xs ${
+                  activeFilter === f.id ? 'bg-black/20' : 'bg-white/10'
+                }`}>
+                  {f.count}
+                </span>
+              )}
             </button>
           ))}
           <button
@@ -246,23 +364,28 @@ const BrandDeliverables = () => {
           <div className="p-12 bg-white/5 border border-white/10 rounded-xl text-center">
             <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400">
-              {activeFilter === 'pending' 
-                ? 'No hay entregas pendientes de revisión'
-                : 'No hay entregas en esta categoría'}
+              {activeFilter === 'to_rate' 
+                ? 'No hay entregas listas para calificar'
+                : activeFilter === 'completed'
+                ? 'No hay entregas completadas y calificadas'
+                : 'No hay entregas pendientes'}
             </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
             {filteredDeliverables.map((del) => {
               const statusConfig = getStatusConfig(del.status);
-              const isPending = ['submitted', 'resubmitted'].includes(del.status);
+              const urlStatus = getDeadlineStatus(del, 'url');
+              const metricsStatus = getDeadlineStatus(del, 'metrics');
+              const canRate = isReadyToRate(del);
               const isSelected = selectedDeliverable?.id === del.id;
+              const isPending = ['submitted', 'resubmitted'].includes(del.status);
 
               return (
                 <div
                   key={del.id}
                   className={`p-5 bg-white/5 border rounded-xl transition-all ${
-                    isPending ? 'border-yellow-500/30' : 'border-white/10'
+                    canRate ? 'border-[#d4a968]/50' : isPending ? 'border-yellow-500/30' : 'border-white/10'
                   } ${isSelected ? 'ring-2 ring-[#d4a968]' : ''}`}
                 >
                   {/* Creator Info */}
@@ -288,7 +411,60 @@ const BrandDeliverables = () => {
                     </span>
                   </div>
 
-                  {/* Post URL */}
+                  {/* Delivery Status Cards */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    {/* URL Status */}
+                    <div className={`p-3 rounded-lg ${urlStatus?.bgColor || 'bg-white/5'}`}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <LinkIcon className={`w-4 h-4 ${urlStatus?.color || 'text-gray-400'}`} />
+                        <span className="text-xs text-gray-400">URL Publicación</span>
+                      </div>
+                      {del.post_url ? (
+                        <div className="flex items-center gap-1">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400" />
+                          <span className="text-sm text-green-400">Entregado</span>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className={`text-sm ${urlStatus?.color || 'text-gray-400'}`}>
+                            {urlStatus?.label || 'Pendiente'}
+                          </p>
+                          {urlStatus?.deadline && urlStatus.status !== 'completed' && (
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              Límite: {formatDeadlineDate(urlStatus.deadline)}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Metrics Status */}
+                    <div className={`p-3 rounded-lg ${metricsStatus?.bgColor || 'bg-white/5'}`}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <BarChart3 className={`w-4 h-4 ${metricsStatus?.color || 'text-gray-400'}`} />
+                        <span className="text-xs text-gray-400">Métricas</span>
+                      </div>
+                      {del.metrics_submitted_at ? (
+                        <div className="flex items-center gap-1">
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400" />
+                          <span className="text-sm text-green-400">Entregado</span>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className={`text-sm ${metricsStatus?.color || 'text-gray-400'}`}>
+                            {metricsStatus?.label || 'Pendiente'}
+                          </p>
+                          {metricsStatus?.deadline && metricsStatus.status !== 'completed' && (
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              Límite: {formatDeadlineDate(metricsStatus.deadline)}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Post URL Link */}
                   {del.post_url && (
                     <div className="mb-4 p-3 bg-black/30 rounded-lg">
                       <a
@@ -303,17 +479,18 @@ const BrandDeliverables = () => {
                     </div>
                   )}
 
-                  {/* Stats */}
+                  {/* Round Info */}
                   <div className="flex items-center gap-4 text-sm text-gray-400 mb-4">
                     <span>Ronda: {del.review_round || 1}</span>
-                    {del.is_on_time !== null && (
-                      <span className={del.is_on_time ? 'text-green-400' : 'text-orange-400'}>
-                        {del.is_on_time ? 'A tiempo' : 'Fuera de tiempo'}
+                    {del.confirmed_at && (
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Confirmado: {new Date(del.confirmed_at).toLocaleDateString('es-PY', { day: '2-digit', month: 'short' })}
                       </span>
                     )}
                   </div>
 
-                  {/* Review Actions */}
+                  {/* Review Actions for pending submissions */}
                   {isPending && (
                     <div className="space-y-3">
                       {isSelected ? (
@@ -379,38 +556,41 @@ const BrandDeliverables = () => {
                     </div>
                   )}
 
-                  {/* Rating Section for approved deliverables */}
-                  {['approved', 'completed', 'metrics_pending', 'metrics_submitted'].includes(del.status) && (
+                  {/* Rating Section */}
+                  {canRate && (
                     <div className="mt-4 pt-4 border-t border-white/10">
-                      {del.brand_rating ? (
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-400">Tu calificación:</span>
-                            <div className="flex items-center gap-0.5">
-                              {[1, 2, 3, 4, 5].map(star => (
-                                <Star 
-                                  key={star} 
-                                  className={`w-4 h-4 ${star <= del.brand_rating.rating ? 'text-yellow-400 fill-current' : 'text-gray-600'}`} 
-                                />
-                              ))}
-                            </div>
+                      <button
+                        onClick={() => openRatingModal(del)}
+                        className="w-full py-3 bg-[#d4a968] text-black rounded-lg text-sm hover:bg-[#c49958] flex items-center justify-center gap-2 font-medium"
+                      >
+                        <Star className="w-5 h-5" />
+                        Calificar entrega
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Already rated */}
+                  {del.brand_rating && (
+                    <div className="mt-4 pt-4 border-t border-white/10">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-400">Tu calificación:</span>
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map(star => (
+                              <Star 
+                                key={star} 
+                                className={`w-4 h-4 ${star <= del.brand_rating.rating ? 'text-yellow-400 fill-current' : 'text-gray-600'}`} 
+                              />
+                            ))}
                           </div>
-                          <button
-                            onClick={() => openRatingModal(del)}
-                            className="text-xs text-[#d4a968] hover:underline"
-                          >
-                            Editar
-                          </button>
                         </div>
-                      ) : (
                         <button
                           onClick={() => openRatingModal(del)}
-                          className="w-full py-2 bg-yellow-500/20 text-yellow-400 rounded-lg text-sm hover:bg-yellow-500/30 flex items-center justify-center gap-2"
+                          className="text-xs text-[#d4a968] hover:underline"
                         >
-                          <Star className="w-4 h-4" />
-                          Calificar entrega
+                          Editar
                         </button>
-                      )}
+                      </div>
                     </div>
                   )}
                 </div>
