@@ -62,6 +62,29 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
     - `/app/frontend/src/pages/ugc/CreatorWorkspace.jsx` - Main deliverables page
     - `/app/frontend/src/pages/ugc/CreatorCampaigns.jsx` - Unified campaigns page
 
+- **UX Improvement: Redesigned Brand "Revisión de Entregas" Section (P1)**
+  - User request: Fix incorrect tabs, deadline calculation, and add separate URL/Metrics status
+  - Changes implemented:
+    - **New filter tabs (in priority order)**: Calificar → Completadas → Pendiente de Entrega
+    - **"Calificar"**: Deliverables with both URL and metrics submitted, but not yet rated
+    - **"Completadas"**: Deliverables that have been rated
+    - **"Pendiente de Entrega"**: Deliverables missing URL or metrics
+    - **Fixed deadline calculation**:
+      - URL deadline: 7 days from confirmation date
+      - Metrics deadline: 14 days from confirmation date
+    - **Color-coded deadline status**:
+      - Green: 5+ days remaining
+      - Yellow: 3-5 days remaining  
+      - Orange: 1-3 days remaining
+      - Red: Vence hoy/mañana or "X días de retraso"
+    - **Separate status cards for URL and Metrics**:
+      - Shows "Entregado" if completed
+      - Shows "X días restantes" with deadline date if pending
+      - Shows "X días de retraso" if late
+    - **Confirmation date visible**: "Confirmado: DD-MMM"
+  - Files modified:
+    - `/app/frontend/src/pages/ugc/BrandDeliverables.jsx` - Complete rewrite
+
 ### Session: 2026-01-24
 
 #### ✅ Completed
