@@ -200,9 +200,9 @@ const CreatorCampaigns = () => {
 
           {/* Tabs */}
           <div className="flex border-b border-white/10 mb-6 overflow-x-auto">
-            <TabButton id="available" label="Disponibles" count={filteredCampaigns.length} active={activeTab === 'available'} />
-            <TabButton id="applications" label="Mis Aplicaciones" count={pendingApplications} active={activeTab === 'applications'} />
-            <TabButton id="deliverables" label="Mis Entregas" count={activeDeliverables} active={activeTab === 'deliverables'} />
+            <TabButton id="available" label="Disponibles" count={filteredCampaigns.length} active={activeTab === 'available'} onClick={() => handleTabClick('available')} />
+            <TabButton id="applications" label="Mis Aplicaciones" count={pendingApplications} active={activeTab === 'applications'} onClick={() => handleTabClick('applications')} />
+            <TabButton id="deliverables" label="Mis Entregas" count={activeDeliverables} active={activeTab === 'deliverables'} onClick={() => handleTabClick('deliverables')} />
           </div>
 
           {/* Search & Filters */}
