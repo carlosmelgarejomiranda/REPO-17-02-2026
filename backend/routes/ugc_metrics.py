@@ -1089,8 +1089,11 @@ async def update_creator_stats(db, creator_id: str):
         "stats.delivery_on_time_rate": delivery_on_time_rate,
         "stats.total_views": total_views,
         "stats.total_reach": total_reach,
+        "stats.total_completed": completed_campaigns,  # For backwards compatibility
         "completed_campaigns": completed_campaigns,
-        "delivery_on_time_rate": delivery_on_time_rate
+        "delivery_on_time_rate": delivery_on_time_rate,
+        "total_reach": total_reach,
+        "total_views": total_views
     }
     
     await db.ugc_creators.update_one(
