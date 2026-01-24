@@ -5,7 +5,8 @@ import {
   ArrowLeft, BarChart3, Users, Globe, Filter, Calendar, Instagram, 
   Music2, Eye, Heart, MessageCircle, Share2, Bookmark, Clock, 
   TrendingUp, Star, Loader2, ChevronDown, Award, AlertCircle,
-  CheckCircle, XCircle, FileCheck, ClipboardList, ExternalLink
+  CheckCircle, XCircle, FileCheck, ClipboardList, ExternalLink,
+  MapPin, User, Percent
 } from 'lucide-react';
 import { UGCNavbar } from '../../components/UGCNavbar';
 
@@ -16,14 +17,15 @@ const BrandCampaignReports = () => {
   const [campaign, setCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeReport, setActiveReport] = useState('metricas');
-  const [platformFilter, setPlatformFilter] = useState('all'); // all, instagram, tiktok
-  const [monthFilter, setMonthFilter] = useState('all'); // all, or specific month
+  const [platformFilter, setPlatformFilter] = useState('all');
+  const [monthFilter, setMonthFilter] = useState('all');
   const [metrics, setMetrics] = useState([]);
   const [applicants, setApplicants] = useState([]);
   const [demographics, setDemographics] = useState(null);
 
   useEffect(() => {
     fetchCampaign();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaignId]);
 
   useEffect(() => {
@@ -32,6 +34,7 @@ const BrandCampaignReports = () => {
       if (activeReport === 'postulantes') fetchApplicants();
       if (activeReport === 'demografia') fetchDemographics();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [campaign, activeReport, platformFilter, monthFilter]);
 
   const fetchCampaign = async () => {
@@ -131,7 +134,6 @@ const BrandCampaignReports = () => {
     return num.toFixed(1) + ' días';
   };
 
-  // Generate months for filter
   const getMonthOptions = () => {
     const months = [];
     const now = new Date();
@@ -145,7 +147,6 @@ const BrandCampaignReports = () => {
     return months;
   };
 
-  // Calculate totals for metrics
   const metricsTotals = metrics.reduce((acc, m) => ({
     views: acc.views + (m.views || 0),
     reach: acc.reach + (m.reach || 0),
@@ -166,12 +167,10 @@ const BrandCampaignReports = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* UGC Navbar */}
       <UGCNavbar type="brand" />
 
-      {/* Main Content */}
       <div className="pt-20 max-w-7xl mx-auto px-6 py-8">
-        {/* Campaign Title & Action Buttons */}
+        {/* Campaign Title */}
         <div className="flex items-start justify-between mb-8">
           <div>
             <h1 className="text-3xl font-light mb-2">{campaign?.name}</h1>
@@ -181,7 +180,6 @@ const BrandCampaignReports = () => {
             <Link
               to={`/ugc/brand/deliverables/${campaignId}`}
               className="flex items-center gap-2 px-5 py-2.5 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors"
-              data-testid="deliverables-btn"
             >
               <FileCheck className="w-4 h-4" />
               Entregas
@@ -189,7 +187,6 @@ const BrandCampaignReports = () => {
             <Link
               to={`/ugc/brand/campaigns/${campaignId}/applications`}
               className="flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
-              data-testid="applications-btn"
             >
               <ClipboardList className="w-4 h-4" />
               Ver Aplicaciones
@@ -221,7 +218,6 @@ const BrandCampaignReports = () => {
 
         {/* Filters */}
         <div className="flex gap-4 mb-8">
-          {/* Platform Filter */}
           <div className="relative">
             <select
               value={platformFilter}
@@ -235,7 +231,6 @@ const BrandCampaignReports = () => {
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
 
-          {/* Month Filter */}
           <div className="relative">
             <select
               value={monthFilter}
@@ -334,13 +329,11 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                 </tr>
               ) : (
                 metrics.map((m, idx) => {
-                  // Calculate derived metrics
                   const totalInteractions = (m.likes || 0) + (m.comments || 0) + (m.shares || 0) + (m.saves || 0);
                   const interactionRate = m.reach > 0 ? (totalInteractions / m.reach) * 100 : 0;
                   
                   return (
                     <tr key={m.id || idx} className="border-b border-white/5 hover:bg-white/5">
-                      {/* Creator Name */}
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
@@ -351,8 +344,6 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                           <p className="text-white font-medium">{m.creator?.name || 'Creator'}</p>
                         </div>
                       </td>
-                      
-                      {/* Platform Badge */}
                       <td className="p-4 text-center">
                         {m.platform === 'tiktok' ? (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black border border-white/20 rounded-full">
@@ -366,16 +357,12 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                           </span>
                         )}
                       </td>
-                      
-                      {/* Metrics */}
                       <td className="p-4 text-right text-white font-medium">{formatNumber(m.views)}</td>
                       <td className="p-4 text-right text-gray-300">{formatNumber(m.reach)}</td>
                       <td className="p-4 text-right text-pink-400">{formatNumber(m.likes)}</td>
                       <td className="p-4 text-right text-blue-400">{formatNumber(m.comments)}</td>
                       <td className="p-4 text-right text-green-400">{formatNumber((m.shares || 0) + (m.reposts || 0))}</td>
                       <td className="p-4 text-right text-yellow-400">{formatNumber(m.saves)}</td>
-                      
-                      {/* Interaction Rate */}
                       <td className="p-4 text-right">
                         <span className={`font-bold ${
                           interactionRate >= 10 ? 'text-green-400' :
@@ -385,8 +372,6 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                           {interactionRate.toFixed(1)}%
                         </span>
                       </td>
-                      
-                      {/* Post URL Button */}
                       <td className="p-4 text-center">
                         {m.post_url ? (
                           <a
@@ -394,7 +379,6 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#d4a968]/20 text-[#d4a968] rounded-lg hover:bg-[#d4a968]/30 transition-colors"
-                            title="Ver posteo"
                           >
                             <ExternalLink className="w-4 h-4" />
                             <span className="text-xs font-medium">Ver</span>
@@ -415,7 +399,123 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
   );
 };
 
-// Demographics Report Component
+// ==================== PROFESSIONAL DEMOGRAPHICS CHARTS ====================
+
+// Animated Circular Progress Component
+const CircularProgress = ({ value, size = 120, strokeWidth = 10, color, label, icon: Icon }) => {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const offset = circumference - (value / 100) * circumference;
+  
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="transform -rotate-90">
+          {/* Background circle */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="rgba(255,255,255,0.1)"
+            strokeWidth={strokeWidth}
+          />
+          {/* Progress circle */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            className="transition-all duration-1000 ease-out"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          {Icon && <Icon className="w-5 h-5 mb-1" style={{ color }} />}
+          <span className="text-2xl font-bold text-white">{value}%</span>
+        </div>
+      </div>
+      <span className="mt-3 text-sm text-gray-400">{label}</span>
+    </div>
+  );
+};
+
+// Horizontal Bar Chart Component
+const HorizontalBarChart = ({ data, maxValue, colorGradient }) => {
+  return (
+    <div className="space-y-4">
+      {data.map((item, idx) => {
+        const width = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
+        return (
+          <div key={idx} className="group">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-300 font-medium">{item.label}</span>
+              <span className="text-sm font-bold text-white">{item.value}%</span>
+            </div>
+            <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+              <div 
+                className={`h-full rounded-full transition-all duration-1000 ease-out ${colorGradient}`}
+                style={{ width: `${width}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// Donut Chart Component
+const DonutChart = ({ data, size = 200 }) => {
+  const strokeWidth = 30;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  
+  let cumulativePercent = 0;
+  
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="transform -rotate-90">
+        {data.map((item, idx) => {
+          const offset = circumference - (item.value / 100) * circumference;
+          const rotation = (cumulativePercent / 100) * 360;
+          cumulativePercent += item.value;
+          
+          return (
+            <circle
+              key={idx}
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke={item.color}
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${(item.value / 100) * circumference} ${circumference}`}
+              strokeLinecap="round"
+              style={{ 
+                transform: `rotate(${rotation}deg)`,
+                transformOrigin: 'center'
+              }}
+              className="transition-all duration-1000 ease-out"
+            />
+          );
+        })}
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center">
+          <Percent className="w-6 h-6 text-gray-400 mx-auto mb-1" />
+          <span className="text-xs text-gray-500">Distribución</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Demographics Report Component with Pro Charts
 const DemographicsReport = ({ demographics }) => {
   if (!demographics) {
     return (
@@ -425,7 +525,6 @@ const DemographicsReport = ({ demographics }) => {
     );
   }
 
-  // Check if there's actual data - use has_data flag from API or check values
   const hasDataFlag = demographics.has_data === true;
   const hasGenderData = demographics.gender && (demographics.gender.male > 0 || demographics.gender.female > 0 || demographics.gender.other > 0);
   const hasAgeData = demographics.age_ranges && demographics.age_ranges.length > 0 && demographics.age_ranges.some(a => a.percent > 0);
@@ -434,10 +533,12 @@ const DemographicsReport = ({ demographics }) => {
 
   if (!hasAnyData) {
     return (
-      <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-        <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+      <div className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-12 text-center">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
+          <Users className="w-10 h-10 text-purple-400" />
+        </div>
         <h3 className="text-xl text-white mb-2">Sin datos demográficos</h3>
-        <p className="text-gray-400">
+        <p className="text-gray-400 max-w-md mx-auto">
           Los datos demográficos aparecerán cuando los creadores suban sus métricas con capturas de audiencia.
         </p>
       </div>
@@ -448,103 +549,130 @@ const DemographicsReport = ({ demographics }) => {
   const ageData = demographics.age_ranges || [];
   const countryData = demographics.countries || [];
 
+  // Prepare gender donut data
+  const genderDonutData = [
+    { value: genderData.female || 0, color: '#ec4899', label: 'Femenino' },
+    { value: genderData.male || 0, color: '#3b82f6', label: 'Masculino' },
+    { value: genderData.other || 0, color: '#8b5cf6', label: 'Otro' }
+  ].filter(d => d.value > 0);
+
+  // Prepare age bar data
+  const ageBarData = ageData.map(a => ({
+    label: a.range,
+    value: a.percent || 0
+  }));
+  const maxAge = Math.max(...ageBarData.map(a => a.value), 1);
+
+  // Country colors
+  const countryColors = ['#d4a968', '#8b5cf6', '#22c55e', '#3b82f6', '#f59e0b'];
+
   return (
     <div className="space-y-8">
-      {/* Gender Distribution */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-white mb-6">Distribución por Sexo</h3>
-        <div className="flex items-center gap-8">
-          <div className="flex-1">
-            <div className="flex h-8 rounded-full overflow-hidden">
-              <div 
-                className="bg-pink-500 flex items-center justify-center text-white text-sm font-medium"
-                style={{ width: `${genderData.female}%` }}
-              >
-                {genderData.female}%
-              </div>
-              <div 
-                className="bg-blue-500 flex items-center justify-center text-white text-sm font-medium"
-                style={{ width: `${genderData.male}%` }}
-              >
-                {genderData.male}%
-              </div>
-              <div 
-                className="bg-purple-500 flex items-center justify-center text-white text-sm font-medium"
-                style={{ width: `${genderData.other}%` }}
-              >
-                {genderData.other}%
-              </div>
-            </div>
+      {/* Gender Distribution - Pro Design */}
+      <div className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-8">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500/20 to-blue-500/20 flex items-center justify-center">
+            <User className="w-5 h-5 text-pink-400" />
           </div>
-          <div className="flex gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-pink-500" />
-              <span className="text-gray-300 text-sm">Femenino</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500" />
-              <span className="text-gray-300 text-sm">Masculino</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-purple-500" />
-              <span className="text-gray-300 text-sm">Otro</span>
-            </div>
+          <div>
+            <h3 className="text-lg font-medium text-white">Distribución por Género</h3>
+            <p className="text-sm text-gray-500">Audiencia alcanzada por género</p>
           </div>
         </div>
-      </div>
-
-      {/* Age Distribution */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-white mb-6">Distribución por Rango Etario</h3>
-        <div className="space-y-4">
-          {ageData.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-4">
-              <span className="w-16 text-gray-400 text-sm">{item.range}</span>
-              <div className="flex-1 h-6 bg-white/10 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-[#d4a968] to-[#e8c078] rounded-full flex items-center px-2"
-                  style={{ width: `${item.percent}%` }}
-                >
-                  <span className="text-black text-xs font-medium">{item.percent}%</span>
-                </div>
-              </div>
+        
+        <div className="flex items-center justify-around">
+          {/* Donut Chart */}
+          <DonutChart data={genderDonutData} size={180} />
+          
+          {/* Circular Progress for each gender */}
+          <div className="flex gap-8">
+            <CircularProgress 
+              value={genderData.female || 0} 
+              color="#ec4899" 
+              label="Femenino"
+              size={100}
+              strokeWidth={8}
+            />
+            <CircularProgress 
+              value={genderData.male || 0} 
+              color="#3b82f6" 
+              label="Masculino"
+              size={100}
+              strokeWidth={8}
+            />
+            {genderData.other > 0 && (
+              <CircularProgress 
+                value={genderData.other} 
+                color="#8b5cf6" 
+                label="Otro"
+                size={100}
+                strokeWidth={8}
+              />
+            )}
+          </div>
+        </div>
+        
+        {/* Legend */}
+        <div className="flex justify-center gap-8 mt-8 pt-6 border-t border-white/5">
+          {genderDonutData.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+              <span className="text-sm text-gray-400">{item.label}</span>
+              <span className="text-sm font-bold text-white">{item.value}%</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Country Distribution */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h3 className="text-lg font-medium text-white mb-6">Distribución por País</h3>
-        <div className="grid grid-cols-5 gap-4">
-          {countryData.map((item, idx) => (
-            <div key={idx} className="text-center">
-              <div className="relative w-20 h-20 mx-auto mb-2">
-                <svg viewBox="0 0 36 36" className="w-full h-full">
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke="#333"
-                    strokeWidth="3"
-                  />
-                  <path
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none"
-                    stroke={idx === 0 ? '#d4a968' : idx === 1 ? '#8b5cf6' : idx === 2 ? '#22c55e' : '#3b82f6'}
-                    strokeWidth="3"
-                    strokeDasharray={`${item.percent}, 100`}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-white font-bold">
-                  {item.percent}%
-                </span>
-              </div>
-              <p className="text-gray-300 text-sm">{item.country}</p>
-            </div>
-          ))}
+      {/* Age Distribution - Pro Design */}
+      <div className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-8">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#d4a968]/20 to-orange-500/20 flex items-center justify-center">
+            <BarChart3 className="w-5 h-5 text-[#d4a968]" />
+          </div>
+          <div>
+            <h3 className="text-lg font-medium text-white">Distribución por Edad</h3>
+            <p className="text-sm text-gray-500">Rangos etarios de la audiencia</p>
+          </div>
+        </div>
+        
+        <div className="max-w-2xl">
+          <HorizontalBarChart 
+            data={ageBarData} 
+            maxValue={maxAge}
+            colorGradient="bg-gradient-to-r from-[#d4a968] to-[#e8c078]"
+          />
         </div>
       </div>
+
+      {/* Country Distribution - Pro Design */}
+      {countryData.length > 0 && (
+        <div className="bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 rounded-2xl p-8">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-blue-500/20 flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-green-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-white">Distribución Geográfica</h3>
+              <p className="text-sm text-gray-500">Top países de la audiencia</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-5 gap-6">
+            {countryData.slice(0, 5).map((item, idx) => (
+              <div key={idx} className="text-center group">
+                <CircularProgress 
+                  value={item.percent || 0}
+                  size={100}
+                  strokeWidth={8}
+                  color={countryColors[idx]}
+                  label={item.country}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -553,7 +681,6 @@ const DemographicsReport = ({ demographics }) => {
 const ApplicantsReport = ({ applicants, formatNumber, formatPercent, formatDays }) => {
   return (
     <div className="space-y-6">
-      {/* Applicants Table */}
       <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
         <div className="p-4 border-b border-white/10">
           <h3 className="text-lg font-medium text-white">Reporte de Postulantes</h3>
@@ -588,10 +715,10 @@ const ApplicantsReport = ({ applicants, formatNumber, formatPercent, formatDays 
               ) : (
                 applicants.map((a, idx) => {
                   const levelConfig = {
-                    rookie: { bg: 'bg-gray-500/20', text: 'text-gray-400', icon: '🌱' },
-                    trusted: { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: '✅' },
-                    pro: { bg: 'bg-purple-500/20', text: 'text-purple-400', icon: '💼' },
-                    elite: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: '👑' }
+                    rookie: { bg: 'bg-gray-500/20', text: 'text-gray-400', label: 'Rookie' },
+                    trusted: { bg: 'bg-blue-500/20', text: 'text-blue-400', label: 'Trusted' },
+                    pro: { bg: 'bg-purple-500/20', text: 'text-purple-400', label: 'Pro' },
+                    elite: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', label: 'Elite' }
                   };
                   const level = levelConfig[a.level] || levelConfig.rookie;
                   
@@ -637,7 +764,7 @@ const ApplicantsReport = ({ applicants, formatNumber, formatPercent, formatDays 
                       </td>
                       <td className="p-4 text-center">
                         <span className={`px-3 py-1 rounded-full text-xs ${level.bg} ${level.text}`}>
-                          {level.icon} {a.level?.toUpperCase()}
+                          {level.label}
                         </span>
                       </td>
                       <td className="p-4 text-right">
