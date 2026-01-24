@@ -316,14 +316,21 @@ const DeliverableDetail = () => {
       return;
     }
 
-    // Validate new URL formats if provided
-    if (instagramUrl.trim() && !deliverable.instagram_url && !instagramUrl.includes('instagram.com')) {
-      setError('La URL de Instagram no parece válida');
-      return;
+    // Check validations for new URLs
+    if (instagramUrl.trim() && !deliverable.instagram_url) {
+      const igValidation = validateInstagramUrl(instagramUrl);
+      if (!igValidation.valid && igValidation.error) {
+        setError('Corregí el link de Instagram antes de continuar');
+        return;
+      }
     }
-    if (tiktokUrl.trim() && !deliverable.tiktok_url && !tiktokUrl.includes('tiktok.com')) {
-      setError('La URL de TikTok no parece válida');
-      return;
+    
+    if (tiktokUrl.trim() && !deliverable.tiktok_url) {
+      const ttValidation = validateTiktokUrl(tiktokUrl);
+      if (!ttValidation.valid && ttValidation.error) {
+        setError('Corregí el link de TikTok antes de continuar');
+        return;
+      }
     }
 
     setSubmitting(true);
