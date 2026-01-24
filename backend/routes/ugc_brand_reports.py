@@ -109,25 +109,12 @@ async def get_campaign_demographics(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    import logging
-    logger = logging.getLogger("demographics")
-    logger.info(f"Demographics request - Campaign ID: {campaign_id}, Brand ID: {brand.get('id')}, User: {user.get('user_id')}")
-    
     # Verify brand owns this campaign
     campaign = await db.ugc_campaigns.find_one({
         "id": campaign_id,
         "brand_id": brand["id"]
     })
-    
-    logger.info(f"Campaign lookup result: {campaign is not None}")
-    
     if not campaign:
-        # Debug: Check if campaign exists at all
-        any_campaign = await db.ugc_campaigns.find_one({"id": campaign_id})
-        if any_campaign:
-            logger.warning(f"Campaign exists but belongs to brand {any_campaign.get('brand_id')}, not {brand['id']}")
-        else:
-            logger.warning(f"Campaign {campaign_id} does not exist")
         raise HTTPException(status_code=404, detail="Campaign not found")
     
     # Get all metrics for this campaign that have demographics data
