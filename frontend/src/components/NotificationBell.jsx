@@ -135,18 +135,28 @@ const NotificationBell = () => {
 
   // Initial fetch and polling
   useEffect(() => {
-    fetchNotifications();
+    const loadInitial = async () => {
+      await fetchNotifications();
+    };
+    loadInitial();
     
     // Poll for new notifications every 30 seconds
-    const interval = setInterval(fetchUnreadCount, 30000);
+    const interval = setInterval(() => {
+      fetchUnreadCount();
+    }, 30000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch full notifications when dropdown opens
   useEffect(() => {
     if (isOpen) {
-      fetchNotifications();
+      const loadNotifications = async () => {
+        await fetchNotifications();
+      };
+      loadNotifications();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   // Get notification type icon/color
