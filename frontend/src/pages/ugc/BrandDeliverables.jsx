@@ -18,6 +18,7 @@ const BrandDeliverables = () => {
   const [reviewNotes, setReviewNotes] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
   const [activeFilter, setActiveFilter] = useState('to_rate');
+  const [showCancelled, setShowCancelled] = useState(false);
   // Rating state
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [ratingDeliverable, setRatingDeliverable] = useState(null);
