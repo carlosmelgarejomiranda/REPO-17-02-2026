@@ -109,7 +109,6 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
   const [creators, setCreators] = useState([]);
   const [brands, setBrands] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
-  const [deliverables, setDeliverables] = useState([]);
   
   // Filters
   const [creatorFilter, setCreatorFilter] = useState({ level: '', city: '', search: '' });
