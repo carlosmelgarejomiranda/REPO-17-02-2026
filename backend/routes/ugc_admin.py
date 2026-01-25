@@ -626,10 +626,10 @@ async def admin_get_campaign_applications(
             ).to_list(100)
             
             num_metrics = len(all_metrics) or 1
-            total_views = sum(m.get("views", 0) for m in all_metrics)
-            total_reach = sum(m.get("reach", 0) for m in all_metrics)
+            total_views = sum((m.get("views") or 0) for m in all_metrics)
+            total_reach = sum((m.get("reach") or 0) for m in all_metrics)
             total_interactions = sum(
-                m.get("likes", 0) + m.get("comments", 0) + m.get("shares", 0) + m.get("saves", 0)
+                (m.get("likes") or 0) + (m.get("comments") or 0) + (m.get("shares") or 0) + (m.get("saves") or 0)
                 for m in all_metrics
             )
             
