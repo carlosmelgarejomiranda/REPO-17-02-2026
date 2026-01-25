@@ -21,6 +21,7 @@ export const UGCNavbar = ({ type = 'creator' }) => {
   const creatorLinks = [
     { href: '/ugc/creator/dashboard', label: 'Home', shortLabel: 'Home', icon: Home },
     { href: '/ugc/creator/campaigns', label: 'Campañas', shortLabel: 'Campañas', icon: Briefcase },
+    { href: '/ugc/creator/deliverables', label: 'Mis Entregas', shortLabel: 'Entregas', icon: FileText },
     { href: '/ugc/creator/profile', label: 'Perfil', shortLabel: 'Perfil', icon: User },
   ];
 
