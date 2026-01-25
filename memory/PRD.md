@@ -18,6 +18,45 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-25 (Continued - Part 2)
+
+#### ✅ Completed
+- **Feature: Página de Entregas por Creador (Admin)**
+  - Nueva página `/admin/creators/:creatorId/deliverables` para ver todas las entregas de un creador específico
+  - Muestra info del creador (nombre, redes sociales, nivel)
+  - Stats cards: Total Activas, Pendientes, Completadas, Con Cambios, Canceladas
+  - Filtros por estado con checkbox para incluir/excluir cancelados
+  - Vista detallada de cada entrega con:
+    - Nombre de campaña y marca
+    - Status de URL (7 días) y Métricas (14 días)
+    - Links directos a publicaciones
+    - Calificación de la marca si existe
+  - Botón "Ver Entregas" (ícono dorado) agregado en el listado de Creators del Admin
+  - Backend endpoints:
+    - `GET /api/ugc/admin/creators/{creatorId}` - Detalle del creador
+    - `GET /api/ugc/admin/creators/{creatorId}/deliverables` - Entregas del creador
+  - Files created:
+    - `/app/frontend/src/pages/admin/AdminCreatorDeliverables.jsx`
+  - Files modified:
+    - `/app/backend/routes/ugc_admin.py` - Nuevos endpoints
+    - `/app/frontend/src/App.js` - Nueva ruta
+    - `/app/frontend/src/components/admin/AdminCreatorsTab.jsx` - Botón "Ver Entregas"
+
+- **Feature: Eliminación de Sección Redundante**
+  - Eliminada la pestaña "Entregas" del panel Admin (era redundante con la vista por campaña)
+  - Limpieza de código: eliminados estado `deliverables`, función `fetchDeliverables`, import `FileCheck`
+  - Files modified:
+    - `/app/frontend/src/components/UGCAdminPanel.jsx`
+
+- **Mejora: Filtrado de Cancelados en Revisión de Entregas**
+  - Cancelados se excluyen por defecto de los filtros
+  - Checkbox "Incluir cancelados" para verlos opcionalmente
+  - Nueva pestaña "Canceladas" (solo visible si hay)
+  - Conteo de retraso se congela al momento de la cancelación
+  - Files modified:
+    - `/app/frontend/src/pages/admin/AdminDeliverables.jsx`
+    - `/app/frontend/src/pages/ugc/BrandDeliverables.jsx`
+
 ### Session: 2026-01-25 (Continued)
 
 #### ✅ Completed
