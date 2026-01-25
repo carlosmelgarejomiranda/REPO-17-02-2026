@@ -4,8 +4,9 @@ import { getApiUrl } from '../../utils/api';
 import { 
   Loader2, RefreshCw, Instagram, Music2, CheckCircle, Clock, 
   AlertCircle, ExternalLink, Calendar, BarChart3, Star, FileText,
-  ArrowRight, Upload
+  ArrowRight, Upload, Link as LinkIcon, ChevronRight
 } from 'lucide-react';
+import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
@@ -16,6 +17,7 @@ const CreatorDeliverables = () => {
 
   useEffect(() => {
     fetchDeliverables();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDeliverables = async () => {
@@ -64,23 +66,23 @@ const CreatorDeliverables = () => {
     const isSubmitted = type === 'url' ? !!deliverable.post_url : !!deliverable.metrics_submitted_at;
 
     if (isSubmitted) {
-      return { status: 'completed', color: 'text-green-400', bgColor: 'bg-green-500/20', label: '✓ Entregado' };
+      return { status: 'completed', color: 'text-green-400', bgColor: 'bg-green-500/10', label: 'Entregado', icon: CheckCircle };
     }
 
     if (isCancelledDel) {
-      return { status: 'cancelled', color: 'text-gray-500', bgColor: 'bg-gray-500/20', label: 'Cancelado' };
+      return { status: 'cancelled', color: 'text-gray-500', bgColor: 'bg-gray-500/10', label: 'Cancelado', icon: Clock };
     }
 
     if (daysRemaining < 0) {
-      return { status: 'late', color: 'text-red-400', bgColor: 'bg-red-500/20', label: `${daysLate}d atrasado` };
+      return { status: 'late', color: 'text-red-400', bgColor: 'bg-red-500/10', label: `${daysLate}d atrasado`, icon: AlertCircle };
     }
     if (daysRemaining <= 2) {
-      return { status: 'urgent', color: 'text-red-400', bgColor: 'bg-red-500/20', label: `${daysRemaining}d restantes` };
+      return { status: 'urgent', color: 'text-red-400', bgColor: 'bg-red-500/10', label: `${daysRemaining}d`, icon: AlertCircle };
     }
     if (daysRemaining <= 5) {
-      return { status: 'warning', color: 'text-orange-400', bgColor: 'bg-orange-500/20', label: `${daysRemaining}d restantes` };
+      return { status: 'warning', color: 'text-orange-400', bgColor: 'bg-orange-500/10', label: `${daysRemaining}d`, icon: Clock };
     }
-    return { status: 'ok', color: 'text-green-400', bgColor: 'bg-green-500/20', label: `${daysRemaining}d restantes` };
+    return { status: 'ok', color: 'text-green-400', bgColor: 'bg-green-500/10', label: `${daysRemaining}d`, icon: Clock };
   };
 
   const getStatusConfig = (status) => {
@@ -114,7 +116,7 @@ const CreatorDeliverables = () => {
 
   // Filter
   const filteredDeliverables = deliverables.filter(d => {
-    if (isCancelled(d)) return false; // Hide cancelled by default
+    if (isCancelled(d)) return false;
     if (activeFilter === 'pending') return isPending(d);
     if (activeFilter === 'completed') return isCompleted(d);
     if (activeFilter === 'action') return needsAction(d);
@@ -123,234 +125,278 @@ const CreatorDeliverables = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
+      <div className="min-h-screen bg-black">
+        <UGCNavbar />
+        <div className="flex items-center justify-center h-[60vh]">
+          <Loader2 className="w-8 h-8 text-[#d4a968] animate-spin" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-light text-white">Mis Entregas</h1>
-          <p className="text-gray-400 text-sm mt-1">Gestiona todas tus entregas pendientes</p>
-        </div>
-        <button
-          onClick={fetchDeliverables}
-          className="px-4 py-2 bg-white/5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 flex items-center gap-2"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Actualizar
-        </button>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <div 
-          onClick={() => setActiveFilter('action')}
-          className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
-            activeFilter === 'action' 
-              ? 'bg-orange-500/20 border-2 border-orange-500' 
-              : 'bg-white/5 border border-white/10 hover:border-white/20'
-          }`}
-        >
-          <p className={`text-2xl font-light ${activeFilter === 'action' ? 'text-orange-400' : 'text-white'}`}>
-            {needsActionCount}
-          </p>
-          <p className="text-sm text-gray-400">Requieren Acción</p>
-        </div>
-        <div 
-          onClick={() => setActiveFilter('pending')}
-          className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
-            activeFilter === 'pending' 
-              ? 'bg-yellow-500/20 border-2 border-yellow-500' 
-              : 'bg-white/5 border border-white/10 hover:border-white/20'
-          }`}
-        >
-          <p className={`text-2xl font-light ${activeFilter === 'pending' ? 'text-yellow-400' : 'text-white'}`}>
-            {pendingCount}
-          </p>
-          <p className="text-sm text-gray-400">En Progreso</p>
-        </div>
-        <div 
-          onClick={() => setActiveFilter('completed')}
-          className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
-            activeFilter === 'completed' 
-              ? 'bg-green-500/20 border-2 border-green-500' 
-              : 'bg-white/5 border border-white/10 hover:border-white/20'
-          }`}
-        >
-          <p className={`text-2xl font-light ${activeFilter === 'completed' ? 'text-green-400' : 'text-white'}`}>
-            {completedCount}
-          </p>
-          <p className="text-sm text-gray-400">Completadas</p>
-        </div>
-      </div>
-
-      {/* Deliverables List */}
-      {filteredDeliverables.length === 0 ? (
-        <div className="p-12 bg-white/5 border border-white/10 rounded-xl text-center">
-          <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">
-            {activeFilter === 'action' 
-              ? 'No tenés entregas que requieran acción'
-              : activeFilter === 'pending'
-              ? 'No tenés entregas pendientes'
-              : 'No tenés entregas completadas'}
-          </p>
-          <Link
-            to="/ugc/creator/campaigns"
-            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#e5ba79]"
+    <div className="min-h-screen bg-black">
+      <UGCNavbar />
+      
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-xl font-light text-white">Mis Entregas</h1>
+            <p className="text-gray-500 text-sm">Gestiona tus entregas pendientes</p>
+          </div>
+          <button
+            onClick={fetchDeliverables}
+            className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
           >
-            Ver campañas disponibles
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+            <RefreshCw className="w-4 h-4" />
+          </button>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {filteredDeliverables.map((del) => {
-            const statusConfig = getStatusConfig(del.status);
-            const urlStatus = getDeadlineStatus(del, 'url');
-            const metricsStatus = getDeadlineStatus(del, 'metrics');
 
-            return (
-              <div 
-                key={del.id} 
-                className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg text-white font-medium">{del.campaign?.name || 'Campaña'}</h3>
-                      <span className={`px-2 py-1 rounded-full text-xs ${statusConfig.color}`}>
-                        {statusConfig.label}
-                      </span>
-                    </div>
-                    <p className="text-gray-400 text-sm">{del.campaign?.brand_name || ''}</p>
-                  </div>
-                  
-                  {/* Action Button */}
-                  <Link
-                    to={`/ugc/creator/deliverable/${del.id}`}
-                    className="px-4 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#e5ba79] flex items-center gap-2 text-sm"
-                  >
-                    {!del.post_url ? (
-                      <>
-                        <Upload className="w-4 h-4" />
-                        Subir URL
-                      </>
-                    ) : !del.metrics_submitted_at ? (
-                      <>
-                        <BarChart3 className="w-4 h-4" />
-                        Subir Métricas
-                      </>
-                    ) : (
-                      <>
-                        <ExternalLink className="w-4 h-4" />
-                        Ver Detalle
-                      </>
-                    )}
-                  </Link>
-                </div>
+        {/* Filter Tabs */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          <button
+            onClick={() => setActiveFilter('action')}
+            className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all flex items-center gap-2 ${
+              activeFilter === 'action'
+                ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
+                : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+            }`}
+          >
+            <AlertCircle className="w-4 h-4" />
+            Requieren Acción
+            {needsActionCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full text-xs bg-orange-500/30">{needsActionCount}</span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveFilter('pending')}
+            className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all flex items-center gap-2 ${
+              activeFilter === 'pending'
+                ? 'bg-[#d4a968]/20 text-[#d4a968] border border-[#d4a968]/30'
+                : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            En Progreso
+            {pendingCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full text-xs bg-[#d4a968]/30">{pendingCount}</span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveFilter('completed')}
+            className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all flex items-center gap-2 ${
+              activeFilter === 'completed'
+                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+            }`}
+          >
+            <CheckCircle className="w-4 h-4" />
+            Completadas
+            {completedCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full text-xs bg-green-500/30">{completedCount}</span>
+            )}
+          </button>
+        </div>
 
-                {/* Progress Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  {/* URL Status */}
-                  <div className={`p-3 rounded-lg ${urlStatus?.bgColor || 'bg-white/5'}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-gray-400 flex items-center gap-1">
-                        <ExternalLink className="w-3 h-3" />
-                        URL del Post (7 días)
-                      </span>
-                      {urlStatus && (
-                        <span className={`text-xs font-medium ${urlStatus.color}`}>
-                          {urlStatus.label}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {del.instagram_url && (
-                        <a href={del.instagram_url} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:underline flex items-center gap-1 text-sm">
-                          <Instagram className="w-4 h-4" />
-                          Instagram
-                        </a>
-                      )}
-                      {del.tiktok_url && (
-                        <a href={del.tiktok_url} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline flex items-center gap-1 text-sm">
-                          <Music2 className="w-4 h-4" />
-                          TikTok
-                        </a>
-                      )}
-                      {!del.instagram_url && !del.tiktok_url && (
-                        <span className="text-gray-500 text-sm">Pendiente de enviar</span>
-                      )}
-                    </div>
-                  </div>
+        {/* Deliverables List */}
+        {filteredDeliverables.length === 0 ? (
+          <div className="p-12 bg-white/5 border border-white/10 rounded-xl text-center">
+            <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-400 mb-4">
+              {activeFilter === 'action' 
+                ? 'No tenés entregas que requieran acción'
+                : activeFilter === 'pending'
+                ? 'No tenés entregas en progreso'
+                : 'No tenés entregas completadas'}
+            </p>
+            <Link
+              to="/ugc/creator/campaigns"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#e5ba79] text-sm font-medium"
+            >
+              Ver campañas disponibles
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredDeliverables.map((del) => {
+              const statusConfig = getStatusConfig(del.status);
+              const urlStatus = getDeadlineStatus(del, 'url');
+              const metricsStatus = getDeadlineStatus(del, 'metrics');
+              const hasChangesRequested = del.status === 'changes_requested';
 
-                  {/* Metrics Status */}
-                  <div className={`p-3 rounded-lg ${metricsStatus?.bgColor || 'bg-white/5'}`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-gray-400 flex items-center gap-1">
-                        <BarChart3 className="w-3 h-3" />
-                        Métricas (14 días)
-                      </span>
-                      {metricsStatus && (
-                        <span className={`text-xs font-medium ${metricsStatus.color}`}>
-                          {metricsStatus.label}
-                        </span>
-                      )}
+              return (
+                <div 
+                  key={del.id} 
+                  className={`bg-white/5 border rounded-xl overflow-hidden transition-all ${
+                    hasChangesRequested 
+                      ? 'border-orange-500/30' 
+                      : 'border-white/10 hover:border-white/20'
+                  }`}
+                >
+                  {/* Changes Requested Banner */}
+                  {hasChangesRequested && (
+                    <div className="px-4 py-2 bg-orange-500/10 border-b border-orange-500/20 flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-orange-400" />
+                      <span className="text-orange-400 text-sm font-medium">Cambios solicitados</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {del.metrics_submitted_at ? (
-                        <span className="text-green-400 text-sm flex items-center gap-1">
-                          <CheckCircle className="w-4 h-4" />
-                          Enviadas
-                        </span>
-                      ) : (
-                        <span className="text-gray-500 text-sm">Pendiente de enviar</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  )}
 
-                {/* Changes Requested Alert */}
-                {del.status === 'changes_requested' && del.brand_feedback && (
-                  <div className="mt-4 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
-                    <div className="flex items-start gap-2">
-                      <AlertCircle className="w-4 h-4 text-orange-400 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-orange-400 text-sm font-medium">Cambios solicitados:</p>
-                        <p className="text-gray-300 text-sm mt-1">{del.brand_feedback}</p>
+                  <div className="p-4">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-white font-medium truncate">{del.campaign?.name || 'Campaña'}</h3>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] ${statusConfig.color}`}>
+                            {statusConfig.label}
+                          </span>
+                        </div>
+                        <p className="text-gray-500 text-sm">{del.campaign?.brand_name || ''}</p>
+                      </div>
+                      
+                      {/* Action Button */}
+                      <Link
+                        to={`/ugc/creator/deliverable/${del.id}`}
+                        className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-sm font-medium transition-colors ${
+                          !del.post_url 
+                            ? 'bg-[#d4a968] text-black hover:bg-[#e5ba79]'
+                            : !del.metrics_submitted_at
+                            ? 'bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30'
+                            : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
+                        }`}
+                      >
+                        {!del.post_url ? (
+                          <>
+                            <Upload className="w-3.5 h-3.5" />
+                            Subir URL
+                          </>
+                        ) : !del.metrics_submitted_at ? (
+                          <>
+                            <BarChart3 className="w-3.5 h-3.5" />
+                            Métricas
+                          </>
+                        ) : (
+                          <>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                            Ver
+                          </>
+                        )}
+                      </Link>
+                    </div>
+
+                    {/* Deadline Progress */}
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* URL Deadline */}
+                      <div className={`p-3 rounded-lg border ${urlStatus?.bgColor || 'bg-white/5'} ${
+                        urlStatus?.status === 'late' ? 'border-red-500/30' : 'border-transparent'
+                      }`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5">
+                            <LinkIcon className="w-3.5 h-3.5 text-gray-500" />
+                            <span className="text-[11px] text-gray-500 uppercase">URL</span>
+                          </div>
+                          <span className={`text-xs font-medium ${urlStatus?.color || 'text-gray-400'}`}>
+                            {urlStatus?.label || '7d'}
+                          </span>
+                        </div>
+                        {del.post_url ? (
+                          <div className="flex items-center gap-1.5">
+                            <CheckCircle className="w-3.5 h-3.5 text-green-400" />
+                            <span className="text-xs text-green-400">Enviado</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-500">Pendiente</span>
+                        )}
+                      </div>
+
+                      {/* Metrics Deadline */}
+                      <div className={`p-3 rounded-lg border ${metricsStatus?.bgColor || 'bg-white/5'} ${
+                        metricsStatus?.status === 'late' ? 'border-red-500/30' : 'border-transparent'
+                      }`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5">
+                            <BarChart3 className="w-3.5 h-3.5 text-gray-500" />
+                            <span className="text-[11px] text-gray-500 uppercase">Métricas</span>
+                          </div>
+                          <span className={`text-xs font-medium ${metricsStatus?.color || 'text-gray-400'}`}>
+                            {metricsStatus?.label || '14d'}
+                          </span>
+                        </div>
+                        {del.metrics_submitted_at ? (
+                          <div className="flex items-center gap-1.5">
+                            <CheckCircle className="w-3.5 h-3.5 text-green-400" />
+                            <span className="text-xs text-green-400">Enviado</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-500">Pendiente</span>
+                        )}
                       </div>
                     </div>
-                  </div>
-                )}
 
-                {/* Rating if exists */}
-                {del.brand_rating && (
-                  <div className="mt-4 pt-4 border-t border-white/10 flex items-center gap-2">
-                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                    <span className="text-yellow-400 text-sm font-medium">{del.brand_rating.rating}/5</span>
-                    {del.brand_rating.comment && (
-                      <span className="text-gray-400 text-sm ml-2">&ldquo;{del.brand_rating.comment}&rdquo;</span>
+                    {/* Changes Feedback */}
+                    {hasChangesRequested && del.brand_feedback && (
+                      <div className="mt-3 p-3 bg-orange-500/5 border border-orange-500/20 rounded-lg">
+                        <p className="text-gray-300 text-sm">{del.brand_feedback}</p>
+                      </div>
+                    )}
+
+                    {/* URLs if submitted */}
+                    {(del.instagram_url || del.tiktok_url) && (
+                      <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-3">
+                        {del.instagram_url && (
+                          <a
+                            href={del.instagram_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-pink-400 text-sm hover:underline"
+                          >
+                            <Instagram className="w-4 h-4" />
+                            Instagram
+                          </a>
+                        )}
+                        {del.tiktok_url && (
+                          <a
+                            href={del.tiktok_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-cyan-400 text-sm hover:underline"
+                          >
+                            <Music2 className="w-4 h-4" />
+                            TikTok
+                          </a>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Rating if exists */}
+                    {del.brand_rating && (
+                      <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`w-3.5 h-3.5 ${
+                                star <= del.brand_rating.rating
+                                  ? 'text-yellow-400 fill-yellow-400'
+                                  : 'text-gray-600'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        {del.brand_rating.comment && (
+                          <span className="text-gray-500 text-xs truncate">{del.brand_rating.comment}</span>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-
-                {/* Confirmed date */}
-                {del.confirmed_at && (
-                  <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-2 text-xs text-gray-500">
-                    <Calendar className="w-3 h-3" />
-                    Confirmado: {new Date(del.confirmed_at).toLocaleDateString('es-PY', { day: '2-digit', month: 'short', year: 'numeric' })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
