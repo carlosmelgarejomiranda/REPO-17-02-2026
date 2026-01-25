@@ -16,7 +16,7 @@ const NotificationBell = () => {
   // Fetch notifications
   const fetchNotifications = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       if (!token) return;
 
       const res = await fetch(`${API_URL}/api/notifications/me?limit=20`, {
@@ -36,7 +36,7 @@ const NotificationBell = () => {
   // Fetch unread count only (for polling)
   const fetchUnreadCount = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       if (!token) return;
 
       const res = await fetch(`${API_URL}/api/notifications/unread-count`, {
@@ -55,7 +55,7 @@ const NotificationBell = () => {
   // Mark notification as read
   const markAsRead = async (notificationId) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       await fetch(`${API_URL}/api/notifications/mark-read`, {
         method: 'POST',
         headers: {
@@ -72,7 +72,7 @@ const NotificationBell = () => {
   // Mark all as read
   const markAllAsRead = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       await fetch(`${API_URL}/api/notifications/mark-all-read`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
@@ -105,7 +105,7 @@ const NotificationBell = () => {
   const handleDelete = async (e, notificationId) => {
     e.stopPropagation();
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       await fetch(`${API_URL}/api/notifications/${notificationId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }

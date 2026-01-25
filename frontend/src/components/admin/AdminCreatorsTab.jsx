@@ -45,7 +45,7 @@ const AdminCreatorsTab = ({
     setExporting(true);
     try {
       const API_URL = getApiUrl();
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       
       // Build query params
       const params = new URLSearchParams();
@@ -360,7 +360,7 @@ const CreatorMetricsModal = ({ creator, onClose }) => {
       try {
         const { getApiUrl } = await import('../../utils/api');
         const API_URL = getApiUrl();
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('auth_token');
         
         const res = await fetch(`${API_URL}/api/ugc/admin/metrics?creator_id=${creator.id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -515,7 +515,7 @@ const CreatorReviewsModal = ({ creator, onClose }) => {
       try {
         const { getApiUrl } = await import('../../utils/api');
         const API_URL = getApiUrl();
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('auth_token');
         
         const res = await fetch(`${API_URL}/api/ugc/admin/creators/${creator.id}/reviews`, {
           headers: { 'Authorization': `Bearer ${token}` }
