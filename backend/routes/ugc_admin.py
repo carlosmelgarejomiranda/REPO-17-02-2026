@@ -1716,3 +1716,109 @@ async def get_creator_metrics_detail(
         "totals": totals,
         "averages": averages
     }
+
+
+# ==================== ADMIN DELIVERABLE MANAGEMENT ====================
+
+from pydantic import BaseModel
+
+class UpdateUrlsRequest(BaseModel):
+    instagram_url: Optional[str] = None
+    tiktok_url: Optional[str] = None
+
+class ResetDeliverableRequest(BaseModel):
+    urls: bool = True
+    metrics: bool = True
+
+@router.post("/deliverables/{deliverable_id}/update-urls", response_model=dict)
+async def admin_update_deliverable_urls(
+    deliverable_id: str,
+    data: UpdateUrlsRequest,
+    request: Request
+):
+    """Admin updates the URLs of a deliverable (to fix incorrect URLs)"""
+    await require_admin(request)
+    db = await get_db()
+    
+    deliverable = await db.ugc_deliverables.find_one({"id": deliverable_id}, {"_id": 0})
+    if not deliverable:
+        raise HTTPException(status_code=404, detail="Entrega no encontrada")
+    
+    # Build combined post_url
+    urls = []
+    if data.instagram_url:
+        urls.append(data.instagram_url)
+    if data.tiktok_url:
+        urls.append(data.tiktok_url)
+    
+    post_url = " | ".join(urls) if urls else None
+    
+    update_data = {
+        "instagram_url": data.instagram_url,
+        "tiktok_url": data.tiktok_url,
+        "post_url": post_url,
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "admin_edited_urls_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.ugc_deliverables.update_one(
+        {"id": deliverable_id},
+        {"$set": update_data}
+    )
+    
+    return {
+        "success": True,
+        "message": "URLs actualizados correctamente",
+        "instagram_url": data.instagram_url,
+        "tiktok_url": data.tiktok_url
+    }
+
+
+@router.post("/deliverables/{deliverable_id}/reset", response_model=dict)
+async def admin_reset_deliverable(
+    deliverable_id: str,
+    data: ResetDeliverableRequest,
+    request: Request
+):
+    """Admin resets a deliverable so creator can re-submit"""
+    await require_admin(request)
+    db = await get_db()
+    
+    deliverable = await db.ugc_deliverables.find_one({"id": deliverable_id}, {"_id": 0})
+    if not deliverable:
+        raise HTTPException(status_code=404, detail="Entrega no encontrada")
+    
+    update_data = {
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "admin_reset_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    reset_items = []
+    
+    if data.urls:
+        update_data["post_url"] = None
+        update_data["instagram_url"] = None
+        update_data["tiktok_url"] = None
+        update_data["status"] = "awaiting_publish"
+        reset_items.append("URLs")
+    
+    if data.metrics:
+        update_data["metrics_submitted_at"] = None
+        reset_items.append("Métricas")
+        
+        # Also delete associated metrics documents
+        await db.ugc_metrics.delete_many({"deliverable_id": deliverable_id})
+    
+    await db.ugc_deliverables.update_one(
+        {"id": deliverable_id},
+        {"$set": update_data}
+    )
+    
+    # TODO: Send notification to creator about the reset
+    
+    return {
+        "success": True,
+        "message": f"Entrega reseteada: {', '.join(reset_items)}",
+        "reset_urls": data.urls,
+        "reset_metrics": data.metrics
+    }
