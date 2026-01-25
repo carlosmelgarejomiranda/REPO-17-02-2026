@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Users, Star, Award, RefreshCw, Instagram, Music2, Eye, TrendingUp, 
-  BarChart3, MessageSquare, ExternalLink, BadgeCheck, MapPin, Download
+  BarChart3, MessageSquare, ExternalLink, BadgeCheck, MapPin, Download,
+  FileText
 } from 'lucide-react';
 import { getApiUrl } from '../../utils/api';
 
