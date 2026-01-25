@@ -68,6 +68,7 @@ import CreatorCampaigns from "./pages/ugc/CreatorCampaigns";
 import CreatorReports from "./pages/ugc/CreatorReports";
 import CampaignApplicationsPage from "./pages/admin/CampaignApplicationsPage";
 import AdminDeliverables from "./pages/admin/AdminDeliverables";
+import AdminCreatorDeliverables from "./pages/admin/AdminCreatorDeliverables";
 import LoginPage from "./pages/LoginPage";
 import MyProfile from "./pages/MyProfile";
 
