@@ -327,7 +327,7 @@ const AdminDeliverables = () => {
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
           <div 
             onClick={() => setActiveFilter('all')}
             className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
@@ -336,8 +336,8 @@ const AdminDeliverables = () => {
                 : 'bg-white/5 border border-white/10 hover:border-white/20'
             }`}
           >
-            <p className="text-2xl font-light text-white">{deliverables.length}</p>
-            <p className="text-sm text-gray-400">Total</p>
+            <p className="text-2xl font-light text-white">{activeDeliverables.length}</p>
+            <p className="text-sm text-gray-400">Activos</p>
           </div>
           <div 
             onClick={() => setActiveFilter('pending')}
@@ -393,10 +393,39 @@ const AdminDeliverables = () => {
               <p className="text-sm text-gray-400">Con Problemas</p>
             </div>
           )}
+          {cancelledCount > 0 && (
+            <div 
+              onClick={() => setActiveFilter('cancelled')}
+              className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
+                activeFilter === 'cancelled' 
+                  ? 'bg-gray-600/30 border-2 border-gray-500' 
+                  : 'bg-white/5 border border-white/10 hover:border-white/20'
+              }`}
+            >
+              <p className={`text-2xl font-light ${activeFilter === 'cancelled' ? 'text-gray-400' : 'text-gray-500'}`}>
+                {cancelledCount}
+              </p>
+              <p className="text-sm text-gray-500">Canceladas</p>
+            </div>
+          )}
         </div>
 
-        {/* Refresh Button */}
-        <div className="flex justify-end mb-4">
+        {/* Refresh Button & Cancelled Toggle */}
+        <div className="flex items-center justify-between mb-4">
+          {/* Show cancelled toggle - only show when not in 'cancelled' filter */}
+          {activeFilter !== 'cancelled' && cancelledCount > 0 && (
+            <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showCancelled}
+                onChange={(e) => setShowCancelled(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-[#d4a968] focus:ring-[#d4a968] focus:ring-offset-0"
+              />
+              Incluir cancelados ({cancelledCount})
+            </label>
+          )}
+          {(activeFilter === 'cancelled' || cancelledCount === 0) && <div />}
+          
           <button
             onClick={fetchData}
             className="px-4 py-2 bg-white/5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 flex items-center gap-2"
