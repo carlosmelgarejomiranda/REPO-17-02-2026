@@ -242,26 +242,6 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
     }
   };
 
-  const fetchDeliverables = async () => {
-    try {
-      const token = localStorage.getItem('auth_token');
-      const headers = {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-      };
-      
-      const res = await fetch(`${API_URL}/api/ugc/admin/deliverables?status=pending_review`, {
-        headers: headers
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setDeliverables(data.deliverables || []);
-      }
-    } catch (err) {
-      console.error('Error fetching deliverables:', err);
-    }
-  };
-
   const subTabs = [
     { id: 'overview', label: 'Dashboard', icon: BarChart3 },
     { id: 'campaign-manager', label: 'Gestión Campañas', icon: Settings },
