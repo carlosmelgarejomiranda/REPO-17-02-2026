@@ -725,36 +725,40 @@ async def rate_deliverable(
             }
         )
     
-    # Send email + WhatsApp notification to creator
+    # Send email notification to creator + admin
     try:
-        from services.ugc_emails import send_deliverable_rated, notify_deliverable_rated_whatsapp
+        from services.ugc_emails import send_deliverable_rated
         creator = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0, "email": 1, "name": 1, "phone": 1})
         campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1})
         
+        if creator and creator.get("email"):
+            await send_deliverable_rated(
+                to_email=creator["email"],
+                creator_name=creator.get("name", "Creator"),
+                campaign_name=campaign.get("name", "Campaña") if campaign else "Campaña",
+                brand_name=brand.get("company_name", "Marca"),
+                rating=data.rating,
+                comment=data.comment
+            )
+            logger.info(f"Rating notification email sent to {creator.get('email')}")
+    except Exception as e:
+        logger.error(f"Failed to send rating email notification: {e}")
+    
+    # Send in-app notification to creator
+    try:
+        from routes.notifications import notify_new_rating
         if creator:
-            # Send email
-            if creator.get("email"):
-                await send_deliverable_rated(
-                    to_email=creator["email"],
-                    creator_name=creator.get("name", "Creator"),
+            user_record = await db.users.find_one({"email": creator.get("email")}, {"_id": 0, "user_id": 1})
+            if user_record:
+                await notify_new_rating(
+                    creator_user_id=user_record["user_id"],
                     campaign_name=campaign.get("name", "Campaña") if campaign else "Campaña",
                     brand_name=brand.get("company_name", "Marca"),
                     rating=data.rating,
-                    comment=data.comment
-                )
-            
-            # Send WhatsApp
-            if creator.get("phone"):
-                await notify_deliverable_rated_whatsapp(
-                    creator_phone=creator["phone"],
-                    creator_name=creator.get("name", "Creator"),
-                    campaign_name=campaign.get("name", "Campaña") if campaign else "Campaña",
-                    brand_name=brand.get("company_name", "Marca"),
-                    rating=data.rating,
-                    comment=data.comment
+                    feedback=data.comment
                 )
     except Exception as e:
-        logger.error(f"Failed to send rating notification: {e}")
+        logger.error(f"Failed to send in-app rating notification: {e}")
     
     return {"success": True, "message": "Calificación guardada"}
 
