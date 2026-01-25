@@ -326,7 +326,7 @@ const BrandDeliverables = () => {
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className={`grid ${cancelledCount > 0 ? 'grid-cols-4' : 'grid-cols-3'} gap-4 mb-6`}>
           <div 
             onClick={() => setActiveFilter('to_rate')}
             className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
@@ -366,10 +366,25 @@ const BrandDeliverables = () => {
             </p>
             <p className="text-sm text-gray-400">Pendiente de Entrega</p>
           </div>
+          {cancelledCount > 0 && (
+            <div 
+              onClick={() => setActiveFilter('cancelled')}
+              className={`p-4 rounded-xl text-center cursor-pointer transition-all ${
+                activeFilter === 'cancelled' 
+                  ? 'bg-gray-600/30 border-2 border-gray-500' 
+                  : 'bg-white/5 border border-white/10 hover:border-white/20'
+              }`}
+            >
+              <p className={`text-2xl font-light ${activeFilter === 'cancelled' ? 'text-gray-400' : 'text-gray-500'}`}>
+                {cancelledCount}
+              </p>
+              <p className="text-sm text-gray-500">Canceladas</p>
+            </div>
+          )}
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6 items-center">
           {[
             { id: 'to_rate', label: 'Calificar', count: toRateCount },
             { id: 'completed', label: 'Completadas', count: completedCount },
@@ -394,6 +409,20 @@ const BrandDeliverables = () => {
               )}
             </button>
           ))}
+          
+          {/* Cancelled toggle - only show when not in 'cancelled' filter */}
+          {activeFilter !== 'cancelled' && cancelledCount > 0 && (
+            <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer ml-2">
+              <input
+                type="checkbox"
+                checked={showCancelled}
+                onChange={(e) => setShowCancelled(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-600 bg-gray-800 text-[#d4a968] focus:ring-[#d4a968] focus:ring-offset-0"
+              />
+              Incluir cancelados
+            </label>
+          )}
+          
           <button
             onClick={fetchData}
             className="p-2 bg-white/5 rounded-lg text-gray-400 hover:text-white ml-auto"
@@ -411,6 +440,8 @@ const BrandDeliverables = () => {
                 ? 'No hay entregas listas para calificar'
                 : activeFilter === 'completed'
                 ? 'No hay entregas completadas y calificadas'
+                : activeFilter === 'cancelled'
+                ? 'No hay entregas canceladas'
                 : 'No hay entregas pendientes'}
             </p>
           </div>
