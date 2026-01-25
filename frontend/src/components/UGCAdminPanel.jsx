@@ -270,7 +270,6 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
     { id: 'creators', label: 'Creators', icon: Users },
     { id: 'brands', label: 'Marcas', icon: Building2 },
     { id: 'campaigns', label: 'Campañas', icon: Briefcase },
-    { id: 'deliverables', label: 'Entregas', icon: FileCheck },
     { id: 'metrics', label: 'Métricas', icon: TrendingUp }
   ];
 
