@@ -3,9 +3,12 @@ UGC Platform - Admin Routes
 """
 
 from fastapi import APIRouter, HTTPException, Request, Query
+from fastapi.responses import StreamingResponse
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
 import uuid
+import csv
+import io
 
 from models.ugc_models import (
     CampaignStatus, ApplicationStatus, DeliverableStatus, CreatorLevel
