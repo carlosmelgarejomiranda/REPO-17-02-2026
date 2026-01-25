@@ -76,6 +76,28 @@ class DeliveryMethod(str, Enum):
     PICKUP = "pickup"  # Creator picks up at location
     NOT_APPLICABLE = "not_applicable"  # For experiences at specific location
 
+class NotificationType(str, Enum):
+    # Campaign related
+    CAMPAIGN_APPLICATION_RECEIVED = "campaign_application_received"
+    CAMPAIGN_APPLICATION_APPROVED = "campaign_application_approved"
+    CAMPAIGN_APPLICATION_REJECTED = "campaign_application_rejected"
+    # Deliverable related
+    DELIVERABLE_SUBMITTED = "deliverable_submitted"
+    DELIVERABLE_APPROVED = "deliverable_approved"
+    DELIVERABLE_CHANGES_REQUESTED = "deliverable_changes_requested"
+    DELIVERABLE_REJECTED = "deliverable_rejected"
+    # Metrics related
+    METRICS_SUBMITTED = "metrics_submitted"
+    METRICS_VERIFIED = "metrics_verified"
+    # Rating related
+    NEW_RATING_RECEIVED = "new_rating_received"
+    # Level related
+    LEVEL_UP = "level_up"
+    # Admin related
+    ADMIN_MESSAGE = "admin_message"
+    # Reminder
+    DEADLINE_REMINDER = "deadline_reminder"
+
 # ==================== CREATOR MODELS ====================
 
 class SocialNetwork(BaseModel):
