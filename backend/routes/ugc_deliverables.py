@@ -77,6 +77,59 @@ async def get_my_deliverables(
     
     return {"deliverables": deliverables}
 
+
+@router.get("/my-deliverables", response_model=dict)
+async def get_my_deliverables_full(request: Request):
+    """Get creator's deliverables with full campaign/brand info and ratings"""
+    db = await get_db()
+    user, creator = await require_creator(request)
+    
+    # Get all deliverables for this creator
+    deliverables = await db.ugc_deliverables.find(
+        {"creator_id": creator["id"]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(200)
+    
+    # Enrich with campaign, brand, and rating info
+    for d in deliverables:
+        # Campaign info
+        campaign = await db.ugc_campaigns.find_one(
+            {"id": d.get("campaign_id")},
+            {"_id": 0, "name": 1, "brand_id": 1, "requirements": 1, "status": 1}
+        )
+        if campaign:
+            d["campaign"] = {"name": campaign.get("name"), "status": campaign.get("status")}
+            
+            # Brand info
+            brand = await db.ugc_brands.find_one(
+                {"id": campaign.get("brand_id")},
+                {"_id": 0, "company_name": 1}
+            )
+            if brand:
+                d["campaign"]["brand_name"] = brand.get("company_name")
+        
+        # Rating info
+        rating = await db.ugc_ratings.find_one(
+            {"deliverable_id": d.get("id")},
+            {"_id": 0, "rating": 1, "comment": 1}
+        )
+        if rating:
+            d["brand_rating"] = rating
+        
+        # Application status for cancelled check
+        application = await db.ugc_applications.find_one(
+            {"deliverable_id": d.get("id")},
+            {"_id": 0, "status": 1}
+        )
+        if application:
+            d["application_status"] = application.get("status")
+    
+    return {
+        "deliverables": deliverables,
+        "total": len(deliverables)
+    }
+
+
 @router.get("/{deliverable_id}", response_model=dict)
 async def get_deliverable_detail(
     deliverable_id: str,
