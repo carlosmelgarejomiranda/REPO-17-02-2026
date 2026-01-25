@@ -110,13 +110,24 @@ const AdminCreatorsTab = ({
             <option value="false">No verificados</option>
           </select>
         </div>
-        <button 
-          onClick={fetchCreators}
-          className="p-1.5 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10"
-          data-testid="refresh-creators-btn"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={handleExportCSV}
+            disabled={exporting || creators.length === 0}
+            className="px-3 py-1.5 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400 hover:bg-green-500/30 transition-colors text-xs flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+            data-testid="export-creators-btn"
+          >
+            <Download className="w-3.5 h-3.5" />
+            {exporting ? 'Exportando...' : 'Exportar CSV'}
+          </button>
+          <button 
+            onClick={fetchCreators}
+            className="p-1.5 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10"
+            data-testid="refresh-creators-btn"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
       {/* Creators Table */}
