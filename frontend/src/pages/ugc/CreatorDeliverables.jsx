@@ -334,7 +334,7 @@ const CreatorDeliverables = () => {
                     <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                     <span className="text-yellow-400 text-sm font-medium">{del.brand_rating.rating}/5</span>
                     {del.brand_rating.comment && (
-                      <span className="text-gray-400 text-sm ml-2">"{del.brand_rating.comment}"</span>
+                      <span className="text-gray-400 text-sm ml-2">&ldquo;{del.brand_rating.comment}&rdquo;</span>
                     )}
                   </div>
                 )}
