@@ -1764,9 +1764,9 @@ async def get_creator_metrics_detail(
         campaign_metrics = [m for m in all_metrics if m.get("campaign_id") == campaign_id]
         
         for m in campaign_metrics:
-            interactions = (m.get("likes", 0) + m.get("comments", 0) + 
-                          m.get("shares", 0) + m.get("saves", 0))
-            reach = m.get("reach", 0)
+            interactions = ((m.get("likes") or 0) + (m.get("comments") or 0) + 
+                          (m.get("shares") or 0) + (m.get("saves") or 0))
+            reach = m.get("reach") or 0
             interaction_rate = (interactions / reach * 100) if reach > 0 else 0
             
             campaigns_data.append({
@@ -1777,14 +1777,14 @@ async def get_creator_metrics_detail(
                 "platform": m.get("platform", "instagram"),
                 "post_url": m.get("post_url"),
                 "submitted_at": m.get("submitted_at"),
-                "views": m.get("views", 0),
+                "views": m.get("views") or 0,
                 "reach": reach,
-                "likes": m.get("likes", 0),
-                "comments": m.get("comments", 0),
-                "shares": m.get("shares", 0),
-                "saves": m.get("saves", 0),
+                "likes": m.get("likes") or 0,
+                "comments": m.get("comments") or 0,
+                "shares": m.get("shares") or 0,
+                "saves": m.get("saves") or 0,
                 "interactions": interactions,
-                "watch_time": m.get("watch_time", 0),
+                "watch_time": m.get("watch_time") or 0,
                 "interaction_rate": round(interaction_rate, 2)
             })
     
