@@ -172,8 +172,14 @@ const AdminDeliverables = () => {
     (del.tiktok_url && !del.tiktok_url.includes('/video/'))
   );
 
-  // Filters
+  // Filters - exclude cancelled by default unless showCancelled is true or filter is 'cancelled'
   const filteredDeliverables = deliverables.filter(d => {
+    // If viewing cancelled specifically, show only cancelled
+    if (activeFilter === 'cancelled') return isCancelled(d);
+    
+    // For other filters, hide cancelled unless checkbox is enabled
+    if (!showCancelled && isCancelled(d)) return false;
+    
     if (activeFilter === 'all') return true;
     if (activeFilter === 'to_rate') return isReadyToRate(d);
     if (activeFilter === 'completed') return isCompletedAndRated(d);
@@ -182,11 +188,13 @@ const AdminDeliverables = () => {
     return true;
   });
 
-  // Counts
-  const toRateCount = deliverables.filter(d => isReadyToRate(d)).length;
-  const completedCount = deliverables.filter(d => isCompletedAndRated(d)).length;
-  const pendingCount = deliverables.filter(d => isPendingDelivery(d)).length;
-  const issuesCount = deliverables.filter(d => hasUrlIssue(d)).length;
+  // Counts - don't include cancelled in regular counts
+  const cancelledCount = deliverables.filter(d => isCancelled(d)).length;
+  const activeDeliverables = deliverables.filter(d => !isCancelled(d));
+  const toRateCount = activeDeliverables.filter(d => isReadyToRate(d)).length;
+  const completedCount = activeDeliverables.filter(d => isCompletedAndRated(d)).length;
+  const pendingCount = activeDeliverables.filter(d => isPendingDelivery(d)).length;
+  const issuesCount = activeDeliverables.filter(d => hasUrlIssue(d)).length;
 
   // Open edit URL modal
   const openEditUrlModal = (del) => {
