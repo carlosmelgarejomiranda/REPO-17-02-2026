@@ -18,6 +18,29 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-25
+
+#### ✅ Completed
+- **Bug Fix: TikTok Metrics Lost on Multi-Platform Submission (P0 - CRITICAL)**
+  - **Problem**: When a creator submitted metrics for both Instagram and TikTok simultaneously, the TikTok metrics were lost because the system created ONE record with `platform='multi'` instead of TWO separate records.
+  - **Root Cause**: In `ugc_metrics.py` lines 878-881, when both platforms had screenshots, the code set `platform = "multi"` and created a single merged record.
+  - **Solution implemented**:
+    - Refactored the `POST /api/ugc/metrics/submit-v2/{deliverable_id}` endpoint
+    - Now separates extractions by platform before processing
+    - Creates individual database records for each platform (`platform='instagram'` and `platform='tiktok'`)
+    - Each record has its own AI extraction, demographics, and metrics
+    - Updated validation to check for existing metrics per platform (not just by deliverable_id)
+    - This allows submitting metrics for one platform first, then the other later
+  - **New response fields** (backward compatible):
+    - `metrics_ids`: Array of all created metric IDs
+    - `platforms_created`: Array of platforms recorded
+  - Files modified:
+    - `/app/backend/routes/ugc_metrics.py` - Complete refactor of submit-v2 endpoint
+  - Test report: `/app/test_reports/iteration_10.json` (Backend: 100%)
+  - Test evidence: Deliverable `d821fa59` has 2 separate metric records (Instagram + TikTok)
+
+---
+
 ### Session: 2026-01-24 (Continued)
 
 #### ✅ Completed
