@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { 
   Users, Star, Award, RefreshCw, Instagram, Music2, Eye, TrendingUp, 
-  BarChart3, MessageSquare, ExternalLink, BadgeCheck, MapPin
+  BarChart3, MessageSquare, ExternalLink, BadgeCheck, MapPin, Download
 } from 'lucide-react';
+import { getApiUrl } from '../../utils/api';
 
 // Format large numbers
 const formatNumber = (num) => {
