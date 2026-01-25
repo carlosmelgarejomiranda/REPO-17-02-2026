@@ -9,7 +9,7 @@ import json
 import sys
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://socialstats-3.preview.emergentagent.com/api"
+BACKEND_URL = "https://contenido-hub.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
