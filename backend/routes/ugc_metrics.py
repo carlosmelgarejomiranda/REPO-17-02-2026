@@ -768,13 +768,26 @@ async def submit_metrics_v2(
     if not deliverable:
         raise HTTPException(status_code=404, detail="Deliverable not found")
     
-    # Check if metrics already submitted
-    existing = await db.ugc_metrics.find_one({"deliverable_id": deliverable_id})
-    if existing:
-        raise HTTPException(status_code=400, detail="Ya subiste métricas para esta entrega")
-    
+    # Check if metrics already submitted for the platforms being submitted
     if not data.instagram_screenshots and not data.tiktok_screenshots:
         raise HTTPException(status_code=400, detail="Sube al menos un screenshot")
+    
+    # Check for existing metrics per platform to prevent duplicates
+    if data.instagram_screenshots:
+        existing_ig = await db.ugc_metrics.find_one({
+            "deliverable_id": deliverable_id,
+            "platform": "instagram"
+        })
+        if existing_ig:
+            raise HTTPException(status_code=400, detail="Ya subiste métricas de Instagram para esta entrega")
+    
+    if data.tiktok_screenshots:
+        existing_tt = await db.ugc_metrics.find_one({
+            "deliverable_id": deliverable_id,
+            "platform": "tiktok"
+        })
+        if existing_tt:
+            raise HTTPException(status_code=400, detail="Ya subiste métricas de TikTok para esta entrega")
     
     now = datetime.now(timezone.utc)
     
