@@ -1026,20 +1026,27 @@ async def submit_metrics_v2(
         import logging
         logging.getLogger(__name__).error(f"Failed to send metrics notification: {e}")
     
+    # Build response with info about all created metrics
+    metrics_ids = [m["id"] for m in created_metrics]
+    platforms_created = [m["platform"] for m in created_metrics]
+    avg_confidence = sum(m.get("ai_confidence", 0) for m in created_metrics) / len(created_metrics) if created_metrics else 0
+    
     return {
         "success": True,
-        "metrics_id": metrics["id"],
-        "ai_confidence": merged_result.get("overall_confidence", 0),
+        "metrics_id": metrics_ids[0] if metrics_ids else None,  # Backward compatibility
+        "metrics_ids": metrics_ids,  # New: all created metric IDs
+        "platforms_created": platforms_created,  # New: which platforms were recorded
+        "ai_confidence": avg_confidence,
         "screenshots_processed": {
             "instagram": len(data.instagram_screenshots),
             "tiktok": len(data.tiktok_screenshots)
         },
         "extracted_data": {
-            "metrics": ai_metrics,
-            "demographics_found": bool(ai_demographics.get("gender", {}).get("male") or ai_demographics.get("countries"))
+            "records_created": len(created_metrics),
+            "platforms": platforms_created
         },
         "is_late": is_late,
-        "message": f"Métricas enviadas - {len(data.instagram_screenshots) + len(data.tiktok_screenshots)} imágenes procesadas" + (" (tarde)" if is_late else "")
+        "message": f"Métricas enviadas - {len(created_metrics)} registro(s) creado(s) para: {', '.join(platforms_created)}" + (" (tarde)" if is_late else "")
     }
 
 
