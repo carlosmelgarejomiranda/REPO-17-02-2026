@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut, Camera, Building2, Home, Briefcase, FileText, Settings } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import NotificationBell from './NotificationBell';
 
 /**
  * UGCNavbar - Navbar unificado para paneles UGC (Creadores y Marcas)
