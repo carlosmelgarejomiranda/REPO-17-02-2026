@@ -92,6 +92,9 @@ export const UGCNavbar = ({ type = 'creator' }) => {
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
+              {/* Notifications */}
+              {user && <NotificationBell />}
+              
               {/* Back to Main Site - Desktop */}
               <Link
                 to="/"
