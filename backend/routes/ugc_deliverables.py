@@ -624,6 +624,24 @@ async def review_deliverable(
                     campaign_name=campaign.get("name", ""),
                     feedback=data.notes or "Sin comentarios adicionales"
                 )
+        
+        # Also send in-app notification
+        from routes.notifications import notify_changes_requested as notify_inapp_changes, notify_deliverable_approved as notify_inapp_approved
+        if creator and data.action == "request_changes":
+            await notify_inapp_changes(
+                creator_user_id=creator.get("user_id"),
+                campaign_name=campaign.get("name", ""),
+                brand_name=brand.get("company_name", ""),
+                deliverable_id=deliverable_id,
+                notes=data.notes
+            )
+        elif creator and data.action == "approve":
+            await notify_inapp_approved(
+                creator_user_id=creator.get("user_id"),
+                campaign_name=campaign.get("name", ""),
+                brand_name=brand.get("company_name", ""),
+                deliverable_id=deliverable_id
+            )
     except Exception as e:
         logger.error(f"Failed to send notification: {e}")
     
