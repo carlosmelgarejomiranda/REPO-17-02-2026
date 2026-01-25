@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getApiUrl } from '../utils/api';
 import { 
-  Users, Building2, Briefcase, Package, FileCheck, BarChart3, 
+  Users, Building2, Briefcase, Package, BarChart3, 
   TrendingUp, DollarSign, Clock, CheckCircle, AlertCircle, Eye,
   Star, Award, ArrowUpRight, ArrowDownRight, Loader2, RefreshCw,
   Filter, Search, ChevronDown, MoreVertical, ExternalLink, Heart,
@@ -12,7 +12,6 @@ import AdminStatsDashboard from './AdminStatsDashboard';
 import AdminCreatorsTab from './admin/AdminCreatorsTab';
 import AdminBrandsTab from './admin/AdminBrandsTab';
 import AdminCampaignsTab from './admin/AdminCampaignsTab';
-import AdminDeliverablesTab from './admin/AdminDeliverablesTab';
 
 const API_URL = getApiUrl();
 
