@@ -290,6 +290,14 @@ const AdminCreatorsTab = ({
                 
                 {/* Actions */}
                 <div className="flex items-center justify-center gap-1">
+                  <Link
+                    to={`/admin/creators/${creator.id}/deliverables`}
+                    className="p-1 bg-[#d4a968]/20 text-[#d4a968] rounded hover:bg-[#d4a968]/30 transition-colors"
+                    title="Ver Entregas"
+                    data-testid={`deliverables-btn-${creator.id}`}
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                  </Link>
                   <button
                     onClick={() => setShowMetricsModal(creator)}
                     className="p-1 bg-purple-500/20 text-purple-400 rounded hover:bg-purple-500/30 transition-colors"
