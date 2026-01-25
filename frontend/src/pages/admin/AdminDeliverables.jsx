@@ -77,13 +77,25 @@ const AdminDeliverables = () => {
     const confirmationDate = deliverable.confirmed_at || deliverable.created_at;
     if (!confirmationDate) return null;
 
+    // Check if deliverable is cancelled
+    const isCancelled = deliverable.status === 'cancelled' || deliverable.application_status === 'cancelled';
+    
     const confirmed = new Date(confirmationDate);
-    const now = new Date();
     const daysLimit = type === 'url' ? 7 : 14;
     const deadline = new Date(confirmed);
     deadline.setDate(deadline.getDate() + daysLimit);
 
-    const timeDiff = deadline - now;
+    // If cancelled, use cancellation date instead of now for calculating delay
+    // The delay should be frozen at the moment of cancellation
+    let referenceDate = new Date();
+    if (isCancelled && deliverable.cancelled_at) {
+      referenceDate = new Date(deliverable.cancelled_at);
+    } else if (isCancelled && deliverable.updated_at) {
+      // Fallback to updated_at if cancelled_at not available
+      referenceDate = new Date(deliverable.updated_at);
+    }
+
+    const timeDiff = deadline - referenceDate;
     const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
     const daysLate = Math.abs(daysRemaining);
 
@@ -93,12 +105,35 @@ const AdminDeliverables = () => {
       return { status: 'completed', color: 'text-green-400', bgColor: 'bg-green-500/20', label: 'Entregado' };
     }
 
+    // If cancelled, show frozen state
+    if (isCancelled) {
+      if (daysRemaining < 0) {
+        return { 
+          status: 'cancelled_late', 
+          color: 'text-gray-500', 
+          bgColor: 'bg-gray-500/20',
+          label: `Cancelado (${daysLate}d retraso)`,
+          deadline
+        };
+      }
+      return { 
+        status: 'cancelled', 
+        color: 'text-gray-500', 
+        bgColor: 'bg-gray-500/20',
+        label: 'Cancelado',
+        deadline
+      };
+    }
+
     if (daysRemaining < 0) {
       return { 
         status: 'late', 
         color: 'text-red-400', 
         bgColor: 'bg-red-500/20',
         label: `${daysLate} días de retraso`,
+        deadline
+      };
+    }
         deadline
       };
     }
