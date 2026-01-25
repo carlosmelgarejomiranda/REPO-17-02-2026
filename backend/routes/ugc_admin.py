@@ -1599,14 +1599,14 @@ async def get_creators_report(
         campaigns_count = len(set(m.get("campaign_id") for m in all_metrics if m.get("campaign_id")))
         
         # Calculate TOTALS
-        total_views = sum(m.get("views", 0) for m in all_metrics)
-        total_reach = sum(m.get("reach", 0) for m in all_metrics)
-        total_likes = sum(m.get("likes", 0) for m in all_metrics)
-        total_comments = sum(m.get("comments", 0) for m in all_metrics)
-        total_shares = sum(m.get("shares", 0) for m in all_metrics)
-        total_saves = sum(m.get("saves", 0) for m in all_metrics)
+        total_views = sum((m.get("views") or 0) for m in all_metrics)
+        total_reach = sum((m.get("reach") or 0) for m in all_metrics)
+        total_likes = sum((m.get("likes") or 0) for m in all_metrics)
+        total_comments = sum((m.get("comments") or 0) for m in all_metrics)
+        total_shares = sum((m.get("shares") or 0) for m in all_metrics)
+        total_saves = sum((m.get("saves") or 0) for m in all_metrics)
         total_interactions = total_likes + total_comments + total_shares + total_saves
-        total_watch_time = sum(m.get("watch_time", m.get("views", 0) * 0.5) for m in all_metrics)
+        total_watch_time = sum((m.get("watch_time") or (m.get("views") or 0) * 0.5) for m in all_metrics)
         
         # Calculate AVERAGES
         num_metrics = len(all_metrics) or 1
