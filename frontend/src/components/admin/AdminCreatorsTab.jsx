@@ -589,7 +589,7 @@ const CreatorReviewsModal = ({ creator, onClose }) => {
                     </span>
                   </div>
                   {review.comment && (
-                    <p className="text-gray-300 text-xs italic">"{review.comment}"</p>
+                    <p className="text-gray-300 text-xs italic">&ldquo;{review.comment}&rdquo;</p>
                   )}
                   {review.brand_name && (
                     <p className="text-[10px] text-gray-500 mt-1">— {review.brand_name}</p>
