@@ -138,13 +138,23 @@ const BrandDeliverables = () => {
     const confirmationDate = deliverable.confirmed_at || deliverable.created_at;
     if (!confirmationDate) return null;
 
+    // Check if deliverable is cancelled
+    const isCancelledDel = deliverable.status === 'cancelled' || deliverable.application_status === 'cancelled';
+
     const confirmed = new Date(confirmationDate);
-    const now = new Date();
     const daysLimit = type === 'url' ? 7 : 14;
     const deadline = new Date(confirmed);
     deadline.setDate(deadline.getDate() + daysLimit);
 
-    const timeDiff = deadline - now;
+    // If cancelled, freeze the calculation at cancellation time
+    let referenceDate = new Date();
+    if (isCancelledDel && deliverable.cancelled_at) {
+      referenceDate = new Date(deliverable.cancelled_at);
+    } else if (isCancelledDel && deliverable.updated_at) {
+      referenceDate = new Date(deliverable.updated_at);
+    }
+
+    const timeDiff = deadline - referenceDate;
     const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
     const daysLate = Math.abs(daysRemaining);
 
@@ -153,6 +163,26 @@ const BrandDeliverables = () => {
 
     if (isSubmitted) {
       return { status: 'completed', color: 'text-green-400', bgColor: 'bg-green-500/20', label: 'Entregado' };
+    }
+
+    // If cancelled, show frozen state
+    if (isCancelledDel) {
+      if (daysRemaining < 0) {
+        return { 
+          status: 'cancelled_late', 
+          color: 'text-gray-500', 
+          bgColor: 'bg-gray-500/20',
+          label: `Cancelado (${daysLate}d retraso)`,
+          deadline
+        };
+      }
+      return { 
+        status: 'cancelled', 
+        color: 'text-gray-500', 
+        bgColor: 'bg-gray-500/20',
+        label: 'Cancelado',
+        deadline
+      };
     }
 
     if (daysRemaining < 0) {
@@ -204,19 +234,22 @@ const BrandDeliverables = () => {
     };
   };
 
+  // Check if deliverable is cancelled
+  const isCancelled = (del) => del.status === 'cancelled' || del.application_status === 'cancelled';
+
   // Check if deliverable is ready to be rated (URL + Metrics submitted)
   const isReadyToRate = (del) => {
-    return del.post_url && del.metrics_submitted_at && !del.brand_rating;
+    return !isCancelled(del) && del.post_url && del.metrics_submitted_at && !del.brand_rating;
   };
 
   // Check if deliverable is completed and rated
   const isCompletedAndRated = (del) => {
-    return del.post_url && del.metrics_submitted_at && del.brand_rating;
+    return !isCancelled(del) && del.post_url && del.metrics_submitted_at && del.brand_rating;
   };
 
   // Check if still pending delivery (either URL or metrics)
   const isPendingDelivery = (del) => {
-    return !del.post_url || !del.metrics_submitted_at;
+    return !isCancelled(del) && (!del.post_url || !del.metrics_submitted_at);
   };
 
   const getStatusConfig = (status) => {
@@ -230,23 +263,32 @@ const BrandDeliverables = () => {
       rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado' },
       metrics_pending: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas pendientes' },
       metrics_submitted: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas enviadas' },
-      completed: { color: 'bg-green-500/20 text-green-400', label: 'Completado' }
+      completed: { color: 'bg-green-500/20 text-green-400', label: 'Completado' },
+      cancelled: { color: 'bg-gray-600/20 text-gray-500', label: 'Cancelado' }
     };
     return configs[status] || { color: 'bg-gray-500/20 text-gray-400', label: status };
   };
 
-  // New filter logic
+  // New filter logic - exclude cancelled by default
   const filteredDeliverables = deliverables.filter(d => {
+    // If viewing cancelled specifically, show only cancelled
+    if (activeFilter === 'cancelled') return isCancelled(d);
+    
+    // For other filters, hide cancelled unless checkbox is enabled
+    if (!showCancelled && isCancelled(d)) return false;
+    
     if (activeFilter === 'to_rate') return isReadyToRate(d);
     if (activeFilter === 'completed') return isCompletedAndRated(d);
     if (activeFilter === 'pending') return isPendingDelivery(d);
     return true;
   });
 
-  // Counts for stats
-  const toRateCount = deliverables.filter(d => isReadyToRate(d)).length;
-  const completedCount = deliverables.filter(d => isCompletedAndRated(d)).length;
-  const pendingCount = deliverables.filter(d => isPendingDelivery(d)).length;
+  // Counts for stats - don't include cancelled in regular counts
+  const cancelledCount = deliverables.filter(d => isCancelled(d)).length;
+  const activeDeliverables = deliverables.filter(d => !isCancelled(d));
+  const toRateCount = activeDeliverables.filter(d => isReadyToRate(d)).length;
+  const completedCount = activeDeliverables.filter(d => isCompletedAndRated(d)).length;
+  const pendingCount = activeDeliverables.filter(d => isPendingDelivery(d)).length;
 
   const formatDeadlineDate = (date) => {
     if (!date) return '';
