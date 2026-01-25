@@ -134,9 +134,6 @@ const AdminDeliverables = () => {
         deadline
       };
     }
-        deadline
-      };
-    }
 
     if (daysRemaining <= 2) {
       return { status: 'urgent', color: 'text-red-400', bgColor: 'bg-red-500/20', label: `${daysRemaining} días`, deadline };
