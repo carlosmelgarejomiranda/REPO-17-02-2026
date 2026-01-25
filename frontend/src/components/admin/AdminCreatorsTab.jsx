@@ -39,6 +39,50 @@ const AdminCreatorsTab = ({
 }) => {
   const [showMetricsModal, setShowMetricsModal] = useState(null);
   const [showReviewsModal, setShowReviewsModal] = useState(null);
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportCSV = async () => {
+    setExporting(true);
+    try {
+      const API_URL = getApiUrl();
+      const token = localStorage.getItem('token');
+      
+      // Build query params
+      const params = new URLSearchParams();
+      if (creatorFilter.level) params.append('level', creatorFilter.level);
+      if (creatorFilter.verified) params.append('is_active', creatorFilter.verified);
+      
+      const response = await fetch(`${API_URL}/api/ugc/admin/creators/export?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (!response.ok) throw new Error('Export failed');
+      
+      // Get filename from header or generate default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'creators_export.csv';
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename=(.+)/);
+        if (match) filename = match[1];
+      }
+      
+      // Download file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Error al exportar. Intenta de nuevo.');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <div className="space-y-4" data-testid="admin-creators-tab">
