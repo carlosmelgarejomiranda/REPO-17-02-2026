@@ -18,9 +18,56 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
-### Session: 2026-01-25
+### Session: 2026-01-25 (Continued)
 
 #### ✅ Completed
+- **Feature P1: Exportar Lista de Creadores a CSV**
+  - **Endpoint**: `GET /api/ugc/admin/creators/export`
+  - **Funcionalidad**: Exporta todos los creadores con filtros opcionales (nivel, activo/inactivo)
+  - **Campos exportados**: Nombre, Email, Teléfono, Ciudad, Nivel, Verificado, Activo, Instagram, IG Seguidores, IG Verificado, TikTok, TT Seguidores, TT Verificado, Campañas Participadas, Rating Promedio, Total Reviews, Fecha Registro
+  - **Frontend**: Botón "Exportar CSV" agregado en AdminCreatorsTab.jsx
+  - Files modified:
+    - `/app/backend/routes/ugc_admin.py` - Nuevo endpoint de exportación
+    - `/app/frontend/src/components/admin/AdminCreatorsTab.jsx` - Botón exportar
+  - Test report: `/app/test_reports/iteration_11.json` (7/7 tests passed)
+
+- **Feature P1: Notificación "Solicitar Corrección" (Email + In-App)**
+  - Cuando una marca solicita cambios en un deliverable, el creador ahora recibe:
+    - Email (ya existía via `send_changes_requested`)
+    - **NUEVA** Notificación in-app visible en la campanita
+  - Files modified:
+    - `/app/backend/routes/ugc_deliverables.py` - Integración de notificaciones in-app
+    - `/app/backend/routes/notifications.py` - Helper `notify_changes_requested`
+
+- **Feature P2: Sistema de Notificaciones In-App**
+  - **Backend completo**:
+    - `GET /api/notifications/me` - Obtener notificaciones del usuario
+    - `GET /api/notifications/unread-count` - Conteo de no leídas
+    - `POST /api/notifications/mark-read` - Marcar específicas como leídas
+    - `POST /api/notifications/mark-all-read` - Marcar todas como leídas
+    - `DELETE /api/notifications/{id}` - Eliminar notificación
+  - **Tipos de notificaciones soportadas**:
+    - Aplicación aprobada/rechazada
+    - Deliverable aprobado/cambios solicitados
+    - Métricas enviadas
+    - Nueva calificación recibida
+    - Subida de nivel
+    - Recordatorios de deadline
+  - **Frontend**:
+    - Nuevo componente `NotificationBell.jsx` con dropdown
+    - Integrado en `UGCNavbar.jsx` para creadores y marcas
+    - Polling automático cada 30 segundos
+    - Iconos y colores por tipo de notificación
+    - Acciones: marcar como leída, eliminar, navegar al recurso
+  - Files created:
+    - `/app/backend/routes/notifications.py`
+    - `/app/frontend/src/components/NotificationBell.jsx`
+  - Files modified:
+    - `/app/backend/models/ugc_models.py` - Enum NotificationType
+    - `/app/backend/server.py` - Registro del router
+    - `/app/frontend/src/components/UGCNavbar.jsx` - Integración del bell
+  - Test report: `/app/test_reports/iteration_11.json` (9/9 tests passed)
+
 - **Bug Fix: TikTok Metrics Lost on Multi-Platform Submission (P0 - CRITICAL)**
   - **Problem**: When a creator submitted metrics for both Instagram and TikTok simultaneously, the TikTok metrics were lost because the system created ONE record with `platform='multi'` instead of TWO separate records.
   - **Root Cause**: In `ugc_metrics.py` lines 878-881, when both platforms had screenshots, the code set `platform = "multi"` and created a single merged record.
