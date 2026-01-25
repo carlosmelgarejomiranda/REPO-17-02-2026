@@ -18,6 +18,7 @@ const AdminDeliverables = () => {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('all');
   const [actionLoading, setActionLoading] = useState(null);
+  const [showCancelled, setShowCancelled] = useState(false);
   
   // Edit URL Modal
   const [showEditUrlModal, setShowEditUrlModal] = useState(false);
