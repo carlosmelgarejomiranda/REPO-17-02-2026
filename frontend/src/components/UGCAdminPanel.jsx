@@ -389,64 +389,6 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
         />
       )}
 
-      {/* Deliverables Tab */}
-      {activeSubTab === 'deliverables' && (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium text-white">Entregas Pendientes de Revisión</h3>
-            <button 
-              onClick={fetchDeliverables}
-              className="p-2 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-
-          {deliverables.length === 0 ? (
-            <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-              <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-              <h4 className="text-xl text-white mb-2">Todo al día</h4>
-              <p className="text-gray-500">No hay entregas pendientes de revisión</p>
-            </div>
-          ) : (
-            <div className="grid gap-4">
-              {deliverables.map((del) => (
-                <div key={del.id} className="bg-white/5 border border-white/10 rounded-xl p-6">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <StatusBadge status={del.status} type="deliverable" />
-                        <span className="text-gray-500 text-sm">Ronda {del.revision_round}</span>
-                      </div>
-                      <h4 className="text-white font-medium mb-1">{del.campaign?.name}</h4>
-                      <p className="text-gray-400 text-sm">Creator: {del.creator?.name}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      {del.post_url && (
-                        <a 
-                          href={del.post_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
-                        >
-                          <ExternalLink className="w-4 h-4 text-gray-400" />
-                        </a>
-                      )}
-                      <button className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 text-sm">
-                        Aprobar
-                      </button>
-                      <button className="px-4 py-2 bg-orange-500/20 text-orange-400 rounded-lg hover:bg-orange-500/30 text-sm">
-                        Solicitar cambios
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* Metrics Tab */}
       {activeSubTab === 'metrics' && (
         <MetricsPanel />
