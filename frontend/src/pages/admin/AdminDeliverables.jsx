@@ -156,16 +156,18 @@ const AdminDeliverables = () => {
       rejected: { color: 'bg-red-500/20 text-red-400', label: 'Rechazado' },
       metrics_pending: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas pendientes' },
       metrics_submitted: { color: 'bg-cyan-500/20 text-cyan-400', label: 'Métricas enviadas' },
-      completed: { color: 'bg-green-500/20 text-green-400', label: 'Completado' }
+      completed: { color: 'bg-green-500/20 text-green-400', label: 'Completado' },
+      cancelled: { color: 'bg-gray-600/20 text-gray-500', label: 'Cancelado' }
     };
     return configs[status] || { color: 'bg-gray-500/20 text-gray-400', label: status };
   };
 
   // Check deliverable states
-  const isReadyToRate = (del) => del.post_url && del.metrics_submitted_at && !del.brand_rating;
-  const isCompletedAndRated = (del) => del.post_url && del.metrics_submitted_at && del.brand_rating;
-  const isPendingDelivery = (del) => !del.post_url || !del.metrics_submitted_at;
-  const hasUrlIssue = (del) => del.post_url && (
+  const isCancelled = (del) => del.status === 'cancelled' || del.application_status === 'cancelled';
+  const isReadyToRate = (del) => !isCancelled(del) && del.post_url && del.metrics_submitted_at && !del.brand_rating;
+  const isCompletedAndRated = (del) => !isCancelled(del) && del.post_url && del.metrics_submitted_at && del.brand_rating;
+  const isPendingDelivery = (del) => !isCancelled(del) && (!del.post_url || !del.metrics_submitted_at);
+  const hasUrlIssue = (del) => !isCancelled(del) && del.post_url && (
     (del.instagram_url && !del.instagram_url.includes('/p/') && !del.instagram_url.includes('/reel/')) ||
     (del.tiktok_url && !del.tiktok_url.includes('/video/'))
   );
