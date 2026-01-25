@@ -47,7 +47,8 @@ class TestAuth:
         assert response.status_code == 200, f"Login failed: {response.text}"
         data = response.json()
         assert "token" in data
-        assert "user" in data
+        # User data is returned directly, not nested under "user"
+        assert "email" in data or "user" in data
 
 
 class TestCreatorsExportCSV:
