@@ -855,82 +855,98 @@ async def submit_metrics_v2(
             ai_logger.error("Timeout processing images")
             all_extractions = [{"error": "Timeout", "confidence": 0}]
     
-    # Merge all extracted data
-    merged_result = await merge_extracted_data(all_extractions)
+    # Separate extractions by platform
+    instagram_extractions = [e for e in all_extractions if e.get("platform") == "instagram"]
+    tiktok_extractions = [e for e in all_extractions if e.get("platform") == "tiktok"]
     
-    ai_metrics = merged_result.get("metrics", {})
-    ai_demographics = merged_result.get("demographics", {})
-    
-    # Use AI data or manual input
     manual = data.manual_metrics or {}
-    views = manual.get("views") or ai_metrics.get("views")
-    reach = manual.get("reach") or ai_metrics.get("reach")
-    likes = manual.get("likes") or ai_metrics.get("likes", 0)
-    comments = manual.get("comments") or ai_metrics.get("comments", 0)
-    shares = manual.get("shares") or ai_metrics.get("shares", 0)
-    saves = manual.get("saves") or ai_metrics.get("saves")
-    watch_time = manual.get("watch_time_seconds") or ai_metrics.get("watch_time_seconds")
-    video_length = manual.get("video_length_seconds") or ai_metrics.get("video_length_seconds")
-    retention_rate = ai_metrics.get("retention_rate")
+    created_metrics = []
     
-    total_interactions = (likes or 0) + (comments or 0) + (shares or 0) + (saves or 0)
+    # Helper function to create a metric record for a single platform
+    async def create_platform_metric(platform: str, extractions: list, screenshots_count: int) -> dict:
+        """Create and insert a metric record for a single platform"""
+        merged_result = await merge_extracted_data(extractions) if extractions else {"metrics": {}, "demographics": {}, "overall_confidence": 0}
+        
+        ai_metrics = merged_result.get("metrics", {})
+        ai_demographics = merged_result.get("demographics", {})
+        
+        # Use AI data or manual input
+        views = manual.get("views") or ai_metrics.get("views")
+        reach = manual.get("reach") or ai_metrics.get("reach")
+        likes = manual.get("likes") or ai_metrics.get("likes", 0)
+        comments = manual.get("comments") or ai_metrics.get("comments", 0)
+        shares = manual.get("shares") or ai_metrics.get("shares", 0)
+        saves = manual.get("saves") or ai_metrics.get("saves")
+        watch_time = manual.get("watch_time_seconds") or ai_metrics.get("watch_time_seconds")
+        video_length = manual.get("video_length_seconds") or ai_metrics.get("video_length_seconds")
+        retention_rate = ai_metrics.get("retention_rate")
+        
+        total_interactions = (likes or 0) + (comments or 0) + (shares or 0) + (saves or 0)
+        
+        metric_record = {
+            "id": str(uuid.uuid4()),
+            "deliverable_id": deliverable_id,
+            "creator_id": creator["id"],
+            "campaign_id": deliverable["campaign_id"],
+            "platform": platform,
+            # Basic metrics
+            "views": views,
+            "reach": reach,
+            "likes": likes,
+            "comments": comments,
+            "shares": shares,
+            "saves": saves,
+            # Video metrics
+            "watch_time_seconds": watch_time,
+            "video_length_seconds": video_length,
+            "retention_rate": retention_rate,
+            # Calculated
+            "total_interactions": total_interactions,
+            "engagement_rate": None,
+            # Demographics (from AI)
+            "demographics": ai_demographics if merged_result.get("overall_confidence", 0) > 0.3 else None,
+            # Screenshots info
+            "screenshots_count": screenshots_count,
+            "screenshot_day": screenshot_day,
+            # AI Processing
+            "ai_extracted": merged_result.get("overall_confidence", 0) > 0.5,
+            "ai_confidence": merged_result.get("overall_confidence", 0),
+            "ai_raw_data": {
+                "extractions": extractions,
+                "merged": merged_result
+            },
+            "manually_verified": False,
+            "verified_by": None,
+            "is_late": is_late,
+            "submitted_at": now.isoformat(),
+            "created_at": now.isoformat()
+        }
+        
+        # Calculate engagement rate
+        if views and views > 0:
+            metric_record["engagement_rate"] = round((total_interactions / views) * 100, 2)
+        
+        # Calculate retention rate if we have both watch time and video length
+        if watch_time and video_length and video_length > 0:
+            metric_record["retention_rate"] = round((watch_time / video_length) * 100, 2)
+        
+        await db.ugc_metrics.insert_one(metric_record)
+        return metric_record
     
-    # Determine primary platform
-    platform = "instagram" if data.instagram_screenshots else "tiktok"
-    if data.instagram_screenshots and data.tiktok_screenshots:
-        platform = "multi"  # Content on both platforms
+    # Create separate records for each platform that has screenshots
+    if data.instagram_screenshots:
+        ig_metric = await create_platform_metric("instagram", instagram_extractions, len(data.instagram_screenshots))
+        created_metrics.append(ig_metric)
+        ai_logger.info(f"Created Instagram metrics record: {ig_metric['id']}")
     
-    metrics = {
-        "id": str(uuid.uuid4()),
-        "deliverable_id": deliverable_id,
-        "creator_id": creator["id"],
-        "campaign_id": deliverable["campaign_id"],
-        "platform": platform,
-        # Basic metrics
-        "views": views,
-        "reach": reach,
-        "likes": likes,
-        "comments": comments,
-        "shares": shares,
-        "saves": saves,
-        # Video metrics
-        "watch_time_seconds": watch_time,
-        "video_length_seconds": video_length,
-        "retention_rate": retention_rate,
-        # Calculated
-        "total_interactions": total_interactions,
-        "engagement_rate": None,
-        # Demographics (from AI)
-        "demographics": ai_demographics if merged_result.get("overall_confidence", 0) > 0.3 else None,
-        # Screenshots info
-        "screenshots_count": {
-            "instagram": len(data.instagram_screenshots),
-            "tiktok": len(data.tiktok_screenshots)
-        },
-        "screenshot_day": screenshot_day,
-        # AI Processing
-        "ai_extracted": merged_result.get("overall_confidence", 0) > 0.5,
-        "ai_confidence": merged_result.get("overall_confidence", 0),
-        "ai_raw_data": {
-            "extractions": all_extractions,
-            "merged": merged_result
-        },
-        "manually_verified": False,
-        "verified_by": None,
-        "is_late": is_late,
-        "submitted_at": now.isoformat(),
-        "created_at": now.isoformat()
-    }
+    if data.tiktok_screenshots:
+        tt_metric = await create_platform_metric("tiktok", tiktok_extractions, len(data.tiktok_screenshots))
+        created_metrics.append(tt_metric)
+        ai_logger.info(f"Created TikTok metrics record: {tt_metric['id']}")
     
-    # Calculate engagement rate
-    if views and views > 0:
-        metrics["engagement_rate"] = round((total_interactions / views) * 100, 2)
-    
-    # Calculate retention rate if we have both watch time and video length
-    if watch_time and video_length and video_length > 0:
-        metrics["retention_rate"] = round((watch_time / video_length) * 100, 2)
-    
-    await db.ugc_metrics.insert_one(metrics)
+    # Use the first created metric for response (for backward compatibility)
+    metrics = created_metrics[0] if created_metrics else {}
+    merged_result = {"overall_confidence": metrics.get("ai_confidence", 0)} if metrics else {"overall_confidence": 0}
     
     # Update deliverable status
     new_status = DeliverableStatus.METRICS_LATE if is_late else DeliverableStatus.METRICS_SUBMITTED
