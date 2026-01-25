@@ -407,6 +407,100 @@ async def get_creator_reviews(
         "creator_name": creator.get("name")
     }
 
+
+@router.get("/creators/{creator_id}", response_model=dict)
+async def get_creator_detail(
+    creator_id: str,
+    request: Request
+):
+    """Get detailed info for a specific creator"""
+    await require_admin(request)
+    db = await get_db()
+    
+    creator = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0})
+    if not creator:
+        raise HTTPException(status_code=404, detail="Creator not found")
+    
+    # Get campaigns count
+    campaigns_count = await db.ugc_applications.count_documents({
+        "creator_id": creator_id,
+        "status": {"$in": ["confirmed", "completed"]}
+    })
+    creator["campaigns_count"] = campaigns_count
+    
+    # Get ratings
+    ratings = await db.ugc_ratings.find(
+        {"creator_id": creator_id},
+        {"_id": 0, "rating": 1}
+    ).to_list(100)
+    creator["avg_rating"] = round(sum(r.get("rating", 0) for r in ratings) / len(ratings), 1) if ratings else 0
+    creator["total_reviews"] = len(ratings)
+    
+    return creator
+
+
+@router.get("/creators/{creator_id}/deliverables", response_model=dict)
+async def get_creator_deliverables(
+    creator_id: str,
+    request: Request
+):
+    """Get all deliverables for a specific creator"""
+    await require_admin(request)
+    db = await get_db()
+    
+    # Verify creator exists
+    creator = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0, "name": 1})
+    if not creator:
+        raise HTTPException(status_code=404, detail="Creator not found")
+    
+    # Get all deliverables for this creator
+    deliverables = await db.ugc_deliverables.find(
+        {"creator_id": creator_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(200)
+    
+    # Enrich with campaign and brand info
+    for del_item in deliverables:
+        campaign_id = del_item.get("campaign_id")
+        if campaign_id:
+            campaign = await db.ugc_campaigns.find_one(
+                {"id": campaign_id},
+                {"_id": 0, "name": 1, "brand_id": 1, "status": 1}
+            )
+            if campaign:
+                del_item["campaign"] = {"name": campaign.get("name"), "status": campaign.get("status")}
+                
+                # Get brand name
+                brand = await db.ugc_brands.find_one(
+                    {"id": campaign.get("brand_id")},
+                    {"_id": 0, "company_name": 1}
+                )
+                if brand:
+                    del_item["campaign"]["brand_name"] = brand.get("company_name")
+        
+        # Check for rating
+        rating = await db.ugc_ratings.find_one(
+            {"deliverable_id": del_item.get("id")},
+            {"_id": 0, "rating": 1, "comment": 1}
+        )
+        if rating:
+            del_item["brand_rating"] = rating
+        
+        # Get application status for cancelled check
+        application = await db.ugc_applications.find_one(
+            {"deliverable_id": del_item.get("id")},
+            {"_id": 0, "status": 1}
+        )
+        if application:
+            del_item["application_status"] = application.get("status")
+    
+    return {
+        "deliverables": deliverables,
+        "total": len(deliverables),
+        "creator_name": creator.get("name")
+    }
+
+
 # ==================== BRANDS MANAGEMENT ====================
 
 @router.get("/brands", response_model=dict)
