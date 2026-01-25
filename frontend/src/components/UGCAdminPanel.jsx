@@ -135,7 +135,6 @@ const UGCAdminPanel = ({ getAuthHeaders }) => {
     if (activeSubTab === 'creators') fetchCreators();
     if (activeSubTab === 'brands') fetchBrands();
     if (activeSubTab === 'campaigns') fetchCampaigns();
-    if (activeSubTab === 'deliverables') fetchDeliverables();
   }, [activeSubTab]);
 
   const fetchDashboard = async () => {
