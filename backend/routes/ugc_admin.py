@@ -208,6 +208,119 @@ async def get_all_creators(
     
     return {"creators": creators, "total": total}
 
+
+@router.get("/creators/export", response_class=StreamingResponse)
+async def export_creators_csv(
+    request: Request,
+    level: Optional[str] = None,
+    is_active: Optional[str] = None
+):
+    """Export all creators to CSV file"""
+    await require_admin(request)
+    db = await get_db()
+    
+    # Build query
+    query = {}
+    if level and level != "all":
+        query["level"] = level
+    if is_active and is_active != "all":
+        query["is_active"] = is_active == "true"
+    
+    # Fetch all creators
+    creators = await db.ugc_creators.find(query, {"_id": 0}).sort("created_at", -1).to_list(5000)
+    
+    # Prepare CSV
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # Header row
+    writer.writerow([
+        "Nombre",
+        "Email",
+        "Teléfono",
+        "Ciudad",
+        "Nivel",
+        "Verificado",
+        "Activo",
+        "Instagram",
+        "IG Seguidores",
+        "IG Verificado",
+        "TikTok",
+        "TT Seguidores", 
+        "TT Verificado",
+        "Campañas Participadas",
+        "Rating Promedio",
+        "Total Reviews",
+        "Fecha Registro"
+    ])
+    
+    # Data rows
+    for creator in creators:
+        # Get social accounts
+        social_accounts = creator.get("social_accounts", {})
+        ig_verified = social_accounts.get("instagram")
+        tt_verified = social_accounts.get("tiktok")
+        
+        # Get unverified from social_networks
+        social_networks = creator.get("social_networks", [])
+        ig_unverified = next((sn for sn in social_networks if sn.get("platform") == "instagram"), None)
+        tt_unverified = next((sn for sn in social_networks if sn.get("platform") == "tiktok"), None)
+        
+        # Best available data
+        ig_username = ig_verified.get("username") if ig_verified else (ig_unverified.get("username") if ig_unverified else "")
+        ig_followers = ig_verified.get("followers") if ig_verified else (ig_unverified.get("followers") if ig_unverified else "")
+        tt_username = tt_verified.get("username") if tt_verified else (tt_unverified.get("username") if tt_unverified else "")
+        tt_followers = tt_verified.get("followers") if tt_verified else (tt_unverified.get("followers") if tt_unverified else "")
+        
+        # Get campaigns count
+        campaigns_count = await db.ugc_applications.count_documents({
+            "creator_id": creator.get("id"),
+            "status": {"$in": ["confirmed", "completed"]}
+        })
+        
+        # Get rating
+        ratings = await db.ugc_ratings.find(
+            {"creator_id": creator.get("id")},
+            {"_id": 0, "rating": 1}
+        ).to_list(100)
+        avg_rating = round(sum(r.get("rating", 0) for r in ratings) / len(ratings), 1) if ratings else 0
+        
+        writer.writerow([
+            creator.get("name", ""),
+            creator.get("email", ""),
+            creator.get("phone", ""),
+            creator.get("city", ""),
+            creator.get("level", "rookie"),
+            "Sí" if creator.get("is_verified") else "No",
+            "Sí" if creator.get("is_active", True) else "No",
+            f"@{ig_username}" if ig_username else "",
+            ig_followers if ig_followers else "",
+            "Sí" if ig_verified else "No",
+            f"@{tt_username}" if tt_username else "",
+            tt_followers if tt_followers else "",
+            "Sí" if tt_verified else "No",
+            campaigns_count,
+            avg_rating,
+            len(ratings),
+            creator.get("created_at", "")[:10] if creator.get("created_at") else ""
+        ])
+    
+    # Prepare response
+    output.seek(0)
+    
+    # Generate filename with date
+    filename = f"creators_avenue_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
+    
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+            "Content-Type": "text/csv; charset=utf-8"
+        }
+    )
+
+
 @router.put("/creators/{creator_id}/level", response_model=dict)
 async def update_creator_level(
     creator_id: str,
