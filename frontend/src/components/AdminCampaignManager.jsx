@@ -1298,6 +1298,13 @@ Ejemplo de formato:
                           <ClipboardList className="w-4 h-4" />
                         </button>
                         <button
+                          onClick={() => navigate(`/admin/ugc/deliverables/${campaign.id}`)}
+                          className="p-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors"
+                          title="Ver entregas"
+                        >
+                          <BarChart3 className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => {
                             setCampaignToTransfer(campaign);
                             setShowTransferModal(true);
