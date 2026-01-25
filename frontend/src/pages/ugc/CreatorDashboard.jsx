@@ -233,7 +233,16 @@ const CreatorDashboard = () => {
           </div>
 
           {/* Quick Actions - Mobile */}
-          <div className="grid grid-cols-3 gap-3 mb-6 md:hidden">
+          <div className="grid grid-cols-4 gap-3 mb-6 md:hidden">
+            <Link
+              to="/ugc/creator/deliverables"
+              className="flex flex-col items-center gap-2 p-3 bg-orange-500/10 border border-orange-500/30 rounded-xl hover:bg-orange-500/20 transition-all"
+            >
+              <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
+                <FileText className="w-5 h-5 text-orange-400" />
+              </div>
+              <p className="text-xs font-medium text-center">Entregas</p>
+            </Link>
             <Link
               to="/ugc/creator/campaigns"
               className="flex flex-col items-center gap-2 p-3 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl hover:bg-[#d4a968]/20 transition-all"
