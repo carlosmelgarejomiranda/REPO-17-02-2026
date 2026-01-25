@@ -133,6 +133,28 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
   - Files modified:
     - `/app/frontend/src/pages/ugc/DeliverableDetail.jsx` - Complete validation system
 
+- **Feature: Admin Deliverables Management Page (P1)**
+  - User request: Admin page to manage deliverables across all brands with special actions
+  - **New page created:** `/admin/ugc/deliverables/:campaignId`
+  - **Features:**
+    - View all deliverables for any campaign (not just Avenue's)
+    - Shows brand name for each campaign
+    - Filter by: All, Pending, To Rate, Completed, Issues (URLs with problems)
+    - Detects potentially incorrect URLs (profile links instead of posts)
+    - **Admin Actions:**
+      - **Edit URLs**: Directly edit Instagram/TikTok URLs to fix incorrect submissions
+      - **Reset Delivery**: Reset URLs and/or metrics so creator can re-submit
+    - Display delivery status for URL and Metrics separately with color coding
+  - **Backend endpoints created:**
+    - `POST /api/ugc/admin/deliverables/{id}/update-urls` - Edit URLs directly
+    - `POST /api/ugc/admin/deliverables/{id}/reset` - Reset delivery (URLs, metrics, or both)
+  - **Access:** From Admin Panel → UGC Platform → Gestión Campañas → Icon button on each campaign
+  - Files created/modified:
+    - `/app/frontend/src/pages/admin/AdminDeliverables.jsx` (NEW)
+    - `/app/frontend/src/components/AdminCampaignManager.jsx` - Added button
+    - `/app/frontend/src/App.js` - Added route
+    - `/app/backend/routes/ugc_admin.py` - Added endpoints
+
 ### Session: 2026-01-24
 
 #### ✅ Completed
