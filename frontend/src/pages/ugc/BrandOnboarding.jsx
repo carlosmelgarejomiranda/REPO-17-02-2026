@@ -250,6 +250,54 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
     );
   }
 
+  // Show message if already registered as brand
+  if (alreadyRegistered) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="border-b border-white/10">
+          <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
+            <button onClick={() => navigate('/ugc/marcas')} className="text-gray-400 hover:text-white flex items-center gap-2">
+              <ArrowLeft className="w-5 h-5" />
+              Volver
+            </button>
+            <span className="text-[#d4a968] italic">Registro de Marca</span>
+          </div>
+        </div>
+        
+        <div className="max-w-md mx-auto px-6 py-16 text-center">
+          <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10 text-green-400" />
+          </div>
+          
+          <h1 className="text-3xl font-light mb-4">
+            ¡Ya estás <span className="text-[#d4a968] italic">registrado</span>!
+          </h1>
+          
+          <p className="text-gray-400 mb-8">
+            Tu marca ya está registrada en nuestra plataforma. Podés acceder a tu panel para ver tus campañas y gestionar tu perfil.
+          </p>
+          
+          <div className="space-y-4">
+            <button
+              onClick={() => navigate('/ugc/brand/dashboard')}
+              className="w-full bg-[#d4a968] text-black py-4 px-6 rounded-lg font-medium hover:bg-[#c49958] transition-all flex items-center justify-center gap-2"
+            >
+              <Building2 className="w-5 h-5" />
+              Ir a mi Panel de Marca
+            </button>
+            
+            <button
+              onClick={() => navigate('/ugc/marcas')}
+              className="w-full border border-white/20 text-white py-3 px-6 rounded-lg hover:bg-white/5 transition-all"
+            >
+              Ver información de marcas
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
