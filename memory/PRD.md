@@ -70,6 +70,27 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
   - Files modified:
     - `/app/frontend/src/App.js` - Nuevo componente ProtectedAdminRoute
 
+- **Feature P1: Checkbox de Aceptación de T&C en Registro de Usuario**
+  - **Problema**: Los usuarios podían registrarse sin aceptar los términos y condiciones
+  - **Solución**: 
+    - Agregado checkbox obligatorio en el formulario de registro (`AuthForms.jsx`)
+    - El botón "CREAR CUENTA" está deshabilitado hasta que se marque el checkbox
+    - Al registrarse, se guardan automáticamente las aceptaciones de:
+      - `privacy-policy` v1.0
+      - `terms-ecommerce` v1.0
+  - Files modified:
+    - `/app/frontend/src/components/AuthForms.jsx` - Nuevo campo `acceptTerms` y UI del checkbox
+    - `/app/backend/server.py` - Modelo `UserCreate` actualizado, lógica de registro guarda aceptaciones
+
+- **Feature P1: Checkbox de Aceptación de T&C en Onboarding de Marcas**
+  - **Problema**: Las marcas podían completar el onboarding sin aceptar los términos específicos de UGC
+  - **Solución**:
+    - Agregado checkbox obligatorio en el Step 3 del `BrandOnboarding.jsx`
+    - El botón "Completar registro" está deshabilitado hasta que se marque el checkbox
+    - Al completar, se guarda la aceptación de `terms-ugc-brand` v1.0
+  - Files modified:
+    - `/app/frontend/src/pages/ugc/BrandOnboarding.jsx` - Nuevo campo `acceptTerms` y UI del checkbox
+
 ### Session: 2026-01-25 (Continued - Part 2)
 
 #### ✅ Completed
