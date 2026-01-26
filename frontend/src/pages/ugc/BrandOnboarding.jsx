@@ -90,7 +90,15 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
 
   const checkAuth = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/auth/me`, { credentials: 'include' });
+      // Try with token first, then cookies
+      const token = localStorage.getItem('auth_token');
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
+      const res = await fetch(`${API_URL}/api/auth/me`, { 
+        headers,
+        credentials: 'include' 
+      });
+      
       if (res.ok) {
         const userData = await res.json();
         setIsAuthenticated(true);
@@ -102,10 +110,14 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
         }));
         
         // Check if already has brand profile
-        const brandRes = await fetch(`${API_URL}/api/ugc/brands/me`, { credentials: 'include' });
+        const brandRes = await fetch(`${API_URL}/api/ugc/brands/me`, { 
+          headers,
+          credentials: 'include' 
+        });
+        
         if (brandRes.ok) {
-          // Already has brand profile, redirect to dashboard
-          navigate('/ugc/brand/dashboard');
+          // Already has brand profile - show message instead of redirecting
+          setAlreadyRegistered(true);
           return;
         }
         
@@ -113,6 +125,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
       }
     } catch (err) {
       // Not authenticated
+      console.error('Auth check error:', err);
     } finally {
       setCheckingAuth(false);
     }
