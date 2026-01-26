@@ -445,6 +445,7 @@ const CreatorOnboarding = () => {
                 <SocialVerification 
                   onVerificationComplete={handleVerificationComplete}
                   initialData={verificationData}
+                  saveImmediately={false}
                 />
               </div>
             ) : (
