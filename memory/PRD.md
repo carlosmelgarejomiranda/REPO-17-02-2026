@@ -18,6 +18,30 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-26 (Part 3)
+
+#### ✅ Completed - P1 Features
+
+- **Feature P1-6: Email a Creadores cuando se Lanza Nueva Campaña**
+  - Nueva función `send_new_campaign_notification_to_creators()` en `/app/backend/services/ugc_emails.py`
+  - Envía email masivo a todos los creadores activos y verificados cuando se crea una campaña
+  - Incluye: nombre de campaña, marca, descripción, cupos disponibles, CTA para aplicar
+  - También notifica al admin con resumen de envíos exitosos/fallidos
+  - Se llama automáticamente al crear campaña en `/app/backend/routes/ugc_admin.py`
+
+- **Feature P1-9: WhatsApp en Listado de Creadores**
+  - Agregado ícono de WhatsApp verde en la columna ACCIONES de:
+    - Listado de Creadores (`AdminCreatorsTab.jsx`)
+    - Aplicaciones de Campaña (`CampaignApplicationsPage.jsx`)
+  - Solo aparece si el creador tiene teléfono válido (no "N/A")
+  - El link abre WhatsApp Web directamente al número del creador
+  - Formato: `https://wa.me/{phone_limpio}`
+
+#### ✅ Verified - Emails Existentes (Ya Funcionaban)
+- **Email a avenue.ugc@gmail.com cuando marca completa onboarding** - `send_brand_welcome()` ya implementado
+- **Email a marca cuando se crea campaña** - `send_campaign_created_notification()` ya implementado
+- **Email a marca cuando se recargan cupos** - `send_brand_notification()` en contract_jobs.py ya implementado
+
 ### Session: 2026-01-26 (Part 2)
 
 #### ✅ Completed - Bugs P0 (Onboarding & T&C)
