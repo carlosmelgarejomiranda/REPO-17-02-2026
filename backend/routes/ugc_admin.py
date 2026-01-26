@@ -1093,6 +1093,29 @@ async def admin_create_campaign(
         import logging
         logging.getLogger(__name__).error(f"Failed to send campaign created email: {e}")
     
+    # Send notification to all active creators about the new campaign
+    try:
+        from services.ugc_emails import send_new_campaign_notification_to_creators
+        
+        # Get all active and verified creators
+        creators_cursor = db.ugc_creators.find(
+            {"is_active": True, "is_verified": True},
+            {"_id": 0, "email": 1, "name": 1}
+        )
+        creators_list = await creators_cursor.to_list(1000)
+        
+        if creators_list:
+            await send_new_campaign_notification_to_creators(
+                campaign_name=campaign["name"],
+                brand_name=brand.get("company_name", ""),
+                campaign_description=campaign.get("description", ""),
+                deliverables_count=data.monthly_deliverables,
+                creators_list=creators_list
+            )
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Failed to send new campaign notifications to creators: {e}")
+    
     return {
         "success": True,
         "campaign_id": campaign_id,
