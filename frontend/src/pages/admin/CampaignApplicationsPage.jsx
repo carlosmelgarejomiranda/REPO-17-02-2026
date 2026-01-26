@@ -461,7 +461,7 @@ const CampaignApplicationsPage = () => {
                     <span className="font-medium text-white text-sm">{app.creator_name}</span>
                     <StatusBadge status={app.status} />
                   </div>
-                  <p className="text-sm text-gray-300 italic">"{app.motivation}"</p>
+                  <p className="text-sm text-gray-300 italic">&ldquo;{app.motivation}&rdquo;</p>
                 </div>
               ))}
             </div>
