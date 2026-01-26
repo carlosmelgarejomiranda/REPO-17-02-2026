@@ -494,6 +494,51 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
                   className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none resize-none"
                 />
               </div>
+
+              {/* Terms and Conditions Checkbox */}
+              <div className="pt-4 border-t border-white/10">
+                <label className="flex items-start gap-4 cursor-pointer group">
+                  <div className="relative mt-0.5">
+                    <input
+                      type="checkbox"
+                      checked={formData.acceptTerms}
+                      onChange={(e) => handleChange('acceptTerms', e.target.checked)}
+                      className="sr-only"
+                      data-testid="brand-accept-terms-checkbox"
+                    />
+                    <div className={`w-5 h-5 border flex items-center justify-center transition-colors ${
+                      formData.acceptTerms 
+                        ? 'border-[#d4a968] bg-[#d4a968]' 
+                        : 'border-gray-500 group-hover:border-gray-400'
+                    }`}>
+                      {formData.acceptTerms && <Check className="w-3 h-3 text-black" />}
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-400 leading-relaxed">
+                    Acepto los{' '}
+                    <a 
+                      href="/terminos-condiciones" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#d4a968] hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      términos y condiciones para marcas UGC
+                    </a>
+                    {' '}y la{' '}
+                    <a 
+                      href="/politica-privacidad" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#d4a968] hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      política de privacidad
+                    </a>
+                    {' '}*
+                  </span>
+                </label>
+              </div>
             </div>
 
             <div className="flex justify-between pt-4">
@@ -505,9 +550,9 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={loading}
+                disabled={loading || !formData.acceptTerms}
                 className={`px-8 py-3 rounded-lg font-medium flex items-center gap-2 ${
-                  !loading ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-700 text-gray-400'
+                  !loading && formData.acceptTerms ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-700 text-gray-400 cursor-not-allowed'
                 }`}
               >
                 {loading ? (
