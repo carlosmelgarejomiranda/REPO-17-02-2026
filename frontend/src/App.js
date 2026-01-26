@@ -341,8 +341,56 @@ const UGCCampaignPage = ({ t, language, setLanguage, user, onLoginClick, onLogou
   );
 };
 
+// Protected Route Component - handles loading state
+const ProtectedAdminRoute = ({ user, loading, children, onLoginClick }) => {
+  // Show loading state while auth is being checked
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-[#d4a968] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p style={{ color: '#a8a8a8' }}>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  const isAdmin = ['admin', 'superadmin', 'staff', 'designer'].includes(user?.role);
+  
+  if (isAdmin) {
+    return children;
+  }
+  
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
+      <div className="text-center">
+        <h1 className="text-2xl mb-4" style={{ color: '#f5ede4' }}>Acceso Restringido</h1>
+        <p className="mb-4" style={{ color: '#a8a8a8' }}>Necesitas iniciar sesión como administrador</p>
+        <Button 
+          onClick={onLoginClick}
+          style={{ backgroundColor: '#d4a968', color: '#0d0d0d' }}
+        >
+          Iniciar Sesión
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 // Admin Route Component - handles auth state properly
-const AdminRoute = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
+const AdminRoute = ({ user, loading, onLoginClick, onLogout, language, setLanguage, t }) => {
+  // Show loading state while auth is being checked
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-[#d4a968] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p style={{ color: '#a8a8a8' }}>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+  
   const isAdmin = ['admin', 'superadmin', 'staff', 'designer'].includes(user?.role);
   
   if (isAdmin) {
