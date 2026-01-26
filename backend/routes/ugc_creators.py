@@ -78,6 +78,50 @@ async def complete_creator_onboarding(
             verified=False
         ).model_dump())
     
+    # Process social verification data if provided
+    social_accounts = {}
+    if data.social_verification:
+        for platform, verification in data.social_verification.items():
+            # Handle both dict and Pydantic model
+            if hasattr(verification, 'model_dump'):
+                v_data = verification.model_dump()
+            else:
+                v_data = verification
+            
+            social_accounts[platform.lower()] = {
+                "platform": platform.lower(),
+                "username": v_data.get("username"),
+                "follower_count": v_data.get("follower_count"),
+                "following_count": v_data.get("following_count"),
+                "posts_count": v_data.get("posts_count"),
+                "likes_count": v_data.get("likes_count"),
+                "is_platform_verified": v_data.get("is_platform_verified", False),
+                "verified_by_ai": True,
+                "verified_at": now,
+                "verification_method": "screenshot_ai",
+                "last_updated": now
+            }
+            
+            # Update legacy fields
+            if platform.lower() == "instagram":
+                social_networks = [sn for sn in social_networks if sn.get("platform") != "instagram"]
+                social_networks.append({
+                    "platform": "instagram",
+                    "username": v_data.get("username"),
+                    "url": f"https://instagram.com/{v_data.get('username')}",
+                    "followers": v_data.get("follower_count"),
+                    "verified": True
+                })
+            elif platform.lower() == "tiktok":
+                social_networks = [sn for sn in social_networks if sn.get("platform") != "tiktok"]
+                social_networks.append({
+                    "platform": "tiktok",
+                    "username": v_data.get("username"),
+                    "url": f"https://tiktok.com/@{v_data.get('username')}",
+                    "followers": v_data.get("follower_count"),
+                    "verified": True
+                })
+    
     # Create creator profile
     creator_profile = {
         "id": str(uuid.uuid4()),
@@ -89,6 +133,7 @@ async def complete_creator_onboarding(
         "bio": data.bio,
         "profile_picture": user.get("picture"),
         "social_networks": social_networks,
+        "social_accounts": social_accounts,  # Add verified social accounts
         "stats": CreatorStats().model_dump(),
         "level": CreatorLevel.ROOKIE,
         "level_progress": 0,
