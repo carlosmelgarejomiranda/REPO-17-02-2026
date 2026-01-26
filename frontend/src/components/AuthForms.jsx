@@ -585,6 +585,46 @@ export const AuthCallback = ({ onAuthComplete }) => {
     };
   }, []); // Empty deps - run once only
 
+  // Handle terms acceptance
+  const handleAcceptTerms = async () => {
+    if (!acceptedTerms || !pendingAuthData) return;
+    
+    setSavingTerms(true);
+    try {
+      // Save terms acceptance
+      const termsToAccept = [
+        { terms_slug: 'privacy-policy', terms_version: '1.0' },
+        { terms_slug: 'terms-ecommerce', terms_version: '1.0' }
+      ];
+      
+      const token = localStorage.getItem('auth_token');
+      for (const term of termsToAccept) {
+        await fetch(`${API_URL}/api/terms/accept`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(term)
+        });
+      }
+      
+      // Complete auth
+      setShowTermsModal(false);
+      if (onAuthComplete) {
+        onAuthComplete(pendingAuthData);
+      }
+    } catch (err) {
+      console.error('Failed to save terms:', err);
+      // Still complete auth even if terms save fails
+      if (onAuthComplete) {
+        onAuthComplete(pendingAuthData);
+      }
+    } finally {
+      setSavingTerms(false);
+    }
+  };
+
   const handleRetry = () => {
     setError(null);
     setStatus('connecting');
@@ -601,6 +641,85 @@ export const AuthCallback = ({ onAuthComplete }) => {
     window.history.replaceState(null, '', '/');
     window.location.href = '/';
   };
+
+  // Show terms acceptance modal for new Google users
+  if (showTermsModal) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
+        <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968', maxWidth: '450px', width: '90%' }}>
+          <CardContent className="p-8">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-[#d4a968]/20 flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-[#d4a968]" />
+              </div>
+              <h2 className="text-xl font-medium" style={{ color: '#f5ede4' }}>
+                ¡Bienvenido a Avenue!
+              </h2>
+              <p className="text-sm mt-2" style={{ color: '#a8a8a8' }}>
+                Para continuar, necesitamos que aceptes nuestros términos
+              </p>
+            </div>
+            
+            <div className="bg-black/30 rounded-lg p-4 mb-6">
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="relative mt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={acceptedTerms}
+                    onChange={(e) => setAcceptedTerms(e.target.checked)}
+                    className="sr-only"
+                    data-testid="google-accept-terms-checkbox"
+                  />
+                  <div className={`w-5 h-5 border flex items-center justify-center transition-colors ${
+                    acceptedTerms 
+                      ? 'border-[#d4a968] bg-[#d4a968]' 
+                      : 'border-gray-500 group-hover:border-gray-400'
+                  }`}>
+                    {acceptedTerms && <Check className="w-3 h-3 text-black" />}
+                  </div>
+                </div>
+                <span className="text-sm" style={{ color: '#a8a8a8' }}>
+                  Acepto los{' '}
+                  <a 
+                    href="/shop/terminos-condiciones" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[#d4a968] hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    términos y condiciones
+                  </a>
+                  {' '}y la{' '}
+                  <a 
+                    href="/politica-privacidad" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[#d4a968] hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    política de privacidad
+                  </a>
+                </span>
+              </label>
+            </div>
+            
+            <Button
+              onClick={handleAcceptTerms}
+              disabled={!acceptedTerms || savingTerms}
+              className="w-full py-4 rounded-none text-xs tracking-[0.2em] uppercase font-medium transition-all"
+              style={{ 
+                backgroundColor: acceptedTerms ? '#d4a968' : '#555', 
+                color: '#000000',
+                cursor: acceptedTerms ? 'pointer' : 'not-allowed'
+              }}
+            >
+              {savingTerms ? 'Guardando...' : 'Continuar'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (error || status === 'error') {
     return (
