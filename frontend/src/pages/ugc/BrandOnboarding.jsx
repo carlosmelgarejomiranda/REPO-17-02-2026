@@ -71,7 +71,9 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
     // Optional (Step 3)
     website: '',
     instagram: '',
-    description: ''
+    description: '',
+    // Terms acceptance (Step 3 - Required)
+    acceptTerms: false
   });
 
   useEffect(() => {
