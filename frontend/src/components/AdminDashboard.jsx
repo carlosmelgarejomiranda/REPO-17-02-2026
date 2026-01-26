@@ -490,18 +490,29 @@ export const AdminDashboard = ({ user }) => {
             {module?.subtabs && module.subtabs.length > 1 && (
               <div className="flex gap-1 mt-4 -mb-4 pb-4">
                 {module.subtabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveSubTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      currentSubTab === tab.id
-                        ? 'bg-white/10 text-white'
-                        : 'text-white/40 hover:text-white/60 hover:bg-white/5'
-                    }`}
-                  >
-                    <tab.icon className="w-4 h-4" />
-                    {tab.label}
-                  </button>
+                  tab.link ? (
+                    <a
+                      key={tab.id}
+                      href={tab.link}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all text-white/40 hover:text-white/60 hover:bg-white/5"
+                    >
+                      <tab.icon className="w-4 h-4" />
+                      {tab.label}
+                    </a>
+                  ) : (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveSubTab(tab.id)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        currentSubTab === tab.id
+                          ? 'bg-white/10 text-white'
+                          : 'text-white/40 hover:text-white/60 hover:bg-white/5'
+                      }`}
+                    >
+                      <tab.icon className="w-4 h-4" />
+                      {tab.label}
+                    </button>
+                  )
                 ))}
               </div>
             )}
