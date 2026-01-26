@@ -17,7 +17,7 @@ import {
 
 const API_URL = getApiUrl();
 
-const SocialVerification = ({ onVerificationComplete, initialData = {} }) => {
+const SocialVerification = ({ onVerificationComplete, initialData = {}, saveImmediately = true }) => {
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageBase64, setImageBase64] = useState(null);
