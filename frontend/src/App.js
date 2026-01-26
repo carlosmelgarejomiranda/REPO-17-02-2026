@@ -788,38 +788,30 @@ function AppRouter() {
           
           {/* Admin Campaign Applications Page */}
           <Route path="/admin/campaigns/:campaignId/applications" element={
-            user?.role === 'admin' || user?.role === 'superadmin' ? (
+            <ProtectedAdminRoute user={user} loading={loading} onLoginClick={() => setShowAuthModal(true)}>
               <CampaignApplicationsPage />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            </ProtectedAdminRoute>
           } />
           
           {/* Admin Deliverables Management */}
           <Route path="/admin/ugc/deliverables/:campaignId" element={
-            user?.role === 'admin' || user?.role === 'superadmin' ? (
+            <ProtectedAdminRoute user={user} loading={loading} onLoginClick={() => setShowAuthModal(true)}>
               <AdminDeliverables />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            </ProtectedAdminRoute>
           } />
 
           {/* Admin Creator Deliverables */}
           <Route path="/admin/creators/:creatorId/deliverables" element={
-            user?.role === 'admin' || user?.role === 'superadmin' ? (
+            <ProtectedAdminRoute user={user} loading={loading} onLoginClick={() => setShowAuthModal(true)}>
               <AdminCreatorDeliverables />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            </ProtectedAdminRoute>
           } />
 
           {/* Admin Terms Management */}
           <Route path="/admin/terms" element={
-            user?.role === 'admin' || user?.role === 'superadmin' ? (
+            <ProtectedAdminRoute user={user} loading={loading} onLoginClick={() => setShowAuthModal(true)}>
               <AdminTermsManagement />
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            </ProtectedAdminRoute>
           } />
 
           {/* Auth Callback Route */}
