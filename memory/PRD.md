@@ -18,6 +18,29 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-26 (Part 4)
+
+#### ✅ Completed - Bug Fix: Verificación con IA de Perfiles de Creadores
+
+- **Bug Crítico**: Creadores no podían verificar sus perfiles con IA durante el onboarding
+  - **Causa raíz**: El componente `SocialVerification` intentaba guardar la verificación en el backend ANTES de que existiera el perfil de creador (se crea al final del onboarding)
+  - **Error**: "Perfil de creador no encontrado" al confirmar verificación
+  
+- **Solución implementada**:
+  1. Nueva prop `saveImmediately` en `SocialVerification.jsx` (default: true)
+     - `saveImmediately={true}`: Guarda directamente en backend (para edición de perfil existente)
+     - `saveImmediately={false}`: Solo devuelve datos al padre (para onboarding)
+  2. `CreatorOnboarding.jsx` ahora usa `saveImmediately={false}`
+  3. Los datos de verificación se envían junto con el onboarding
+  4. Nuevo modelo `SocialVerificationData` en `/app/backend/models/ugc_models.py`
+  5. Endpoint `/api/ugc/creators/onboarding` ahora acepta `social_verification` y procesa los datos
+  
+- **Archivos modificados**:
+  - `/app/frontend/src/components/SocialVerification.jsx` - Nueva prop y lógica condicional
+  - `/app/frontend/src/pages/ugc/CreatorOnboarding.jsx` - saveImmediately={false} + envío de datos
+  - `/app/backend/models/ugc_models.py` - Nuevo modelo SocialVerificationData
+  - `/app/backend/routes/ugc_creators.py` - Procesamiento de verificación en onboarding
+
 ### Session: 2026-01-26 (Part 3)
 
 #### ✅ Completed - P1 Features
