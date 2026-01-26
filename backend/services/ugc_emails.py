@@ -1290,3 +1290,101 @@ async def send_admin_metrics_delay_reminder(
         <p style="color: #888888;"><strong>Fecha límite:</strong> {deadline_date}</p>
     """
     return await send_admin_notification(f"📊 Métricas: {creator_name} - {status}", admin_content, SENDER_CREATORS)
+
+
+# ============================================================================
+# NOTIFICACIÓN MASIVA - Nueva Campaña Lanzada
+# ============================================================================
+
+async def send_new_campaign_notification_to_creators(
+    campaign_name: str,
+    brand_name: str,
+    campaign_description: str,
+    deliverables_count: int,
+    creators_list: list  # List of {"email": str, "name": str}
+):
+    """
+    Send notification to all active creators when a new campaign is launched.
+    This encourages creators to apply to the new campaign.
+    """
+    subject = f"🚀 Nueva campaña disponible: {campaign_name}"
+    
+    # Count successful sends
+    success_count = 0
+    failed_count = 0
+    
+    for creator in creators_list:
+        try:
+            creator_email = creator.get("email")
+            creator_name = creator.get("name", "Creador")
+            
+            if not creator_email:
+                continue
+            
+            content = f"""
+                <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
+                    ¡Nueva campaña disponible! 🚀
+                </h1>
+                <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                    Hola {creator_name}, hay una nueva oportunidad para vos en Avenue UGC.
+                </p>
+                
+                <div style="background-color: #1a1a1a; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #d4a968;">
+                    <p style="color: #888888; margin: 0 0 5px 0; font-size: 12px; text-transform: uppercase;">NUEVA CAMPAÑA</p>
+                    <p style="color: #ffffff; margin: 0 0 8px 0; font-size: 20px; font-weight: 600;">{campaign_name}</p>
+                    <p style="color: #d4a968; margin: 0 0 15px 0;">{brand_name}</p>
+                    <p style="color: #aaaaaa; font-size: 14px; margin: 0; line-height: 1.5;">
+                        {campaign_description[:200]}{'...' if len(campaign_description) > 200 else ''}
+                    </p>
+                </div>
+                
+                <div style="background-color: #0d0d0d; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+                    <p style="color: #888888; margin: 0 0 5px 0; font-size: 12px;">CUPOS DISPONIBLES</p>
+                    <p style="color: #22c55e; margin: 0; font-size: 32px; font-weight: bold;">{deliverables_count}</p>
+                </div>
+                
+                <p style="color: #cccccc; font-size: 16px; line-height: 1.6; margin: 20px 0;">
+                    ¡No te lo pierdas! Aplicá ahora y sé parte de esta campaña.
+                </p>
+                
+                <div style="margin: 30px 0; text-align: center;">
+                    <a href="https://avenue.com.py/ugc/campaigns" 
+                       style="display: inline-block; background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%); color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                        Ver campaña y aplicar
+                    </a>
+                </div>
+                
+                <p style="color: #666666; font-size: 12px; margin-top: 30px; text-align: center;">
+                    Los cupos son limitados. ¡Aplicá antes de que se agoten!
+                </p>
+            """
+            
+            result = await send_email(creator_email, subject, content, SENDER_CREATORS)
+            if result.get("status") == "success":
+                success_count += 1
+            else:
+                failed_count += 1
+                
+        except Exception as e:
+            logger.error(f"Failed to send new campaign notification to {creator.get('email')}: {e}")
+            failed_count += 1
+    
+    # Log summary
+    logger.info(f"New campaign notification sent: {success_count} success, {failed_count} failed out of {len(creators_list)} creators")
+    
+    # Notify admin about the broadcast
+    admin_content = f"""
+        <h2 style="color: #d4a968; margin: 0 0 15px 0;">📢 Notificación Masiva Enviada</h2>
+        <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign_name}</p>
+        <p style="color: #cccccc;"><strong>Marca:</strong> {brand_name}</p>
+        <p style="color: #22c55e;"><strong>Enviados:</strong> {success_count} creadores</p>
+        <p style="color: #ef4444;"><strong>Fallidos:</strong> {failed_count}</p>
+    """
+    await send_admin_notification(f"📢 Campaña Lanzada: {campaign_name} ({success_count} notificados)", admin_content, SENDER_CREATORS)
+    
+    return {
+        "success_count": success_count,
+        "failed_count": failed_count,
+        "total": len(creators_list)
+    }
+
