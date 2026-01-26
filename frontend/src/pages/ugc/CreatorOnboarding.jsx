@@ -163,6 +163,56 @@ const CreatorOnboarding = () => {
     );
   }
 
+  // Show message if already registered as creator
+  if (alreadyRegistered) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="border-b border-white/10">
+          <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
+            <button onClick={() => navigate('/ugc/creators')} className="text-gray-400 hover:text-white flex items-center gap-2">
+              <ArrowLeft className="w-5 h-5" />
+              Volver
+            </button>
+            <span className="text-xl font-light">
+              <span className="text-[#d4a968] italic">Avenue</span> UGC
+            </span>
+          </div>
+        </div>
+        
+        <div className="max-w-md mx-auto px-6 py-16 text-center">
+          <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10 text-green-400" />
+          </div>
+          
+          <h1 className="text-3xl font-light mb-4">
+            ¡Ya estás <span className="text-[#d4a968] italic">registrado</span>!
+          </h1>
+          
+          <p className="text-gray-400 mb-8">
+            Tu perfil de creator ya está activo en nuestra plataforma. Podés acceder a tu panel para ver campañas disponibles y gestionar tu perfil.
+          </p>
+          
+          <div className="space-y-4">
+            <button
+              onClick={() => navigate('/ugc/creator/dashboard')}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-lg font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2"
+            >
+              <Camera className="w-5 h-5" />
+              Ir a mi Panel de Creator
+            </button>
+            
+            <button
+              onClick={() => navigate('/ugc/creators')}
+              className="w-full border border-white/20 text-white py-3 px-6 rounded-lg hover:bg-white/5 transition-all"
+            >
+              Ver información de creators
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Show login prompt if not authenticated
   if (!currentUser) {
     return (
