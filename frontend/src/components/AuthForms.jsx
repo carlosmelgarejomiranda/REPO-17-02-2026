@@ -541,8 +541,16 @@ export const AuthCallback = ({ onAuthComplete }) => {
           localStorage.setItem('auth_token', data.token);
         }
 
-        // Clear URL and complete
+        // Clear URL
         window.history.replaceState(null, '', window.location.pathname);
+        
+        // Check if user needs to accept terms (new Google user)
+        if (data.needs_terms_acceptance) {
+          setPendingAuthData(data);
+          setShowTermsModal(true);
+          setStatus('terms');
+          return;
+        }
         
         if (onAuthComplete) {
           onAuthComplete(data);
