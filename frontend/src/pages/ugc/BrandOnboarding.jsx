@@ -160,7 +160,8 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
         website: formData.website ? `https://${cleanUrl(formData.website)}` : '',
         instagram_url: formData.instagram ? `https://instagram.com/${cleanInstagram(formData.instagram)}` : '',
         instagram_handle: cleanInstagram(formData.instagram),
-        description: formData.description
+        description: formData.description,
+        accept_terms: formData.acceptTerms
       };
 
       const token = localStorage.getItem('auth_token');
@@ -180,6 +181,26 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
 
       if (!res.ok) {
         throw new Error(data.detail || 'Error al crear perfil');
+      }
+
+      // Record terms acceptance if checkbox was checked
+      if (formData.acceptTerms && token) {
+        try {
+          await fetch(`${API_URL}/api/terms/accept`, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              terms_slug: 'terms-ugc-brand',
+              terms_version: '1.0'
+            })
+          });
+        } catch (termsErr) {
+          console.error('Failed to record terms acceptance:', termsErr);
+          // Don't fail the onboarding if terms recording fails
+        }
       }
 
       // Success! Go to brand dashboard
