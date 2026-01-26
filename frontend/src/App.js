@@ -776,7 +776,8 @@ function AppRouter() {
           {/* Admin Dashboard */}
           <Route path="/admin" element={
             <AdminRoute 
-              user={user} 
+              user={user}
+              loading={loading}
               onLoginClick={() => setShowAuthModal(true)}
               onLogout={logout}
               language={language}
