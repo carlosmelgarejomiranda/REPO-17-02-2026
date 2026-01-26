@@ -18,6 +18,58 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-26
+
+#### ✅ Completed
+- **Feature P0: Sistema de Gestión de Términos y Condiciones**
+  - **Nueva página Admin**: `/admin/terms` para gestionar documentos legales
+  - **Backend completo** (`/app/backend/routes/terms.py`):
+    - `GET /api/terms/documents` - Lista de documentos T&C predefinidos
+    - `POST /api/terms/accept` - Registrar aceptación de un usuario
+    - `GET /api/terms/my-acceptances` - Ver aceptaciones del usuario actual
+    - `GET /api/terms/admin/documents` - Lista con estadísticas (Admin)
+    - `GET /api/terms/admin/acceptances` - Historial de aceptaciones (Admin)
+    - `GET /api/terms/admin/acceptances/export` - Exportar a CSV (Admin)
+    - `GET /api/terms/admin/users-summary` - Resumen por usuario (Admin)
+  - **Documentos T&C predefinidos**:
+    - Términos y Condiciones - Creadores UGC
+    - Términos y Condiciones - Marcas UGC
+    - Términos y Condiciones - E-commerce
+    - Términos y Condiciones - Reservas de Studio
+    - Política de Privacidad
+  - **Frontend** (`/app/frontend/src/pages/admin/AdminTermsManagement.jsx`):
+    - Tab "Documentos": Lista de todos los documentos con conteo de aceptaciones
+    - Tab "Aceptaciones": Historial detallado con filtros
+    - Tab "Por Usuario": Vista agrupada por usuario con todos sus términos aceptados
+    - Exportar a CSV individual o global
+    - Diseño consistente con el tema dark de la aplicación
+  - **Enlace desde Admin Dashboard**: Configuración → Términos y Condiciones
+  - **Modelo de datos**:
+    - Collection `terms_acceptances`: user_id, terms_slug, terms_version, accepted_at, ip_address, user_agent
+  - Files created:
+    - `/app/backend/routes/terms.py`
+    - `/app/frontend/src/pages/admin/AdminTermsManagement.jsx`
+  - Files modified:
+    - `/app/backend/server.py` - Registro del router
+    - `/app/frontend/src/App.js` - Nueva ruta protegida
+    - `/app/frontend/src/components/AdminDashboard.jsx` - Enlace en subtabs
+
+- **Bug Fix P1: Protected Routes Loading State**
+  - **Problema**: Las rutas admin (`/admin/terms`, `/admin/creators/:id/deliverables`, etc.) redirigían a `/login` antes de verificar el token guardado
+  - **Causa**: El hook `useAuth` tiene un estado `loading=true` durante la verificación inicial, pero las rutas no lo esperaban
+  - **Solución**: Nuevo componente `ProtectedAdminRoute` que:
+    - Muestra spinner mientras `loading=true`
+    - Verifica rol de admin cuando `loading=false`
+    - Muestra mensaje de acceso restringido si no es admin
+  - **Rutas actualizadas**:
+    - `/admin` (AdminDashboard)
+    - `/admin/terms` (AdminTermsManagement)
+    - `/admin/campaigns/:id/applications` (CampaignApplicationsPage)
+    - `/admin/ugc/deliverables/:id` (AdminDeliverables)
+    - `/admin/creators/:id/deliverables` (AdminCreatorDeliverables)
+  - Files modified:
+    - `/app/frontend/src/App.js` - Nuevo componente ProtectedAdminRoute
+
 ### Session: 2026-01-25 (Continued - Part 2)
 
 #### ✅ Completed
