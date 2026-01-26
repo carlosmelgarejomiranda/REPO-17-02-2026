@@ -297,8 +297,8 @@ const AdminCreatorsTab = ({
                 
                 {/* Actions */}
                 <div className="flex items-center justify-center gap-1">
-                  {/* WhatsApp - only if creator has phone */}
-                  {creator.phone && (
+                  {/* WhatsApp - only if creator has valid phone */}
+                  {creator.phone && creator.phone !== 'N/A' && (
                     <a
                       href={`https://wa.me/${creator.phone.replace(/[^0-9]/g, '')}`}
                       target="_blank"
