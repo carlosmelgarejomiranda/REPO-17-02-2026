@@ -324,7 +324,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
 
             <div className="max-w-sm mx-auto space-y-4">
               <button
-                onClick={onLoginClick}
+                onClick={handleLoginClick}
                 className="w-full py-4 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] transition-all flex items-center justify-center gap-3"
                 data-testid="brand-onboarding-login-btn"
               >
