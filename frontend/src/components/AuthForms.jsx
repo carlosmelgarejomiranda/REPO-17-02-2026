@@ -23,7 +23,8 @@ export const AuthForms = ({ onLogin, onClose }) => {
     email: '',
     password: '',
     name: '',
-    phone: ''
+    phone: '',
+    acceptTerms: false
   });
 
   // Use current origin for production, fallback to env variable for development
@@ -335,11 +336,61 @@ export const AuthForms = ({ onLogin, onClose }) => {
               </div>
             </div>
 
+            {/* Terms checkbox - only for registration */}
+            {!isLogin && (
+              <div className="pt-2">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <div className="relative mt-0.5">
+                    <input
+                      type="checkbox"
+                      checked={formData.acceptTerms}
+                      onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+                      className="sr-only"
+                      data-testid="register-accept-terms-checkbox"
+                    />
+                    <div className={`w-5 h-5 border flex items-center justify-center transition-colors ${
+                      formData.acceptTerms 
+                        ? 'border-[#d4a968] bg-[#d4a968]' 
+                        : 'border-gray-500 group-hover:border-gray-400'
+                    }`}>
+                      {formData.acceptTerms && <Check className="w-3 h-3 text-black" />}
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-400 leading-relaxed">
+                    Acepto los{' '}
+                    <a 
+                      href="/shop/terminos-condiciones" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#d4a968] hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      términos y condiciones
+                    </a>
+                    {' '}y la{' '}
+                    <a 
+                      href="/politica-privacidad" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#d4a968] hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      política de privacidad
+                    </a>
+                  </span>
+                </label>
+              </div>
+            )}
+
             <Button
               type="submit"
               className="w-full py-4 rounded-none text-xs tracking-[0.2em] uppercase font-medium transition-all hover:opacity-90"
-              disabled={loading}
-              style={{ backgroundColor: '#d4a968', color: '#000000' }}
+              disabled={loading || (!isLogin && !formData.acceptTerms)}
+              style={{ 
+                backgroundColor: (!isLogin && !formData.acceptTerms) ? '#555' : '#d4a968', 
+                color: '#000000',
+                cursor: (!isLogin && !formData.acceptTerms) ? 'not-allowed' : 'pointer'
+              }}
             >
               {loading ? 'Procesando...' : isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
             </Button>
