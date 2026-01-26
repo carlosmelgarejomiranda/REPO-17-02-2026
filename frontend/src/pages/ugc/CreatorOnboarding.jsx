@@ -114,13 +114,20 @@ const CreatorOnboarding = () => {
 
     try {
       const token = localStorage.getItem('auth_token');
+      
+      // Include verification data in the submission
+      const submitData = {
+        ...formData,
+        social_verification: verificationData // Include the verification data
+      };
+      
       const response = await fetch(`${API_URL}/api/ugc/creators/onboarding`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(submitData)
       });
 
       const data = await response.json();
