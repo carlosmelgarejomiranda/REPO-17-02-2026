@@ -151,6 +151,7 @@ class UserCreate(BaseModel):
     password: str
     name: str
     phone: Optional[str] = None
+    acceptTerms: Optional[bool] = False
 
 class UserLogin(BaseModel):
     email: EmailStr
