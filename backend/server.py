@@ -1145,6 +1145,9 @@ async def google_callback(request: Request, response: Response):
         # Create JWT token
         token = create_jwt_token(user_id, email, role)
         
+        # Track if this is a new user
+        is_new_user = not existing_user
+        
         # Set cookie
         response.set_cookie(
             key="session_token",
@@ -1160,7 +1163,10 @@ async def google_callback(request: Request, response: Response):
         has_creator_profile = await db.ugc_creators.find_one({"user_id": user_id}) is not None
         has_brand_profile = await db.ugc_brands.find_one({"user_id": user_id}) is not None
         
-        logger.info(f"Google callback: Success for {email}")
+        # Check if user has accepted terms
+        has_accepted_terms = await db.terms_acceptances.find_one({"user_id": user_id}) is not None
+        
+        logger.info(f"Google callback: Success for {email}, is_new_user={is_new_user}")
         
         return {
             "user_id": user_id,
@@ -1170,7 +1176,9 @@ async def google_callback(request: Request, response: Response):
             "role": role,
             "token": token,
             "has_creator_profile": has_creator_profile,
-            "has_brand_profile": has_brand_profile
+            "has_brand_profile": has_brand_profile,
+            "is_new_user": is_new_user,
+            "needs_terms_acceptance": is_new_user and not has_accepted_terms
         }
     except HTTPException:
         raise
