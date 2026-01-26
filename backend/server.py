@@ -865,7 +865,7 @@ async def get_flyer_image(filename: str):
 # ==================== AUTH ROUTES ====================
 
 @api_router.post("/auth/register")
-async def register(user_data: UserCreate, response: Response):
+async def register(user_data: UserCreate, request: Request, response: Response):
     """Register a new user with email/password"""
     # Check if user exists
     existing = await db.users.find_one({"email": user_data.email}, {"_id": 0})
@@ -890,6 +890,32 @@ async def register(user_data: UserCreate, response: Response):
     }
     
     await db.users.insert_one(user_doc)
+    
+    # Record terms acceptance if user accepted
+    if user_data.acceptTerms:
+        try:
+            ip_address = get_client_ip(request)
+            user_agent = get_user_agent(request)
+            
+            # Accept privacy policy and general terms
+            terms_to_accept = [
+                {"slug": "privacy-policy", "version": "1.0"},
+                {"slug": "terms-ecommerce", "version": "1.0"}
+            ]
+            
+            for term in terms_to_accept:
+                acceptance_doc = {
+                    "user_id": user_id,
+                    "terms_slug": term["slug"],
+                    "terms_version": term["version"],
+                    "accepted_at": datetime.now(timezone.utc).isoformat(),
+                    "ip_address": ip_address,
+                    "user_agent": user_agent
+                }
+                await db.terms_acceptances.insert_one(acceptance_doc)
+        except Exception as e:
+            # Log but don't fail registration if terms recording fails
+            print(f"Failed to record terms acceptance: {e}")
     
     # Create welcome coupon (10% off) for new users
     welcome_coupon_code = f"BIENVENIDO{uuid.uuid4().hex[:6].upper()}"
