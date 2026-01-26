@@ -90,13 +90,17 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
 
   const checkAuth = async () => {
     try {
-      // Try with token first, then cookies
+      // Try with token first (most reliable method)
       const token = localStorage.getItem('auth_token');
-      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
+      if (!token) {
+        // No token, user needs to login
+        setCheckingAuth(false);
+        return;
+      }
       
       const res = await fetch(`${API_URL}/api/auth/me`, { 
-        headers,
-        credentials: 'include' 
+        headers: { 'Authorization': `Bearer ${token}` }
       });
       
       if (res.ok) {
@@ -111,8 +115,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
         
         // Check if already has brand profile
         const brandRes = await fetch(`${API_URL}/api/ugc/brands/me`, { 
-          headers,
-          credentials: 'include' 
+          headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (brandRes.ok) {
@@ -122,6 +125,9 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
         }
         
         setStep(2); // Skip to step 2 if logged in but no brand profile
+      } else {
+        // Token invalid, clear it
+        localStorage.removeItem('auth_token');
       }
     } catch (err) {
       // Not authenticated
