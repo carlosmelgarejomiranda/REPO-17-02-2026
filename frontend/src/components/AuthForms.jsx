@@ -450,6 +450,10 @@ export const AuthCallback = ({ onAuthComplete }) => {
   const [status, setStatus] = useState('connecting');
   const [attempts, setAttempts] = useState(0);
   const [debugInfo, setDebugInfo] = useState('');
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [pendingAuthData, setPendingAuthData] = useState(null);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [savingTerms, setSavingTerms] = useState(false);
   const hasProcessed = React.useRef(false);
   const shouldStop = React.useRef(false);
   
