@@ -433,6 +433,7 @@ export const AdminDashboard = ({ user }) => {
     ]},
     { id: 'config', label: 'Configuración', icon: Settings, color: 'from-gray-500 to-gray-600', stats: ['Sistema', 'Usuarios'], permission: 'settings', subtabs: [
       { id: 'users', label: 'Usuarios', icon: UserCog },
+      { id: 'terms', label: 'Términos y Condiciones', icon: FileText, link: '/admin/terms' },
       { id: 'security', label: 'Seguridad', icon: Shield },
       { id: 'audit', label: 'Auditoría', icon: FileText },
       { id: 'settings', label: 'Ajustes', icon: Settings }
