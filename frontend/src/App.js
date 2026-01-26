@@ -70,6 +70,7 @@ import CreatorDeliverables from "./pages/ugc/CreatorDeliverables";
 import CampaignApplicationsPage from "./pages/admin/CampaignApplicationsPage";
 import AdminDeliverables from "./pages/admin/AdminDeliverables";
 import AdminCreatorDeliverables from "./pages/admin/AdminCreatorDeliverables";
+import AdminTermsManagement from "./pages/admin/AdminTermsManagement";
 import LoginPage from "./pages/LoginPage";
 import MyProfile from "./pages/MyProfile";
 
