@@ -23,6 +23,7 @@ const CreatorOnboarding = () => {
   const [error, setError] = useState('');
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
   // Check authentication directly
   useEffect(() => {
@@ -52,6 +53,16 @@ const CreatorOnboarding = () => {
           const userData = await res.json();
           console.log('CreatorOnboarding - User authenticated:', userData.email);
           setCurrentUser(userData);
+          
+          // Check if already has creator profile
+          const creatorRes = await fetch(`${API_URL}/api/ugc/creators/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          
+          if (creatorRes.ok) {
+            // Already has creator profile - show message
+            setAlreadyRegistered(true);
+          }
         } else {
           console.log('CreatorOnboarding - Auth failed, clearing token');
           localStorage.removeItem('auth_token');
