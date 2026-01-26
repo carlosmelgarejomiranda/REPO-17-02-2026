@@ -18,7 +18,49 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
-### Session: 2026-01-26
+### Session: 2026-01-26 (Part 2)
+
+#### ✅ Completed - Bugs P0 (Onboarding & T&C)
+
+- **Bug P0-1: Brand Onboarding Redirect Fix**
+  - **Problema**: Después de login/registro desde `/ugc/brand/onboarding`, usuarios eran redirigidos a landing en vez de continuar onboarding
+  - **Solución**: 
+    - Agregado `handleLoginClick()` que guarda `redirect_after_login` en sessionStorage antes de abrir modal
+    - `checkAuth()` ahora usa solo token de localStorage (sin cookies CORS)
+  - **Archivos**: `/app/frontend/src/pages/ugc/BrandOnboarding.jsx`
+
+- **Bug P0-2: Creator Onboarding Redirect Fix**
+  - **Problema**: Mismo issue que Brand
+  - **Solución**: Verificado que ya funcionaba con sessionStorage + navegación a `/?login=creator`
+  - **Archivos**: `/app/frontend/src/pages/ugc/CreatorOnboarding.jsx`
+
+- **Bug P0-3: Mensaje "Ya Estás Registrado"**
+  - **Problema**: Usuarios con perfil existente podían ver el formulario de onboarding de nuevo
+  - **Solución**:
+    - Nuevo estado `alreadyRegistered` en ambos onboardings
+    - Si usuario ya tiene perfil de marca/creador, muestra pantalla con:
+      - Ícono de check verde
+      - Mensaje "¡Ya estás registrado!"
+      - Botón para ir al dashboard
+      - Botón secundario para ver info
+  - **Archivos**: 
+    - `/app/frontend/src/pages/ugc/BrandOnboarding.jsx` (líneas 260-305)
+    - `/app/frontend/src/pages/ugc/CreatorOnboarding.jsx` (líneas 167-214)
+
+- **Bug P0-4: Checkbox T&C con Google OAuth**
+  - **Problema**: Usuarios que se registran con Google no aceptaban T&C
+  - **Solución**:
+    - Backend `google_callback` ahora devuelve `needs_terms_acceptance: true` para usuarios nuevos
+    - `AuthCallback` muestra modal de aceptación de términos antes de completar auth
+    - Modal tiene checkbox obligatorio con enlaces a T&C y política de privacidad
+  - **Archivos**:
+    - `/app/backend/server.py` (líneas 1145-1182)
+    - `/app/frontend/src/components/AuthForms.jsx` (líneas 646-721)
+
+- **Testing**: 100% passed (11/11 backend tests, all frontend flows verified)
+- **Test Report**: `/app/test_reports/iteration_12.json`
+
+### Session: 2026-01-26 (Part 1)
 
 #### ✅ Completed
 - **Feature P0: Sistema de Gestión de Términos y Condiciones**
