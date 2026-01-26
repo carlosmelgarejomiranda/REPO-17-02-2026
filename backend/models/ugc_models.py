@@ -143,6 +143,17 @@ class CreatorProfile(BaseModel):
     created_at: str
     updated_at: str
 
+class SocialVerificationData(BaseModel):
+    platform: str
+    username: str
+    follower_count: int
+    following_count: Optional[int] = None
+    posts_count: Optional[int] = None
+    likes_count: Optional[int] = None
+    is_platform_verified: bool = False
+    verified_by_ai: bool = True
+    verification_method: str = "screenshot_ai"
+
 class CreatorProfileCreate(BaseModel):
     name: str
     city: str
@@ -150,6 +161,7 @@ class CreatorProfileCreate(BaseModel):
     bio: Optional[str] = None
     instagram_username: Optional[str] = None
     tiktok_username: Optional[str] = None
+    social_verification: Optional[Dict[str, SocialVerificationData]] = None
 
 class CreatorProfileUpdate(BaseModel):
     name: Optional[str] = None
