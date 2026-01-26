@@ -297,6 +297,19 @@ const AdminCreatorsTab = ({
                 
                 {/* Actions */}
                 <div className="flex items-center justify-center gap-1">
+                  {/* WhatsApp - only if creator has phone */}
+                  {creator.phone && (
+                    <a
+                      href={`https://wa.me/${creator.phone.replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1 bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors"
+                      title={`WhatsApp: ${creator.phone}`}
+                      data-testid={`whatsapp-btn-${creator.id}`}
+                    >
+                      <WhatsAppIcon className="w-3.5 h-3.5" />
+                    </a>
+                  )}
                   <Link
                     to={`/admin/creators/${creator.id}/deliverables`}
                     className="p-1 bg-[#d4a968]/20 text-[#d4a968] rounded hover:bg-[#d4a968]/30 transition-colors"
