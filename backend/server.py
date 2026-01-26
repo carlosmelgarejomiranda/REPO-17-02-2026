@@ -2643,6 +2643,7 @@ from routes.ugc_reputation import router as ugc_reputation_router
 from routes.ugc_brand_reports import router as ugc_brand_reports_router
 from routes.social_verification import router as social_verification_router
 from routes.notifications import router as notifications_router
+from routes.terms import router as terms_router
 
 app.include_router(ugc_creators_router)
 app.include_router(ugc_brands_router)
@@ -2656,6 +2657,7 @@ app.include_router(ugc_reputation_router)
 app.include_router(ugc_brand_reports_router)
 app.include_router(social_verification_router)
 app.include_router(notifications_router)
+app.include_router(terms_router)
 
 app.add_middleware(
     CORSMiddleware,
