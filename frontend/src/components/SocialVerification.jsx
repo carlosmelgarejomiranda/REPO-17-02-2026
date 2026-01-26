@@ -196,6 +196,33 @@ const SocialVerification = ({ onVerificationComplete, initialData = {}, saveImme
     setError(null);
 
     try {
+      // Preparar los datos de verificación
+      const verificationResult = {
+        platform: selectedPlatform.id,
+        username: extractedData.username || '',
+        follower_count: extractedData.follower_count || 0,
+        following_count: extractedData.following_count || null,
+        posts_count: extractedData.posts_count || null,
+        likes_count: extractedData.likes_count || null,
+        is_platform_verified: extractedData.is_verified || false,
+        verified_by_ai: true,
+        verification_method: "screenshot_ai"
+      };
+
+      // Si saveImmediately es false, no guardamos en el backend (ej: durante onboarding)
+      // Solo pasamos los datos al componente padre
+      if (!saveImmediately) {
+        setVerifiedAccounts(prev => ({
+          ...prev,
+          [selectedPlatform.id]: verificationResult
+        }));
+        setStep('success');
+        onVerificationComplete?.(selectedPlatform.id, verificationResult);
+        setLoading(false);
+        return;
+      }
+
+      // Si saveImmediately es true, guardamos en el backend
       const params = new URLSearchParams({
         platform: selectedPlatform.id,
         username: extractedData.username || '',
