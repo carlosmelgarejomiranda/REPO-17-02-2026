@@ -228,6 +228,14 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
 
   const availableCities = CITIES_BY_COUNTRY[formData.country] || ['Otra'];
 
+  // Handle login click - save redirect path first
+  const handleLoginClick = () => {
+    sessionStorage.setItem('redirect_after_login', '/ugc/brand/onboarding');
+    if (onLoginClick) {
+      onLoginClick();
+    }
+  };
+
   const steps = [
     { num: 1, label: 'Cuenta', icon: Lock },
     { num: 2, label: 'Datos', icon: Building2 },
