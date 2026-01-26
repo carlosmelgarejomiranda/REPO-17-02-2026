@@ -358,6 +358,20 @@ const CampaignApplicationsPage = () => {
                   
                   {/* Actions */}
                   <div className="flex items-center justify-center gap-1 flex-wrap">
+                    {/* WhatsApp button - always visible if creator has phone */}
+                    {creator.phone && (
+                      <a
+                        href={`https://wa.me/${creator.phone.replace(/[^0-9]/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors"
+                        title={`WhatsApp: ${creator.phone}`}
+                        data-testid={`whatsapp-btn-${app.id}`}
+                      >
+                        <WhatsAppIcon className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                    
                     {actionLoading === app.id ? (
                       <Loader2 className="w-4 h-4 animate-spin text-[#d4a968]" />
                     ) : (
