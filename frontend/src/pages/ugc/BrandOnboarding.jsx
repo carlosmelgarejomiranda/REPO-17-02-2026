@@ -54,6 +54,7 @@ const BrandOnboarding = ({ user: propUser, onLoginClick }) => {
   const [error, setError] = useState('');
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
   const [formData, setFormData] = useState({
     // Auth (Step 1)
