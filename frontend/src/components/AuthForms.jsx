@@ -83,6 +83,29 @@ export const AuthForms = ({ onLogin, onClose }) => {
         localStorage.setItem('auth_token', data.token);
       }
 
+      // CRITICAL: Check if user is a creator with incomplete profile
+      // Must redirect to onboarding IMMEDIATELY before allowing any navigation
+      if (isLogin && data.token && data.has_creator_profile) {
+        try {
+          const creatorRes = await fetch(`${API_URL}/api/ugc/creators/me`, {
+            headers: { 'Authorization': `Bearer ${data.token}` }
+          });
+          
+          if (creatorRes.ok) {
+            const creatorData = await creatorRes.json();
+            if (creatorData.needs_profile_update) {
+              // Force redirect to onboarding
+              console.log('Creator profile incomplete, forcing onboarding redirect');
+              window.location.href = '/ugc/creator/onboarding';
+              return;
+            }
+          }
+        } catch (creatorErr) {
+          console.error('Error checking creator profile:', creatorErr);
+          // Continue with normal flow if check fails
+        }
+      }
+
       // Check for welcome coupon (new registration)
       if (data.welcome_coupon) {
         setWelcomeCoupon(data.welcome_coupon);
