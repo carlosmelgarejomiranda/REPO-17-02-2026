@@ -137,7 +137,23 @@ const CreatorOnboarding = () => {
           });
           
           if (creatorRes.ok) {
-            setAlreadyRegistered(true);
+            const creatorData = await creatorRes.json();
+            setExistingProfile(creatorData);
+            
+            // Check if profile needs update (missing critical fields)
+            if (creatorData.needs_profile_update) {
+              setIsProfileUpdate(true);
+              setStep(0); // Show welcome message first
+              
+              // Pre-fill existing data
+              prefillExistingData(creatorData);
+            } else {
+              // Profile is complete - show already registered message
+              setAlreadyRegistered(true);
+            }
+          } else {
+            // No profile - new onboarding
+            setStep(1);
           }
         } else {
           localStorage.removeItem('auth_token');
@@ -153,6 +169,47 @@ const CreatorOnboarding = () => {
     
     verifyAuth();
   }, []);
+
+  // Pre-fill form with existing profile data
+  const prefillExistingData = (profile) => {
+    // Extract Instagram username from social_networks
+    const instagramNetwork = profile.social_networks?.find(sn => sn.platform === 'instagram');
+    const tiktokNetwork = profile.social_networks?.find(sn => sn.platform === 'tiktok');
+    
+    // Determine country code from existing data
+    let countryCode = profile.country || 'PY';
+    // If country is full name, try to find code
+    const countryMatch = COUNTRIES.find(c => c.name === profile.country || c.code === profile.country);
+    if (countryMatch) {
+      countryCode = countryMatch.code;
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      name: profile.name || prev.name,
+      birth_date: profile.birth_date || '',
+      gender: profile.gender || '',
+      document_id: profile.document_id || '',
+      country: countryCode,
+      city: profile.city || '',
+      phone_country_code: profile.phone_country_code || '+595',
+      phone: profile.phone || '',
+      categories: profile.categories || [],
+      bio: profile.bio || '',
+      education_level: profile.education_level || '',
+      occupation: profile.occupation || '',
+      languages: profile.languages || ['Español'],
+      portfolio_url: profile.portfolio_url || '',
+      instagram_username: instagramNetwork?.username || '',
+      tiktok_username: tiktokNetwork?.username || '',
+      terms_accepted: false // Must accept again
+    }));
+    
+    // Set profile picture preview if exists
+    if (profile.profile_picture) {
+      setProfilePicturePreview(profile.profile_picture);
+    }
+  };
 
   // Update cities when country changes
   const getCities = useCallback(() => {
