@@ -104,7 +104,19 @@ const CreatorProfileEdit = () => {
           name: data.name || '',
           city: data.city || '',
           bio: data.bio || '',
-          categories: data.categories || []
+          categories: data.categories || [],
+          // Personal info
+          birth_date: data.birth_date || '',
+          gender: data.gender || '',
+          document_id: data.document_id || '',
+          country: data.country || 'Paraguay',
+          // Contact
+          phone_country_code: data.phone_country_code || '+595',
+          phone: data.phone || '',
+          // Professional
+          education_level: data.education_level || '',
+          occupation: data.occupation || '',
+          languages: data.languages || ['Español']
         });
       } else if (res.status === 404) {
         // No creator profile, redirect to onboarding
