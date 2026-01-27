@@ -1071,6 +1071,14 @@ function AppRouter() {
       
       {/* Cookie Banner - Global */}
       <CookieBanner />
+      
+      {/* Session Timeout Warning */}
+      <SessionTimeoutWarning
+        show={showSessionWarning}
+        remainingSeconds={remainingSeconds}
+        onExtend={extendSession}
+        onLogout={sessionLogout}
+      />
     </>
   );
 }
