@@ -44,9 +44,19 @@ const CampaignsCatalog = () => {
 
   const checkCreatorProfile = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ugc/creators/me`, { credentials: 'include' });
+      const token = localStorage.getItem('auth_token');
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      
+      const res = await fetch(`${API_URL}/api/ugc/creators/me`, { headers });
       if (res.ok) {
         const data = await res.json();
+        
+        // Redirect to onboarding if profile needs update
+        if (data.needs_profile_update) {
+          navigate('/ugc/creator/onboarding');
+          return;
+        }
+        
         setHasCreatorProfile(true);
         setCreatorProfile(data);
       }
