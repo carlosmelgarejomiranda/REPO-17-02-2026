@@ -624,24 +624,44 @@ export const AuthCallback = ({ onAuthComplete }) => {
         // CRITICAL: Check if user is a creator with incomplete profile
         // Must redirect to onboarding IMMEDIATELY before allowing any navigation
         if (data.token && data.has_creator_profile) {
+          console.log('User has creator profile, checking if complete...');
           try {
             const creatorRes = await fetch(`${API_URL}/api/ugc/creators/me`, {
               headers: { 'Authorization': `Bearer ${data.token}` }
             });
             
+            console.log('Creator profile check response status:', creatorRes.status);
+            
             if (creatorRes.ok) {
-              const creatorData = await creatorRes.json();
+              const creatorText = await creatorRes.text();
+              let creatorData;
+              try {
+                creatorData = JSON.parse(creatorText);
+              } catch (e) {
+                console.error('Failed to parse creator response:', creatorText);
+                creatorData = {};
+              }
+              
+              console.log('Creator profile needs_profile_update:', creatorData.needs_profile_update);
+              console.log('Creator profile missing_fields:', creatorData.missing_fields);
+              
               if (creatorData.needs_profile_update) {
                 // Force redirect to onboarding - don't call onAuthComplete yet
-                console.log('Creator profile incomplete, forcing onboarding redirect');
-                window.location.href = '/ugc/creator/onboarding';
+                console.log('Creator profile incomplete, forcing onboarding redirect NOW');
+                // Use replace to prevent back button from returning here
+                window.location.replace('/ugc/creator/onboarding');
                 return;
               }
+            } else {
+              console.error('Creator profile check failed with status:', creatorRes.status);
             }
           } catch (creatorErr) {
             console.error('Error checking creator profile:', creatorErr);
             // Continue with normal flow if check fails
           }
+        } else {
+          console.log('User does not have creator profile or no token, skipping check');
+          console.log('has_creator_profile:', data.has_creator_profile);
         }
         
         if (onAuthComplete) {
