@@ -766,15 +766,16 @@ terms_accepted, terms_accepted_at, terms_version
 ## Pending Issues
 
 ### P0 - Critical (Blocking)
+- [x] ~~**Creator Onboarding Missing Data**~~ - COMPLETED: New 5-step onboarding now collects phone, birth_date, document_id, country, gender, education_level, languages, profile_picture
 - [ ] **Image Mis-assignment Bug** - Intermittent bug where product images get assigned to wrong products (USER VERIFICATION PENDING)
 
 ### P1 - High Priority
-- [ ] **Export Creator List** - Add CSV/Excel export button to Admin Creators panel
-- [ ] **Missing Email Notifications** - Several triggers pending:
-  - Brands: Campaign approved, slots recharged, plan purchased
-  - Creators: Level-up notification
-  - E-commerce: Full order cycle
-- [ ] **Dark Mode UI for Forms** - Fix applied, pending visual confirmation (USER VERIFICATION PENDING)
+- [ ] **T&C Versioning & Forced Acceptance** - Create system where updating T&C triggers mandatory acceptance banner for existing users
+- [ ] **Admin Edit Creator Profiles** - Allow admins to add/edit phone numbers for existing creators (needed for WhatsApp icon to work with old creators)
+- [ ] **Missing Email Notifications** - Several triggers need E2E testing:
+  - Email to avenue.ugc@gmail.com when brand completes onboarding
+  - Email to brand when new campaign created
+  - Email to brand when slots recharged
 
 ### P2 - Medium Priority  
 - [ ] **Mobile-First UGC Panels** - Apply mobile-first design to other UGC admin/creator pages
