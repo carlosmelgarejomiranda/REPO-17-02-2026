@@ -395,8 +395,13 @@ const CreatorOnboarding = () => {
         terms_version: '1.0'
       };
       
-      const response = await fetch(`${API_URL}/api/ugc/creators/onboarding`, {
-        method: 'POST',
+      // Use different endpoint for profile update vs new onboarding
+      const endpoint = isProfileUpdate 
+        ? `${API_URL}/api/ugc/creators/me/complete-profile`
+        : `${API_URL}/api/ugc/creators/onboarding`;
+      
+      const response = await fetch(endpoint, {
+        method: isProfileUpdate ? 'PUT' : 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -407,7 +412,7 @@ const CreatorOnboarding = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.detail || 'Error al crear perfil');
+        throw new Error(data.detail || 'Error al actualizar perfil');
       }
 
       // Redirect to creator dashboard
