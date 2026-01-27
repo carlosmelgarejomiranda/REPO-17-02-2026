@@ -60,12 +60,14 @@ const GENDERS = [
 
 const CreatorOnboarding = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0); // Start at 0 for welcome message
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+  const [existingProfile, setExistingProfile] = useState(null);
+  const [isProfileUpdate, setIsProfileUpdate] = useState(false); // True if updating existing profile
 
   // Form state - all 5 steps
   const [formData, setFormData] = useState({
