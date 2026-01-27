@@ -25,7 +25,19 @@ const CreatorProfileEdit = () => {
     name: '',
     city: '',
     bio: '',
-    categories: []
+    categories: [],
+    // Personal info
+    birth_date: '',
+    gender: '',
+    document_id: '',
+    country: 'Paraguay',
+    // Contact
+    phone_country_code: '+595',
+    phone: '',
+    // Professional
+    education_level: '',
+    occupation: '',
+    languages: ['Español']
   });
   
   // Add social network modal
