@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getApiUrl } from '../../utils/api';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, CheckCircle, XCircle, AlertCircle, Clock, ExternalLink,
   Instagram, Music2, Loader2, RefreshCw, Star, Eye, MessageSquare,
