@@ -126,13 +126,34 @@ export const AuthForms = ({ onLogin, onClose }) => {
   };
 
   // Handle MFA verification success
-  const handleMFAVerified = (data) => {
+  const handleMFAVerified = async (data) => {
     if (data.token) {
       localStorage.setItem('auth_token', data.token);
     }
     setMfaRequired(false);
     setPartialToken(null);
     trackLogin('email_mfa');
+    
+    // CRITICAL: Check if user is a creator with incomplete profile
+    if (data.token && data.has_creator_profile) {
+      try {
+        const creatorRes = await fetch(`${API_URL}/api/ugc/creators/me`, {
+          headers: { 'Authorization': `Bearer ${data.token}` }
+        });
+        
+        if (creatorRes.ok) {
+          const creatorData = await creatorRes.json();
+          if (creatorData.needs_profile_update) {
+            console.log('Creator profile incomplete after MFA, forcing onboarding redirect');
+            window.location.href = '/ugc/creator/onboarding';
+            return;
+          }
+        }
+      } catch (creatorErr) {
+        console.error('Error checking creator profile:', creatorErr);
+      }
+    }
+    
     onLogin(data);
   };
 
