@@ -154,14 +154,49 @@ class SocialVerificationData(BaseModel):
     verified_by_ai: bool = True
     verification_method: str = "screenshot_ai"
 
+class GenderType(str, Enum):
+    MALE = "male"
+    FEMALE = "female"
+    OTHER = "other"
+    PREFER_NOT_TO_SAY = "prefer_not_to_say"
+
+class EducationLevel(str, Enum):
+    SECONDARY = "secondary"
+    TECHNICAL = "technical"
+    UNIVERSITY = "university"
+    POSTGRADUATE = "postgraduate"
+    OTHER = "other"
+
 class CreatorProfileCreate(BaseModel):
+    # Step 1: Personal Data
     name: str
+    birth_date: str  # ISO date - must be 18+
+    gender: GenderType
+    document_id: str  # CI number
+    
+    # Step 2: Location & Contact
+    country: str = "Paraguay"
     city: str
+    phone_country_code: str = "+595"  # Paraguay default
+    phone: str  # Just the number without code
+    
+    # Step 3: Professional Profile
     categories: List[str] = []
     bio: Optional[str] = None
+    education_level: Optional[EducationLevel] = None
+    occupation: Optional[str] = None
+    languages: List[str] = ["Español"]  # Default Spanish
+    portfolio_url: Optional[str] = None
+    
+    # Step 4: Social Networks
     instagram_username: Optional[str] = None
     tiktok_username: Optional[str] = None
     social_verification: Optional[Dict[str, SocialVerificationData]] = None
+    
+    # Step 5: Profile Picture & Terms
+    profile_picture: Optional[str] = None  # Base64 or URL
+    terms_accepted: bool = False
+    terms_version: str = "1.0"
 
 class CreatorProfileUpdate(BaseModel):
     name: Optional[str] = None
