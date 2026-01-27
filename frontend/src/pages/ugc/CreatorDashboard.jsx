@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   User, Star, TrendingUp, Award, Briefcase, Clock, CheckCircle,
   ArrowRight, Instagram, Music2, Camera, BarChart3, Loader2, BadgeCheck, 
@@ -13,6 +13,7 @@ const API_URL = getApiUrl();
 
 const CreatorDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [deliverables, setDeliverables] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +40,12 @@ const CreatorDashboard = () => {
 
       if (profileRes.ok) {
         const profileData = await profileRes.json();
+        
+        // Check if profile needs update - redirect to onboarding
+        if (profileData.needs_profile_update) {
+          navigate('/ugc/creator/onboarding');
+          return;
+        }
         
         let socialNetworks = profileData.social_networks || profileData.social_media || [];
         const socialAccounts = profileData.social_accounts || {};
