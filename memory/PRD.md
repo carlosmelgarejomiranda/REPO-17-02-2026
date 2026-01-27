@@ -18,6 +18,51 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-27 (Continued)
+
+#### ✅ Completed - Forced Profile Update for Existing Creators
+
+**Problema resuelto**: Los creadores existentes que hicieron onboarding antes del nuevo flujo de 5 pasos no tienen datos críticos (teléfono, documento, fecha nacimiento, género). Necesitamos forzarlos a actualizar su perfil.
+
+**Solución implementada:**
+
+**Backend:**
+- Función `check_profile_complete()` que verifica campos críticos (phone, birth_date, document_id, gender)
+- Endpoint GET `/api/ugc/creators/me` ahora devuelve `needs_profile_update: true/false`, `profile_complete: true/false`, `missing_fields: []`
+- Nuevo endpoint PUT `/api/ugc/creators/me/complete-profile` para actualizar perfiles existentes
+
+**Frontend - Redirección forzosa:**
+- CreatorDashboard redirige automáticamente a onboarding si perfil incompleto
+- CampaignsCatalog redirige automáticamente a onboarding si perfil incompleto
+- Hook `useCreatorProfile` creado para reutilizar lógica de verificación
+
+**Frontend - Mensaje de bienvenida (Step 0):**
+- "¡Hola, [Nombre]!"
+- "Necesitamos actualizar tu información de contacto"
+- "Para brindarte mejor soporte y mejorar tu experiencia en la plataforma, necesitamos algunos datos adicionales:"
+  - Número de WhatsApp para que las marcas te contacten
+  - Fecha de nacimiento
+  - Documento de identidad
+- "Tus datos existentes ya están pre-cargados. Solo necesitás completar lo que falta."
+- Botón "Actualizar mi perfil"
+- "Este proceso toma menos de 2 minutos"
+
+**Frontend - Pre-llenado de datos:**
+- Nombre, ciudad, categorías, bio, redes sociales se pre-llenan automáticamente
+- Usuario solo completa los campos faltantes
+
+**Archivos modificados:**
+- `/app/backend/routes/ugc_creators.py` - check_profile_complete(), /me endpoint, /me/complete-profile endpoint
+- `/app/frontend/src/pages/ugc/CreatorOnboarding.jsx` - isProfileUpdate state, step 0, prefillExistingData()
+- `/app/frontend/src/pages/ugc/CreatorDashboard.jsx` - redirect logic
+- `/app/frontend/src/pages/ugc/CampaignsCatalog.jsx` - redirect logic
+- `/app/frontend/src/hooks/useCreatorProfile.js` - NEW hook for profile verification
+
+**Testing:** Backend 10/10 tests passed, Frontend all redirect flows verified
+**Test Report:** `/app/test_reports/iteration_14.json`
+
+---
+
 ### Session: 2026-01-27
 
 #### ✅ Completed - NEW 5-Step Creator Onboarding Flow (P0)
