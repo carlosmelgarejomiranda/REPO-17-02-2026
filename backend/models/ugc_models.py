@@ -200,9 +200,19 @@ class CreatorProfileCreate(BaseModel):
 
 class CreatorProfileUpdate(BaseModel):
     name: Optional[str] = None
+    birth_date: Optional[str] = None
+    gender: Optional[GenderType] = None
+    document_id: Optional[str] = None
+    country: Optional[str] = None
     city: Optional[str] = None
+    phone_country_code: Optional[str] = None
+    phone: Optional[str] = None
     categories: Optional[List[str]] = None
     bio: Optional[str] = None
+    education_level: Optional[EducationLevel] = None
+    occupation: Optional[str] = None
+    languages: Optional[List[str]] = None
+    portfolio_url: Optional[str] = None
     profile_picture: Optional[str] = None
 
 # ==================== BRAND MODELS ====================
