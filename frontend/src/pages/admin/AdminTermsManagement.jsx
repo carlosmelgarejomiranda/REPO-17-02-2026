@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getApiUrl } from '../../utils/api';
 import { 
   FileText, Download, Users, ExternalLink, RefreshCw, Loader2,
@@ -9,6 +9,7 @@ import {
 const API_URL = getApiUrl();
 
 const AdminTermsManagement = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [documents, setDocuments] = useState([]);
   const [acceptances, setAcceptances] = useState([]);
