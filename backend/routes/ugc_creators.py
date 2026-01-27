@@ -51,7 +51,7 @@ async def complete_creator_onboarding(
     data: CreatorProfileCreate,
     request: Request
 ):
-    """Complete creator onboarding - creates creator profile"""
+    """Complete creator onboarding - creates creator profile with all new fields"""
     db = await get_db()
     user = await require_auth(request)
     
@@ -60,7 +60,77 @@ async def complete_creator_onboarding(
     if existing:
         raise HTTPException(status_code=400, detail="Creator profile already exists")
     
+    # Validate age (must be 18+)
+    try:
+        birth = datetime.fromisoformat(data.birth_date.replace('Z', '+00:00'))
+        today = datetime.now(timezone.utc)
+        age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+        if age < 18:
+            raise HTTPException(status_code=400, detail="Debes ser mayor de 18 años para registrarte")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Formato de fecha de nacimiento inválido")
+    
+    # Validate terms acceptance
+    if not data.terms_accepted:
+        raise HTTPException(status_code=400, detail="Debes aceptar los términos y condiciones")
+    
     now = datetime.now(timezone.utc).isoformat()
+    
+    # Build full phone number
+    phone_full = f"{data.phone_country_code}{data.phone}".replace(" ", "")
+    
+    # Handle profile picture upload to GridFS if provided as base64
+    profile_picture_url = None
+    if data.profile_picture:
+        try:
+            # Check if it's base64 data
+            if data.profile_picture.startswith('data:image'):
+                from services.gridfs_storage import upload_image
+                
+                # Extract base64 content
+                header, base64_data = data.profile_picture.split(',', 1)
+                image_bytes = base64.b64decode(base64_data)
+                
+                # Determine file extension from header
+                if 'png' in header:
+                    ext = '.png'
+                    content_type = 'image/png'
+                elif 'jpeg' in header or 'jpg' in header:
+                    ext = '.jpg'
+                    content_type = 'image/jpeg'
+                elif 'webp' in header:
+                    ext = '.webp'
+                    content_type = 'image/webp'
+                else:
+                    ext = '.jpg'
+                    content_type = 'image/jpeg'
+                
+                filename = f"creator_profile_{user['user_id']}{ext}"
+                
+                # Upload to GridFS
+                file_id = await upload_image(
+                    file_content=image_bytes,
+                    filename=filename,
+                    content_type=content_type,
+                    metadata={"user_id": user["user_id"], "type": "profile_picture"},
+                    bucket_name="images"
+                )
+                
+                # Build the URL
+                from server import get_api_base_url
+                api_base = os.environ.get('REACT_APP_BACKEND_URL', '')
+                profile_picture_url = f"{api_base}/api/images/{file_id}"
+                logger.info(f"Uploaded profile picture for user {user['user_id']}: {file_id}")
+            else:
+                # It's already a URL
+                profile_picture_url = data.profile_picture
+        except Exception as e:
+            logger.error(f"Failed to upload profile picture: {e}")
+            # Continue without profile picture instead of failing
+            profile_picture_url = user.get("picture")  # Fallback to Google picture
+    else:
+        # Use Google picture if available
+        profile_picture_url = user.get("picture")
     
     # Build social networks
     social_networks = []
@@ -126,18 +196,39 @@ async def complete_creator_onboarding(
                     "verified": True
                 })
     
-    # Create creator profile
+    # Create creator profile with all new fields
     creator_profile = {
         "id": str(uuid.uuid4()),
         "user_id": user["user_id"],
         "email": user["email"],
+        # Personal Data (Step 1)
         "name": data.name,
+        "birth_date": data.birth_date,
+        "gender": data.gender.value if hasattr(data.gender, 'value') else data.gender,
+        "document_id": data.document_id,
+        # Location & Contact (Step 2)
+        "country": data.country,
         "city": data.city,
+        "phone_country_code": data.phone_country_code,
+        "phone": data.phone,
+        "phone_full": phone_full,
+        # Professional Profile (Step 3)
         "categories": data.categories,
         "bio": data.bio,
-        "profile_picture": user.get("picture"),
+        "education_level": data.education_level.value if data.education_level and hasattr(data.education_level, 'value') else data.education_level,
+        "occupation": data.occupation,
+        "languages": data.languages,
+        "portfolio_url": data.portfolio_url,
+        # Social Networks (Step 4)
         "social_networks": social_networks,
-        "social_accounts": social_accounts,  # Add verified social accounts
+        "social_accounts": social_accounts,
+        # Profile Picture (Step 5)
+        "profile_picture": profile_picture_url,
+        # Terms & Legal
+        "terms_accepted": data.terms_accepted,
+        "terms_accepted_at": now,
+        "terms_version": data.terms_version,
+        # Stats & Level
         "stats": CreatorStats().model_dump(),
         "level": CreatorLevel.ROOKIE,
         "level_progress": 0,
@@ -156,6 +247,19 @@ async def complete_creator_onboarding(
         {"$set": {"role": "creator", "updated_at": now}}
     )
     
+    # Record T&C acceptance
+    try:
+        await db.terms_acceptances.insert_one({
+            "user_id": user["user_id"],
+            "terms_slug": "terms-ugc-creator",
+            "terms_version": data.terms_version,
+            "accepted_at": now,
+            "ip_address": request.client.host if request.client else None,
+            "user_agent": request.headers.get("user-agent")
+        })
+    except Exception as e:
+        logger.error(f"Failed to record T&C acceptance: {e}")
+    
     # Send welcome email + notify avenue
     try:
         from services.ugc_emails import send_creator_welcome
@@ -164,8 +268,7 @@ async def complete_creator_onboarding(
             creator_name=data.name
         )
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).error(f"Failed to send creator welcome email: {e}")
+        logger.error(f"Failed to send creator welcome email: {e}")
     
     return {"success": True, "creator_id": creator_profile["id"], "message": "Creator profile created"}
 
