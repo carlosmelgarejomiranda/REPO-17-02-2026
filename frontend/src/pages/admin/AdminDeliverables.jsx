@@ -12,6 +12,7 @@ const API_URL = getApiUrl();
 
 const AdminDeliverables = () => {
   const { campaignId } = useParams();
+  const navigate = useNavigate();
   const [campaign, setCampaign] = useState(null);
   const [brand, setBrand] = useState(null);
   const [deliverables, setDeliverables] = useState([]);
