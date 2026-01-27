@@ -456,6 +456,7 @@ export const AuthCallback = ({ onAuthComplete }) => {
   const [savingTerms, setSavingTerms] = useState(false);
   const hasProcessed = React.useRef(false);
   const shouldStop = React.useRef(false);
+  const isProcessing = React.useRef(false);
   
   // Use current origin for production, fallback to env variable for development
   const API_URL = window.location.hostname === 'localhost' 
