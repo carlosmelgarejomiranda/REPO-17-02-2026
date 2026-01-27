@@ -1095,14 +1095,16 @@ async def admin_create_campaign(
     
     # Send notification to all active creators about the new campaign
     try:
-        from services.ugc_emails import send_new_campaign_notification_to_creators
+        from services.ugc_emails import send_new_campaign_notification_to_creators, send_admin_notification
         
-        # Get all active and verified creators
+        # Get all active creators with completed onboarding (not just verified)
         creators_cursor = db.ugc_creators.find(
-            {"is_active": True, "is_verified": True},
+            {"is_active": True, "onboarding_completed": True},
             {"_id": 0, "email": 1, "name": 1}
         )
         creators_list = await creators_cursor.to_list(1000)
+        
+        logger.info(f"[Email] Found {len(creators_list)} active creators to notify about new campaign")
         
         if creators_list:
             await send_new_campaign_notification_to_creators(
@@ -1112,6 +1114,17 @@ async def admin_create_campaign(
                 deliverables_count=data.monthly_deliverables,
                 creators_list=creators_list
             )
+        
+        # Also send notification to admin about the new campaign
+        admin_content = f"""
+            <h2 style="color: #22c55e; margin: 0 0 15px 0;">🚀 Nueva Campaña Creada</h2>
+            <p style="color: #cccccc;"><strong>Campaña:</strong> {campaign["name"]}</p>
+            <p style="color: #cccccc;"><strong>Marca:</strong> {brand.get("company_name", "N/A")}</p>
+            <p style="color: #cccccc;"><strong>Cupos:</strong> {data.monthly_deliverables}</p>
+            <p style="color: #cccccc;"><strong>Creadores notificados:</strong> {len(creators_list)}</p>
+        """
+        await send_admin_notification(f"Nueva Campaña: {campaign['name']}", admin_content)
+        
     except Exception as e:
         import logging
         logging.getLogger(__name__).error(f"Failed to send new campaign notifications to creators: {e}")
