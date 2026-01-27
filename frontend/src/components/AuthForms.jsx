@@ -475,13 +475,19 @@ export const AuthCallback = ({ onAuthComplete }) => {
   ];
 
   React.useEffect(() => {
-    if (hasProcessed.current) return;
+    // Strict check to prevent multiple calls
+    if (hasProcessed.current || isProcessing.current) {
+      console.log('AuthCallback: Already processed or processing, skipping');
+      return;
+    }
     hasProcessed.current = true;
+    isProcessing.current = true;
 
     const processAuth = async (retryCount = 0) => {
       if (shouldStop.current || retryCount >= MAX_ATTEMPTS) {
         setError('No se pudo conectar después de varios intentos.');
         setStatus('error');
+        isProcessing.current = false;
         return;
       }
 
@@ -513,6 +519,7 @@ export const AuthCallback = ({ onAuthComplete }) => {
         if (!sessionId) {
           setError('No se encontró la sesión de Google. Intentá iniciar sesión de nuevo.');
           setStatus('error');
+          isProcessing.current = false;
           return;
         }
 
@@ -520,12 +527,19 @@ export const AuthCallback = ({ onAuthComplete }) => {
         const callUrl = `${API_URL}/api/auth/google/callback`;
         console.log('Calling:', callUrl);
         
+        // Create AbortController for this request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        
         const response = await fetch(callUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ session_id: sessionId })
+          body: JSON.stringify({ session_id: sessionId }),
+          signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
 
         console.log('Response status:', response.status);
         
@@ -546,6 +560,7 @@ export const AuthCallback = ({ onAuthComplete }) => {
 
         // Success!
         shouldStop.current = true;
+        isProcessing.current = false;
         
         if (data.token) {
           localStorage.setItem('auth_token', data.token);
@@ -568,13 +583,20 @@ export const AuthCallback = ({ onAuthComplete }) => {
       } catch (err) {
         console.error('Auth error:', err.message, err);
         
-        if (shouldStop.current) return;
+        if (shouldStop.current) {
+          isProcessing.current = false;
+          return;
+        }
         
         const isNetworkError = err.message === 'Load failed' || 
                               err.message === 'Failed to fetch' ||
-                              err.name === 'TypeError';
+                              err.name === 'TypeError' ||
+                              err.name === 'AbortError';
         
-        if (isNetworkError && retryCount < MAX_ATTEMPTS - 1) {
+        // Also retry on "body stream already read" errors
+        const isBodyStreamError = err.message?.includes('body stream already read');
+        
+        if ((isNetworkError || isBodyStreamError) && retryCount < MAX_ATTEMPTS - 1) {
           setStatus('retrying');
           setDebugInfo(prev => prev + ` | Retry ${retryCount + 1}: ${err.message}`);
           await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
@@ -584,6 +606,7 @@ export const AuthCallback = ({ onAuthComplete }) => {
         } else {
           setError(`Error: ${err.message}`);
           setStatus('error');
+          isProcessing.current = false;
         }
       }
     };
