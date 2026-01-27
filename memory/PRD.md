@@ -18,6 +18,66 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-27
+
+#### ✅ Completed - NEW 5-Step Creator Onboarding Flow (P0)
+
+**Problema resuelto**: El onboarding anterior de creadores solo recolectaba nombre, ciudad y redes sociales. Faltaban datos críticos como teléfono (para WhatsApp), documento de identidad, fecha de nacimiento, país, género, nivel educativo, idiomas, y foto de perfil.
+
+**Solución implementada** - Flujo completo de 5 pasos:
+
+**Paso 1 - Datos Personales:**
+- Nombre completo (pre-llenado de cuenta Google)
+- Fecha de nacimiento (con validación 18+)
+- Género (Femenino, Masculino, Otro, Prefiero no decir)
+- Número de documento (CI)
+
+**Paso 2 - Ubicación y Contacto:**
+- Selector de país (Paraguay por defecto, 13 países disponibles)
+- Selector de ciudad dinámico (cambia según país seleccionado)
+- Teléfono separado: código de país + número
+- Mensaje: "Las marcas te contactarán por WhatsApp"
+
+**Paso 3 - Perfil Profesional:**
+- Categorías de contenido (10 opciones, mínimo 1 requerida)
+- Bio (opcional)
+- Nivel educativo (opcional)
+- Ocupación (opcional)
+- Idiomas (multi-select, Español por defecto)
+- Portfolio URL (opcional)
+
+**Paso 4 - Redes Sociales:**
+- Instagram username
+- TikTok username
+- Al menos una red requerida
+- Verificación con IA (opcional, "3x más chances de ser seleccionados")
+- Componente SocialVerification integrado
+
+**Paso 5 - Foto y Confirmación:**
+- Upload de foto de perfil (opcional, JPG/PNG/WebP, máx 5MB)
+- Fallback a foto de Google si no sube otra
+- Resumen completo del perfil
+- Checkbox obligatorio de T&C con links
+
+**Backend - Nuevos campos en `ugc_creators` collection:**
+```
+birth_date, gender, document_id, country, city, 
+phone_country_code, phone, phone_full,
+education_level, occupation, languages, portfolio_url,
+profile_picture (almacenado en GridFS),
+terms_accepted, terms_accepted_at, terms_version
+```
+
+**Archivos modificados:**
+- `/app/backend/models/ugc_models.py` - Nuevos enums (GenderType, EducationLevel), campos expandidos en CreatorProfileCreate
+- `/app/backend/routes/ugc_creators.py` - Endpoint onboarding con validación 18+, upload GridFS, T&C
+- `/app/frontend/src/pages/ugc/CreatorOnboarding.jsx` - Componente completo de 5 pasos
+
+**Testing:** Backend 20/20 tests passed, Frontend E2E completo
+**Test Report:** `/app/test_reports/iteration_13.json`
+
+---
+
 ### Session: 2026-01-26 (Part 4)
 
 #### ✅ Completed - Bug Fix: Verificación con IA de Perfiles de Creadores
