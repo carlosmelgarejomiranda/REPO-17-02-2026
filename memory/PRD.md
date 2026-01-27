@@ -812,11 +812,11 @@ terms_accepted, terms_accepted_at, terms_version
 
 ### P0 - Critical (Blocking)
 - [x] ~~**Creator Onboarding Missing Data**~~ - COMPLETED: New 5-step onboarding now collects phone, birth_date, document_id, country, gender, education_level, languages, profile_picture
+- [x] ~~**Forced Profile Update for Existing Creators**~~ - COMPLETED: Dashboard/Catalog redirect to onboarding, welcome message shown, data pre-filled
 - [ ] **Image Mis-assignment Bug** - Intermittent bug where product images get assigned to wrong products (USER VERIFICATION PENDING)
 
 ### P1 - High Priority
 - [ ] **T&C Versioning & Forced Acceptance** - Create system where updating T&C triggers mandatory acceptance banner for existing users
-- [ ] **Admin Edit Creator Profiles** - Allow admins to add/edit phone numbers for existing creators (needed for WhatsApp icon to work with old creators)
 - [ ] **Missing Email Notifications** - Several triggers need E2E testing:
   - Email to avenue.ugc@gmail.com when brand completes onboarding
   - Email to brand when new campaign created
