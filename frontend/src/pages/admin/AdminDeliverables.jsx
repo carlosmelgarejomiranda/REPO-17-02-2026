@@ -299,10 +299,10 @@ const AdminDeliverables = () => {
       {/* Header */}
       <div className="border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/admin" className="flex items-center gap-2 text-gray-400 hover:text-white">
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-400 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
-            Panel Admin
-          </Link>
+            Volver
+          </button>
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-[#d4a968]" />
             <span className="text-[#d4a968] italic">Admin - Gestión de Entregas</span>
