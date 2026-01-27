@@ -38,6 +38,8 @@ import {
   PrivacySEO, TermsSEO, StudioTermsSEO, CheckoutSEO, CartSEO, AdminSEO 
 } from "./components/SEOHead";
 import { getApiUrl } from "./utils/api";
+import { useSessionTimeout } from "./hooks/useSessionTimeout";
+import SessionTimeoutWarning from "./components/SessionTimeoutWarning";
 
 // UGC Platform Pages
 import BrandOnboarding from "./pages/ugc/BrandOnboarding";
