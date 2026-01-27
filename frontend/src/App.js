@@ -442,6 +442,7 @@ function AppRouter() {
   });
   const { user, loading, login, logout } = useAuth();
   const t = translations[language];
+  const API_URL = getApiUrl(); // Add API_URL for creator profile check
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
