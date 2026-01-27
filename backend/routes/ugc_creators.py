@@ -4,15 +4,19 @@ UGC Platform - Creator Routes
 
 from fastapi import APIRouter, HTTPException, Depends, Request, UploadFile, File
 from typing import List, Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 import uuid
 import os
+import base64
+import logging
 
 from models.ugc_models import (
     CreatorProfile, CreatorProfileCreate, CreatorProfileUpdate,
     SocialNetwork, ContentPlatform, CreatorLevel, CreatorStats,
-    LeaderboardEntry, LeaderboardFilters
+    LeaderboardEntry, LeaderboardFilters, GenderType, EducationLevel
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/ugc/creators", tags=["UGC Creators"])
 
