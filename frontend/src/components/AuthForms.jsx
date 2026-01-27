@@ -527,7 +527,16 @@ export const AuthCallback = ({ onAuthComplete }) => {
         });
 
         console.log('Response status:', response.status);
-        const data = await response.json();
+        
+        // Read response as text first to avoid "body stream already read" error
+        const responseText = await response.text();
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (parseErr) {
+          console.error('Failed to parse response:', responseText);
+          throw new Error('Error del servidor - respuesta inválida');
+        }
         console.log('Response data:', data);
 
         if (!response.ok) {
