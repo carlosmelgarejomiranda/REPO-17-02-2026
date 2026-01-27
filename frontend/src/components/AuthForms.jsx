@@ -577,6 +577,29 @@ export const AuthCallback = ({ onAuthComplete }) => {
           return;
         }
         
+        // CRITICAL: Check if user is a creator with incomplete profile
+        // Must redirect to onboarding IMMEDIATELY before allowing any navigation
+        if (data.token && data.has_creator_profile) {
+          try {
+            const creatorRes = await fetch(`${API_URL}/api/ugc/creators/me`, {
+              headers: { 'Authorization': `Bearer ${data.token}` }
+            });
+            
+            if (creatorRes.ok) {
+              const creatorData = await creatorRes.json();
+              if (creatorData.needs_profile_update) {
+                // Force redirect to onboarding - don't call onAuthComplete yet
+                console.log('Creator profile incomplete, forcing onboarding redirect');
+                window.location.href = '/ugc/creator/onboarding';
+                return;
+              }
+            }
+          } catch (creatorErr) {
+            console.error('Error checking creator profile:', creatorErr);
+            // Continue with normal flow if check fails
+          }
+        }
+        
         if (onAuthComplete) {
           onAuthComplete(data);
         }
