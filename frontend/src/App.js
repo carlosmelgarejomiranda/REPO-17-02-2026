@@ -498,14 +498,28 @@ function AppRouter() {
   // This runs on EVERY page load to ensure creators can't bypass onboarding
   useEffect(() => {
     const checkCreatorProfile = async () => {
+      console.log('[CreatorProfileCheck] Starting check...');
+      
       const token = localStorage.getItem('auth_token');
-      if (!token) return;
+      if (!token) {
+        console.log('[CreatorProfileCheck] No token found, skipping');
+        return;
+      }
       
       // Don't check if already on onboarding page
-      if (location.pathname === '/ugc/creator/onboarding') return;
+      if (location.pathname === '/ugc/creator/onboarding') {
+        console.log('[CreatorProfileCheck] Already on onboarding page, skipping');
+        return;
+      }
       
       // Skip during OAuth callback
-      if (location.hash?.includes('session_id=')) return;
+      if (location.hash?.includes('session_id=')) {
+        console.log('[CreatorProfileCheck] OAuth callback in progress, skipping');
+        return;
+      }
+      
+      console.log('[CreatorProfileCheck] Checking profile for token:', token.substring(0, 20) + '...');
+      console.log('[CreatorProfileCheck] API_URL:', API_URL);
       
       try {
         // First check if user has creator profile
@@ -513,34 +527,54 @@ function AppRouter() {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        if (!meRes.ok) return;
+        console.log('[CreatorProfileCheck] /api/auth/me status:', meRes.status);
+        
+        if (!meRes.ok) {
+          console.log('[CreatorProfileCheck] /api/auth/me failed, skipping');
+          return;
+        }
         
         const meText = await meRes.text();
         const meData = JSON.parse(meText);
         
-        if (!meData.has_creator_profile) return;
+        console.log('[CreatorProfileCheck] has_creator_profile:', meData.has_creator_profile);
+        
+        if (!meData.has_creator_profile) {
+          console.log('[CreatorProfileCheck] User is not a creator, skipping');
+          return;
+        }
         
         // User has creator profile, check if complete
         const creatorRes = await fetch(`${API_URL}/api/ugc/creators/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        if (!creatorRes.ok) return;
+        console.log('[CreatorProfileCheck] /api/ugc/creators/me status:', creatorRes.status);
+        
+        if (!creatorRes.ok) {
+          console.log('[CreatorProfileCheck] Creator profile fetch failed, skipping');
+          return;
+        }
         
         const creatorText = await creatorRes.text();
         const creatorData = JSON.parse(creatorText);
         
+        console.log('[CreatorProfileCheck] needs_profile_update:', creatorData.needs_profile_update);
+        console.log('[CreatorProfileCheck] missing_fields:', creatorData.missing_fields);
+        
         if (creatorData.needs_profile_update) {
-          console.log('Creator profile incomplete, forcing redirect to onboarding');
+          console.log('[CreatorProfileCheck] REDIRECTING to onboarding NOW!');
           window.location.replace('/ugc/creator/onboarding');
+        } else {
+          console.log('[CreatorProfileCheck] Profile is complete, no redirect needed');
         }
       } catch (err) {
-        console.error('Error checking creator profile:', err);
+        console.error('[CreatorProfileCheck] Error:', err);
       }
     };
     
     checkCreatorProfile();
-  }, [location.pathname, location.hash]);
+  }, [location.pathname, location.hash, API_URL]);
 
   // Check URL fragment for session_id (Google OAuth callback)
   if (location.hash?.includes('session_id=')) {
