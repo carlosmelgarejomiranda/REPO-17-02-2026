@@ -496,9 +496,10 @@ function AppRouter() {
 
   // CRITICAL: Check if logged-in creator needs to complete profile
   // This runs on EVERY page load to ensure creators can't bypass onboarding
+  // Version: 2026-01-27-v2
   useEffect(() => {
     const checkCreatorProfile = async () => {
-      console.log('[CreatorProfileCheck] Starting check...');
+      console.log('[CreatorProfileCheck] v2026-01-27-v2 - Starting check...');
       
       const token = localStorage.getItem('auth_token');
       if (!token) {
