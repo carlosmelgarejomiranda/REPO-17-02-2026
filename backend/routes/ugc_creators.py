@@ -274,6 +274,22 @@ async def complete_creator_onboarding(
 
 # ==================== PROFILE ====================
 
+def check_profile_complete(profile: dict) -> dict:
+    """Check if creator profile has all required fields from new onboarding"""
+    required_fields = ['phone', 'birth_date', 'document_id', 'gender']
+    missing_fields = []
+    
+    for field in required_fields:
+        if not profile.get(field):
+            missing_fields.append(field)
+    
+    is_complete = len(missing_fields) == 0
+    return {
+        "is_complete": is_complete,
+        "missing_fields": missing_fields,
+        "needs_update": not is_complete
+    }
+
 @router.get("/me", response_model=dict)
 async def get_my_creator_profile(request: Request):
     """Get current user's creator profile"""
@@ -283,6 +299,12 @@ async def get_my_creator_profile(request: Request):
     profile = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0})
     if not profile:
         raise HTTPException(status_code=404, detail="Creator profile not found")
+    
+    # Add profile completeness check
+    completeness = check_profile_complete(profile)
+    profile["profile_complete"] = completeness["is_complete"]
+    profile["needs_profile_update"] = completeness["needs_update"]
+    profile["missing_fields"] = completeness["missing_fields"]
     
     return profile
 
