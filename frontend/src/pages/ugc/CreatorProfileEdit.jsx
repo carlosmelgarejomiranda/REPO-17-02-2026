@@ -368,6 +368,181 @@ const CreatorProfileEdit = () => {
           </div>
         </div>
 
+        {/* Personal Information */}
+        <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-xl">
+          <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-[#d4a968]" />
+            Información Personal
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Fecha de Nacimiento</label>
+              <div className="relative">
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                  type="date"
+                  value={formData.birth_date}
+                  onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
+                  className="w-full pl-11 pr-4 py-3 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Género</label>
+              <select
+                value={formData.gender}
+                onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
+                className="w-full px-4 py-3 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none transition-colors"
+              >
+                <option value="">Seleccionar...</option>
+                <option value="female">Femenino</option>
+                <option value="male">Masculino</option>
+                <option value="non_binary">No binario</option>
+                <option value="prefer_not_say">Prefiero no decir</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">Número de CI</label>
+              <input
+                type="text"
+                value={formData.document_id}
+                onChange={(e) => setFormData(prev => ({ ...prev, document_id: e.target.value }))}
+                className="w-full px-4 py-3 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none transition-colors"
+                placeholder="Ej: 4.567.890"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">País</label>
+              <div className="relative">
+                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <select
+                  value={formData.country}
+                  onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
+                  className="w-full pl-11 pr-4 py-3 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none transition-colors"
+                >
+                  <option value="Paraguay">Paraguay</option>
+                  <option value="Argentina">Argentina</option>
+                  <option value="Brasil">Brasil</option>
+                  <option value="Uruguay">Uruguay</option>
+                  <option value="Chile">Chile</option>
+                  <option value="Bolivia">Bolivia</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Contact Information */}
+        <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-xl">
+          <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
+            <Phone className="w-5 h-5 text-[#d4a968]" />
+            Información de Contacto
+          </h2>
+          
+          <div>
+            <label className="block text-sm text-gray-400 mb-2">Teléfono / WhatsApp</label>
+            <div className="flex gap-2">
+              <select
+                value={formData.phone_country_code}
+                onChange={(e) => setFormData(prev => ({ ...prev, phone_country_code: e.target.value }))}
+                className="w-28 px-3 py-3 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none transition-colors"
+              >
+                <option value="+595">+595</option>
+                <option value="+54">+54</option>
+                <option value="+55">+55</option>
+                <option value="+598">+598</option>
+                <option value="+56">+56</option>
+                <option value="+591">+591</option>
+              </select>
+              <div className="relative flex-1">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value.replace(/\D/g, '') }))}
+                  className="w-full pl-11 pr-4 py-3 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none transition-colors"
+                  placeholder="981 234 567"
+                />
+              </div>
+            </div>
+            <p className="text-gray-500 text-xs mt-2">Este número se usará para coordinar campañas</p>
+          </div>
+        </div>
+
+        {/* Professional Information */}
+        <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-xl">
+          <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
+            <Briefcase className="w-5 h-5 text-[#d4a968]" />
+            Información Profesional
+          </h2>
+          
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">Nivel de Educación</label>
+                <select
+                  value={formData.education_level}
+                  onChange={(e) => setFormData(prev => ({ ...prev, education_level: e.target.value }))}
+                  className="w-full px-4 py-3 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none transition-colors"
+                >
+                  <option value="">Seleccionar...</option>
+                  <option value="secundario">Secundario</option>
+                  <option value="tecnico">Técnico</option>
+                  <option value="universitario_cursando">Universitario (cursando)</option>
+                  <option value="universitario_completo">Universitario (completo)</option>
+                  <option value="posgrado">Posgrado</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">Ocupación / Profesión</label>
+                <input
+                  type="text"
+                  value={formData.occupation}
+                  onChange={(e) => setFormData(prev => ({ ...prev, occupation: e.target.value }))}
+                  className="w-full px-4 py-3 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none transition-colors"
+                  placeholder="Ej: Diseñador gráfico, Estudiante, etc."
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">
+                <Languages className="inline w-4 h-4 mr-1" />
+                Idiomas que hablás
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {['Español', 'Inglés', 'Portugués', 'Guaraní', 'Alemán', 'Francés', 'Italiano'].map(lang => (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => {
+                      setFormData(prev => ({
+                        ...prev,
+                        languages: prev.languages.includes(lang)
+                          ? prev.languages.filter(l => l !== lang)
+                          : [...prev.languages, lang]
+                      }));
+                    }}
+                    className={`px-4 py-2 rounded-full text-sm transition-all ${
+                      formData.languages.includes(lang)
+                        ? 'bg-[#d4a968] text-black font-medium'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Categories */}
         <div className="mb-8 p-6 bg-white/5 border border-white/10 rounded-xl">
           <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
