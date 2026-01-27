@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getApiUrl } from '../../utils/api';
 import { 
   ArrowLeft, Loader2, RefreshCw, Users, Instagram, Music2,
@@ -11,6 +11,7 @@ const API_URL = getApiUrl();
 
 const AdminCreatorDeliverables = () => {
   const { creatorId } = useParams();
+  const navigate = useNavigate();
   const [creator, setCreator] = useState(null);
   const [deliverables, setDeliverables] = useState([]);
   const [loading, setLoading] = useState(true);
