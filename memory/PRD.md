@@ -18,6 +18,43 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-27 (Evening)
+
+#### ✅ Bug Fix - Email Notifications Not Working
+
+**Problema reportado**: Los emails no llegaban cuando:
+1. Se creaba una nueva campaña (ni a la marca ni a los creadores)
+2. Se registraba una nueva marca (no se notificaba al admin)
+
+**Causa raíz identificada**:
+1. Los archivos `ugc_emails.py` y `email_service.py` no cargaban las variables de entorno (`load_dotenv`), causando que `RESEND_API_KEY` fuera `None`
+2. El filtro de creadores era demasiado restrictivo (`is_verified: True`), solo había 1 creador verificado de 44 totales
+3. Resend tiene un rate limit de 2 requests/segundo que no se respetaba
+
+**Solución implementada**:
+1. **Fix de variables de entorno**: Añadido `load_dotenv` a:
+   - `/app/backend/services/ugc_emails.py`
+   - `/app/backend/email_service.py`
+   
+2. **Fix de filtro de creadores**: Cambiado de `{"is_active": True, "is_verified": True}` a `{"is_active": True, "onboarding_completed": True}`. Ahora 30 creadores reciben notificaciones.
+
+3. **Fix de rate limiting**: Añadido delay de 0.6 segundos entre envíos en `send_new_campaign_notification_to_creators()`
+
+4. **Mejora adicional**: Se añadió notificación al admin cuando se crea una campaña, informando cuántos creadores fueron notificados.
+
+**Archivos modificados**:
+- `/app/backend/services/ugc_emails.py` - load_dotenv + rate limit delay
+- `/app/backend/email_service.py` - load_dotenv
+- `/app/backend/routes/ugc_admin.py` - Filtro actualizado + notificación admin
+
+**Testing**: Emails verificados funcionando:
+- Email a marca al crear campaña ✅
+- Email a creadores al crear campaña ✅
+- Email a admin (avenue.ugc@gmail.com) al crear campaña ✅
+- Logs confirman envíos exitosos con rate limiting
+
+---
+
 ### Session: 2026-01-27 (Continued)
 
 #### ✅ Completed - Forced Profile Update for Existing Creators
