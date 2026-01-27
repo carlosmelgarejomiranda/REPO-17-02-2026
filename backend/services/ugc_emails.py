@@ -1312,6 +1312,7 @@ async def send_new_campaign_notification_to_creators(
     """
     Send notification to all active creators when a new campaign is launched.
     This encourages creators to apply to the new campaign.
+    Rate limited to respect Resend's 2 requests/second limit.
     """
     subject = f"🚀 Nueva campaña disponible: {campaign_name}"
     
@@ -1319,13 +1320,17 @@ async def send_new_campaign_notification_to_creators(
     success_count = 0
     failed_count = 0
     
-    for creator in creators_list:
+    for i, creator in enumerate(creators_list):
         try:
             creator_email = creator.get("email")
             creator_name = creator.get("name", "Creador")
             
             if not creator_email:
                 continue
+            
+            # Add delay to respect Resend rate limit (2 req/sec = 0.5s between requests)
+            if i > 0:
+                await asyncio.sleep(0.6)
             
             content = f"""
                 <h1 style="color: #ffffff; font-size: 28px; margin: 0 0 20px 0;">
