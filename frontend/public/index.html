@@ -53,6 +53,79 @@
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="root"></div>
+        
+        <!-- CRITICAL: Early creator profile check - runs before React loads -->
+        <script>
+        (function() {
+            console.log('[EarlyCreatorCheck] v2026-01-27-v2 Script loaded');
+            
+            // Skip if already on onboarding page
+            if (window.location.pathname === '/ugc/creator/onboarding') {
+                console.log('[EarlyCreatorCheck] Already on onboarding, skipping');
+                return;
+            }
+            
+            // Skip during OAuth callback
+            if (window.location.hash && window.location.hash.includes('session_id=')) {
+                console.log('[EarlyCreatorCheck] OAuth callback, skipping');
+                return;
+            }
+            
+            var token = localStorage.getItem('auth_token');
+            if (!token) {
+                console.log('[EarlyCreatorCheck] No token, skipping');
+                return;
+            }
+            
+            console.log('[EarlyCreatorCheck] Token found, checking profile...');
+            
+            // Determine API URL
+            var apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? '' // Use relative URLs in dev
+                : window.location.origin;
+            
+            console.log('[EarlyCreatorCheck] API URL:', apiUrl);
+            
+            // Check user profile
+            fetch(apiUrl + '/api/auth/me', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            })
+            .then(function(res) { 
+                console.log('[EarlyCreatorCheck] /api/auth/me status:', res.status);
+                return res.json(); 
+            })
+            .then(function(data) {
+                console.log('[EarlyCreatorCheck] has_creator_profile:', data.has_creator_profile);
+                
+                if (!data.has_creator_profile) {
+                    console.log('[EarlyCreatorCheck] Not a creator, done');
+                    return;
+                }
+                
+                // Check creator profile completeness
+                return fetch(apiUrl + '/api/ugc/creators/me', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                })
+                .then(function(res) { 
+                    console.log('[EarlyCreatorCheck] /api/ugc/creators/me status:', res.status);
+                    return res.json(); 
+                })
+                .then(function(creatorData) {
+                    console.log('[EarlyCreatorCheck] needs_profile_update:', creatorData.needs_profile_update);
+                    console.log('[EarlyCreatorCheck] missing_fields:', creatorData.missing_fields);
+                    
+                    if (creatorData.needs_profile_update) {
+                        console.log('[EarlyCreatorCheck] REDIRECTING NOW!');
+                        window.location.replace('/ugc/creator/onboarding');
+                    }
+                });
+            })
+            .catch(function(err) {
+                console.error('[EarlyCreatorCheck] Error:', err);
+            });
+        })();
+        </script>
+        
         <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
