@@ -55,6 +55,23 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ---
 
+#### ✅ UX Fix - Navigation "Back" Button Issue
+
+**Problema reportado**: Al navegar entre secciones del panel admin y usar el botón "volver", en lugar de regresar a la página anterior, llevaba a páginas incorrectas (ej: al landing principal en vez de la sección previa).
+
+**Causa raíz**: Los botones de "volver" usaban rutas hardcodeadas como `navigate('/admin')` o `<Link to="/admin">` en lugar de usar el historial del navegador con `navigate(-1)`.
+
+**Solución implementada**:
+Cambiados los botones de navegación de rutas fijas a `navigate(-1)` en:
+- `/app/frontend/src/pages/admin/CampaignApplicationsPage.jsx`
+- `/app/frontend/src/pages/admin/AdminDeliverables.jsx`
+- `/app/frontend/src/pages/admin/AdminCreatorDeliverables.jsx`
+- `/app/frontend/src/pages/admin/AdminTermsManagement.jsx`
+
+**Resultado**: Ahora el botón "Volver" respeta el historial de navegación y lleva al usuario a la página desde donde vino.
+
+---
+
 ### Session: 2026-01-27 (Continued)
 
 #### ✅ Completed - Forced Profile Update for Existing Creators
