@@ -331,6 +331,205 @@ async def update_my_creator_profile(
     
     return {"success": True, "message": "Profile updated"}
 
+
+@router.put("/me/complete-profile", response_model=dict)
+async def complete_existing_creator_profile(
+    data: CreatorProfileCreate,
+    request: Request
+):
+    """Complete/update existing creator profile with new required fields"""
+    db = await get_db()
+    user = await require_auth(request)
+    
+    # Check if profile exists
+    profile = await db.ugc_creators.find_one({"user_id": user["user_id"]})
+    if not profile:
+        raise HTTPException(status_code=404, detail="Creator profile not found. Use /onboarding for new profiles.")
+    
+    # Validate age (must be 18+)
+    try:
+        birth = datetime.fromisoformat(data.birth_date.replace('Z', '+00:00'))
+        today = datetime.now(timezone.utc)
+        age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+        if age < 18:
+            raise HTTPException(status_code=400, detail="Debes ser mayor de 18 años")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Formato de fecha de nacimiento inválido")
+    
+    # Validate terms acceptance
+    if not data.terms_accepted:
+        raise HTTPException(status_code=400, detail="Debes aceptar los términos y condiciones")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    # Build full phone number
+    phone_full = f"{data.phone_country_code}{data.phone}".replace(" ", "")
+    
+    # Handle profile picture upload to GridFS if provided as base64
+    profile_picture_url = profile.get("profile_picture")  # Keep existing if not updating
+    if data.profile_picture:
+        try:
+            if data.profile_picture.startswith('data:image'):
+                from services.gridfs_storage import upload_image
+                
+                header, base64_data = data.profile_picture.split(',', 1)
+                image_bytes = base64.b64decode(base64_data)
+                
+                if 'png' in header:
+                    ext = '.png'
+                    content_type = 'image/png'
+                elif 'jpeg' in header or 'jpg' in header:
+                    ext = '.jpg'
+                    content_type = 'image/jpeg'
+                elif 'webp' in header:
+                    ext = '.webp'
+                    content_type = 'image/webp'
+                else:
+                    ext = '.jpg'
+                    content_type = 'image/jpeg'
+                
+                filename = f"creator_profile_{user['user_id']}{ext}"
+                
+                file_id = await upload_image(
+                    file_content=image_bytes,
+                    filename=filename,
+                    content_type=content_type,
+                    metadata={"user_id": user["user_id"], "type": "profile_picture"},
+                    bucket_name="images"
+                )
+                
+                api_base = os.environ.get('REACT_APP_BACKEND_URL', '')
+                profile_picture_url = f"{api_base}/api/images/{file_id}"
+                logger.info(f"Uploaded profile picture for user {user['user_id']}: {file_id}")
+            else:
+                profile_picture_url = data.profile_picture
+        except Exception as e:
+            logger.error(f"Failed to upload profile picture: {e}")
+    
+    # Build social networks - merge with existing
+    social_networks = profile.get("social_networks", [])
+    
+    # Update Instagram if provided
+    if data.instagram_username:
+        social_networks = [sn for sn in social_networks if sn.get("platform") != "instagram"]
+        social_networks.append({
+            "platform": "instagram",
+            "username": data.instagram_username,
+            "url": f"https://instagram.com/{data.instagram_username}",
+            "followers": None,
+            "verified": False
+        })
+    
+    # Update TikTok if provided
+    if data.tiktok_username:
+        social_networks = [sn for sn in social_networks if sn.get("platform") != "tiktok"]
+        social_networks.append({
+            "platform": "tiktok",
+            "username": data.tiktok_username,
+            "url": f"https://tiktok.com/@{data.tiktok_username}",
+            "followers": None,
+            "verified": False
+        })
+    
+    # Process social verification data if provided
+    social_accounts = profile.get("social_accounts", {})
+    if data.social_verification:
+        for platform, verification in data.social_verification.items():
+            if hasattr(verification, 'model_dump'):
+                v_data = verification.model_dump()
+            else:
+                v_data = verification
+            
+            social_accounts[platform.lower()] = {
+                "platform": platform.lower(),
+                "username": v_data.get("username"),
+                "follower_count": v_data.get("follower_count"),
+                "following_count": v_data.get("following_count"),
+                "posts_count": v_data.get("posts_count"),
+                "likes_count": v_data.get("likes_count"),
+                "is_platform_verified": v_data.get("is_platform_verified", False),
+                "verified_by_ai": True,
+                "verified_at": now,
+                "verification_method": "screenshot_ai",
+                "last_updated": now
+            }
+            
+            # Update social_networks with verified data
+            if platform.lower() == "instagram":
+                social_networks = [sn for sn in social_networks if sn.get("platform") != "instagram"]
+                social_networks.append({
+                    "platform": "instagram",
+                    "username": v_data.get("username"),
+                    "url": f"https://instagram.com/{v_data.get('username')}",
+                    "followers": v_data.get("follower_count"),
+                    "verified": True
+                })
+            elif platform.lower() == "tiktok":
+                social_networks = [sn for sn in social_networks if sn.get("platform") != "tiktok"]
+                social_networks.append({
+                    "platform": "tiktok",
+                    "username": v_data.get("username"),
+                    "url": f"https://tiktok.com/@{v_data.get('username')}",
+                    "followers": v_data.get("follower_count"),
+                    "verified": True
+                })
+    
+    # Update profile with all new fields
+    update_data = {
+        # Personal Data (Step 1)
+        "name": data.name,
+        "birth_date": data.birth_date,
+        "gender": data.gender.value if hasattr(data.gender, 'value') else data.gender,
+        "document_id": data.document_id,
+        # Location & Contact (Step 2)
+        "country": data.country,
+        "city": data.city,
+        "phone_country_code": data.phone_country_code,
+        "phone": data.phone,
+        "phone_full": phone_full,
+        # Professional Profile (Step 3)
+        "categories": data.categories,
+        "bio": data.bio,
+        "education_level": data.education_level.value if data.education_level and hasattr(data.education_level, 'value') else data.education_level,
+        "occupation": data.occupation,
+        "languages": data.languages,
+        "portfolio_url": data.portfolio_url,
+        # Social Networks (Step 4)
+        "social_networks": social_networks,
+        "social_accounts": social_accounts,
+        # Profile Picture (Step 5)
+        "profile_picture": profile_picture_url,
+        # Terms & Legal
+        "terms_accepted": data.terms_accepted,
+        "terms_accepted_at": now,
+        "terms_version": data.terms_version,
+        # Mark profile as complete
+        "profile_updated_at": now,
+        "updated_at": now
+    }
+    
+    await db.ugc_creators.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": update_data}
+    )
+    
+    # Record T&C acceptance
+    try:
+        await db.terms_acceptances.insert_one({
+            "user_id": user["user_id"],
+            "terms_slug": "terms-ugc-creator",
+            "terms_version": data.terms_version,
+            "accepted_at": now,
+            "ip_address": request.client.host if request.client else None,
+            "user_agent": request.headers.get("user-agent"),
+            "action": "profile_update"
+        })
+    except Exception as e:
+        logger.error(f"Failed to record T&C acceptance: {e}")
+    
+    return {"success": True, "message": "Perfil actualizado correctamente"}
+
+
 @router.get("/{creator_id}", response_model=dict)
 async def get_creator_profile(creator_id: str):
     """Get a creator's public profile"""
