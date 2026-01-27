@@ -446,6 +446,18 @@ function AppRouter() {
   const t = translations[language];
   const API_URL = getApiUrl(); // Add API_URL for creator profile check
 
+  // Session timeout - 30 minutes of inactivity
+  const { 
+    showWarning: showSessionWarning, 
+    remainingSeconds, 
+    extendSession, 
+    logout: sessionLogout 
+  } = useSessionTimeout({
+    timeoutMinutes: 30,
+    warningMinutes: 5,
+    onLogout: logout
+  });
+
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('avenue_cart', JSON.stringify(cart));
