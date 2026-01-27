@@ -536,6 +536,7 @@ const CreatorOnboarding = () => {
 
   // Step titles for progress
   const stepTitles = [
+    'Bienvenido',
     'Datos Personales',
     'Ubicación y Contacto',
     'Perfil Profesional',
@@ -543,16 +544,84 @@ const CreatorOnboarding = () => {
     'Foto y Confirmación'
   ];
 
+  // Welcome message for existing users who need to update
+  if (step === 0 && isProfileUpdate) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="border-b border-white/10">
+          <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
+            <span className="text-xl font-light">
+              <span className="text-[#d4a968] italic">Avenue</span> UGC
+            </span>
+          </div>
+        </div>
+        
+        <div className="max-w-lg mx-auto px-6 py-16 text-center">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-r from-[#d4a968]/20 to-purple-500/20 flex items-center justify-center mx-auto mb-8">
+            <Sparkles className="w-12 h-12 text-[#d4a968]" />
+          </div>
+          
+          <h1 className="text-3xl font-light mb-4">
+            ¡Hola, <span className="text-[#d4a968] italic">{existingProfile?.name?.split(' ')[0] || 'Creator'}</span>!
+          </h1>
+          
+          <p className="text-gray-300 text-lg mb-6">
+            Necesitamos actualizar tu información de contacto
+          </p>
+          
+          <div className="p-6 bg-white/5 border border-white/10 rounded-xl text-left mb-8">
+            <p className="text-gray-400 mb-4">
+              Para brindarte <span className="text-white font-medium">mejor soporte</span> y mejorar tu experiencia en la plataforma, necesitamos algunos datos adicionales:
+            </p>
+            <ul className="space-y-2 text-gray-400">
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-[#d4a968]" />
+                <span>Número de WhatsApp para que las marcas te contacten</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#d4a968]" />
+                <span>Fecha de nacimiento</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-[#d4a968]" />
+                <span>Documento de identidad</span>
+              </li>
+            </ul>
+          </div>
+          
+          <p className="text-gray-500 text-sm mb-8">
+            Tus datos existentes ya están pre-cargados. Solo necesitás completar lo que falta.
+          </p>
+          
+          <button
+            onClick={() => setStep(1)}
+            data-testid="start-update-btn"
+            className="w-full bg-gradient-to-r from-[#d4a968] to-purple-500 text-black py-4 px-6 rounded-lg font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2"
+          >
+            Actualizar mi perfil
+            <ArrowRight className="w-5 h-5" />
+          </button>
+          
+          <p className="text-gray-600 text-xs mt-6">
+            Este proceso toma menos de 2 minutos
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <div className="border-b border-white/10">
         <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
-          <button onClick={() => step > 1 ? setStep(s => s - 1) : navigate('/ugc/creators')} className="text-gray-400 hover:text-white flex items-center gap-2">
+          <button onClick={() => step > 1 ? setStep(s => s - 1) : (isProfileUpdate ? null : navigate('/ugc/creators'))} className={`text-gray-400 hover:text-white flex items-center gap-2 ${step === 1 && isProfileUpdate ? 'invisible' : ''}`}>
             <ArrowLeft className="w-5 h-5" />
             {step > 1 ? 'Anterior' : 'Volver'}
           </button>
-          <span className="text-[#d4a968]">Paso {step} de 5</span>
+          <span className="text-[#d4a968]">
+            {isProfileUpdate ? 'Actualización de perfil' : `Paso ${step} de 5`}
+          </span>
         </div>
       </div>
 
@@ -565,7 +634,7 @@ const CreatorOnboarding = () => {
           />
         </div>
         <div className="mt-2 text-sm text-gray-500 text-center">
-          {stepTitles[step - 1]}
+          {stepTitles[step]}
         </div>
       </div>
 
