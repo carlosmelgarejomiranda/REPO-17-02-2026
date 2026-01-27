@@ -493,6 +493,54 @@ function AppRouter() {
     }
   }, [user, navigate, location.hash]);
 
+  // CRITICAL: Check if logged-in creator needs to complete profile
+  // This runs on EVERY page load to ensure creators can't bypass onboarding
+  useEffect(() => {
+    const checkCreatorProfile = async () => {
+      const token = localStorage.getItem('auth_token');
+      if (!token) return;
+      
+      // Don't check if already on onboarding page
+      if (location.pathname === '/ugc/creator/onboarding') return;
+      
+      // Skip during OAuth callback
+      if (location.hash?.includes('session_id=')) return;
+      
+      try {
+        // First check if user has creator profile
+        const meRes = await fetch(`${API_URL}/api/auth/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!meRes.ok) return;
+        
+        const meText = await meRes.text();
+        const meData = JSON.parse(meText);
+        
+        if (!meData.has_creator_profile) return;
+        
+        // User has creator profile, check if complete
+        const creatorRes = await fetch(`${API_URL}/api/ugc/creators/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!creatorRes.ok) return;
+        
+        const creatorText = await creatorRes.text();
+        const creatorData = JSON.parse(creatorText);
+        
+        if (creatorData.needs_profile_update) {
+          console.log('Creator profile incomplete, forcing redirect to onboarding');
+          window.location.replace('/ugc/creator/onboarding');
+        }
+      } catch (err) {
+        console.error('Error checking creator profile:', err);
+      }
+    };
+    
+    checkCreatorProfile();
+  }, [location.pathname, location.hash]);
+
   // Check URL fragment for session_id (Google OAuth callback)
   if (location.hash?.includes('session_id=')) {
     return <AuthCallback onAuthComplete={(userData) => {
