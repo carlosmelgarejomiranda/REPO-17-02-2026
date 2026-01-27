@@ -9,10 +9,13 @@ from datetime import datetime, timezone, timedelta
 import uuid
 import csv
 import io
+import logging
 
 from models.ugc_models import (
     CampaignStatus, ApplicationStatus, DeliverableStatus, CreatorLevel
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/ugc/admin", tags=["UGC Admin"])
 
