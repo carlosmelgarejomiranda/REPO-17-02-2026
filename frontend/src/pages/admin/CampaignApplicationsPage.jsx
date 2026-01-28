@@ -244,10 +244,17 @@ const CampaignApplicationsPage = () => {
               const creator = app.creator || {};
               const verifiedIG = creator.verified_instagram;
               const verifiedTT = creator.verified_tiktok;
-              const socialAccounts = creator.social_accounts || {};
               
-              const igUsername = verifiedIG?.username || socialAccounts.instagram?.username;
-              const ttUsername = verifiedTT?.username || socialAccounts.tiktok?.username;
+              // Try both social_accounts (legacy) and social_networks (new)
+              const socialAccounts = creator.social_accounts || {};
+              const socialNetworks = creator.social_networks || [];
+              
+              // Get Instagram username from verified, social_networks, or social_accounts
+              const igFromNetworks = socialNetworks.find(s => s.platform === 'instagram');
+              const ttFromNetworks = socialNetworks.find(s => s.platform === 'tiktok');
+              
+              const igUsername = verifiedIG?.username || igFromNetworks?.username || socialAccounts.instagram?.username;
+              const ttUsername = verifiedTT?.username || ttFromNetworks?.username || socialAccounts.tiktok?.username;
               const igVerified = !!verifiedIG;
               const ttVerified = !!verifiedTT;
               
