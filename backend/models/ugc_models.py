@@ -503,6 +503,11 @@ class CampaignCreate(BaseModel):
     monthly_deliverables: int  # Slots per month
     contract_duration_months: int  # Duration in months
     contract_start_date: str  # ISO date
+    # Delivery deadlines
+    url_delivery_days: int = 7  # Days after confirmation to deliver URL
+    metrics_delivery_days: int = 14  # Days after confirmation to deliver metrics
+    url_delivery_fixed_date: Optional[str] = None  # ISO date (overrides days if set)
+    metrics_delivery_fixed_date: Optional[str] = None  # ISO date (overrides days if set)
     # Requirements and content
     requirements: CampaignRequirements
     canje: CampaignCanje
