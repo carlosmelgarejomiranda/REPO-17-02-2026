@@ -109,11 +109,10 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
   const [brands, setBrands] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   
-  // Sync with parent when initialSubTab changes
+  // Sync with parent when initialSubTab changes (only on mount or when parent forces change)
   useEffect(() => {
-    if (initialSubTab && initialSubTab !== activeSubTab) {
-      setActiveSubTab(initialSubTab);
-    }
+    setActiveSubTab(initialSubTab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialSubTab]);
   
   // Notify parent of sub-tab changes
