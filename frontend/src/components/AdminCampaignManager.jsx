@@ -5,7 +5,8 @@ import {
   Instagram, Music2, Loader2, CheckCircle, AlertCircle, Clock,
   RefreshCw, Eye, EyeOff, ChevronDown, Image as ImageIcon,
   UserCheck, XCircle, Star, ClipboardList, List, Type, Minus, Pencil, ArrowRightLeft,
-  BadgeCheck, TrendingUp, Heart, MessageCircle, Share2, Bookmark, BarChart3, Award
+  BadgeCheck, TrendingUp, Heart, MessageCircle, Share2, Bookmark, BarChart3, Award,
+  Search, MoreVertical, Filter, Link as LinkIcon, LineChart
 } from 'lucide-react';
 import { getApiUrl } from '../utils/api';
 
