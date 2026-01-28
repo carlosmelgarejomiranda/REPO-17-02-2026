@@ -637,36 +637,161 @@ async def admin_activate_package(
 async def get_all_campaigns(
     request: Request,
     status: Optional[CampaignStatus] = None,
+    brand_id: Optional[str] = None,
+    has_pending: Optional[bool] = None,
+    has_late_deliveries: Optional[bool] = None,
+    search: Optional[str] = None,
     skip: int = 0,
     limit: int = 50
 ):
-    """Get all campaigns"""
+    """Get all campaigns with enriched stats for admin dashboard"""
     await require_admin(request)
     db = await get_db()
     
     query = {}
     if status:
         query["status"] = status
+    if brand_id:
+        query["brand_id"] = brand_id
+    if search:
+        query["$or"] = [
+            {"name": {"$regex": search, "$options": "i"}},
+        ]
     
     campaigns = await db.ugc_campaigns.find(
         query,
         {"_id": 0}
     ).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
     
-    # Enrich with brand info and counts
+    now = datetime.now(timezone.utc)
+    three_days_later = now + timedelta(days=3)
+    
+    # Enrich with brand info, application stats, and delivery traffic lights
+    filtered_campaigns = []
     for campaign in campaigns:
         brand = await db.ugc_brands.find_one(
             {"id": campaign["brand_id"]},
-            {"_id": 0, "company_name": 1}
+            {"_id": 0, "company_name": 1, "logo_url": 1}
         )
         campaign["brand"] = brand
         
-        app_count = await db.ugc_applications.count_documents({"campaign_id": campaign["id"]})
-        campaign["applications_count"] = app_count
+        # Application stats
+        app_stats = {
+            "total": 0,
+            "pending": 0,
+            "approved": 0,
+            "rejected": 0
+        }
+        
+        apps = await db.ugc_applications.find(
+            {"campaign_id": campaign["id"]},
+            {"_id": 0, "status": 1}
+        ).to_list(500)
+        
+        app_stats["total"] = len(apps)
+        for app in apps:
+            if app.get("status") == "pending":
+                app_stats["pending"] += 1
+            elif app.get("status") == "confirmed":
+                app_stats["approved"] += 1
+            elif app.get("status") == "rejected":
+                app_stats["rejected"] += 1
+        
+        campaign["application_stats"] = app_stats
+        
+        # Delivery traffic lights (semáforo)
+        # Get all deliverables for this campaign
+        deliverables = await db.ugc_deliverables.find(
+            {"campaign_id": campaign["id"]},
+            {"_id": 0, "status": 1, "post_url": 1, "metrics_submitted_at": 1, 
+             "metrics_window_closes": 1, "created_at": 1, "published_at": 1}
+        ).to_list(500)
+        
+        # Get campaign timeline for URL deadline
+        timeline = campaign.get("timeline", {})
+        url_deadline_str = timeline.get("publish_end")
+        
+        # URL delivery traffic light
+        url_traffic = {"on_time": 0, "due_soon": 0, "late": 0}
+        # Metrics delivery traffic light  
+        metrics_traffic = {"on_time": 0, "due_soon": 0, "late": 0}
+        
+        for deliv in deliverables:
+            # URL status - check if post_url is submitted
+            has_url = bool(deliv.get("post_url"))
+            
+            if has_url:
+                # URL submitted = on_time for URL
+                url_traffic["on_time"] += 1
+            else:
+                # Check URL deadline
+                if url_deadline_str:
+                    try:
+                        url_deadline = datetime.fromisoformat(url_deadline_str.replace('Z', '+00:00'))
+                        if now > url_deadline:
+                            url_traffic["late"] += 1
+                        elif now > url_deadline - timedelta(days=3):
+                            url_traffic["due_soon"] += 1
+                        else:
+                            url_traffic["on_time"] += 1
+                    except:
+                        url_traffic["on_time"] += 1
+                else:
+                    url_traffic["on_time"] += 1
+            
+            # Metrics status
+            has_metrics = bool(deliv.get("metrics_submitted_at"))
+            metrics_deadline_str = deliv.get("metrics_window_closes")
+            
+            if has_metrics:
+                metrics_traffic["on_time"] += 1
+            elif metrics_deadline_str:
+                try:
+                    metrics_deadline = datetime.fromisoformat(metrics_deadline_str.replace('Z', '+00:00'))
+                    if now > metrics_deadline:
+                        metrics_traffic["late"] += 1
+                    elif now > metrics_deadline - timedelta(days=3):
+                        metrics_traffic["due_soon"] += 1
+                    else:
+                        metrics_traffic["on_time"] += 1
+                except:
+                    metrics_traffic["on_time"] += 1
+            else:
+                # No deadline yet (content not published)
+                metrics_traffic["on_time"] += 1
+        
+        campaign["url_traffic"] = url_traffic
+        campaign["metrics_traffic"] = metrics_traffic
+        campaign["total_deliverables"] = len(deliverables)
+        
+        # Filter by pending applications if requested
+        if has_pending is True and app_stats["pending"] == 0:
+            continue
+        if has_pending is False and app_stats["pending"] > 0:
+            continue
+            
+        # Filter by late deliveries if requested
+        if has_late_deliveries is True and (url_traffic["late"] == 0 and metrics_traffic["late"] == 0):
+            continue
+        if has_late_deliveries is False and (url_traffic["late"] > 0 or metrics_traffic["late"] > 0):
+            continue
+        
+        filtered_campaigns.append(campaign)
     
     total = await db.ugc_campaigns.count_documents(query)
     
-    return {"campaigns": campaigns, "total": total}
+    # Get unique brands for filter dropdown
+    all_brands = await db.ugc_brands.find(
+        {},
+        {"_id": 0, "id": 1, "company_name": 1}
+    ).to_list(200)
+    
+    return {
+        "campaigns": filtered_campaigns, 
+        "total": total,
+        "brands_for_filter": all_brands
+    }
+
 
 
 @router.get("/campaigns/{campaign_id}/applications", response_model=dict)
