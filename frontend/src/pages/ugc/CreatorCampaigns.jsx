@@ -102,7 +102,14 @@ const CreatorCampaigns = () => {
       if (res.ok) {
         fetchAllData();
       } else {
-        const error = await res.json();
+        // Read response as text first to avoid "body is disturbed or locked" error on Safari/iOS
+        const responseText = await res.text();
+        let error;
+        try {
+          error = JSON.parse(responseText);
+        } catch (parseErr) {
+          error = {};
+        }
         alert(error.detail || 'Error al cancelar');
       }
     } catch (err) {
