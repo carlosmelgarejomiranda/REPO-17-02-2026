@@ -288,6 +288,15 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
         publish_end: new Date(formData.publish_end).toISOString(),
         delivery_sla_hours: 48
       },
+      // Delivery deadline settings
+      url_delivery_days: parseInt(formData.url_delivery_days) || 7,
+      metrics_delivery_days: parseInt(formData.metrics_delivery_days) || 14,
+      url_delivery_fixed_date: formData.url_delivery_type === 'fixed' && formData.url_delivery_fixed_date 
+        ? new Date(formData.url_delivery_fixed_date).toISOString() 
+        : null,
+      metrics_delivery_fixed_date: formData.metrics_delivery_type === 'fixed' && formData.metrics_delivery_fixed_date 
+        ? new Date(formData.metrics_delivery_fixed_date).toISOString() 
+        : null,
       assets: {
         cover_image: formData.cover_image_url,
         brand_name: formData.brand_name
@@ -434,6 +443,15 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
         publish_end: new Date(formData.publish_end).toISOString(),
         delivery_sla_hours: 48
       },
+      // Delivery deadline settings
+      url_delivery_days: parseInt(formData.url_delivery_days) || 7,
+      metrics_delivery_days: parseInt(formData.metrics_delivery_days) || 14,
+      url_delivery_fixed_date: formData.url_delivery_type === 'fixed' && formData.url_delivery_fixed_date 
+        ? new Date(formData.url_delivery_fixed_date).toISOString() 
+        : null,
+      metrics_delivery_fixed_date: formData.metrics_delivery_type === 'fixed' && formData.metrics_delivery_fixed_date 
+        ? new Date(formData.metrics_delivery_fixed_date).toISOString() 
+        : null,
       assets: {
         cover_image: formData.cover_image_url,
         brand_name: formData.brand_name
