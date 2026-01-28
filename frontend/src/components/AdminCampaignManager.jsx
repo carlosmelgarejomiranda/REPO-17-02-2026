@@ -128,7 +128,14 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
     publish_start: '',
     publish_end: '',
     cover_image_url: '',
-    admin_notes: ''
+    admin_notes: '',
+    // Delivery deadline settings
+    url_delivery_days: 7,
+    metrics_delivery_days: 14,
+    url_delivery_type: 'days',  // 'days' or 'fixed'
+    metrics_delivery_type: 'days',  // 'days' or 'fixed'
+    url_delivery_fixed_date: '',
+    metrics_delivery_fixed_date: ''
   };
 
   // Form state
