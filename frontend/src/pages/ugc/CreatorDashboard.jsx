@@ -239,97 +239,24 @@ const CreatorDashboard = () => {
             </div>
           </div>
 
-          {/* Quick Actions - Mobile */}
-          <div className="grid grid-cols-4 gap-3 mb-6 md:hidden">
-            <Link
-              to="/ugc/creator/deliverables"
-              className="flex flex-col items-center gap-2 p-3 bg-orange-500/10 border border-orange-500/30 rounded-xl hover:bg-orange-500/20 transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-orange-400" />
+          {/* Prominent CTA - Explorar Campañas */}
+          <Link
+            to="/ugc/campaigns"
+            className="block mb-6 p-4 md:p-5 bg-gradient-to-r from-[#d4a968]/20 to-purple-500/10 border border-[#d4a968]/30 rounded-xl hover:border-[#d4a968]/50 transition-all group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-[#d4a968] flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-black" />
+                </div>
+                <div>
+                  <p className="font-medium text-white group-hover:text-[#d4a968] transition-colors">Explorar nuevas campañas</p>
+                  <p className="text-sm text-gray-400">Encontrá oportunidades para colaborar con marcas</p>
+                </div>
               </div>
-              <p className="text-xs font-medium text-center">Entregas</p>
-            </Link>
-            <Link
-              to="/ugc/creator/campaigns"
-              className="flex flex-col items-center gap-2 p-3 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl hover:bg-[#d4a968]/20 transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-[#d4a968] flex items-center justify-center">
-                <Zap className="w-5 h-5 text-black" />
-              </div>
-              <p className="text-xs font-medium text-center">Campañas</p>
-            </Link>
-            <Link
-              to="/ugc/creator/reports"
-              className="flex flex-col items-center gap-2 p-3 bg-purple-500/10 border border-purple-500/30 rounded-xl hover:bg-purple-500/20 transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-purple-400" />
-              </div>
-              <p className="text-xs font-medium text-center">Reportes</p>
-            </Link>
-            <Link
-              to="/ugc/creator/profile"
-              className="flex flex-col items-center gap-2 p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                <User className="w-5 h-5 text-blue-400" />
-              </div>
-              <p className="text-xs font-medium text-center">Perfil</p>
-            </Link>
-          </div>
-
-          {/* Quick Actions - Desktop */}
-          <div className="hidden md:grid md:grid-cols-4 gap-4 mb-6">
-            <Link
-              to="/ugc/creator/campaigns"
-              className="flex items-center gap-3 p-4 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl hover:bg-[#d4a968]/20 transition-all group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-[#d4a968] flex items-center justify-center">
-                <Zap className="w-6 h-6 text-black" />
-              </div>
-              <div>
-                <p className="font-medium group-hover:text-[#d4a968] transition-colors">Explorar Campañas</p>
-                <p className="text-xs text-gray-400">Encontrar oportunidades</p>
-              </div>
-            </Link>
-            <Link
-              to="/ugc/creator/reports"
-              className="flex items-center gap-3 p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl hover:bg-purple-500/20 transition-all group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                <BarChart3 className="w-6 h-6 text-purple-400" />
-              </div>
-              <div>
-                <p className="font-medium group-hover:text-purple-400 transition-colors">Mis Reportes</p>
-                <p className="text-xs text-gray-400">Métricas y reviews</p>
-              </div>
-            </Link>
-            <Link
-              to="/ugc/creator/profile"
-              className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                <User className="w-6 h-6 text-blue-400" />
-              </div>
-              <div>
-                <p className="font-medium group-hover:text-blue-400 transition-colors">Mi Perfil</p>
-                <p className="text-xs text-gray-400">Editar información</p>
-              </div>
-            </Link>
-            <Link
-              to="/ugc/leaderboard"
-              className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-                <Award className="w-6 h-6 text-yellow-400" />
-              </div>
-              <div>
-                <p className="font-medium group-hover:text-yellow-400 transition-colors">Leaderboard</p>
-                <p className="text-xs text-gray-400">Ver ranking</p>
-              </div>
-            </Link>
-          </div>
+              <ArrowRight className="w-5 h-5 text-[#d4a968] group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
 
           {/* Content Grid */}
           <div className="grid md:grid-cols-3 gap-4 md:gap-6">
@@ -337,7 +264,7 @@ const CreatorDashboard = () => {
             <div className="md:col-span-2 order-1">
               <div className="flex items-center justify-between mb-3 md:mb-4">
                 <h2 className="text-base md:text-lg font-medium">Entregas Activas</h2>
-                <Link to="/ugc/creator/workspace" className="text-[#d4a968] text-xs md:text-sm hover:underline flex items-center gap-1">
+                <Link to="/ugc/creator/my-work" className="text-[#d4a968] text-xs md:text-sm hover:underline flex items-center gap-1">
                   Ver todas <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -350,7 +277,7 @@ const CreatorDashboard = () => {
                     to="/ugc/campaigns"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black text-sm rounded-lg hover:bg-[#c49958]"
                   >
-                    Buscar campañas <ArrowRight className="w-4 h-4" />
+                    Explorar campañas <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
               ) : (
