@@ -1203,6 +1203,11 @@ async def admin_create_campaign(
         "assets": data.assets,
         "status": CampaignStatus.LIVE,
         "visible_to_creators": True,
+        # Delivery deadline configuration
+        "url_delivery_days": data.url_delivery_days,
+        "metrics_delivery_days": data.metrics_delivery_days,
+        "url_delivery_fixed_date": data.url_delivery_fixed_date,
+        "metrics_delivery_fixed_date": data.metrics_delivery_fixed_date,
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
         "published_at": now.isoformat(),
