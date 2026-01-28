@@ -527,6 +527,12 @@ function AppRouter() {
         return;
       }
       
+      // Skip for admin pages - admins don't need to complete creator onboarding
+      if (location.pathname.startsWith('/admin')) {
+        console.log('[CreatorProfileCheck] On admin page, skipping');
+        return;
+      }
+      
       // Skip during OAuth callback
       if (location.hash?.includes('session_id=')) {
         console.log('[CreatorProfileCheck] OAuth callback in progress, skipping');
