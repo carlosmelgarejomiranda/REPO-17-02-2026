@@ -346,11 +346,22 @@ const BrandsInquiriesPanel = ({ inquiries, loading, onRefresh }) => {
 
 // ============== MAIN ADMIN DASHBOARD ==============
 export const AdminDashboard = ({ user }) => {
-  const [activeModule, setActiveModule] = useState(null);
-  const [activeSubTab, setActiveSubTab] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Read initial state from URL params
+  const [activeModule, setActiveModule] = useState(searchParams.get('module') || null);
+  const [activeSubTab, setActiveSubTab] = useState(searchParams.get('tab') || null);
   const [showBuilder, setShowBuilder] = useState(false);
   const [showCommandBar, setShowCommandBar] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Sync URL params when state changes
+  useEffect(() => {
+    const newParams = new URLSearchParams();
+    if (activeModule) newParams.set('module', activeModule);
+    if (activeSubTab) newParams.set('tab', activeSubTab);
+    setSearchParams(newParams, { replace: true });
+  }, [activeModule, activeSubTab, setSearchParams]);
   
   // Data states
   const [reservations, setReservations] = useState([]);
