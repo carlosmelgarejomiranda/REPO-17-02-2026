@@ -140,11 +140,18 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
   useEffect(() => {
     fetchData();
   }, []);
+  
+  // Refetch when filters change
+  useEffect(() => {
+    if (!loading) {
+      fetchCampaigns();
+    }
+  }, [searchQuery, filterStatus, filterBrand, filterPending, filterLate]);
 
   const fetchData = async () => {
     const token = localStorage.getItem('auth_token');
     try {
-      // Fetch brands
+      // Fetch brands for form
       const brandsRes = await fetch(`${API_URL}/api/ugc/admin/brands`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -153,18 +160,36 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
         setBrands(data.brands || []);
       }
 
-      // Fetch campaigns
-      const campaignsRes = await fetch(`${API_URL}/api/ugc/admin/campaigns`, {
+      // Fetch campaigns with stats
+      await fetchCampaigns();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const fetchCampaigns = async () => {
+    const token = localStorage.getItem('auth_token');
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      if (filterStatus) params.append('status', filterStatus);
+      if (filterBrand) params.append('brand_id', filterBrand);
+      if (filterPending) params.append('has_pending', 'true');
+      if (filterLate) params.append('has_late_deliveries', 'true');
+      
+      const url = `${API_URL}/api/ugc/admin/campaigns?${params.toString()}`;
+      const campaignsRes = await fetch(url, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (campaignsRes.ok) {
         const data = await campaignsRes.json();
         setCampaigns(data.campaigns || []);
+        setBrandsForFilter(data.brands_for_filter || []);
       }
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
