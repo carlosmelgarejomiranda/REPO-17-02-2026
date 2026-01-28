@@ -195,7 +195,7 @@ const CampaignsCatalog = () => {
 
       {/* Success Message */}
       {success && (
-        <div className="max-w-6xl mx-auto px-6 mt-6">
+        <div className={`max-w-6xl mx-auto px-6 ${hasCreatorProfile ? 'mt-20' : 'mt-6'}`}>
           <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center gap-3">
             <Check className="w-5 h-5 text-green-400" />
             <span className="text-green-400">{success}</span>
@@ -203,11 +203,11 @@ const CampaignsCatalog = () => {
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className={`max-w-6xl mx-auto px-6 ${hasCreatorProfile ? 'pt-20 pb-24' : 'py-8'}`}>
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-light mb-3">
-            Campañas <span className="text-[#d4a968] italic">disponibles</span>
+            {hasCreatorProfile ? 'Explorar' : 'Campañas'} <span className="text-[#d4a968] italic">{hasCreatorProfile ? 'campañas' : 'disponibles'}</span>
           </h1>
           <p className="text-gray-400">
             Encontrá campañas que se ajusten a tu perfil y postulate para colaborar con marcas
