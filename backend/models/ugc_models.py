@@ -527,6 +527,11 @@ class CampaignUpdate(BaseModel):
     status: Optional[CampaignStatus] = None
     admin_notes: Optional[str] = None
     visible_to_creators: Optional[bool] = None
+    # Delivery deadlines
+    url_delivery_days: Optional[int] = None
+    metrics_delivery_days: Optional[int] = None
+    url_delivery_fixed_date: Optional[str] = None
+    metrics_delivery_fixed_date: Optional[str] = None
 
 # Contract renewal by admin
 class CampaignContractRenewal(BaseModel):
