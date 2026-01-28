@@ -1233,6 +1233,129 @@ Ejemplo de formato:
                 </div>
               </div>
 
+              {/* Delivery Deadlines Configuration */}
+              <div className="border-t border-white/10 pt-6">
+                <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-[#d4a968]" />
+                  Plazos de Entrega para Creadores
+                </h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  Define cuánto tiempo tienen los creadores confirmados para entregar su contenido y métricas.
+                </p>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* URL Delivery Deadline */}
+                  <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                    <label className="block text-sm text-gray-400 mb-3 flex items-center gap-2">
+                      <LinkIcon className="w-4 h-4" />
+                      Entrega de URL (contenido publicado)
+                    </label>
+                    
+                    <div className="flex gap-2 mb-3">
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, url_delivery_type: 'days' }))}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                          formData.url_delivery_type === 'days'
+                            ? 'bg-[#d4a968] text-black font-medium'
+                            : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                        }`}
+                      >
+                        Días después
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, url_delivery_type: 'fixed' }))}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                          formData.url_delivery_type === 'fixed'
+                            ? 'bg-[#d4a968] text-black font-medium'
+                            : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                        }`}
+                      >
+                        Fecha fija
+                      </button>
+                    </div>
+                    
+                    {formData.url_delivery_type === 'days' ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min="1"
+                          max="90"
+                          value={formData.url_delivery_days}
+                          onChange={(e) => setFormData(prev => ({ ...prev, url_delivery_days: parseInt(e.target.value) || 7 }))}
+                          className="w-20 px-3 py-2 bg-black border border-white/20 rounded-lg text-white text-center focus:border-[#d4a968] focus:outline-none"
+                        />
+                        <span className="text-gray-400 text-sm">días después de confirmación</span>
+                      </div>
+                    ) : (
+                      <input
+                        type="date"
+                        value={formData.url_delivery_fixed_date}
+                        onChange={(e) => setFormData(prev => ({ ...prev, url_delivery_fixed_date: e.target.value }))}
+                        className="w-full px-3 py-2 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                        style={{ colorScheme: 'dark' }}
+                      />
+                    )}
+                  </div>
+                  
+                  {/* Metrics Delivery Deadline */}
+                  <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                    <label className="block text-sm text-gray-400 mb-3 flex items-center gap-2">
+                      <LineChart className="w-4 h-4" />
+                      Entrega de Métricas (screenshots)
+                    </label>
+                    
+                    <div className="flex gap-2 mb-3">
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, metrics_delivery_type: 'days' }))}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                          formData.metrics_delivery_type === 'days'
+                            ? 'bg-[#d4a968] text-black font-medium'
+                            : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                        }`}
+                      >
+                        Días después
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, metrics_delivery_type: 'fixed' }))}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all ${
+                          formData.metrics_delivery_type === 'fixed'
+                            ? 'bg-[#d4a968] text-black font-medium'
+                            : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                        }`}
+                      >
+                        Fecha fija
+                      </button>
+                    </div>
+                    
+                    {formData.metrics_delivery_type === 'days' ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min="1"
+                          max="90"
+                          value={formData.metrics_delivery_days}
+                          onChange={(e) => setFormData(prev => ({ ...prev, metrics_delivery_days: parseInt(e.target.value) || 14 }))}
+                          className="w-20 px-3 py-2 bg-black border border-white/20 rounded-lg text-white text-center focus:border-[#d4a968] focus:outline-none"
+                        />
+                        <span className="text-gray-400 text-sm">días después de confirmación</span>
+                      </div>
+                    ) : (
+                      <input
+                        type="date"
+                        value={formData.metrics_delivery_fixed_date}
+                        onChange={(e) => setFormData(prev => ({ ...prev, metrics_delivery_fixed_date: e.target.value }))}
+                        className="w-full px-3 py-2 bg-black border border-white/20 rounded-lg text-white focus:border-[#d4a968] focus:outline-none"
+                        style={{ colorScheme: 'dark' }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Admin Notes */}
               <div className="border-t border-white/10 pt-6">
                 <label className="block text-sm text-gray-400 mb-2">Notas Internas (solo admin)</label>
