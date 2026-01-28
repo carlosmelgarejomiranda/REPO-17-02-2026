@@ -1206,11 +1206,32 @@ const CreatorOnboarding = () => {
           </div>
         )}
 
-        {/* Error Display */}
+        {/* Error Display - Server errors */}
         {error && (
-          <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            {error}
+          <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">Error</span>
+            </div>
+            <p className="mt-2 ml-8">{error}</p>
+          </div>
+        )}
+        
+        {/* Validation Errors Summary */}
+        {Object.keys(validationErrors).length > 0 && !error && (
+          <div className="mt-6 p-4 bg-orange-500/20 border border-orange-500/50 rounded-lg text-orange-400">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">Completá los siguientes campos:</span>
+            </div>
+            <ul className="mt-2 ml-8 space-y-1">
+              {Object.values(validationErrors).map((err, idx) => (
+                <li key={idx} className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+                  {err}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 
