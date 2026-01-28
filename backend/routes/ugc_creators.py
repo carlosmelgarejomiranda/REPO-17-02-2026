@@ -363,7 +363,26 @@ async def complete_existing_creator_profile(
     # Check if profile exists
     profile = await db.ugc_creators.find_one({"user_id": user["user_id"]})
     if not profile:
-        raise HTTPException(status_code=404, detail="Creator profile not found. Use /onboarding for new profiles.")
+        raise HTTPException(status_code=404, detail="No se encontró tu perfil de creador. Iniciá el proceso de registro nuevamente.")
+    
+    # Validate required fields with clear messages
+    if not data.name or not data.name.strip():
+        raise HTTPException(status_code=400, detail="El nombre completo es requerido")
+    
+    if not data.document_id or not data.document_id.strip():
+        raise HTTPException(status_code=400, detail="El número de cédula de identidad es requerido")
+    
+    if not data.phone or not data.phone.strip():
+        raise HTTPException(status_code=400, detail="El número de teléfono es requerido")
+    
+    if not data.categories or len(data.categories) == 0:
+        raise HTTPException(status_code=400, detail="Seleccioná al menos una categoría de contenido")
+    
+    # Validate social networks - at least one required
+    has_instagram = data.instagram_username and data.instagram_username.strip()
+    has_tiktok = data.tiktok_username and data.tiktok_username.strip()
+    if not has_instagram and not has_tiktok:
+        raise HTTPException(status_code=400, detail="Conectá al menos una red social (Instagram o TikTok)")
     
     # Validate age (must be 18+)
     try:
@@ -371,13 +390,13 @@ async def complete_existing_creator_profile(
         today = datetime.now(timezone.utc)
         age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
         if age < 18:
-            raise HTTPException(status_code=400, detail="Debes ser mayor de 18 años")
+            raise HTTPException(status_code=400, detail="Debes ser mayor de 18 años para registrarte como creador")
     except ValueError:
-        raise HTTPException(status_code=400, detail="Formato de fecha de nacimiento inválido")
+        raise HTTPException(status_code=400, detail="La fecha de nacimiento ingresada no es válida")
     
     # Validate terms acceptance
     if not data.terms_accepted:
-        raise HTTPException(status_code=400, detail="Debes aceptar los términos y condiciones")
+        raise HTTPException(status_code=400, detail="Debes aceptar los términos y condiciones para continuar")
     
     now = datetime.now(timezone.utc).isoformat()
     
