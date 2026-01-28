@@ -18,6 +18,46 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-28
+
+#### ✅ Bug Fix - "Body is disturbed or locked" Error in Campaign Applications (P0)
+
+**Problema reportado**: Los creadores no podían aplicar a campañas desde Safari/iOS. Al intentar enviar la aplicación, aparecía el error "Body is disturbed or locked" que bloqueaba completamente el flujo.
+
+**Causa raíz identificada**: El error es específico de Safari/iOS donde el body de una Response (Fetch API) es un stream que solo puede ser leído una vez. El código anterior usaba `res.json()` directamente, lo cual puede causar problemas cuando:
+1. La respuesta tiene un error y se intenta leer el body de nuevo
+2. El browser Safari tiene limitaciones adicionales en el manejo de streams
+
+**Solución implementada**:
+Cambiado el patrón de lectura de respuestas de `res.json()` a `res.text() + JSON.parse()`:
+
+```javascript
+// Antes (problemático en Safari/iOS):
+const data = await res.json();
+if (!res.ok) throw new Error(data.detail);
+
+// Después (seguro para todos los browsers):
+const responseText = await res.text();
+let data;
+try {
+  data = JSON.parse(responseText);
+} catch (parseErr) {
+  throw new Error('Error del servidor');
+}
+if (!res.ok) throw new Error(data.detail);
+```
+
+**Archivos modificados:**
+- `/app/frontend/src/pages/ugc/CampaignsCatalog.jsx` - submitApplication() + agregado Authorization header faltante
+- `/app/frontend/src/pages/ugc/CampaignDetail.jsx` - submitApplication()
+- `/app/frontend/src/pages/ugc/CreatorApplications.jsx` - handleCancelParticipation() y handleWithdrawApplication()
+- `/app/frontend/src/pages/ugc/CreatorCampaigns.jsx` - handleCancelParticipation()
+
+**Testing:** 100% passed - Backend 12/12 tests, Frontend all application flows verified
+**Test Report:** `/app/test_reports/iteration_15.json`
+
+---
+
 ### Session: 2026-01-27 (Evening)
 
 #### ✅ Bug Fix - Email Notifications Not Working
