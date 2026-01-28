@@ -298,7 +298,7 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveSubTab(tab.id)}
+              onClick={() => handleSubTabChange(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-all ${
                 activeSubTab === tab.id
                   ? 'bg-[#d4a968] text-black'
