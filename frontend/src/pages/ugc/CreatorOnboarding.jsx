@@ -298,34 +298,34 @@ const CreatorOnboarding = () => {
     
     switch (stepNumber) {
       case 1:
-        if (!formData.name.trim()) errors.name = 'El nombre es requerido';
+        if (!formData.name.trim()) errors.name = 'Ingresá tu nombre completo';
         if (!formData.birth_date) {
-          errors.birth_date = 'La fecha de nacimiento es requerida';
+          errors.birth_date = 'Seleccioná tu fecha de nacimiento';
         } else if (!validateAge(formData.birth_date)) {
-          errors.birth_date = 'Debes ser mayor de 18 años';
+          errors.birth_date = 'Debes ser mayor de 18 años para registrarte';
         }
-        if (!formData.gender) errors.gender = 'Selecciona tu género';
-        if (!formData.document_id.trim()) errors.document_id = 'El número de documento es requerido';
+        if (!formData.gender) errors.gender = 'Seleccioná tu género';
+        if (!formData.document_id.trim()) errors.document_id = 'Ingresá tu número de cédula de identidad';
         break;
       case 2:
-        if (!formData.country) errors.country = 'Selecciona tu país';
-        if (!formData.city) errors.city = 'Selecciona tu ciudad';
+        if (!formData.country) errors.country = 'Seleccioná tu país de residencia';
+        if (!formData.city) errors.city = 'Seleccioná tu ciudad';
         if (!formData.phone.trim()) {
-          errors.phone = 'El teléfono es requerido';
+          errors.phone = 'Ingresá tu número de teléfono o WhatsApp';
         } else if (!/^\d{6,15}$/.test(formData.phone.replace(/\s/g, ''))) {
-          errors.phone = 'Ingresa un número de teléfono válido';
+          errors.phone = 'El número de teléfono debe tener entre 6 y 15 dígitos';
         }
         break;
       case 3:
-        if (formData.categories.length === 0) errors.categories = 'Selecciona al menos una categoría';
+        if (formData.categories.length === 0) errors.categories = 'Seleccioná al menos una categoría de contenido que te represente';
         break;
       case 4:
         if (!formData.instagram_username && !formData.tiktok_username) {
-          errors.social = 'Ingresa al menos una red social';
+          errors.social = 'Conectá al menos una red social (Instagram o TikTok) para continuar';
         }
         break;
       case 5:
-        if (!formData.terms_accepted) errors.terms = 'Debes aceptar los términos y condiciones';
+        if (!formData.terms_accepted) errors.terms = 'Debes aceptar los términos y condiciones para completar tu registro';
         break;
       default:
         break;
@@ -333,6 +333,13 @@ const CreatorOnboarding = () => {
     
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+  
+  // Get readable error summary for current step
+  const getErrorSummary = () => {
+    const errorList = Object.values(validationErrors);
+    if (errorList.length === 0) return null;
+    return errorList;
   };
 
   // Check if can proceed to next step
