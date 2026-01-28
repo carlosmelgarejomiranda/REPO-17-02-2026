@@ -546,7 +546,12 @@ export const AdminDashboard = ({ user }) => {
           {activeModule === 'ecommerce' && currentSubTab === 'coupons' && <CouponsManager />}
 
           {/* UGC */}
-          {activeModule === 'ugc' && currentSubTab === 'overview' && <UGCAdminPanel />}
+          {activeModule === 'ugc' && currentSubTab === 'overview' && (
+            <UGCAdminPanel 
+              initialSubTab={ugcSubTab} 
+              onSubTabChange={handleUgcSubTabChange}
+            />
+          )}
           {activeModule === 'ugc' && currentSubTab === 'creators-report' && <AdminCreatorsReport />}
 
           {/* Studio */}
