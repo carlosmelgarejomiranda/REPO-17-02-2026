@@ -171,28 +171,27 @@ const CampaignsCatalog = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="text-xl font-light">
-            <span className="text-[#d4a968] italic">Avenue</span> UGC
-          </Link>
-          <div className="flex items-center gap-4">
-            {hasCreatorProfile ? (
-              <Link to="/ugc/creator/dashboard" className="text-gray-400 hover:text-white transition-colors">
-                Mi Dashboard
-              </Link>
-            ) : (
+      {/* Show creator navbar if logged in as creator */}
+      {hasCreatorProfile && <UGCNavbar type="creator" />}
+      
+      {/* Header - Only show if NOT a creator (public view) */}
+      {!hasCreatorProfile && (
+        <div className="border-b border-white/10">
+          <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <Link to="/" className="text-xl font-light">
+              <span className="text-[#d4a968] italic">Avenue</span> UGC
+            </Link>
+            <div className="flex items-center gap-4">
               <Link 
                 to="/ugc/creator/onboarding"
                 className="px-4 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#c49958] transition-colors"
               >
                 Registrarme como Creator
               </Link>
-            )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Success Message */}
       {success && (
