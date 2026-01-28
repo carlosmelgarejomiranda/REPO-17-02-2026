@@ -340,6 +340,10 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
       residenceOther = requirements.residence;
     }
     
+    // Determine delivery type
+    const urlDeliveryType = campaign.url_delivery_fixed_date ? 'fixed' : 'days';
+    const metricsDeliveryType = campaign.metrics_delivery_fixed_date ? 'fixed' : 'days';
+    
     setFormData({
       brand_id: campaign.brand_id || '',
       brand_name: campaign.assets?.brand_name || campaign.name || '',
@@ -371,7 +375,14 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
       publish_start: timeline.publish_start ? new Date(timeline.publish_start).toISOString().split('T')[0] : '',
       publish_end: timeline.publish_end ? new Date(timeline.publish_end).toISOString().split('T')[0] : '',
       cover_image_url: campaign.assets?.cover_image || '',
-      admin_notes: campaign.admin_notes || ''
+      admin_notes: campaign.admin_notes || '',
+      // Delivery deadline settings
+      url_delivery_days: campaign.url_delivery_days || 7,
+      metrics_delivery_days: campaign.metrics_delivery_days || 14,
+      url_delivery_type: urlDeliveryType,
+      metrics_delivery_type: metricsDeliveryType,
+      url_delivery_fixed_date: campaign.url_delivery_fixed_date ? new Date(campaign.url_delivery_fixed_date).toISOString().split('T')[0] : '',
+      metrics_delivery_fixed_date: campaign.metrics_delivery_fixed_date ? new Date(campaign.metrics_delivery_fixed_date).toISOString().split('T')[0] : ''
     });
     
     setEditingCampaign(campaign);
