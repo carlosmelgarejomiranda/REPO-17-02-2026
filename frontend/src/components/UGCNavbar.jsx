@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, Camera, Building2, Home, Briefcase, FileText, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut, Camera, Building2, Home, Briefcase, FileText, Settings, Search, ClipboardList } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import NotificationBell from './NotificationBell';
 
@@ -20,8 +20,8 @@ export const UGCNavbar = ({ type = 'creator' }) => {
   // Navigation links based on user type
   const creatorLinks = [
     { href: '/ugc/creator/dashboard', label: 'Home', shortLabel: 'Home', icon: Home },
-    { href: '/ugc/creator/campaigns', label: 'Campañas', shortLabel: 'Campañas', icon: Briefcase },
-    { href: '/ugc/creator/deliverables', label: 'Mis Entregas', shortLabel: 'Entregas', icon: FileText },
+    { href: '/ugc/campaigns', label: 'Explorar', shortLabel: 'Explorar', icon: Search },
+    { href: '/ugc/creator/my-work', label: 'Mi Trabajo', shortLabel: 'Mi Trabajo', icon: ClipboardList },
     { href: '/ugc/creator/profile', label: 'Perfil', shortLabel: 'Perfil', icon: User },
   ];
 
