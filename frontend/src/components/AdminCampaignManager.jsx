@@ -81,6 +81,14 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
   const [loadingApplications, setLoadingApplications] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   
+  // Filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterBrand, setFilterBrand] = useState('');
+  const [filterPending, setFilterPending] = useState(false);
+  const [filterLate, setFilterLate] = useState(false);
+  const [brandsForFilter, setBrandsForFilter] = useState([]);
+  
   // Transfer ownership state
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [transferEmail, setTransferEmail] = useState('');
