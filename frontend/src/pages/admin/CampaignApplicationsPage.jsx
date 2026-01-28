@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Users, Star, Award, Eye, TrendingUp, Instagram, Music2, 
   BadgeCheck, MapPin, Loader2, CheckCircle, XCircle, Clock, UserCheck,
-  BarChart3, MessageSquare, RefreshCw, Filter
+  BarChart3, MessageSquare, RefreshCw, Filter, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { getApiUrl } from '../../utils/api';
 
