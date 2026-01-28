@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getApiUrl } from '../utils/api';
 import { 
   Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, ShoppingBag, 
