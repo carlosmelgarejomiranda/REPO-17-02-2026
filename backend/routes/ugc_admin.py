@@ -700,69 +700,98 @@ async def get_all_campaigns(
         campaign["application_stats"] = app_stats
         
         # Delivery traffic lights (semáforo)
-        # Get all deliverables for this campaign
-        deliverables = await db.ugc_deliverables.find(
-            {"campaign_id": campaign["id"]},
-            {"_id": 0, "status": 1, "post_url": 1, "metrics_submitted_at": 1, 
-             "metrics_window_closes": 1, "created_at": 1, "published_at": 1}
+        # Based on confirmed creators and their delivery deadlines
+        
+        # Get campaign delivery settings (with defaults)
+        url_delivery_days = campaign.get("url_delivery_days", 7)
+        metrics_delivery_days = campaign.get("metrics_delivery_days", 14)
+        url_fixed_date = campaign.get("url_delivery_fixed_date")
+        metrics_fixed_date = campaign.get("metrics_delivery_fixed_date")
+        
+        # Get all confirmed applications with their confirmed_at date
+        confirmed_apps = await db.ugc_applications.find(
+            {"campaign_id": campaign["id"], "status": "confirmed"},
+            {"_id": 0, "id": 1, "creator_id": 1, "confirmed_at": 1}
         ).to_list(500)
         
-        # Get campaign timeline for URL deadline
-        timeline = campaign.get("timeline", {})
-        url_deadline_str = timeline.get("publish_end")
+        # Get deliverables for this campaign
+        deliverables = await db.ugc_deliverables.find(
+            {"campaign_id": campaign["id"]},
+            {"_id": 0, "application_id": 1, "creator_id": 1, "post_url": 1, "metrics_submitted_at": 1}
+        ).to_list(500)
+        
+        # Create lookup for deliverables by creator
+        deliverables_by_creator = {}
+        for deliv in deliverables:
+            creator_id = deliv.get("creator_id")
+            if creator_id not in deliverables_by_creator:
+                deliverables_by_creator[creator_id] = []
+            deliverables_by_creator[creator_id].append(deliv)
         
         # URL delivery traffic light
         url_traffic = {"on_time": 0, "due_soon": 0, "late": 0}
         # Metrics delivery traffic light  
         metrics_traffic = {"on_time": 0, "due_soon": 0, "late": 0}
         
-        for deliv in deliverables:
-            # URL status - check if post_url is submitted
-            has_url = bool(deliv.get("post_url"))
+        for app in confirmed_apps:
+            creator_id = app.get("creator_id")
+            confirmed_at_str = app.get("confirmed_at")
             
-            if has_url:
-                # URL submitted = on_time for URL
-                url_traffic["on_time"] += 1
+            if not confirmed_at_str:
+                # No confirmation date, skip
+                continue
+            
+            try:
+                confirmed_at = datetime.fromisoformat(confirmed_at_str.replace('Z', '+00:00'))
+            except:
+                continue
+            
+            # Calculate URL deadline
+            if url_fixed_date:
+                try:
+                    url_deadline = datetime.fromisoformat(url_fixed_date.replace('Z', '+00:00'))
+                except:
+                    url_deadline = confirmed_at + timedelta(days=url_delivery_days)
             else:
-                # Check URL deadline
-                if url_deadline_str:
-                    try:
-                        url_deadline = datetime.fromisoformat(url_deadline_str.replace('Z', '+00:00'))
-                        if now > url_deadline:
-                            url_traffic["late"] += 1
-                        elif now > url_deadline - timedelta(days=3):
-                            url_traffic["due_soon"] += 1
-                        else:
-                            url_traffic["on_time"] += 1
-                    except:
-                        url_traffic["on_time"] += 1
-                else:
-                    url_traffic["on_time"] += 1
+                url_deadline = confirmed_at + timedelta(days=url_delivery_days)
             
-            # Metrics status
-            has_metrics = bool(deliv.get("metrics_submitted_at"))
-            metrics_deadline_str = deliv.get("metrics_window_closes")
+            # Calculate metrics deadline
+            if metrics_fixed_date:
+                try:
+                    metrics_deadline = datetime.fromisoformat(metrics_fixed_date.replace('Z', '+00:00'))
+                except:
+                    metrics_deadline = confirmed_at + timedelta(days=metrics_delivery_days)
+            else:
+                metrics_deadline = confirmed_at + timedelta(days=metrics_delivery_days)
             
+            # Check if creator has delivered
+            creator_deliverables = deliverables_by_creator.get(creator_id, [])
+            has_url = any(d.get("post_url") for d in creator_deliverables)
+            has_metrics = any(d.get("metrics_submitted_at") for d in creator_deliverables)
+            
+            # URL traffic light
+            if has_url:
+                url_traffic["on_time"] += 1
+            elif now > url_deadline:
+                url_traffic["late"] += 1
+            elif now > url_deadline - timedelta(days=3):
+                url_traffic["due_soon"] += 1
+            else:
+                url_traffic["on_time"] += 1
+            
+            # Metrics traffic light
             if has_metrics:
                 metrics_traffic["on_time"] += 1
-            elif metrics_deadline_str:
-                try:
-                    metrics_deadline = datetime.fromisoformat(metrics_deadline_str.replace('Z', '+00:00'))
-                    if now > metrics_deadline:
-                        metrics_traffic["late"] += 1
-                    elif now > metrics_deadline - timedelta(days=3):
-                        metrics_traffic["due_soon"] += 1
-                    else:
-                        metrics_traffic["on_time"] += 1
-                except:
-                    metrics_traffic["on_time"] += 1
+            elif now > metrics_deadline:
+                metrics_traffic["late"] += 1
+            elif now > metrics_deadline - timedelta(days=3):
+                metrics_traffic["due_soon"] += 1
             else:
-                # No deadline yet (content not published)
                 metrics_traffic["on_time"] += 1
         
         campaign["url_traffic"] = url_traffic
         campaign["metrics_traffic"] = metrics_traffic
-        campaign["total_deliverables"] = len(deliverables)
+        campaign["confirmed_creators_count"] = len(confirmed_apps)
         
         # Filter by pending applications if requested
         if has_pending is True and app_stats["pending"] == 0:
