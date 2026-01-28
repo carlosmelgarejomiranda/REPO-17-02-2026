@@ -255,196 +255,225 @@ const CampaignApplicationsPage = () => {
                 <div 
                   key={app.id}
                   data-testid={`application-row-${app.id}`}
-                  className={`grid grid-cols-[50px_200px_80px_140px_140px_180px_100px_1fr] gap-2 px-4 py-3 items-center hover:bg-white/5 transition-colors ${idx !== 0 ? 'border-t border-white/5' : ''}`}
+                  className={`bg-[#0d0d0d] border border-white/10 rounded-lg overflow-hidden transition-all ${idx !== 0 ? 'mt-3' : ''}`}
                 >
-                  {/* Avatar */}
-                  <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-sm">
-                      {app.creator_name?.charAt(0) || 'C'}
-                    </div>
-                    {creator.is_verified && (
-                      <div className="absolute -bottom-0.5 -right-0.5 bg-blue-500 rounded-full p-0.5">
-                        <BadgeCheck className="w-2.5 h-2.5 text-white" />
+                  {/* Main Row */}
+                  <div className="grid grid-cols-[50px_200px_80px_140px_140px_180px_100px_1fr] gap-2 px-4 py-3 items-center">
+                    {/* Avatar */}
+                    <div className="relative">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-sm">
+                        {app.creator_name?.charAt(0) || 'C'}
                       </div>
-                    )}
-                  </div>
-                  
-                  {/* Name + Username + Location */}
-                  <div className="overflow-hidden">
-                    <p className="font-medium text-white text-sm truncate" title={app.creator_name}>
-                      {app.creator_name}
-                    </p>
-                    <p className="text-xs text-gray-400 truncate">@{app.creator_username}</p>
-                    {creator.city && (
-                      <p className="text-[10px] text-gray-500 flex items-center gap-0.5 truncate">
-                        <MapPin className="w-2.5 h-2.5 flex-shrink-0" />
-                        <span className="truncate">{creator.city}</span>
-                      </p>
-                    )}
-                  </div>
-                  
-                  {/* Level */}
-                  <div className="text-center">
-                    <LevelBadge level={creator.level || app.creator_level} />
-                  </div>
-                  
-                  {/* Instagram */}
-                  <div className="text-center">
-                    {igUsername ? (
-                      <a 
-                        href={`https://instagram.com/${igUsername}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] ${
-                          igVerified 
-                            ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30' 
-                            : 'bg-white/5 text-gray-400 border border-white/10'
-                        }`}
-                      >
-                        <Instagram className="w-3 h-3 flex-shrink-0" />
-                        <span className="truncate max-w-[80px]">@{igUsername}</span>
-                        {igVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 flex-shrink-0" />}
-                      </a>
-                    ) : (
-                      <span className="text-[10px] text-gray-600">—</span>
-                    )}
-                  </div>
-                  
-                  {/* TikTok */}
-                  <div className="text-center">
-                    {ttUsername ? (
-                      <a 
-                        href={`https://tiktok.com/@${ttUsername}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] ${
-                          ttVerified 
-                            ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' 
-                            : 'bg-white/5 text-gray-400 border border-white/10'
-                        }`}
-                      >
-                        <Music2 className="w-3 h-3 flex-shrink-0" />
-                        <span className="truncate max-w-[80px]">@{ttUsername}</span>
-                        {ttVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 flex-shrink-0" />}
-                      </a>
-                    ) : (
-                      <span className="text-[10px] text-gray-600">—</span>
-                    )}
-                  </div>
-                  
-                  {/* Metrics */}
-                  <div className="flex items-center justify-center gap-2 text-[10px]">
-                    <div className="flex items-center gap-0.5 text-yellow-400" title="Rating">
-                      <Star className="w-3 h-3 fill-current" />
-                      <span>{(creator.avg_rating || app.creator_rating || 0).toFixed(1)}</span>
+                      {creator.is_verified && (
+                        <div className="absolute -bottom-0.5 -right-0.5 bg-blue-500 rounded-full p-0.5">
+                          <BadgeCheck className="w-2.5 h-2.5 text-white" />
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-0.5 text-blue-400" title="Campañas">
-                      <Award className="w-3 h-3" />
-                      <span>{creator.campaigns_participated || 0}</span>
-                    </div>
-                    <div className="flex items-center gap-0.5 text-purple-400" title="Prom. Vistas">
-                      <Eye className="w-3 h-3" />
-                      <span>{formatNumber(creator.avg_views)}</span>
-                    </div>
-                    <div className="flex items-center gap-0.5 text-green-400" title="Prom. Interacc.">
-                      <TrendingUp className="w-3 h-3" />
-                      <span>{formatNumber(creator.avg_interactions)}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Status */}
-                  <div className="text-center">
-                    <StatusBadge status={app.status} />
-                  </div>
-                  
-                  {/* Actions */}
-                  <div className="flex items-center justify-center gap-1 flex-wrap">
-                    {/* WhatsApp button - always visible if creator has valid phone */}
-                    {creator.phone && creator.phone !== 'N/A' && (
-                      <a
-                        href={`https://wa.me/${creator.phone.replace(/[^0-9]/g, '')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors"
-                        title={`WhatsApp: ${creator.phone}`}
-                        data-testid={`whatsapp-btn-${app.id}`}
-                      >
-                        <WhatsAppIcon className="w-3.5 h-3.5" />
-                      </a>
-                    )}
                     
-                    {actionLoading === app.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin text-[#d4a968]" />
-                    ) : (
-                      <>
-                        {app.status === 'applied' && (
-                          <>
+                    {/* Name + Username + Location */}
+                    <div className="overflow-hidden">
+                      <p className="font-medium text-white text-sm truncate" title={app.creator_name}>
+                        {app.creator_name}
+                      </p>
+                      <p className="text-xs text-gray-400 truncate">@{app.creator_username}</p>
+                      {creator.city && (
+                        <p className="text-[10px] text-gray-500 flex items-center gap-0.5 truncate">
+                          <MapPin className="w-2.5 h-2.5 flex-shrink-0" />
+                          <span className="truncate">{creator.city}</span>
+                        </p>
+                      )}
+                    </div>
+                    
+                    {/* Level */}
+                    <div className="text-center">
+                      <LevelBadge level={creator.level || app.creator_level} />
+                    </div>
+                    
+                    {/* Instagram */}
+                    <div className="text-center">
+                      {igUsername ? (
+                        <a 
+                          href={`https://instagram.com/${igUsername}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] ${
+                            igVerified 
+                              ? 'bg-pink-500/20 text-pink-400 border border-pink-500/30' 
+                              : 'bg-white/5 text-gray-400 border border-white/10'
+                          }`}
+                        >
+                          <Instagram className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate max-w-[80px]">@{igUsername}</span>
+                          {igVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 flex-shrink-0" />}
+                        </a>
+                      ) : (
+                        <span className="text-[10px] text-gray-600">—</span>
+                      )}
+                    </div>
+                    
+                    {/* TikTok */}
+                    <div className="text-center">
+                      {ttUsername ? (
+                        <a 
+                          href={`https://tiktok.com/@${ttUsername}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] ${
+                            ttVerified 
+                              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' 
+                              : 'bg-white/5 text-gray-400 border border-white/10'
+                          }`}
+                        >
+                          <Music2 className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate max-w-[80px]">@{ttUsername}</span>
+                          {ttVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 flex-shrink-0" />}
+                        </a>
+                      ) : (
+                        <span className="text-[10px] text-gray-600">—</span>
+                      )}
+                    </div>
+                    
+                    {/* Metrics */}
+                    <div className="flex items-center justify-center gap-2 text-[10px]">
+                      <div className="flex items-center gap-0.5 text-yellow-400" title="Rating">
+                        <Star className="w-3 h-3 fill-current" />
+                        <span>{(creator.avg_rating || app.creator_rating || 0).toFixed(1)}</span>
+                      </div>
+                      <div className="flex items-center gap-0.5 text-blue-400" title="Campañas">
+                        <Award className="w-3 h-3" />
+                        <span>{creator.campaigns_participated || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-0.5 text-purple-400" title="Prom. Vistas">
+                        <Eye className="w-3 h-3" />
+                        <span>{formatNumber(creator.avg_views)}</span>
+                      </div>
+                      <div className="flex items-center gap-0.5 text-green-400" title="Prom. Interacc.">
+                        <TrendingUp className="w-3 h-3" />
+                        <span>{formatNumber(creator.avg_interactions)}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Status */}
+                    <div className="text-center">
+                      <StatusBadge status={app.status} />
+                    </div>
+                    
+                    {/* Actions */}
+                    <div className="flex items-center justify-center gap-1 flex-wrap">
+                      {/* WhatsApp button - always visible if creator has valid phone */}
+                      {creator.phone && creator.phone !== 'N/A' && (
+                        <a
+                          href={`https://wa.me/${creator.phone.replace(/[^0-9]/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors"
+                          title={`WhatsApp: ${creator.phone}`}
+                          data-testid={`whatsapp-btn-${app.id}`}
+                        >
+                          <WhatsAppIcon className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      
+                      {actionLoading === app.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-[#d4a968]" />
+                      ) : (
+                        <>
+                          {app.status === 'applied' && (
+                            <>
+                              <button
+                                onClick={() => handleUpdateStatus(app.id, 'shortlisted')}
+                                className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-[10px] hover:bg-purple-500/30 transition-colors"
+                              >
+                                Preseleccionar
+                              </button>
+                              <button
+                                onClick={() => handleUpdateStatus(app.id, 'confirmed')}
+                                disabled={!canConfirm}
+                                className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-[10px] hover:bg-green-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                title={!canConfirm ? 'No hay cupos disponibles' : ''}
+                              >
+                                Confirmar
+                              </button>
+                              <button
+                                onClick={() => handleUpdateStatus(app.id, 'rejected')}
+                                className="px-2 py-1 bg-red-500/20 text-red-400 rounded text-[10px] hover:bg-red-500/30 transition-colors"
+                              >
+                                Rechazar
+                              </button>
+                            </>
+                          )}
+                          
+                          {app.status === 'shortlisted' && (
+                            <>
+                              <button
+                                onClick={() => handleUpdateStatus(app.id, 'confirmed')}
+                                disabled={!canConfirm}
+                                className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-[10px] hover:bg-green-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                title={!canConfirm ? 'No hay cupos disponibles' : ''}
+                              >
+                                Confirmar
+                              </button>
+                              <button
+                                onClick={() => handleUpdateStatus(app.id, 'rejected')}
+                                className="px-2 py-1 bg-red-500/20 text-red-400 rounded text-[10px] hover:bg-red-500/30 transition-colors"
+                              >
+                                Rechazar
+                              </button>
+                            </>
+                          )}
+                          
+                          {app.status === 'confirmed' && (
                             <button
-                              onClick={() => handleUpdateStatus(app.id, 'shortlisted')}
-                              className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-[10px] hover:bg-purple-500/30 transition-colors"
-                            >
-                              Preseleccionar
-                            </button>
-                            <button
-                              onClick={() => handleUpdateStatus(app.id, 'confirmed')}
-                              disabled={!canConfirm}
-                              className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-[10px] hover:bg-green-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                              title={!canConfirm ? 'No hay cupos disponibles' : ''}
-                            >
-                              Confirmar
-                            </button>
-                            <button
-                              onClick={() => handleUpdateStatus(app.id, 'rejected')}
+                              onClick={() => {
+                                if (window.confirm('¿Cancelar la participación de este creador?')) {
+                                  handleUpdateStatus(app.id, 'cancelled');
+                                }
+                              }}
                               className="px-2 py-1 bg-red-500/20 text-red-400 rounded text-[10px] hover:bg-red-500/30 transition-colors"
                             >
-                              Rechazar
+                              Cancelar
                             </button>
-                          </>
-                        )}
-                        
-                        {app.status === 'shortlisted' && (
-                          <>
+                          )}
+                          
+                          {(app.status === 'rejected' || app.status === 'cancelled') && (
                             <button
-                              onClick={() => handleUpdateStatus(app.id, 'confirmed')}
-                              disabled={!canConfirm}
-                              className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-[10px] hover:bg-green-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                              title={!canConfirm ? 'No hay cupos disponibles' : ''}
+                              onClick={() => handleUpdateStatus(app.id, 'applied')}
+                              className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-[10px] hover:bg-blue-500/30 transition-colors"
                             >
-                              Confirmar
+                              Reactivar
                             </button>
-                            <button
-                              onClick={() => handleUpdateStatus(app.id, 'rejected')}
-                              className="px-2 py-1 bg-red-500/20 text-red-400 rounded text-[10px] hover:bg-red-500/30 transition-colors"
-                            >
-                              Rechazar
-                            </button>
-                          </>
-                        )}
-                        
-                        {app.status === 'confirmed' && (
-                          <button
-                            onClick={() => {
-                              if (window.confirm('¿Cancelar la participación de este creador?')) {
-                                handleUpdateStatus(app.id, 'cancelled');
-                              }
-                            }}
-                            className="px-2 py-1 bg-red-500/20 text-red-400 rounded text-[10px] hover:bg-red-500/30 transition-colors"
-                          >
-                            Cancelar
-                          </button>
-                        )}
-                        
-                        {(app.status === 'rejected' || app.status === 'cancelled') && (
-                          <button
-                            onClick={() => handleUpdateStatus(app.id, 'applied')}
-                            className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-[10px] hover:bg-blue-500/30 transition-colors"
-                          >
-                            Reactivar
-                          </button>
-                        )}
-                      </>
-                    )}
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
+                  
+                  {/* Motivation Section - Integrated in card */}
+                  {app.motivation && (
+                    <div className="border-t border-white/5 px-4 py-2 bg-white/[0.02]">
+                      <div className="flex items-start gap-2">
+                        <MessageSquare className="w-3.5 h-3.5 text-gray-500 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-xs text-gray-400 italic ${expandedMotivation === app.id ? '' : 'line-clamp-2'}`}>
+                            &ldquo;{app.motivation}&rdquo;
+                          </p>
+                          {app.motivation.length > 100 && (
+                            <button
+                              onClick={() => setExpandedMotivation(expandedMotivation === app.id ? null : app.id)}
+                              className="text-[10px] text-[#d4a968] hover:text-[#e5ba79] mt-1 flex items-center gap-0.5 transition-colors"
+                            >
+                              {expandedMotivation === app.id ? (
+                                <>Ver menos <ChevronUp className="w-3 h-3" /></>
+                              ) : (
+                                <>Ver más <ChevronDown className="w-3 h-3" /></>
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
