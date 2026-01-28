@@ -479,24 +479,6 @@ const CampaignApplicationsPage = () => {
             })}
           </div>
         )}
-        
-        {/* Motivation Section - Expandable */}
-        {applications.some(app => app.motivation) && (
-          <div className="mt-6">
-            <h3 className="text-sm font-medium text-gray-400 mb-3">Motivaciones de los aplicantes</h3>
-            <div className="grid gap-3">
-              {applications.filter(app => app.motivation).map(app => (
-                <div key={app.id} className="bg-white/5 border border-white/10 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-medium text-white text-sm">{app.creator_name}</span>
-                    <StatusBadge status={app.status} />
-                  </div>
-                  <p className="text-sm text-gray-300 italic">&ldquo;{app.motivation}&rdquo;</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
