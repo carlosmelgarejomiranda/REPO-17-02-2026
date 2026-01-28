@@ -50,13 +50,20 @@ const CreatorApplications = () => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
+      // Read response as text first to avoid "body is disturbed or locked" error on Safari/iOS
+      const responseText = await res.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseErr) {
+        data = {};
+      }
+
       if (res.ok) {
-        const data = await res.json();
         alert(data.message || 'Participación cancelada');
         fetchApplications();
       } else {
-        const error = await res.json();
-        alert(error.detail || 'Error al cancelar');
+        alert(data.detail || 'Error al cancelar');
       }
     } catch (err) {
       alert('Error de conexión');
@@ -79,13 +86,20 @@ const CreatorApplications = () => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
+      // Read response as text first to avoid "body is disturbed or locked" error on Safari/iOS
+      const responseText = await res.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseErr) {
+        data = {};
+      }
+
       if (res.ok) {
-        const data = await res.json();
         alert(data.message || 'Aplicación retirada');
         fetchApplications();
       } else {
-        const error = await res.json();
-        alert(error.detail || 'Error al retirar');
+        alert(data.detail || 'Error al retirar');
       }
     } catch (err) {
       alert('Error de conexión');
