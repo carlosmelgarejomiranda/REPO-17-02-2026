@@ -351,6 +351,7 @@ export const AdminDashboard = ({ user }) => {
   // Read initial state from URL params
   const [activeModule, setActiveModule] = useState(searchParams.get('module') || null);
   const [activeSubTab, setActiveSubTab] = useState(searchParams.get('tab') || null);
+  const [ugcSubTab, setUgcSubTab] = useState(searchParams.get('ugcTab') || 'overview');
   const [showBuilder, setShowBuilder] = useState(false);
   const [showCommandBar, setShowCommandBar] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -360,8 +361,14 @@ export const AdminDashboard = ({ user }) => {
     const newParams = new URLSearchParams();
     if (activeModule) newParams.set('module', activeModule);
     if (activeSubTab) newParams.set('tab', activeSubTab);
+    if (activeModule === 'ugc' && ugcSubTab) newParams.set('ugcTab', ugcSubTab);
     setSearchParams(newParams, { replace: true });
-  }, [activeModule, activeSubTab, setSearchParams]);
+  }, [activeModule, activeSubTab, ugcSubTab, setSearchParams]);
+  
+  // Handle UGC sub-tab changes
+  const handleUgcSubTabChange = (newTab) => {
+    setUgcSubTab(newTab);
+  };
   
   // Data states
   const [reservations, setReservations] = useState([]);
