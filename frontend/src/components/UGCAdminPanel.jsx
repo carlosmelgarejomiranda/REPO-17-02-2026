@@ -100,14 +100,29 @@ const StatusBadge = ({ status, type = 'campaign' }) => {
   );
 };
 
-const UGCAdminPanel = ({ getAuthHeaders }) => {
-  const [activeSubTab, setActiveSubTab] = useState('overview');
+const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabChange }) => {
+  const [activeSubTab, setActiveSubTab] = useState(initialSubTab);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dashboard, setDashboard] = useState(null);
   const [creators, setCreators] = useState([]);
   const [brands, setBrands] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
+  
+  // Sync with parent when initialSubTab changes
+  useEffect(() => {
+    if (initialSubTab && initialSubTab !== activeSubTab) {
+      setActiveSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
+  
+  // Notify parent of sub-tab changes
+  const handleSubTabChange = (newTab) => {
+    setActiveSubTab(newTab);
+    if (onSubTabChange) {
+      onSubTabChange(newTab);
+    }
+  };
   
   // Filters
   const [creatorFilter, setCreatorFilter] = useState({ level: '', city: '', search: '' });
