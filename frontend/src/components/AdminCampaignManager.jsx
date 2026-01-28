@@ -1251,137 +1251,303 @@ Ejemplo de formato:
       )}
 
       {/* Campaigns List */}
-      <div className="space-y-4">
+      <div className="space-y-3">
+        {/* Toolbar */}
+        <div className="flex flex-wrap items-center gap-3 p-4 bg-[#121212] border border-white/10 rounded-xl">
+          {/* Search */}
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Buscar campaña o marca..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:border-[#d4a968] focus:outline-none"
+            />
+          </div>
+          
+          {/* Status Filter */}
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:border-[#d4a968] focus:outline-none"
+          >
+            <option value="">Todos los estados</option>
+            <option value="active">Activas</option>
+            <option value="paused">Pausadas</option>
+            <option value="expired">Vencidas</option>
+          </select>
+          
+          {/* Brand Filter */}
+          <select
+            value={filterBrand}
+            onChange={(e) => setFilterBrand(e.target.value)}
+            className="px-3 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-white focus:border-[#d4a968] focus:outline-none max-w-[180px]"
+          >
+            <option value="">Todas las marcas</option>
+            {brandsForFilter.map(brand => (
+              <option key={brand.id} value={brand.id}>{brand.company_name}</option>
+            ))}
+          </select>
+          
+          {/* Quick Filters */}
+          <button
+            onClick={() => setFilterPending(!filterPending)}
+            className={`px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-all ${
+              filterPending 
+                ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' 
+                : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+            }`}
+          >
+            <AlertCircle className="w-4 h-4" />
+            Con pendientes
+          </button>
+          
+          <button
+            onClick={() => setFilterLate(!filterLate)}
+            className={`px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-all ${
+              filterLate 
+                ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
+                : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            Con atrasos
+          </button>
+        </div>
+
+        {/* Summary Stats */}
+        <div className="flex items-center gap-4 px-4 py-2 text-sm text-gray-400">
+          <span>{campaigns.length} campañas</span>
+          <span>•</span>
+          <span>{campaigns.filter(c => c.application_stats?.pending > 0).length} con aplicaciones pendientes</span>
+          <span>•</span>
+          <span>{campaigns.filter(c => (c.url_traffic?.late > 0 || c.metrics_traffic?.late > 0)).length} con entregas atrasadas</span>
+        </div>
+
+        {/* Column Headers */}
+        <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-4 py-2 text-xs text-gray-500 uppercase tracking-wider border-b border-white/10">
+          <div className="col-span-4">Campaña</div>
+          <div className="col-span-1">Estado</div>
+          <div className="col-span-2">Cupos</div>
+          <div className="col-span-2">Aplicaciones</div>
+          <div className="col-span-1">URLs</div>
+          <div className="col-span-1">Métricas</div>
+          <div className="col-span-1"></div>
+        </div>
+
+        {/* Campaign Rows */}
         {campaigns.length === 0 ? (
           <div className="p-12 bg-white/5 border border-white/10 rounded-xl text-center">
             <AlertCircle className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400">No hay campañas creadas</p>
+            <p className="text-gray-400">No hay campañas que coincidan con los filtros</p>
           </div>
         ) : (
           campaigns.map(campaign => {
             const contract = campaign.contract;
             const isExpired = contract && new Date(contract.end_date) < new Date();
+            const appStats = campaign.application_stats || { total: 0, pending: 0, approved: 0 };
+            const urlTraffic = campaign.url_traffic || { on_time: 0, due_soon: 0, late: 0 };
+            const metricsTraffic = campaign.metrics_traffic || { on_time: 0, due_soon: 0, late: 0 };
+            const hasLateDeliveries = urlTraffic.late > 0 || metricsTraffic.late > 0;
+            const hasPendingApps = appStats.pending > 0;
             
             return (
               <div 
                 key={campaign.id}
-                className="p-5 bg-white/5 border border-white/10 rounded-xl hover:border-white/20 transition-all"
+                data-testid={`campaign-row-${campaign.id}`}
+                className={`grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 bg-[#121212] border rounded-xl hover:bg-[#161616] transition-all group ${
+                  hasLateDeliveries 
+                    ? 'border-l-4 border-l-red-500 border-white/5' 
+                    : hasPendingApps 
+                      ? 'border-l-4 border-l-orange-500 border-white/5'
+                      : 'border-white/5 hover:border-[#d4a968]/30'
+                }`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-medium text-lg text-white">{campaign.name}</h3>
-                      {getStatusBadge(campaign.status, contract)}
+                {/* Campaign Info */}
+                <div className="lg:col-span-4 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <Building2 className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium text-white text-sm truncate">{campaign.name}</h3>
                       {campaign.visible_to_creators === false && (
-                        <span className="px-2 py-1 rounded-full text-xs bg-orange-500/20 text-orange-400 flex items-center gap-1">
-                          <EyeOff className="w-3 h-3" /> Oculta
-                        </span>
+                        <EyeOff className="w-3 h-3 text-orange-400 flex-shrink-0" />
                       )}
                     </div>
-                    <p className="text-sm text-gray-400 mb-3">
-                      <span className="text-gray-500">Empresa:</span> {campaign.brand?.company_name || '-'} • 
-                      <span className="text-gray-500 ml-2">Categoría:</span> {CATEGORY_LABELS[campaign.category] || campaign.category}
+                    <p className="text-xs text-gray-500 truncate">
+                      {campaign.brand?.company_name || '-'} • {CATEGORY_LABELS[campaign.category] || campaign.category}
                     </p>
-
-                    {/* Contract Info */}
-                    {contract && (
-                      <div className="flex flex-wrap gap-4 text-sm">
-                        <span className="text-gray-400">
-                          <span className="text-gray-500">Cupos:</span>{' '}
-                          <span className="text-white">{campaign.available_slots || 0}</span> disponibles / 
-                          <span className="text-white"> {campaign.total_slots_loaded || campaign.slots}</span> cargados
-                        </span>
-                        <span className="text-gray-400">
-                          <span className="text-gray-500">Confirmados:</span>{' '}
-                          <span className="text-green-400">{campaign.slots_filled || 0}</span>
-                        </span>
-                        <span className="text-gray-400">
-                          <span className="text-gray-500">Próxima recarga:</span>{' '}
-                          <span className={contract.next_reload_date ? 'text-cyan-400' : 'text-gray-500'}>
-                            {contract.next_reload_date ? formatDate(contract.next_reload_date) : 'N/A'}
-                          </span>
-                        </span>
-                        <span className="text-gray-400">
-                          <span className="text-gray-500">Vencimiento:</span>{' '}
-                          <span className={isExpired ? 'text-red-400' : 'text-white'}>
-                            {formatDate(contract.end_date)}
-                          </span>
-                        </span>
-                      </div>
-                    )}
                   </div>
+                </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 ml-4">
-                    {actionLoading === campaign.id ? (
-                      <Loader2 className="w-5 h-5 animate-spin text-[#d4a968]" />
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => handleEditCampaign(campaign)}
-                          className="p-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors"
-                          title="Editar campaña"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleViewApplications(campaign)}
-                          className="p-2 rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
-                          title="Ver aplicaciones"
-                        >
-                          <ClipboardList className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => navigate(`/admin/ugc/deliverables/${campaign.id}`)}
-                          className="p-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors"
-                          title="Ver entregas"
-                        >
-                          <BarChart3 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setCampaignToTransfer(campaign);
-                            setShowTransferModal(true);
-                          }}
-                          className="p-2 rounded-lg bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 transition-colors"
-                          title="Transferir propiedad"
-                        >
-                          <ArrowRightLeft className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleAddSlots(campaign)}
-                          className="p-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
-                          title="Agregar cupos"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                        {isExpired && (
-                          <button
-                            onClick={() => handleRenewCampaign(campaign)}
-                            className="p-2 rounded-lg bg-[#d4a968]/20 text-[#d4a968] hover:bg-[#d4a968]/30 transition-colors"
-                            title="Renovar contrato"
-                          >
-                            <RefreshCw className="w-4 h-4" />
-                          </button>
+                {/* Status */}
+                <div className="lg:col-span-1 flex items-center">
+                  {getStatusBadge(campaign.status, contract)}
+                </div>
+
+                {/* Cupos Progress */}
+                <div className="lg:col-span-2 flex flex-col justify-center">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-emerald-500 rounded-full transition-all"
+                        style={{ width: `${((campaign.slots_filled || 0) / (campaign.total_slots_loaded || campaign.slots || 1)) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400">
+                    <span className="text-emerald-400 font-medium">{campaign.slots_filled || 0}</span>
+                    <span className="text-gray-600"> / </span>
+                    <span>{campaign.total_slots_loaded || campaign.slots || 0}</span>
+                    <span className="text-gray-600 ml-1">confirmados</span>
+                  </p>
+                </div>
+
+                {/* Applications */}
+                <div className="lg:col-span-2 flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-gray-500">{appStats.total}</span>
+                  </div>
+                  {appStats.pending > 0 && (
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-orange-500/20 text-orange-400 font-medium">
+                      {appStats.pending} pend
+                    </span>
+                  )}
+                  {appStats.approved > 0 && (
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-500/10 text-emerald-400">
+                      ✓{appStats.approved}
+                    </span>
+                  )}
+                </div>
+
+                {/* URL Traffic Light */}
+                <div className="lg:col-span-1 flex items-center gap-1" title="Entregas de URL">
+                  <LinkIcon className="w-3 h-3 text-gray-600 mr-1" />
+                  {urlTraffic.on_time > 0 && (
+                    <span className="w-5 h-5 rounded text-xs flex items-center justify-center bg-emerald-500/20 text-emerald-400">
+                      {urlTraffic.on_time}
+                    </span>
+                  )}
+                  {urlTraffic.due_soon > 0 && (
+                    <span className="w-5 h-5 rounded text-xs flex items-center justify-center bg-yellow-500/20 text-yellow-400">
+                      {urlTraffic.due_soon}
+                    </span>
+                  )}
+                  {urlTraffic.late > 0 && (
+                    <span className="w-5 h-5 rounded text-xs flex items-center justify-center bg-red-500/20 text-red-400 font-medium">
+                      {urlTraffic.late}
+                    </span>
+                  )}
+                  {(urlTraffic.on_time + urlTraffic.due_soon + urlTraffic.late) === 0 && (
+                    <span className="text-xs text-gray-600">-</span>
+                  )}
+                </div>
+
+                {/* Metrics Traffic Light */}
+                <div className="lg:col-span-1 flex items-center gap-1" title="Entregas de Métricas">
+                  <LineChart className="w-3 h-3 text-gray-600 mr-1" />
+                  {metricsTraffic.on_time > 0 && (
+                    <span className="w-5 h-5 rounded text-xs flex items-center justify-center bg-emerald-500/20 text-emerald-400">
+                      {metricsTraffic.on_time}
+                    </span>
+                  )}
+                  {metricsTraffic.due_soon > 0 && (
+                    <span className="w-5 h-5 rounded text-xs flex items-center justify-center bg-yellow-500/20 text-yellow-400">
+                      {metricsTraffic.due_soon}
+                    </span>
+                  )}
+                  {metricsTraffic.late > 0 && (
+                    <span className="w-5 h-5 rounded text-xs flex items-center justify-center bg-red-500/20 text-red-400 font-medium">
+                      {metricsTraffic.late}
+                    </span>
+                  )}
+                  {(metricsTraffic.on_time + metricsTraffic.due_soon + metricsTraffic.late) === 0 && (
+                    <span className="text-xs text-gray-600">-</span>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="lg:col-span-1 flex items-center justify-end gap-1">
+                  {actionLoading === campaign.id ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-[#d4a968]" />
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleViewApplications(campaign)}
+                        className="p-2 rounded-lg text-gray-400 hover:bg-blue-500/20 hover:text-blue-400 transition-colors relative"
+                        title="Ver aplicaciones"
+                        data-testid={`view-applications-${campaign.id}`}
+                      >
+                        <ClipboardList className="w-4 h-4" />
+                        {appStats.pending > 0 && (
+                          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-orange-500 text-[10px] text-white flex items-center justify-center">
+                            {appStats.pending}
+                          </span>
                         )}
+                      </button>
+                      <button
+                        onClick={() => navigate(`/admin/ugc/deliverables/${campaign.id}`)}
+                        className="p-2 rounded-lg text-gray-400 hover:bg-cyan-500/20 hover:text-cyan-400 transition-colors"
+                        title="Ver entregas"
+                        data-testid={`view-deliveries-${campaign.id}`}
+                      >
+                        <BarChart3 className="w-4 h-4" />
+                      </button>
+                      
+                      {/* Dropdown Menu for more actions */}
+                      <div className="relative group/menu">
                         <button
-                          onClick={() => handleToggleVisibility(campaign)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            campaign.visible_to_creators === false
-                              ? 'bg-orange-500/20 text-orange-400 hover:bg-orange-500/30'
-                              : 'bg-white/10 text-gray-400 hover:bg-white/20'
-                          }`}
-                          title={campaign.visible_to_creators === false ? 'Mostrar a creadores' : 'Ocultar de creadores'}
+                          className="p-2 rounded-lg text-gray-400 hover:bg-white/10 transition-colors"
+                          title="Más acciones"
                         >
-                          {campaign.visible_to_creators === false ? (
-                            <Eye className="w-4 h-4" />
-                          ) : (
-                            <EyeOff className="w-4 h-4" />
-                          )}
+                          <MoreVertical className="w-4 h-4" />
                         </button>
-                      </>
-                    )}
-                  </div>
+                        <div className="absolute right-0 top-full mt-1 w-48 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-xl opacity-0 invisible group-hover/menu:opacity-100 group-hover/menu:visible transition-all z-50">
+                          <button
+                            onClick={() => handleEditCampaign(campaign)}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-white/5 flex items-center gap-2"
+                          >
+                            <Pencil className="w-4 h-4" /> Editar campaña
+                          </button>
+                          <button
+                            onClick={() => handleAddSlots(campaign)}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-white/5 flex items-center gap-2"
+                          >
+                            <Plus className="w-4 h-4" /> Agregar cupos
+                          </button>
+                          <button
+                            onClick={() => {
+                              setCampaignToTransfer(campaign);
+                              setShowTransferModal(true);
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-white/5 flex items-center gap-2"
+                          >
+                            <ArrowRightLeft className="w-4 h-4" /> Transferir
+                          </button>
+                          {isExpired && (
+                            <button
+                              onClick={() => handleRenewCampaign(campaign)}
+                              className="w-full px-4 py-2 text-left text-sm text-[#d4a968] hover:bg-white/5 flex items-center gap-2"
+                            >
+                              <RefreshCw className="w-4 h-4" /> Renovar contrato
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleToggleVisibility(campaign)}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-white/5 flex items-center gap-2"
+                          >
+                            {campaign.visible_to_creators === false ? (
+                              <><Eye className="w-4 h-4" /> Mostrar a creadores</>
+                            ) : (
+                              <><EyeOff className="w-4 h-4" /> Ocultar de creadores</>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             );
