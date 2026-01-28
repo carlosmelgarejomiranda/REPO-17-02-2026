@@ -426,7 +426,44 @@ const CreatorOnboarding = () => {
       navigate('/ugc/creator/dashboard');
     } catch (err) {
       console.error('Onboarding error:', err);
-      setError(err.message || 'Error de conexión. Por favor intenta de nuevo.');
+      
+      // Parse server error for better messages
+      let errorMessage = 'Error de conexión. Por favor intenta de nuevo.';
+      
+      if (err.message) {
+        // Map common server errors to user-friendly messages
+        const errorMappings = {
+          'Debes ser mayor de 18 años': 'Debes ser mayor de 18 años para registrarte como creador.',
+          'Invalid salt': 'Error de autenticación. Por favor cerrá sesión e ingresá nuevamente.',
+          'terms': 'Debes aceptar los términos y condiciones para continuar.',
+          'already exists': 'Ya existe una cuenta con este correo electrónico.',
+          'document_id': 'El número de documento ingresado no es válido.',
+          'phone': 'El número de teléfono ingresado no es válido.',
+          'categories': 'Seleccioná al menos una categoría de contenido.',
+          'social': 'Conectá al menos una red social (Instagram o TikTok).',
+          'profile_picture': 'Error al subir la foto de perfil. Intentá con otra imagen.',
+          'network': 'Error de conexión. Verificá tu conexión a internet.',
+          'Failed to fetch': 'Error de conexión. Verificá tu conexión a internet.',
+        };
+        
+        // Check if error message matches any known pattern
+        for (const [key, message] of Object.entries(errorMappings)) {
+          if (err.message.toLowerCase().includes(key.toLowerCase())) {
+            errorMessage = message;
+            break;
+          }
+        }
+        
+        // If no match found, use the original error message if it looks user-friendly
+        if (errorMessage === 'Error de conexión. Por favor intenta de nuevo.' && 
+            err.message.length < 200 && 
+            !err.message.includes('Error') &&
+            !err.message.includes('exception')) {
+          errorMessage = err.message;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
