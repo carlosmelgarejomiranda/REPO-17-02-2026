@@ -111,6 +111,10 @@ const CampaignDetail = () => {
     setError('');
     try {
       const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('Debes iniciar sesión para aplicar');
+      }
+      
       const res = await fetch(`${API_URL}/api/ugc/applications/apply`, {
         method: 'POST',
         headers: { 
@@ -124,7 +128,15 @@ const CampaignDetail = () => {
         })
       });
 
-      const data = await res.json();
+      // Read response as text first to avoid "body is disturbed or locked" error on Safari/iOS
+      const responseText = await res.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseErr) {
+        console.error('Failed to parse response:', responseText);
+        throw new Error('Error del servidor - respuesta inválida');
+      }
 
       if (!res.ok) {
         throw new Error(data.detail || 'Error al aplicar');
