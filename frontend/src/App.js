@@ -69,6 +69,7 @@ import CreatorFeedback from "./pages/ugc/CreatorFeedback";
 import CreatorCampaigns from "./pages/ugc/CreatorCampaigns";
 import CreatorReports from "./pages/ugc/CreatorReports";
 import CreatorDeliverables from "./pages/ugc/CreatorDeliverables";
+import CreatorMyWork from "./pages/ugc/CreatorMyWork";
 import CampaignApplicationsPage from "./pages/admin/CampaignApplicationsPage";
 import AdminDeliverables from "./pages/admin/AdminDeliverables";
 import AdminCreatorDeliverables from "./pages/admin/AdminCreatorDeliverables";
