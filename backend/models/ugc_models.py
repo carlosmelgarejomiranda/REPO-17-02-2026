@@ -470,6 +470,12 @@ class Campaign(BaseModel):
     slots_filled: int = 0  # Confirmed creators
     # Legacy field for backwards compatibility
     slots: int = 0  # Will be calculated from contract
+    # Delivery deadlines (relative to confirmation date)
+    url_delivery_days: int = 7  # Days after confirmation to deliver URL
+    metrics_delivery_days: int = 14  # Days after confirmation to deliver metrics
+    # Or fixed dates (if set, these override the days)
+    url_delivery_fixed_date: Optional[str] = None  # ISO date
+    metrics_delivery_fixed_date: Optional[str] = None  # ISO date
     # Contract configuration
     contract: Optional[CampaignContract] = None
     requirements: CampaignRequirements
