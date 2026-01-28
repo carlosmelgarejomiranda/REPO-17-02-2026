@@ -70,6 +70,7 @@ const CampaignApplicationsPage = () => {
   const [actionLoading, setActionLoading] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [error, setError] = useState('');
+  const [expandedMotivation, setExpandedMotivation] = useState(null); // Track which application's motivation is expanded
 
   // Fetch campaign and applications
   const fetchData = async () => {
