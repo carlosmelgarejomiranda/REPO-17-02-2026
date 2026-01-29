@@ -161,16 +161,17 @@ export const UGCNavbar = ({ type = 'creator' }) => {
           {links.map((link) => {
             const Icon = link.icon;
             const active = isActive(link.href);
+            const activeColor = isCreator ? 'text-pink-400' : 'text-[#d4a968]';
             return (
               <Link
                 key={link.href}
                 to={link.href}
                 className={`flex flex-col items-center justify-center flex-1 py-2 transition-all ${
-                  active ? 'text-[#d4a968]' : 'text-gray-500'
+                  active ? activeColor : 'text-gray-500'
                 }`}
               >
-                <Icon className={`w-5 h-5 mb-0.5 ${active ? 'text-[#d4a968]' : ''}`} />
-                <span className={`text-[10px] font-medium ${active ? 'text-[#d4a968]' : ''}`}>
+                <Icon className={`w-5 h-5 mb-0.5 ${active ? activeColor : ''}`} />
+                <span className={`text-[10px] font-medium ${active ? activeColor : ''}`}>
                   {link.shortLabel}
                 </span>
               </Link>
