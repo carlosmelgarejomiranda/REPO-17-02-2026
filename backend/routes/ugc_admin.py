@@ -119,7 +119,7 @@ async def get_admin_dashboard(request: Request):
 async def get_all_creators(
     request: Request,
     skip: int = 0,
-    limit: int = 50,
+    limit: int = 500,
     level: Optional[CreatorLevel] = None,
     city: Optional[str] = None,
     is_active: Optional[bool] = None
