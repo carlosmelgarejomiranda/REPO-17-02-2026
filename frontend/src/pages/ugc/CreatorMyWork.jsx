@@ -61,14 +61,14 @@ const CreatorMyWork = () => {
 
   const getApplicationStatusConfig = (status) => {
     const configs = {
-      pending: { color: 'bg-[#d4a968]/20 text-[#d4a968] border-[#d4a968]/30', label: 'En espera', icon: Clock },
-      applied: { color: 'bg-[#d4a968]/20 text-[#d4a968] border-[#d4a968]/30', label: 'Postulado', icon: Clock },
+      pending: { color: 'bg-pink-500/20 text-pink-400 border-pink-500/30', label: 'En espera', icon: Clock },
+      applied: { color: 'bg-pink-500/20 text-pink-400 border-pink-500/30', label: 'Postulado', icon: Clock },
       shortlisted: { color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', label: 'Preseleccionado', icon: Star },
       approved: { color: 'bg-green-500/20 text-green-400 border-green-500/30', label: 'Aprobado', icon: CheckCircle },
       confirmed: { color: 'bg-green-500/20 text-green-400 border-green-500/30', label: 'Confirmado', icon: CheckCircle },
       rejected: { color: 'bg-red-500/20 text-red-400 border-red-500/30', label: 'No seleccionado', icon: XCircle },
       withdrawn: { color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', label: 'Retirado', icon: XCircle },
-      completed: { color: 'bg-[#d4a968]/20 text-[#d4a968] border-[#d4a968]/30', label: 'Completado', icon: Award }
+      completed: { color: 'bg-pink-500/20 text-pink-400 border-pink-500/30', label: 'Completado', icon: Award }
     };
     return configs[status] || { color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', label: status, icon: Clock };
   };
