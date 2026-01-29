@@ -506,9 +506,11 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                 <button
                   onClick={() => handlePlanSelect(plan)}
                   className={`w-full py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg ${
-                    plan.highlight
-                      ? 'bg-[#d4a968] text-black hover:bg-[#e8c891]'
-                      : 'border border-white/20 text-white hover:bg-white/5'
+                    plan.isPro
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90'
+                      : plan.highlight
+                        ? 'bg-[#d4a968] text-black hover:bg-[#e8c891]'
+                        : 'border border-white/20 text-white hover:bg-white/5'
                   }`}
                 >
                   Elegir plan
