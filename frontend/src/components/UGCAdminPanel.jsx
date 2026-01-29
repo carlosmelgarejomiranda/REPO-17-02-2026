@@ -106,6 +106,7 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
   const [error, setError] = useState(null);
   const [dashboard, setDashboard] = useState(null);
   const [creators, setCreators] = useState([]);
+  const [creatorsTotal, setCreatorsTotal] = useState(0);
   const [brands, setBrands] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   
