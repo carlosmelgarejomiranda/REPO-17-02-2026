@@ -44,6 +44,8 @@ const AdminCreatorsTab = ({
   creatorFilter,
   setCreatorFilter,
   fetchCreators,
+  loadMoreCreators,
+  loadingMoreCreators,
   handleVerifyCreator,
   handleToggleCreatorStatus
 }) => {
