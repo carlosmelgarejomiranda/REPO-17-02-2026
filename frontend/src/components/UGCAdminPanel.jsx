@@ -207,6 +207,7 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
       if (res.ok) {
         const data = await res.json();
         setCreators(data.creators || []);
+        setCreatorsTotal(data.total || data.creators?.length || 0);
       }
     } catch (err) {
       console.error('Error fetching creators:', err);
