@@ -373,13 +373,24 @@ const CampaignsCatalog = () => {
               {/* Campaign Info */}
               <div className="p-4 bg-white/5 rounded-xl">
                 <h3 className="text-white font-medium mb-2">{selectedCampaign.name}</h3>
-                <p className="text-gray-400 text-sm mb-3">{selectedCampaign.description}</p>
-                <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-4 text-sm mb-3">
                   <span className="text-[#d4a968]">{selectedCampaign.brand?.company_name}</span>
                   <span className="text-gray-500">•</span>
                   <span className="text-gray-400">Canje: {formatPrice(selectedCampaign.canje?.value || 0)}</span>
                 </div>
               </div>
+              
+              {/* Campaign Description - Scrollable */}
+              {selectedCampaign.description && (
+                <div className="p-4 bg-white/5 rounded-xl">
+                  <h4 className="text-sm font-medium text-gray-300 mb-3">Descripción de la campaña</h4>
+                  <div className="max-h-40 overflow-y-auto pr-2 scrollbar-thin">
+                    <p className="text-gray-400 text-sm whitespace-pre-line leading-relaxed">
+                      {selectedCampaign.description}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Canje Details */}
               <div className="p-4 bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl">
