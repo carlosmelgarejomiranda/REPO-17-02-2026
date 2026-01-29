@@ -495,7 +495,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                   <ul className="space-y-1.5">
                     {plan.features.map((feature, fidx) => (
                       <li key={fidx} className="flex items-start gap-2 text-xs text-white/60">
-                        <Check className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[#d4a968]" />
+                        <Check className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${plan.isPro ? 'text-pink-400' : 'text-[#d4a968]'}`} />
                         <span>{feature}</span>
                       </li>
                     ))}
