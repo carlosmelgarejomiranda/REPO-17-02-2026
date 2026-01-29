@@ -153,8 +153,11 @@ const AdminCreatorsTab = ({
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-[#d4a968]" />
-                <span className="text-white font-medium">{creators.length}</span>
+                <span className="text-white font-medium">{creatorsTotal || creators.length}</span>
                 <span className="text-gray-400 text-sm">Creators registrados</span>
+                {creatorsTotal > creators.length && (
+                  <span className="text-gray-500 text-xs">(mostrando {creators.length})</span>
+                )}
               </div>
             </div>
           </div>
