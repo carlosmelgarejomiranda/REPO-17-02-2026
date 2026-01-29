@@ -633,7 +633,7 @@ const MetricsSubmit = () => {
   // Handle continue from success screen
   const handleSuccessContinue = () => {
     setShowSuccess(false);
-    navigate('/ugc/creator/campaigns');
+    navigate('/ugc/creator/my-work');
   };
 
   const getWindowStatus = () => {
@@ -681,8 +681,8 @@ const MetricsSubmit = () => {
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
           <p>{error || 'Entrega no encontrada'}</p>
-          <Link to="/ugc/creator/workspace" className="text-[#d4a968] hover:underline mt-4 block">
-            Volver al workspace
+          <Link to="/ugc/creator/my-work" className="text-[#d4a968] hover:underline mt-4 block">
+            Volver a Mi Trabajo
           </Link>
         </div>
       </div>
@@ -715,9 +715,9 @@ const MetricsSubmit = () => {
         {/* Header */}
         <div className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-sm z-10">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-            <Link to="/ugc/creator/campaigns" className="flex items-center gap-2 text-gray-400 hover:text-white">
+            <Link to="/ugc/creator/my-work" className="flex items-center gap-2 text-gray-400 hover:text-white">
               <ArrowLeft className="w-5 h-5" />
-              Mis Campañas
+              Mi Trabajo
             </Link>
             <div className="flex items-center gap-3">
               {deliverable?.instagram_url && (

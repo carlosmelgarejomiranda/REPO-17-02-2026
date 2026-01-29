@@ -72,9 +72,9 @@ const CreatorFeedback = () => {
       {/* Header */}
       <div className="border-b border-white/10">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/ugc/creator/workspace" className="flex items-center gap-2 text-gray-400 hover:text-white">
+          <Link to="/ugc/creator/my-work" className="flex items-center gap-2 text-gray-400 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
-            Mi Workspace
+            Mi Trabajo
           </Link>
           <span className="text-[#d4a968] italic">Mis Calificaciones</span>
         </div>
