@@ -289,7 +289,7 @@ const CreatorMyWork = () => {
                         <Link
                           key={item.id}
                           to={`/ugc/creator/deliverable/${item.id}`}
-                          className={`block p-4 bg-white/5 border rounded-xl hover:border-[#d4a968]/50 transition-all ${
+                          className={`block p-4 bg-white/5 border rounded-xl hover:border-pink-500/50 transition-all ${
                             statusConfig.needsAction ? 'border-yellow-500/30' : 'border-white/10'
                           }`}
                         >
