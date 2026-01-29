@@ -189,10 +189,10 @@ const CreatorDashboard = () => {
           {/* Stats Grid - 2x2 on mobile, 4 cols on desktop */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
             {/* Rating */}
-            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all">
+            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-pink-500/30 transition-all">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-[#d4a968]/20 flex items-center justify-center">
-                  <Star className="w-4 h-4 text-[#d4a968]" />
+                <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                  <Star className="w-4 h-4 text-pink-400" />
                 </div>
                 <span className="text-xs text-gray-400">Rating</span>
               </div>
@@ -201,10 +201,10 @@ const CreatorDashboard = () => {
             </div>
 
             {/* Campaigns */}
-            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all">
+            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-pink-500/30 transition-all">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-[#d4a968]/20 flex items-center justify-center">
-                  <Briefcase className="w-4 h-4 text-[#d4a968]" />
+                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                  <Briefcase className="w-4 h-4 text-purple-400" />
                 </div>
                 <span className="text-xs text-gray-400">Campañas</span>
               </div>
@@ -213,7 +213,7 @@ const CreatorDashboard = () => {
             </div>
 
             {/* On-Time */}
-            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all">
+            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-pink-500/30 transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
                   <Clock className="w-4 h-4 text-green-500" />
@@ -225,10 +225,10 @@ const CreatorDashboard = () => {
             </div>
 
             {/* Total Reach */}
-            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all">
+            <div className="p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-pink-500/30 transition-all">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-[#d4a968]/20 flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-[#d4a968]" />
+                <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-pink-400" />
                 </div>
                 <span className="text-xs text-gray-400">Alcance</span>
               </div>
@@ -242,7 +242,7 @@ const CreatorDashboard = () => {
           {/* Prominent CTA - Explorar Campañas */}
           <Link
             to="/ugc/campaigns"
-            className="block mb-6 p-4 md:p-5 bg-gradient-to-r from-[#d4a968]/20 to-purple-500/10 border border-[#d4a968]/30 rounded-xl hover:border-[#d4a968]/50 transition-all group"
+            className="block mb-6 p-4 md:p-5 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-pink-500/30 rounded-xl hover:border-pink-500/50 transition-all group"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
