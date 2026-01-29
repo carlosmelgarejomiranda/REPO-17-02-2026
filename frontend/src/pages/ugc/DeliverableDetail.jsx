@@ -400,8 +400,8 @@ const DeliverableDetail = () => {
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
           <p className="text-lg mb-4">Entrega no encontrada</p>
-          <Link to="/ugc/creator/workspace" className="text-[#d4a968] hover:underline">
-            ← Volver al workspace
+          <Link to="/ugc/creator/my-work" className="text-[#d4a968] hover:underline">
+            ← Volver a Mi Trabajo
           </Link>
         </div>
       </div>
@@ -425,7 +425,7 @@ const DeliverableDetail = () => {
       {/* Header - Compact for mobile */}
       <div className="sticky top-0 z-10 bg-black/95 backdrop-blur border-b border-white/10">
         <div className="px-4 py-3 flex items-center justify-between">
-          <Link to="/ugc/creator/workspace" className="flex items-center gap-2 text-gray-400">
+          <Link to="/ugc/creator/my-work" className="flex items-center gap-2 text-gray-400">
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm">Volver</span>
           </Link>
