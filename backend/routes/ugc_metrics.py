@@ -1033,6 +1033,27 @@ async def submit_metrics_v2(
     platforms_created = [m["platform"] for m in created_metrics]
     avg_confidence = sum(m.get("ai_confidence", 0) for m in created_metrics) / len(created_metrics) if created_metrics else 0
     
+    # Prepare extracted data for display on success screen
+    combined_metrics = {
+        "views": 0,
+        "reach": 0,
+        "likes": 0,
+        "comments": 0,
+        "shares": 0,
+        "saves": 0
+    }
+    
+    for m in created_metrics:
+        if m.get("views"): combined_metrics["views"] += m["views"]
+        if m.get("reach"): combined_metrics["reach"] += m["reach"]
+        if m.get("likes"): combined_metrics["likes"] += m["likes"]
+        if m.get("comments"): combined_metrics["comments"] += m["comments"]
+        if m.get("shares"): combined_metrics["shares"] += m["shares"]
+        if m.get("saves"): combined_metrics["saves"] += m["saves"]
+    
+    # Clean up zeros
+    combined_metrics = {k: v for k, v in combined_metrics.items() if v > 0}
+    
     return {
         "success": True,
         "metrics_id": metrics_ids[0] if metrics_ids else None,  # Backward compatibility
@@ -1045,7 +1066,19 @@ async def submit_metrics_v2(
         },
         "extracted_data": {
             "records_created": len(created_metrics),
-            "platforms": platforms_created
+            "platforms": platforms_created,
+            "metrics": combined_metrics,  # Add the actual extracted metrics
+            "by_platform": {
+                m["platform"]: {
+                    "views": m.get("views"),
+                    "reach": m.get("reach"),
+                    "likes": m.get("likes"),
+                    "comments": m.get("comments"),
+                    "shares": m.get("shares"),
+                    "saves": m.get("saves"),
+                    "confidence": m.get("ai_confidence", 0)
+                } for m in created_metrics
+            }
         },
         "is_late": is_late,
         "message": f"Métricas enviadas - {len(created_metrics)} registro(s) creado(s) para: {', '.join(platforms_created)}" + (" (tarde)" if is_late else "")
