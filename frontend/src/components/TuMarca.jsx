@@ -242,7 +242,7 @@ const PROCESS_STEPS = [
 ];
 
 export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage }) => {
-  const [productType, setProductType] = useState('exhibidores');
+  const [productType, setProductType] = useState('percheros');
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [formData, setFormData] = useState({
     brand_name: '',
