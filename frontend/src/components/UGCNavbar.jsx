@@ -78,13 +78,16 @@ export const UGCNavbar = ({ type = 'creator' }) => {
               {links.map((link) => {
                 const Icon = link.icon;
                 const active = isActive(link.href);
+                const activeColor = isCreator 
+                  ? 'bg-pink-500/20 text-pink-400' 
+                  : 'bg-[#d4a968]/20 text-[#d4a968]';
                 return (
                   <Link
                     key={link.href}
                     to={link.href}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                       active 
-                        ? 'bg-[#d4a968]/20 text-[#d4a968]' 
+                        ? activeColor
                         : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }`}
                   >
