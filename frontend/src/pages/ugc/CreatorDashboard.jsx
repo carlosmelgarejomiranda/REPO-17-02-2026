@@ -343,7 +343,7 @@ const CreatorDashboard = () => {
             <div className="order-2">
               <div className="flex items-center justify-between mb-3 md:mb-4">
                 <h2 className="text-base md:text-lg font-medium">Mis Redes</h2>
-                <Link to="/ugc/creator/profile" className="text-[#d4a968] text-xs hover:underline flex items-center gap-1">
+                <Link to="/ugc/creator/profile" className="text-pink-400 text-xs hover:underline flex items-center gap-1">
                   Editar <ChevronRight className="w-3 h-3" />
                 </Link>
               </div>
@@ -353,7 +353,7 @@ const CreatorDashboard = () => {
                   {socialNetworks.map((sn, idx) => (
                     <div
                       key={idx}
-                      className="p-3 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all"
+                      className="p-3 bg-white/5 border border-white/10 rounded-xl hover:border-pink-500/30 transition-all"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -370,10 +370,10 @@ const CreatorDashboard = () => {
                             <p className="text-sm font-medium flex items-center gap-1">
                               @{sn.username}
                               {sn.verified_by_ai && (
-                                <BadgeCheck className="w-3.5 h-3.5 text-[#d4a968]" />
+                                <BadgeCheck className="w-3.5 h-3.5 text-pink-400" />
                               )}
                             </p>
-                            <p className={`text-xs ${sn.verified_by_ai ? 'text-[#d4a968]' : 'text-gray-400'}`}>
+                            <p className={`text-xs ${sn.verified_by_ai ? 'text-pink-400' : 'text-gray-400'}`}>
                               {sn.followers ? `${sn.followers.toLocaleString()} seguidores` : 'Sin verificar'}
                             </p>
                           </div>
@@ -381,7 +381,7 @@ const CreatorDashboard = () => {
                         {!sn.verified_by_ai && (
                           <Link
                             to="/ugc/creator/profile"
-                            className="text-[10px] px-2 py-1 bg-[#d4a968]/20 text-[#d4a968] rounded-full"
+                            className="text-[10px] px-2 py-1 bg-pink-500/20 text-pink-400 rounded-full"
                           >
                             Verificar
                           </Link>
@@ -391,12 +391,12 @@ const CreatorDashboard = () => {
                   ))}
                 </div>
               ) : (
-                <div className="p-4 bg-white/5 border border-dashed border-[#d4a968]/30 rounded-xl text-center">
-                  <Plus className="w-8 h-8 text-[#d4a968]/50 mx-auto mb-2" />
+                <div className="p-4 bg-white/5 border border-dashed border-pink-500/30 rounded-xl text-center">
+                  <Plus className="w-8 h-8 text-pink-400/50 mx-auto mb-2" />
                   <p className="text-gray-400 text-sm mb-2">Agregá tus redes</p>
                   <Link
                     to="/ugc/creator/profile"
-                    className="text-[#d4a968] text-xs hover:underline"
+                    className="text-pink-400 text-xs hover:underline"
                   >
                     Configurar perfil →
                   </Link>
