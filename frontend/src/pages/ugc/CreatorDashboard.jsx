@@ -406,32 +406,6 @@ const CreatorDashboard = () => {
           </div>
         </div>
       </div>
-
-      {/* Mobile Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-lg border-t border-white/10 md:hidden z-40">
-        <div className="flex items-center justify-around py-2">
-          <Link to="/ugc/creator/dashboard" className="flex flex-col items-center py-2 px-4 text-[#d4a968]">
-            <BarChart3 className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Dashboard</span>
-          </Link>
-          <Link to="/ugc/campaigns" className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-white">
-            <Briefcase className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Campañas</span>
-          </Link>
-          <Link to="/ugc/creator/applications" className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-white">
-            <FileText className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Aplicaciones</span>
-          </Link>
-          <Link to="/ugc/creator/workspace" className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-white">
-            <Camera className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Workspace</span>
-          </Link>
-          <Link to="/ugc/creator/profile" className="flex flex-col items-center py-2 px-4 text-gray-400 hover:text-white">
-            <User className="w-5 h-5" />
-            <span className="text-[10px] mt-1">Perfil</span>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 };
