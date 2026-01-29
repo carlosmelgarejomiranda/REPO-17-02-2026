@@ -353,7 +353,9 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
           creatorsTotal={creatorsTotal}
           creatorFilter={creatorFilter}
           setCreatorFilter={setCreatorFilter}
-          fetchCreators={fetchCreators}
+          fetchCreators={() => fetchCreators(false)}
+          loadMoreCreators={loadMoreCreators}
+          loadingMoreCreators={loadingMoreCreators}
           handleVerifyCreator={async (id) => {
             try {
               const token = localStorage.getItem('auth_token');
