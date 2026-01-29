@@ -364,6 +364,29 @@ const AdminCreatorsTab = ({
               </div>
             );
           })}
+          
+          {/* Load More Button */}
+          {creators.length < creatorsTotal && (
+            <div className="p-4 border-t border-white/10 flex items-center justify-center">
+              <button
+                onClick={loadMoreCreators}
+                disabled={loadingMoreCreators}
+                className="px-6 py-2 bg-[#d4a968]/20 border border-[#d4a968]/30 rounded-lg text-[#d4a968] hover:bg-[#d4a968]/30 transition-colors text-sm font-medium disabled:opacity-50 flex items-center gap-2"
+                data-testid="load-more-creators-btn"
+              >
+                {loadingMoreCreators ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Cargando...
+                  </>
+                ) : (
+                  <>
+                    Cargar más ({creatorsTotal - creators.length} restantes)
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       )}
       
