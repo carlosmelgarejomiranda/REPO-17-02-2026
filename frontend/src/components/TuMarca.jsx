@@ -46,143 +46,127 @@ const BRANDS_LOGOS = [
   { name: 'Skyline', url: 'https://customer-assets.emergentagent.com/job_avenue-agency/artifacts/8imn49pd_Design%20sem%20nome%20%284%29.png' }
 ];
 
-// Pricing data with breakdown
+// Pricing data with breakdown - NEW STRUCTURE based on Showroom plans
 const PRICING = {
-  exhibidores: {
-    label: 'Exhibidores',
-    description: 'Joyas, accesorios, cosmética, perfumería, calzados',
-    icon: Package,
-    plans: [
-      {
-        id: 'ecommerce',
-        name: 'E-commerce',
-        description: 'Solo presencia digital',
-        price: 500000,
-        totalValue: 500000,
-        savings: 0,
-        savingsPercent: 0,
-        breakdown: null,
-        features: ['Presencia en Avenue Online', 'Página de marca personalizada', 'Gestión de productos'],
-        highlight: false
-      },
-      {
-        id: 'online-pro',
-        name: 'Online PRO',
-        description: 'Contenido + UGC incluido',
-        price: 1200000,
-        totalValue: 2040000,
-        savings: 840000,
-        savingsPercent: 41,
-        breakdown: [
-          { item: 'E-commerce', value: 500000 },
-          { item: 'Producción + post dedicado/mes', value: 500000 },
-          { item: '2 horas de estudio/mes', value: 250000 },
-          { item: '1 Campaña UGC Starter (4 mat.)/mes', value: 790000 }
-        ],
-        features: ['Todo de E-commerce', 'Producción de contenido mensual', 'Horas de estudio incluidas', 'Campaña UGC con creadores'],
-        highlight: false
-      },
-      {
-        id: 'showroom',
-        name: 'Showroom + Online',
-        description: 'Espacio físico + digital',
-        price: 1300000,
-        totalValue: 1800000,
-        savings: 500000,
-        savingsPercent: 28,
-        breakdown: [
-          { item: 'E-commerce', value: 500000 },
-          { item: 'Exhibidor en Showroom', value: 1300000 }
-        ],
-        features: ['Todo de E-commerce', 'Exhibidor en Avenue Showroom', 'Ubicación premium en Asunción'],
-        highlight: false
-      },
-      {
-        id: 'showroom-pro',
-        name: 'Showroom + Online PRO',
-        description: 'Todo el ecosistema',
-        price: 1800000,
-        totalValue: 3340000,
-        savings: 1540000,
-        savingsPercent: 46,
-        breakdown: [
-          { item: 'E-commerce', value: 500000 },
-          { item: 'Exhibidor en Showroom', value: 1300000 },
-          { item: 'Producción + post dedicado/mes', value: 500000 },
-          { item: '2 horas de estudio/mes', value: 250000 },
-          { item: '1 Campaña UGC Starter (4 mat.)/mes', value: 790000 }
-        ],
-        features: ['Todo de Showroom + Online', 'Producción de contenido mensual', 'Horas de estudio incluidas', 'Campaña UGC con creadores'],
-        highlight: true
-      }
-    ]
-  },
   percheros: {
     label: 'Percheros',
     description: 'Ropa, indumentaria',
     icon: Store,
     plans: [
       {
-        id: 'ecommerce',
-        name: 'E-commerce',
-        description: 'Solo presencia digital',
-        price: 500000,
-        totalValue: 500000,
-        savings: 0,
-        savingsPercent: 0,
-        breakdown: null,
-        features: ['Presencia en Avenue Online', 'Página de marca personalizada', 'Gestión de productos'],
-        highlight: false
+        id: 'showroom-starter',
+        name: 'Showroom Starter',
+        description: 'Presencia física + UGC',
+        price: 1700000,
+        totalValue: 2490000,
+        savings: 790000,
+        savingsPercent: 32,
+        breakdown: [
+          { item: '1 Perchero en Showroom', value: 1700000 },
+          { item: '1 Campaña UGC Starter (4 mat.)/Mes', value: 790000 }
+        ],
+        features: ['1 Perchero en Avenue Showroom', 'Ubicación premium en Asunción', 'Campaña UGC mensual con 4 materiales', 'Equipo de venta dedicado'],
+        highlight: false,
+        isPro: false
       },
       {
-        id: 'online-pro',
-        name: 'Online PRO',
-        description: 'Contenido + UGC incluido',
-        price: 1200000,
-        totalValue: 2040000,
-        savings: 840000,
-        savingsPercent: 41,
+        id: 'showroom-standard',
+        name: 'Showroom Standard',
+        description: 'Presencia + Contenido + UGC',
+        price: 2200000,
+        totalValue: 3240000,
+        savings: 1040000,
+        savingsPercent: 32,
         breakdown: [
-          { item: 'E-commerce', value: 500000 },
+          { item: '1 Perchero en Showroom', value: 1700000 },
           { item: 'Producción + post dedicado/mes', value: 500000 },
           { item: '2 horas de estudio/mes', value: 250000 },
-          { item: '1 Campaña UGC Starter (4 mat.)/mes', value: 790000 }
+          { item: '1 Campaña UGC Starter (4 mat.)/Mes', value: 790000 }
         ],
-        features: ['Todo de E-commerce', 'Producción de contenido mensual', 'Horas de estudio incluidas', 'Campaña UGC con creadores'],
-        highlight: false
-      },
-      {
-        id: 'showroom',
-        name: 'Showroom + Online',
-        description: 'Espacio físico + digital',
-        price: 1700000,
-        totalValue: 2200000,
-        savings: 500000,
-        savingsPercent: 23,
-        breakdown: [
-          { item: 'E-commerce', value: 500000 },
-          { item: 'Perchero en Showroom', value: 1700000 }
-        ],
-        features: ['Todo de E-commerce', 'Perchero en Avenue Showroom', 'Ubicación premium en Asunción'],
-        highlight: false
+        features: ['Todo de Showroom Starter', 'Producción de contenido mensual', '2 horas de estudio incluidas', 'Post dedicado en redes Avenue'],
+        highlight: false,
+        isPro: false
       },
       {
         id: 'showroom-pro',
-        name: 'Showroom + Online PRO',
-        description: 'Todo el ecosistema',
-        price: 2200000,
-        totalValue: 3740000,
-        savings: 1540000,
-        savingsPercent: 41,
+        name: 'Showroom Pro+',
+        description: 'Máxima presencia + Contenido premium',
+        price: 7800000,
+        totalValue: 11340000,
+        savings: 3540000,
+        savingsPercent: 31,
         breakdown: [
-          { item: 'E-commerce', value: 500000 },
-          { item: 'Perchero en Showroom', value: 1700000 },
+          { item: '2 Percheros en Showroom', value: 3400000 },
+          { item: 'Producción 8 Reels/Mes', value: 3600000 },
+          { item: '4 Posteos dedicados en redes Avenue/mes', value: 400000 },
+          { item: 'Producción de 30 fotos estudio/Mes', value: 1500000 },
+          { item: '4 horas de estudio/mes', value: 450000 },
+          { item: '1 Campaña UGC Standard (12 mat.)/Mes', value: 1990000 }
+        ],
+        features: ['2 Percheros en Showroom', '8 Reels producidos por mes', '30 fotos de estudio mensuales', '4 horas de estudio incluidas', 'Campaña UGC Standard con 12 materiales', '4 posteos en redes de Avenue'],
+        highlight: true,
+        isPro: true
+      }
+    ]
+  },
+  exhibidores: {
+    label: 'Exhibidores',
+    description: 'Joyas, accesorios, cosmética, perfumería, calzados',
+    icon: Package,
+    plans: [
+      {
+        id: 'showroom-starter',
+        name: 'Showroom Starter',
+        description: 'Presencia física + UGC',
+        price: 1300000,
+        totalValue: 2090000,
+        savings: 790000,
+        savingsPercent: 38,
+        breakdown: [
+          { item: '1 Exhibidor en Showroom', value: 1300000 },
+          { item: '1 Campaña UGC Starter (4 mat.)/Mes', value: 790000 }
+        ],
+        features: ['1 Exhibidor en Avenue Showroom', 'Ubicación premium en Asunción', 'Campaña UGC mensual con 4 materiales', 'Equipo de venta dedicado'],
+        highlight: false,
+        isPro: false
+      },
+      {
+        id: 'showroom-standard',
+        name: 'Showroom Standard',
+        description: 'Presencia + Contenido + UGC',
+        price: 1800000,
+        totalValue: 2840000,
+        savings: 1040000,
+        savingsPercent: 37,
+        breakdown: [
+          { item: '1 Exhibidor en Showroom', value: 1300000 },
           { item: 'Producción + post dedicado/mes', value: 500000 },
           { item: '2 horas de estudio/mes', value: 250000 },
-          { item: '1 Campaña UGC Starter (4 mat.)/mes', value: 790000 }
+          { item: '1 Campaña UGC Starter (4 mat.)/Mes', value: 790000 }
         ],
-        features: ['Todo de Showroom + Online', 'Producción de contenido mensual', 'Horas de estudio incluidas', 'Campaña UGC con creadores'],
-        highlight: true
+        features: ['Todo de Showroom Starter', 'Producción de contenido mensual', '2 horas de estudio incluidas', 'Post dedicado en redes Avenue'],
+        highlight: false,
+        isPro: false
+      },
+      {
+        id: 'showroom-pro',
+        name: 'Showroom Pro+',
+        description: 'Máxima presencia + Contenido premium',
+        price: 7000000,
+        totalValue: 10540000,
+        savings: 3540000,
+        savingsPercent: 34,
+        breakdown: [
+          { item: '2 Exhibidores en Showroom', value: 2600000 },
+          { item: 'Producción 8 Reels/Mes', value: 3600000 },
+          { item: '4 Posteos dedicados en redes Avenue/mes', value: 400000 },
+          { item: 'Producción de 30 fotos estudio/Mes', value: 1500000 },
+          { item: '4 horas de estudio/mes', value: 450000 },
+          { item: '1 Campaña UGC Standard (12 mat.)/Mes', value: 1990000 }
+        ],
+        features: ['2 Exhibidores en Showroom', '8 Reels producidos por mes', '30 fotos de estudio mensuales', '4 horas de estudio incluidas', 'Campaña UGC Standard con 12 materiales', '4 posteos en redes de Avenue'],
+        highlight: true,
+        isPro: true
       }
     ]
   }
