@@ -66,7 +66,7 @@ export const UGCNavbar = ({ type = 'creator' }) => {
             <div className="md:hidden flex-1 mx-4">
               <span className="text-sm font-medium text-white">
                 {isCreator ? (
-                  <>Panel <span className="text-[#d4a968]">Creador</span></>
+                  <>Panel <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Creador</span></>
                 ) : (
                   <>Panel <span className="text-[#d4a968]">Marca</span></>
                 )}
