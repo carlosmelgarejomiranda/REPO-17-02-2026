@@ -184,7 +184,7 @@ const CreatorMyWork = () => {
                 Entregas
                 {pendingDeliverables.length > 0 && (
                   <span className={`px-2 py-0.5 rounded-full text-xs ${
-                    activeTab === 'deliverables' ? 'bg-[#d4a968]/20' : 'bg-yellow-500/20 text-yellow-400'
+                    activeTab === 'deliverables' ? 'bg-pink-500/20' : 'bg-yellow-500/20 text-yellow-400'
                   }`}>
                     {pendingDeliverables.length}
                   </span>
@@ -195,7 +195,7 @@ const CreatorMyWork = () => {
                 onClick={() => setActiveTab('history')}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-all ${
                   activeTab === 'history'
-                    ? 'border-[#d4a968] text-[#d4a968]'
+                    ? 'border-pink-400 text-pink-400'
                     : 'border-transparent text-gray-400 hover:text-white'
                 }`}
               >
@@ -218,7 +218,7 @@ const CreatorMyWork = () => {
                   <p className="text-gray-400 mb-4">No tenés postulaciones activas</p>
                   <Link
                     to="/ugc/campaigns"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] transition-colors"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:opacity-90 transition-colors"
                   >
                     <Search className="w-4 h-4" />
                     Explorar campañas
