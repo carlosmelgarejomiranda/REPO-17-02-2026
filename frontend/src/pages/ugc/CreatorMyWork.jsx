@@ -393,7 +393,7 @@ const CreatorMyWork = () => {
                   <p className="text-gray-400 mb-4">No tenés entregas activas</p>
                   <Link
                     to="/ugc/campaigns"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black rounded-lg font-medium hover:bg-[#c49958] transition-colors"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:opacity-90 transition-colors"
                   >
                     <Search className="w-4 h-4" />
                     Explorar campañas
