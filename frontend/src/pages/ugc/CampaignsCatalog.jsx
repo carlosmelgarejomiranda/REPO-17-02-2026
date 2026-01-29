@@ -398,7 +398,7 @@ const CampaignsCatalog = () => {
                   <Gift className="w-5 h-5 text-[#d4a968]" />
                   <span className="text-[#d4a968] font-medium">¿Qué recibirás?</span>
                 </div>
-                <p className="text-gray-300 text-sm">{selectedCampaign.canje?.description || 'Ver detalles con la marca'}</p>
+                <p className="text-gray-300 text-sm whitespace-pre-line">{selectedCampaign.canje?.description || 'Ver detalles con la marca'}</p>
               </div>
 
               {/* Application Note */}
@@ -410,7 +410,7 @@ const CampaignsCatalog = () => {
                   value={applicationNote}
                   onChange={(e) => setApplicationNote(e.target.value)}
                   placeholder="Contale a la marca por qué te interesa y qué podés aportar..."
-                  rows={4}
+                  rows={3}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#d4a968] focus:outline-none resize-none"
                 />
               </div>
