@@ -353,7 +353,7 @@ const CreatorDashboard = () => {
                   {socialNetworks.map((sn, idx) => (
                     <div
                       key={idx}
-                      className="p-3 bg-white/5 border border-white/10 rounded-xl"
+                      className="p-3 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/30 transition-all"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -370,10 +370,10 @@ const CreatorDashboard = () => {
                             <p className="text-sm font-medium flex items-center gap-1">
                               @{sn.username}
                               {sn.verified_by_ai && (
-                                <BadgeCheck className="w-3.5 h-3.5 text-green-400" />
+                                <BadgeCheck className="w-3.5 h-3.5 text-[#d4a968]" />
                               )}
                             </p>
-                            <p className={`text-xs ${sn.verified_by_ai ? 'text-green-400' : 'text-gray-400'}`}>
+                            <p className={`text-xs ${sn.verified_by_ai ? 'text-[#d4a968]' : 'text-gray-400'}`}>
                               {sn.followers ? `${sn.followers.toLocaleString()} seguidores` : 'Sin verificar'}
                             </p>
                           </div>
@@ -391,8 +391,8 @@ const CreatorDashboard = () => {
                   ))}
                 </div>
               ) : (
-                <div className="p-4 bg-white/5 border border-dashed border-white/20 rounded-xl text-center">
-                  <Plus className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                <div className="p-4 bg-white/5 border border-dashed border-[#d4a968]/30 rounded-xl text-center">
+                  <Plus className="w-8 h-8 text-[#d4a968]/50 mx-auto mb-2" />
                   <p className="text-gray-400 text-sm mb-2">Agregá tus redes</p>
                   <Link
                     to="/ugc/creator/profile"
