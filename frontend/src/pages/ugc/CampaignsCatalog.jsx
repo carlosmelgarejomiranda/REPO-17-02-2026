@@ -311,8 +311,8 @@ const CampaignsCatalog = () => {
                   {/* Stats */}
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="text-center p-2 bg-white/5 rounded-lg">
-                      <p className="text-xs text-gray-500">Canje</p>
-                      <p className="text-[#d4a968] font-medium text-sm">{formatPrice(campaign.canje?.value || 0)}</p>
+                      <p className="text-xs text-gray-500">Valor del canje</p>
+                      <p className="text-[#d4a968] font-medium text-sm">~{formatPrice(campaign.canje?.value || 0)}</p>
                     </div>
                     {/* Show slots only if 1 or 2 remaining */}
                     {campaign.slots_available !== undefined && campaign.slots_available <= 2 && campaign.slots_available > 0 ? (
