@@ -40,6 +40,7 @@ const LevelBadge = ({ level }) => {
 
 const AdminCreatorsTab = ({
   creators,
+  creatorsTotal,
   creatorFilter,
   setCreatorFilter,
   fetchCreators,
