@@ -191,15 +191,24 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
     }
   };
 
-  const fetchCreators = async () => {
+  const fetchCreators = async (loadMore = false) => {
     try {
+      if (loadMore) {
+        setLoadingMoreCreators(true);
+      }
+      
       const token = localStorage.getItem('auth_token');
       const headers = {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       };
       
+      const pageToFetch = loadMore ? creatorsPage + 1 : 0;
+      const CREATORS_PER_PAGE = 100;
+      
       let query = new URLSearchParams();
+      query.append('skip', pageToFetch * CREATORS_PER_PAGE);
+      query.append('limit', CREATORS_PER_PAGE);
       if (creatorFilter.level) query.append('level', creatorFilter.level);
       if (creatorFilter.city) query.append('city', creatorFilter.city);
       
@@ -208,12 +217,24 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
       });
       if (res.ok) {
         const data = await res.json();
-        setCreators(data.creators || []);
-        setCreatorsTotal(data.total || data.creators?.length || 0);
+        if (loadMore) {
+          setCreators(prev => [...prev, ...(data.creators || [])]);
+          setCreatorsPage(pageToFetch);
+        } else {
+          setCreators(data.creators || []);
+          setCreatorsPage(0);
+        }
+        setCreatorsTotal(data.total || 0);
       }
     } catch (err) {
       console.error('Error fetching creators:', err);
+    } finally {
+      setLoadingMoreCreators(false);
     }
+  };
+  
+  const loadMoreCreators = () => {
+    fetchCreators(true);
   };
 
   const fetchBrands = async () => {
