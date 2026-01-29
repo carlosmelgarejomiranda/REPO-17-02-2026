@@ -290,11 +290,11 @@ const CreatorApplications = () => {
                       {app.status === 'confirmed' && (
                         <>
                           <Link
-                            to="/ugc/creator/workspace"
+                            to="/ugc/creator/my-work"
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#d4a968] text-black text-[10px] sm:text-xs font-medium"
                             data-testid={`go-to-workspace-${app.id}`}
                           >
-                            Ir al Workspace
+                            Ver Entregas
                             <ChevronRight className="w-3 h-3" />
                           </Link>
                           <button
