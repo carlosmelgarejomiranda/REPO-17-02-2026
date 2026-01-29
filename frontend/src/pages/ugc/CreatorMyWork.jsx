@@ -143,7 +143,7 @@ const CreatorMyWork = () => {
         <div className="px-4 md:px-6 py-4 md:py-6 border-b border-white/10">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-2xl md:text-3xl font-light">
-              Mi <span className="text-[#d4a968] italic">Trabajo</span>
+              Mi <span className="italic bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Trabajo</span>
             </h1>
             <p className="text-gray-400 text-sm mt-1">Gestiona tus postulaciones y entregas</p>
           </div>
@@ -157,7 +157,7 @@ const CreatorMyWork = () => {
                 onClick={() => setActiveTab('applications')}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-all ${
                   activeTab === 'applications'
-                    ? 'border-[#d4a968] text-[#d4a968]'
+                    ? 'border-pink-400 text-pink-400'
                     : 'border-transparent text-gray-400 hover:text-white'
                 }`}
               >
@@ -165,7 +165,7 @@ const CreatorMyWork = () => {
                 Postulaciones
                 {applications.length > 0 && (
                   <span className={`px-2 py-0.5 rounded-full text-xs ${
-                    activeTab === 'applications' ? 'bg-[#d4a968]/20' : 'bg-white/10'
+                    activeTab === 'applications' ? 'bg-pink-500/20' : 'bg-white/10'
                   }`}>
                     {applications.length}
                   </span>
@@ -176,7 +176,7 @@ const CreatorMyWork = () => {
                 onClick={() => setActiveTab('deliverables')}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-all ${
                   activeTab === 'deliverables'
-                    ? 'border-[#d4a968] text-[#d4a968]'
+                    ? 'border-pink-400 text-pink-400'
                     : 'border-transparent text-gray-400 hover:text-white'
                 }`}
               >
