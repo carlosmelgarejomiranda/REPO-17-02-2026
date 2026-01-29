@@ -211,7 +211,7 @@ const CreatorDeliverables = () => {
                 : 'No tenés entregas completadas'}
             </p>
             <Link
-              to="/ugc/creator/campaigns"
+              to="/ugc/campaigns"
               className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black rounded-lg hover:bg-[#e5ba79] text-sm font-medium"
             >
               Ver campañas disponibles
