@@ -419,13 +419,22 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
               <div 
                 key={plan.id}
                 className={`relative flex flex-col p-5 rounded-xl transition-all ${
-                  plan.highlight 
-                    ? 'bg-gradient-to-b from-[#d4a968]/10 to-[#121212] border-2 border-[#d4a968] shadow-lg shadow-[#d4a968]/10' 
-                    : 'bg-[#121212] border border-white/5 hover:border-white/20'
+                  plan.isPro
+                    ? 'bg-gradient-to-b from-pink-500/10 to-[#121212] border-2 border-pink-500 shadow-lg shadow-pink-500/10' 
+                    : plan.highlight 
+                      ? 'bg-gradient-to-b from-[#d4a968]/10 to-[#121212] border-2 border-[#d4a968] shadow-lg shadow-[#d4a968]/10' 
+                      : 'bg-[#121212] border border-white/5 hover:border-white/20'
                 }`}
                 data-testid={`plan-${plan.id}`}
               >
-                {plan.highlight && (
+                {plan.isPro && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                      ⭐ Pro+
+                    </span>
+                  </div>
+                )}
+                {plan.highlight && !plan.isPro && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <span className="bg-[#d4a968] text-black text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
                       ⭐ Recomendado
