@@ -246,15 +246,15 @@ const CreatorDashboard = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#d4a968] flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-black" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="font-medium text-white group-hover:text-[#d4a968] transition-colors">Explorar nuevas campañas</p>
+                  <p className="font-medium text-white group-hover:text-pink-400 transition-colors">Explorar nuevas campañas</p>
                   <p className="text-sm text-gray-400">Encontrá oportunidades para colaborar con marcas</p>
                 </div>
               </div>
-              <ArrowRight className="w-5 h-5 text-[#d4a968] group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 text-pink-400 group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>
 
@@ -264,7 +264,7 @@ const CreatorDashboard = () => {
             <div className="md:col-span-2 order-1">
               <div className="flex items-center justify-between mb-3 md:mb-4">
                 <h2 className="text-base md:text-lg font-medium">Entregas Activas</h2>
-                <Link to="/ugc/creator/my-work" className="text-[#d4a968] text-xs md:text-sm hover:underline flex items-center gap-1">
+                <Link to="/ugc/creator/my-work" className="text-pink-400 text-xs md:text-sm hover:underline flex items-center gap-1">
                   Ver todas <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -275,7 +275,7 @@ const CreatorDashboard = () => {
                   <p className="text-gray-400 text-sm mb-3">No tenés entregas activas</p>
                   <Link
                     to="/ugc/campaigns"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4a968] text-black text-sm rounded-lg hover:bg-[#c49958]"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm rounded-lg hover:opacity-90"
                   >
                     Explorar campañas <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -286,7 +286,7 @@ const CreatorDashboard = () => {
                     <Link
                       key={item.deliverable.id}
                       to={`/ugc/creator/deliverable/${item.deliverable.id}`}
-                      className="block p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-[#d4a968]/50 transition-all"
+                      className="block p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl hover:border-pink-500/50 transition-all"
                     >
                       <div className="flex items-start gap-3">
                         {/* Platform Icon */}
