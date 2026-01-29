@@ -144,23 +144,25 @@ async def extract_metrics_from_screenshot(screenshot_url: str, platform: str) ->
         
         platform_hints = {
             "instagram": """
-            - "Reproducciones" or "Plays" = views
-            - "Alcance" or "Reach" = reach  
+            - "Reproducciones" or "Plays" or "Vistas" = views
+            - "Alcance" or "Reach" or "Cuentas alcanzadas" = reach  
             - "Me gusta" or "Likes" = likes
             - "Comentarios" or "Comments" = comments
-            - "Compartidos" or "Shares" = shares
-            - "Guardados" or "Saves" = saves
+            - "Compartidos" or "Shares" or "Veces compartido" = shares
+            - "Guardados" or "Saves" or "Veces guardado" = saves
             - "Tiempo de visualización promedio" or "Avg watch time" = watch_time
             - "Duración" or "Duration" = video_length
             """,
             "tiktok": """
-            - "Visualizaciones" or "Views" = views
+            - "Visualizaciones" or "Views" or "Vistas" = views
+            - "Espectadores" or "Viewers" or "Total de espectadores" or "Espectadores totales" = reach (THIS IS THE EQUIVALENT OF INSTAGRAM'S REACH - unique people who saw the content)
             - "Me gusta" or "Likes" = likes
             - "Comentarios" or "Comments" = comments
-            - "Compartidos" or "Shares" = shares
-            - "Guardados" or "Saves" = saves (if visible)
+            - "Compartidos" or "Shares" or "Veces compartido" = shares
+            - "Guardados" or "Saves" or "Favoritos" = saves (if visible)
             - "Tiempo de reproducción promedio" or "Avg watch time" = watch_time
-            - "Duración del video" = video_length
+            - "Duración del video" or "Video length" = video_length
+            - "Tiempo total de reproducción" or "Total play time" = total_play_time (optional)
             """
         }
         
