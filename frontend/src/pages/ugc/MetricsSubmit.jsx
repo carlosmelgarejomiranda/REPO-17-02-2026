@@ -155,36 +155,83 @@ const SuccessScreen = ({ onContinue, extractedData }) => {
           La IA procesó exitosamente tus screenshots
         </p>
         
-        {/* Extracted summary */}
-        {extractedData && (
+        {/* Extracted summary - Enhanced display */}
+        {extractedData && Object.keys(extractedData).length > 0 && (
           <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-left">
-            <p className="text-sm text-gray-400 mb-3">Datos extraídos:</p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm text-gray-400">Datos extraídos por IA:</p>
+              <span className="text-[10px] px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full">
+                Verificable
+              </span>
+            </div>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              {extractedData.views && (
-                <div className="flex items-center gap-2">
+              {extractedData.views > 0 && (
+                <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
                   <Eye className="w-4 h-4 text-blue-400" />
-                  <span className="text-white">{extractedData.views?.toLocaleString()} views</span>
+                  <div>
+                    <span className="text-white font-medium">{extractedData.views?.toLocaleString()}</span>
+                    <span className="text-gray-500 text-xs ml-1">views</span>
+                  </div>
                 </div>
               )}
-              {extractedData.likes && (
-                <div className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-red-400" />
-                  <span className="text-white">{extractedData.likes?.toLocaleString()} likes</span>
-                </div>
-              )}
-              {extractedData.reach && (
-                <div className="flex items-center gap-2">
+              {extractedData.reach > 0 && (
+                <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
                   <Users className="w-4 h-4 text-green-400" />
-                  <span className="text-white">{extractedData.reach?.toLocaleString()} reach</span>
+                  <div>
+                    <span className="text-white font-medium">{extractedData.reach?.toLocaleString()}</span>
+                    <span className="text-gray-500 text-xs ml-1">alcance</span>
+                  </div>
                 </div>
               )}
-              {extractedData.comments && (
-                <div className="flex items-center gap-2">
+              {extractedData.likes > 0 && (
+                <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
+                  <Heart className="w-4 h-4 text-red-400" />
+                  <div>
+                    <span className="text-white font-medium">{extractedData.likes?.toLocaleString()}</span>
+                    <span className="text-gray-500 text-xs ml-1">likes</span>
+                  </div>
+                </div>
+              )}
+              {extractedData.comments > 0 && (
+                <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
                   <MessageCircle className="w-4 h-4 text-cyan-400" />
-                  <span className="text-white">{extractedData.comments?.toLocaleString()} comments</span>
+                  <div>
+                    <span className="text-white font-medium">{extractedData.comments?.toLocaleString()}</span>
+                    <span className="text-gray-500 text-xs ml-1">comments</span>
+                  </div>
+                </div>
+              )}
+              {extractedData.shares > 0 && (
+                <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
+                  <Share2 className="w-4 h-4 text-purple-400" />
+                  <div>
+                    <span className="text-white font-medium">{extractedData.shares?.toLocaleString()}</span>
+                    <span className="text-gray-500 text-xs ml-1">shares</span>
+                  </div>
+                </div>
+              )}
+              {extractedData.saves > 0 && (
+                <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
+                  <Bookmark className="w-4 h-4 text-yellow-400" />
+                  <div>
+                    <span className="text-white font-medium">{extractedData.saves?.toLocaleString()}</span>
+                    <span className="text-gray-500 text-xs ml-1">saves</span>
+                  </div>
                 </div>
               )}
             </div>
+            <p className="text-[10px] text-gray-500 mt-3 text-center">
+              Estos datos fueron extraídos automáticamente de tus screenshots y pueden ser verificados por el administrador
+            </p>
+          </div>
+        )}
+        
+        {/* No data extracted notice */}
+        {(!extractedData || Object.keys(extractedData).length === 0) && (
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-6 text-left">
+            <p className="text-sm text-yellow-400">
+              No se pudieron extraer métricas automáticamente. Los screenshots fueron guardados para revisión manual.
+            </p>
           </div>
         )}
         
@@ -193,7 +240,7 @@ const SuccessScreen = ({ onContinue, extractedData }) => {
           onClick={onContinue}
           className="w-full py-4 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors"
         >
-          Continuar al Workspace
+          Continuar
         </button>
       </div>
     </div>
