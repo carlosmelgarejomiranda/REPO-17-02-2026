@@ -327,6 +327,7 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
       {activeSubTab === 'creators' && (
         <AdminCreatorsTab
           creators={creators}
+          creatorsTotal={creatorsTotal}
           creatorFilter={creatorFilter}
           setCreatorFilter={setCreatorFilter}
           fetchCreators={fetchCreators}
