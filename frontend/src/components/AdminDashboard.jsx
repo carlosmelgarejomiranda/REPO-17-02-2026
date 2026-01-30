@@ -697,7 +697,7 @@ export const AdminDashboard = ({ user }) => {
     { id: 'studio', label: 'Studio', icon: Camera, color: 'from-amber-500 to-orange-500', stats: [`${stats.reservations.total} reservas`, stats.reservations.pending > 0 ? `${stats.reservations.pending} pendientes` : null], permission: 'reservations', subtabs: [
       { id: 'reservations', label: 'Reservas', icon: Calendar }
     ]},
-    { id: 'brands', label: 'Marcas Aliadas', icon: Building, color: 'from-emerald-500 to-teal-500', stats: [`${stats.brands.total} consultas`, stats.brands.new > 0 ? `${stats.brands.new} nuevas` : null], permission: 'brands', subtabs: [
+    { id: 'brands', label: 'Consultas de Marcas', icon: Building, color: 'from-emerald-500 to-teal-500', stats: [`${stats.brands.total} consultas`, stats.brands.new > 0 ? `${stats.brands.new} nuevas` : null], permission: 'brands', subtabs: [
       { id: 'inquiries', label: 'Consultas', icon: Mail }
     ]},
     { id: 'config', label: 'Configuración', icon: Settings, color: 'from-gray-500 to-gray-600', stats: ['Sistema', 'Usuarios'], permission: 'settings', subtabs: [
