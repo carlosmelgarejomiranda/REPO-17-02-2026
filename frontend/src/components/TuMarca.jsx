@@ -462,35 +462,13 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
     setSubmitting(true);
     setError(null);
 
-    try {
-      const response = await fetch(`${API_URL}/api/contact/brands`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          product_type: productType,
-          selected_plan: selectedPlan?.name || formData.interest,
-          questionnaire: {
-            situacion: q1Situacion,
-            resultado: q2Resultado,
-            obstaculo: q3Obstaculo,
-            prioridad: q4Prioridad,
-            inversion: q5Inversion,
-            adicional: q6Adicional
-          }
-        })
-      });
-
-      if (response.ok) {
-        trackBrandInquiry(formData.interest || 'general');
-        
-        // Build WhatsApp message with form data and questionnaire
-        const planName = selectedPlan?.name || formData.interest || 'No especificado';
-        const productTypeLabel = productType === 'percheros' ? 'Percheros' : 'Exhibidores';
-        
-        const formatList = (arr) => arr.length > 0 ? arr.map(item => `  • ${item}`).join('\n') : '  • No especificado';
-        
-        const whatsappMessage = `*Nueva consulta - Tu Marca en Avenue*
+    // Build WhatsApp message first (always works)
+    const planName = selectedPlan?.name || formData.interest || 'No especificado';
+    const productTypeLabel = productType === 'percheros' ? 'Percheros' : 'Exhibidores';
+    
+    const formatList = (arr) => arr.length > 0 ? arr.map(item => `  • ${item}`).join('\n') : '  • No especificado';
+    
+    const whatsappMessage = `*Nueva consulta - Tu Marca en Avenue*
 
 *Datos del contacto:*
 • Nombre: ${formData.contact_name || 'No especificado'}
@@ -527,20 +505,41 @@ ${q6Adicional || 'Sin información adicional'}
 *Mensaje adicional:*
 ${formData.message || 'Sin mensaje adicional'}`;
 
-        // Encode and open WhatsApp
-        const encodedMessage = encodeURIComponent(whatsappMessage);
-        window.open(`https://wa.me/595976691520?text=${encodedMessage}`, '_blank');
-        
-        setSubmitted(true);
-      } else {
-        const data = await response.json();
-        setError(data.detail || 'Error al enviar el mensaje');
-      }
+    // Open WhatsApp IMMEDIATELY (this always works)
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    window.open(`https://wa.me/595976691520?text=${encodedMessage}`, '_blank');
+    
+    // Try to save to database in background (non-blocking)
+    try {
+      fetch(`${API_URL}/api/contact/brands`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          product_type: productType,
+          selected_plan: selectedPlan?.name || formData.interest,
+          questionnaire: {
+            situacion: q1Situacion,
+            resultado: q2Resultado,
+            obstaculo: q3Obstaculo,
+            prioridad: q4Prioridad,
+            inversion: q5Inversion,
+            adicional: q6Adicional
+          }
+        })
+      }).then(() => {
+        trackBrandInquiry(formData.interest || 'general');
+      }).catch(() => {
+        // Silent fail - WhatsApp already opened
+        console.log('Could not save to database, but WhatsApp was opened');
+      });
     } catch (err) {
-      setError('Error de conexión. Por favor intenta de nuevo.');
-    } finally {
-      setSubmitting(false);
+      // Silent fail - WhatsApp already opened
+      console.log('Could not save to database, but WhatsApp was opened');
     }
+    
+    setSubmitted(true);
+    setSubmitting(false);
   };
 
   const updateField = (field, value) => {
