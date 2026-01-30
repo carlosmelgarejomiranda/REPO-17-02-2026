@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { 
   ArrowRight, Building2, Users, BarChart3, CheckCircle, Sparkles,
   ArrowLeft, Heart, TrendingUp, MessageCircle, Shield,
-  Package, Zap, FileCheck, Check, Star, Eye, Clock, MessageSquare, Truck
+  Package, Zap, FileCheck, Check, Star, Eye, Clock, MessageSquare, Truck, Loader2
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
