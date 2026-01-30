@@ -1222,60 +1222,6 @@ ${formData.message || 'Sin mensaje adicional'}`;
               </div>
             </div>
           )}
-                          <option value="percheros">Percheros (ropa, indumentaria)</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs mb-2 text-white/40">Plan de interés *</label>
-                        <select
-                          required
-                          value={formData.interest}
-                          onChange={(e) => updateField('interest', e.target.value)}
-                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
-                        >
-                          <option value="">Seleccionar</option>
-                          <option value="starter">Showroom Starter</option>
-                          <option value="standard">Showroom Standard ⭐</option>
-                          <option value="pro">Showroom Pro+</option>
-                          <option value="consulta">Quiero que me asesoren</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs mb-2 text-white/40">Mensaje adicional (opcional)</label>
-                      <textarea
-                        rows={3}
-                        value={formData.message}
-                        onChange={(e) => updateField('message', e.target.value)}
-                        className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
-                        placeholder="Algo más que quieras agregar..."
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full py-3.5 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium text-sm rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      data-testid="submit-form"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Enviando...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          <span>Enviar y contactar por WhatsApp</span>
-                        </>
-                      )}
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </section>
 
