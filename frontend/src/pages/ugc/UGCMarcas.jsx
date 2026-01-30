@@ -330,11 +330,9 @@ ${formData.message || 'Sin mensaje adicional'}`;
                     </ul>
                   </div>
 
-                  {/* CTA - All buttons lead to WhatsApp */}
-                  <a
-                    href="https://wa.me/595976691520?text=Hola! Me interesa el plan de UGC para marcas"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  {/* CTA - Elegir Plan */}
+                  <button
+                    onClick={() => handlePlanSelect(pkg)}
                     className={`block w-full text-center py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg mt-auto hover:scale-105 ${
                       isPro
                         ? 'lava-lamp-btn-gold text-black'
@@ -343,8 +341,8 @@ ${formData.message || 'Sin mensaje adicional'}`;
                           : 'border border-white/20 text-white hover:bg-white/5'
                     }`}
                   >
-                    Contactar
-                  </a>
+                    Elegir Plan
+                  </button>
                 </div>
               );
             }))
