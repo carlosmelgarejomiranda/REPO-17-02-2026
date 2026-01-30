@@ -239,7 +239,7 @@ const CampaignApplicationsPage = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+              className="px-3 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-sm [&>option]:bg-[#1a1a1a] [&>option]:text-white"
             >
               <option value="">Todos los estados</option>
               <option value="applied">Pendientes</option>
@@ -252,7 +252,7 @@ const CampaignApplicationsPage = () => {
           <select
             value={hasAiVerified}
             onChange={(e) => setHasAiVerified(e.target.value)}
-            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+            className="px-3 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-sm [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Todas las cuentas</option>
             <option value="true">Con redes verificadas IA</option>
@@ -260,7 +260,7 @@ const CampaignApplicationsPage = () => {
           <select
             value={sortBy}
             onChange={(e) => { setSortBy(e.target.value); setSortOrder('desc'); }}
-            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+            className="px-3 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-sm [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Ordenar por...</option>
             <option value="ig_followers">Seguidores IG</option>
@@ -271,7 +271,7 @@ const CampaignApplicationsPage = () => {
           {sortBy && (
             <button
               onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-              className="px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+              className="px-2 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-sm"
             >
               {sortOrder === 'desc' ? '↓ Mayor' : '↑ Menor'}
             </button>
