@@ -968,8 +968,8 @@ ${formData.message || 'Sin mensaje adicional'}`;
 
       {/* ============== FORMULARIO ============== */}
       <section id="contact-form" className="py-16 px-6 border-t border-white/5">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-8">
             <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Contacto</span>
             <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
               Hablemos de tu <span className="italic text-[#d4a968]">marca</span>
@@ -978,162 +978,101 @@ ${formData.message || 'Sin mensaje adicional'}`;
           </div>
           
           {/* Progress Indicator */}
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <div className={`w-3 h-3 rounded-full ${formStep >= 1 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
-            <div className={`w-16 h-0.5 ${formStep >= 2 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
-            <div className={`w-3 h-3 rounded-full ${formStep >= 2 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className={`w-2.5 h-2.5 rounded-full ${formStep >= 1 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+            <div className={`w-12 h-0.5 ${formStep >= 2 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+            <div className={`w-2.5 h-2.5 rounded-full ${formStep >= 2 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
           </div>
 
           {formStep === 1 ? (
-            /* STEP 1: Questionnaire */
-            <div className="space-y-8">
+            /* STEP 1: Questionnaire - Compact Version */
+            <div className="space-y-3">
               {/* Selected Plan Preview */}
               {selectedPlan && (
-                <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl p-4 flex items-center justify-between">
+                <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl p-3 flex items-center justify-between mb-4">
                   <div>
-                    <span className="text-white/70 text-sm">Plan seleccionado: </span>
+                    <span className="text-white/70 text-sm">Plan: </span>
                     <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
-                    <span className="text-white/50 text-sm ml-2">
-                      ({formatPrice(selectedPlan.price)} Gs/mes)
-                    </span>
+                    <span className="text-white/50 text-xs ml-2">({formatPrice(selectedPlan.price)} Gs/mes)</span>
                   </div>
-                  <button onClick={() => setSelectedPlan(null)} className="text-white/50 hover:text-white text-sm underline">
+                  <button onClick={() => setSelectedPlan(null)} className="text-white/40 hover:text-white text-xs underline">
                     Cambiar
                   </button>
                 </div>
               )}
 
               {/* Q1: Situación actual */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h4 className="text-white font-medium mb-2">1) ¿Cuál describe mejor tu situación actual?</h4>
-                <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
-                <div className="space-y-2">
-                  {opcionesSituacion.map((opcion, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => toggleMultiSelect(opcion, q1Situacion, setQ1Situacion, 3)}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
-                        q1Situacion.includes(opcion)
-                          ? 'bg-[#d4a968] text-black'
-                          : 'bg-white/5 text-white/80 hover:bg-white/10'
-                      } ${q1Situacion.length >= 3 && !q1Situacion.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {opcion}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <MultiSelectDropdown
+                question="1) ¿Cuál describe mejor tu situación actual?"
+                subtitle="Seleccioná hasta 3 opciones"
+                options={opcionesSituacion}
+                selected={q1Situacion}
+                setSelected={setQ1Situacion}
+                max={3}
+              />
 
               {/* Q2: Resultado en 90 días */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h4 className="text-white font-medium mb-2">2) ¿Qué querés lograr en los próximos 90 días?</h4>
-                <p className="text-white/50 text-sm mb-4">Seleccioná hasta 2 opciones</p>
-                <div className="space-y-2">
-                  {opcionesResultado.map((opcion, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => toggleMultiSelect(opcion, q2Resultado, setQ2Resultado, 2)}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
-                        q2Resultado.includes(opcion)
-                          ? 'bg-[#d4a968] text-black'
-                          : 'bg-white/5 text-white/80 hover:bg-white/10'
-                      } ${q2Resultado.length >= 2 && !q2Resultado.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {opcion}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <MultiSelectDropdown
+                question="2) ¿Qué querés lograr en los próximos 90 días?"
+                subtitle="Seleccioná hasta 2 opciones"
+                options={opcionesResultado}
+                selected={q2Resultado}
+                setSelected={setQ2Resultado}
+                max={2}
+              />
 
               {/* Q3: Obstáculo */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h4 className="text-white font-medium mb-2">3) ¿Qué obstáculo te frena hoy?</h4>
-                <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
-                <div className="space-y-2">
-                  {opcionesObstaculo.map((opcion, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => toggleMultiSelect(opcion, q3Obstaculo, setQ3Obstaculo, 3)}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
-                        q3Obstaculo.includes(opcion)
-                          ? 'bg-[#d4a968] text-black'
-                          : 'bg-white/5 text-white/80 hover:bg-white/10'
-                      } ${q3Obstaculo.length >= 3 && !q3Obstaculo.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {opcion}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <MultiSelectDropdown
+                question="3) ¿Qué obstáculo te frena hoy?"
+                subtitle="Seleccioná hasta 3 opciones"
+                options={opcionesObstaculo}
+                selected={q3Obstaculo}
+                setSelected={setQ3Obstaculo}
+                max={3}
+              />
 
               {/* Q4: Prioridad en AVENUE */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h4 className="text-white font-medium mb-2">4) Dentro de AVENUE (con inventario y delivery incluidos), ¿qué es lo que más te interesa priorizar?</h4>
-                <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
-                <div className="space-y-2">
-                  {opcionesPrioridad.map((opcion, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => toggleMultiSelect(opcion, q4Prioridad, setQ4Prioridad, 3)}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
-                        q4Prioridad.includes(opcion)
-                          ? 'bg-[#d4a968] text-black'
-                          : 'bg-white/5 text-white/80 hover:bg-white/10'
-                      } ${q4Prioridad.length >= 3 && !q4Prioridad.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      {opcion}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <MultiSelectDropdown
+                question="4) ¿Qué te interesa priorizar en AVENUE?"
+                subtitle="Seleccioná hasta 3 opciones"
+                options={opcionesPrioridad}
+                selected={q4Prioridad}
+                setSelected={setQ4Prioridad}
+                max={3}
+              />
 
               {/* Q5: Inversión */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h4 className="text-white font-medium mb-2">5) ¿Qué rango de inversión mensual te resulta razonable para una alianza de posicionamiento/visibilidad?</h4>
-                <p className="text-white/50 text-sm mb-4">Seleccioná una opción</p>
-                <div className="space-y-2">
-                  {opcionesInversion.map((opcion, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setQ5Inversion(opcion)}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
-                        q5Inversion === opcion
-                          ? 'bg-[#d4a968] text-black'
-                          : 'bg-white/5 text-white/80 hover:bg-white/10'
-                      }`}
-                    >
-                      {opcion}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <SingleSelectDropdown
+                question="5) ¿Qué inversión mensual te resulta razonable?"
+                subtitle="Seleccioná una opción"
+                options={opcionesInversion}
+                selected={q5Inversion}
+                setSelected={setQ5Inversion}
+              />
 
               {/* Q6: Expectativa + contexto */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h4 className="text-white font-medium mb-2">6) Expectativa principal + contexto</h4>
-                <p className="text-white/50 text-sm mb-4">
-                  ¿Qué esperás principalmente de AVENUE? Contanos si tu prioridad es: posicionamiento/visibilidad, contenido, activación, data/reportes o ventas; y cualquier info relevante: categoría, ticket promedio, stock, links, metas, restricciones.
-                </p>
-                <textarea
-                  value={q6Adicional}
-                  onChange={(e) => setQ6Adicional(e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
-                  placeholder="Contanos más sobre tu marca, objetivos o cualquier detalle relevante..."
-                />
+              <div className="border border-white/10 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 bg-white/5">
+                  <p className="text-white font-medium text-sm">6) Expectativa principal + contexto</p>
+                  <p className="text-white/40 text-xs mt-0.5">¿Qué esperás de AVENUE? Contanos tu prioridad y cualquier info relevante</p>
+                </div>
+                <div className="p-3 border-t border-white/10">
+                  <textarea
+                    value={q6Adicional}
+                    onChange={(e) => setQ6Adicional(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
+                    placeholder="Categoría, ticket promedio, stock, links, metas, restricciones..."
+                  />
+                </div>
               </div>
 
               {/* Next button */}
-              <div className="flex justify-end">
+              <div className="flex justify-end pt-4">
                 <button
                   type="button"
                   onClick={() => setFormStep(2)}
-                  className="px-8 py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors flex items-center gap-2"
+                  className="px-6 py-2.5 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors flex items-center gap-2 text-sm"
                 >
                   Continuar
                   <ArrowRight className="w-4 h-4" />
