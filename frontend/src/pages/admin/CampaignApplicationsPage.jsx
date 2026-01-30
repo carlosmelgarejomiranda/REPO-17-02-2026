@@ -386,9 +386,21 @@ const CampaignApplicationsPage = () => {
                           }`}
                         >
                           <Instagram className="w-3 h-3 flex-shrink-0" />
-                          <span className="truncate max-w-[80px]">@{igUsername}</span>
+                          <span className="truncate max-w-[60px]">@{igUsername}</span>
                           {igVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 flex-shrink-0" />}
                         </a>
+                      ) : (
+                        <span className="text-[10px] text-gray-600">—</span>
+                      )}
+                    </div>
+                    
+                    {/* IG Followers */}
+                    <div className="text-center">
+                      {igFollowers > 0 ? (
+                        <span className={`text-xs font-medium ${igVerified ? 'text-pink-400' : 'text-gray-400'}`}>
+                          {formatNumber(igFollowers)}
+                          {igVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 inline ml-1" />}
+                        </span>
                       ) : (
                         <span className="text-[10px] text-gray-600">—</span>
                       )}
@@ -408,9 +420,21 @@ const CampaignApplicationsPage = () => {
                           }`}
                         >
                           <Music2 className="w-3 h-3 flex-shrink-0" />
-                          <span className="truncate max-w-[80px]">@{ttUsername}</span>
+                          <span className="truncate max-w-[60px]">@{ttUsername}</span>
                           {ttVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 flex-shrink-0" />}
                         </a>
+                      ) : (
+                        <span className="text-[10px] text-gray-600">—</span>
+                      )}
+                    </div>
+                    
+                    {/* TT Followers */}
+                    <div className="text-center">
+                      {ttFollowers > 0 ? (
+                        <span className={`text-xs font-medium ${ttVerified ? 'text-cyan-400' : 'text-gray-400'}`}>
+                          {formatNumber(ttFollowers)}
+                          {ttVerified && <BadgeCheck className="w-2.5 h-2.5 text-green-400 inline ml-1" />}
+                        </span>
                       ) : (
                         <span className="text-[10px] text-gray-600">—</span>
                       )}
