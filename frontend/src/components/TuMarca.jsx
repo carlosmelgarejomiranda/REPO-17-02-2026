@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { getApiUrl } from '../utils/api';
 import { 
-  ArrowRight, Check, Store, Camera, Users, Star, Phone, Mail, Building, Send,
+  ArrowRight, ArrowLeft, Check, Store, Camera, Users, Star, Phone, Mail, Building, Send,
   ShoppingBag, Sparkles, Image, Video, BarChart3, Globe, MapPin, Zap,
   MessageSquare, TrendingUp, Package, ChevronRight, Shield, Heart,
-  Truck, ClipboardList, CreditCard, Calendar, FileText, Handshake
+  Truck, ClipboardList, CreditCard, Calendar, FileText, Handshake, Loader2
 } from 'lucide-react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
