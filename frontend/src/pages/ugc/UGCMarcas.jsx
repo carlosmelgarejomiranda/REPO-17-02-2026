@@ -260,7 +260,8 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                   </Link>
                 </div>
               );
-            })}
+            })
+            )}
           </div>
 
           {/* Delivery Note */}
