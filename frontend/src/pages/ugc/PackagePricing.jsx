@@ -185,20 +185,22 @@ const PackagePricing = () => {
         {/* Packages Grid - 4 columns */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {standardPackages.map((pkg, idx) => {
-            const isPopular = pkg.type === 'standard';
+            const isPro = pkg.type === 'pro';
             const hasSavings = pkg.promo_price && pkg.promo_price < pkg.price;
             
             return (
               <div 
                 key={pkg.type}
-                className={`relative bg-white/5 border rounded-2xl p-6 transition-all hover:border-[#d4a968]/50 ${
-                  isPopular ? 'border-[#d4a968] ring-1 ring-[#d4a968]/30' : 'border-white/10'
+                className={`relative rounded-2xl p-6 transition-all ${
+                  isPro 
+                    ? 'lava-lamp-card-gold' 
+                    : 'bg-white/5 border border-white/10 hover:border-[#d4a968]/50'
                 }`}
               >
-                {isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-[#d4a968] text-black text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                      <Star className="w-3 h-3" /> MÁS POPULAR
+                {isPro && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                    <span className="lava-lamp-badge-gold text-black text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
+                      <Star className="w-3 h-3" /> RECOMENDADO
                     </span>
                   </div>
                 )}
