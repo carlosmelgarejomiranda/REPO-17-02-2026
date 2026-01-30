@@ -46,6 +46,38 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ---
 
+### Session: 2026-01-30 (Part 4 - Fork Continued)
+
+#### ✅ FEATURE - Cuestionario de Calificación de Leads en `/tu-marca`
+
+**Solicitud del usuario**: Agregar un cuestionario detallado al formulario de contacto de la página Tu Marca en Avenue.
+
+**Solución implementada**:
+
+1. **6 Preguntas del Cuestionario**:
+   - Q1: ¿Cuál describe mejor tu situación actual? (max 3 opciones)
+   - Q2: ¿Qué querés lograr en los próximos 90 días? (max 2 opciones)
+   - Q3: ¿Qué obstáculo te frena hoy? (max 3 opciones)
+   - Q4: Dentro de AVENUE, ¿qué es lo que más te interesa priorizar? (max 3 opciones)
+   - Q5: ¿Qué rango de inversión mensual te resulta razonable? (selección única)
+   - Q6: Expectativa principal + contexto (texto libre)
+
+2. **Flujo de 2 pasos**:
+   - Paso 1: Cuestionario completo con indicador de progreso visual
+   - Paso 2: Datos de contacto (nombre, email, teléfono, marca, tipo de producto, plan)
+
+3. **Integración WhatsApp**:
+   - Al enviar, genera mensaje formateado con todos los datos del cuestionario
+   - Incluye respuestas de las 6 preguntas en formato estructurado
+   - Abre WhatsApp con número `+595976691520`
+
+**Archivo modificado:**
+- `/app/frontend/src/components/TuMarca.jsx`
+
+**Testing**: Visual verification via screenshot ✅
+
+---
+
 #### ✅ VERIFICACIÓN - Admin Panel Sorting y Followers (P1)
 
 **Estado verificado**: La funcionalidad de seguidores y sorting en el panel de Admin está **correctamente implementada**:
