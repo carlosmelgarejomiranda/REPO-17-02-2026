@@ -18,9 +18,48 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
-### Session: 2026-01-30
+### Session: 2026-01-30 (Part 2)
 
-#### ✅ UI/UX - Estilización de Página de Precios UGC para Marcas (P0)
+#### ✅ FEATURE - Columnas de Seguidores y Filtros de Verificación IA
+
+**Solicitud del usuario**: Ver seguidores de Instagram y TikTok de creadores con cuentas verificadas por IA, con filtros y ordenamiento.
+
+**Solución implementada** en 3 páginas:
+
+1. **AdminCreatorsTab.jsx** (Lista de Creators):
+   - Nuevas columnas "Seg. IG" y "Seg. TT" mostrando seguidores verificados
+   - Badge verde ✓ indica cuentas verificadas con IA
+   - Filtro "Con redes verificadas IA" para mostrar solo creadores con verificación
+   - Ordenamiento por seguidores IG, TT, promedio de vistas y alcance
+   - Headers clickeables para ordenar rápidamente
+
+2. **AdminCreatorsReport.jsx** (Reporte de Creadores):
+   - Columnas "Seg. IG" y "Seg. TT" con indicador de verificación
+   - Filtro "Con redes verificadas IA"
+   - Dropdown de ordenamiento por seguidores y métricas
+   - Badge de verificación junto a cada cifra de seguidores
+
+3. **CampaignApplicationsPage.jsx** (Aplicaciones de Campaña):
+   - Columnas "Seg. IG" y "Seg. TT" en la tabla de aplicantes
+   - Filtro local para mostrar solo aplicantes con verificación IA
+   - Ordenamiento por seguidores, vistas y rating
+   - Headers clickeables para ordenar
+
+**Backend actualizado** (`/app/backend/routes/ugc_admin.py`):
+- Nuevo parámetro `has_ai_verified` en endpoint `/creators-report`
+- Campos adicionales: `ig_followers`, `tt_followers`, `ig_verified`, `tt_verified`
+
+**Archivos modificados:**
+- `/app/frontend/src/components/admin/AdminCreatorsTab.jsx`
+- `/app/frontend/src/components/AdminCreatorsReport.jsx`
+- `/app/frontend/src/pages/admin/CampaignApplicationsPage.jsx`
+- `/app/backend/routes/ugc_admin.py`
+
+---
+
+### Session: 2026-01-30 (Part 1)
+
+#### ✅ UI/UX - Estilización de Página de Precios UGC para Marcas
 
 **Solicitud del usuario**: Aplicar efectos visuales dinámicos a la página de precios de paquetes UGC para marcas (`/ugc/brand/packages`).
 
