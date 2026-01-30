@@ -253,9 +253,13 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                   <Link
                     to={pkg.type === 'enterprise' ? '#contacto' : '/ugc/brand/onboarding'}
                     className={`block w-full text-center py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg mt-auto ${
-                      pkg.type === 'standard'
-                        ? 'bg-[#d4a968] text-black hover:bg-[#e8c891]'
-                        : 'border border-white/20 text-white hover:bg-white/5'
+                      isPro
+                        ? 'lava-lamp-btn-gold text-black hover:opacity-90'
+                        : isEnterprise
+                          ? 'lava-lamp-btn text-white hover:opacity-90'
+                          : pkg.type === 'standard'
+                            ? 'bg-[#d4a968] text-black hover:bg-[#e8c891]'
+                            : 'border border-white/20 text-white hover:bg-white/5'
                     }`}
                   >
                     {pkg.type === 'enterprise' ? 'Contactar' : 'Elegir plan'}
