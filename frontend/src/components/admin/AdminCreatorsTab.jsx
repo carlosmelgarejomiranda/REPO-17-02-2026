@@ -140,7 +140,7 @@ const AdminCreatorsTab = ({
           <select
             value={creatorFilter.level}
             onChange={(e) => { setCreatorFilter({...creatorFilter, level: e.target.value}); fetchCreators(); }}
-            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
+            className="px-3 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-xs [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Todos los niveles</option>
             <option value="rookie">Rookie</option>
@@ -151,7 +151,7 @@ const AdminCreatorsTab = ({
           <select
             value={creatorFilter.verified}
             onChange={(e) => { setCreatorFilter({...creatorFilter, verified: e.target.value}); fetchCreators(); }}
-            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
+            className="px-3 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-xs [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Todos</option>
             <option value="true">Verificados</option>
@@ -160,7 +160,7 @@ const AdminCreatorsTab = ({
           <select
             value={creatorFilter.hasAiVerified || ''}
             onChange={(e) => { setCreatorFilter({...creatorFilter, hasAiVerified: e.target.value}); fetchCreators(); }}
-            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
+            className="px-3 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-xs [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Todas las cuentas</option>
             <option value="true">Con redes verificadas IA</option>
@@ -168,7 +168,7 @@ const AdminCreatorsTab = ({
           <select
             value={sortBy}
             onChange={(e) => { setSortBy(e.target.value); setSortOrder('desc'); }}
-            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
+            className="px-3 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-xs [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Ordenar por...</option>
             <option value="ig_followers">Seguidores IG</option>
