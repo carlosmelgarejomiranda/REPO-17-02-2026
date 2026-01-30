@@ -299,4 +299,5 @@ nav[data-studio-nav="true"] {
     background: linear-gradient(90deg, #d4a968, #f5d78e, #c49958, #e8c891, #d4a968);
     background-size: 300% 100%;
     animation: lavaLamp 4s ease infinite;
+    box-shadow: 0 0 20px rgba(212, 169, 104, 0.5), 0 0 40px rgba(245, 215, 142, 0.3);
 }
