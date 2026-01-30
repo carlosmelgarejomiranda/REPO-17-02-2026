@@ -1866,11 +1866,11 @@ async def get_creators_report(
             {"tiktok_handle": {"$regex": search, "$options": "i"}}
         ]
     
-    # Filter for AI verified accounts
+    # Filter for AI verified accounts (check social_accounts with verified_by_ai: true)
     if has_ai_verified:
         query["$or"] = [
-            {"social_verification.instagram": {"$exists": True}},
-            {"social_verification.tiktok": {"$exists": True}}
+            {"social_accounts.instagram.verified_by_ai": True},
+            {"social_accounts.tiktok.verified_by_ai": True}
         ]
     
     # Get all creators
