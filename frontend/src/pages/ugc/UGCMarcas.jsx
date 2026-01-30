@@ -266,34 +266,14 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
     setSubmitting(true);
     setError(null);
 
-    try {
-      const response = await fetch(`${API_URL}/api/contact/brands`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          interest: 'UGC para Marcas',
-          selected_plan: selectedPlan?.name || 'No especificado',
-          questionnaire: {
-            situacion: q1Situacion,
-            resultado: q2Resultado,
-            frustracion: q3Frustracion,
-            solucion: q4Solucion,
-            inversion: q5Inversion,
-            adicional: q6Adicional
-          }
-        })
-      });
-
-      if (response.ok) {
-        // Build WhatsApp message with form data and questionnaire
-        const planName = selectedPlan?.name || 'No especificado';
-        const planDeliveries = selectedPlan?.deliveries || 'N/A';
-        const planPrice = selectedPlan?.price ? formatPrice(selectedPlan.price) : 'A consultar';
-        
-        const formatList = (arr) => arr.length > 0 ? arr.map(item => `  • ${item}`).join('\n') : '  • No especificado';
-        
-        const whatsappMessage = `*Nueva consulta - UGC para Marcas*
+    // Build WhatsApp message first (always works)
+    const planName = selectedPlan?.name || 'No especificado';
+    const planDeliveries = selectedPlan?.deliveries || 'N/A';
+    const planPrice = selectedPlan?.price ? formatPrice(selectedPlan.price) : 'A consultar';
+    
+    const formatList = (arr) => arr.length > 0 ? arr.map(item => `  • ${item}`).join('\n') : '  • No especificado';
+    
+    const whatsappMessage = `*Nueva consulta - UGC para Marcas*
 
 *Datos del contacto:*
 • Nombre: ${formData.name || 'No especificado'}
@@ -331,20 +311,37 @@ ${q6Adicional || 'Sin información adicional'}
 *Mensaje:*
 ${formData.message || 'Sin mensaje adicional'}`;
 
-        // Encode and open WhatsApp
-        const encodedMessage = encodeURIComponent(whatsappMessage);
-        window.open(`https://wa.me/595976691520?text=${encodedMessage}`, '_blank');
-        
-        setSubmitted(true);
-      } else {
-        const data = await response.json();
-        setError(data.detail || 'Error al enviar el mensaje');
-      }
+    // Open WhatsApp IMMEDIATELY (this always works)
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    window.open(`https://wa.me/595976691520?text=${encodedMessage}`, '_blank');
+    
+    // Try to save to database in background (non-blocking)
+    try {
+      fetch(`${API_URL}/api/contact/brands`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          interest: 'UGC para Marcas',
+          selected_plan: selectedPlan?.name || 'No especificado',
+          questionnaire: {
+            situacion: q1Situacion,
+            resultado: q2Resultado,
+            frustracion: q3Frustracion,
+            solucion: q4Solucion,
+            inversion: q5Inversion,
+            adicional: q6Adicional
+          }
+        })
+      }).catch(() => {
+        console.log('Could not save to database, but WhatsApp was opened');
+      });
     } catch (err) {
-      setError('Error de conexión. Por favor intenta de nuevo.');
-    } finally {
-      setSubmitting(false);
+      console.log('Could not save to database, but WhatsApp was opened');
     }
+    
+    setSubmitted(true);
+    setSubmitting(false);
   };
 
   return (
