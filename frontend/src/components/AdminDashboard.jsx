@@ -959,7 +959,7 @@ export const AdminDashboard = ({ user }) => {
             { label: 'Ingresos E-comm', value: `${(stats.orders.revenue / 1000000).toFixed(1)}M`, subvalue: 'Gs este mes', icon: TrendingUp, color: 'text-green-400' },
             { label: 'Reservas Studio', value: stats.reservations.confirmed, subvalue: 'Confirmadas', icon: Calendar, color: 'text-blue-400' },
             { label: 'Campañas UGC', value: stats.ugc.campaigns, subvalue: 'Activas', icon: Sparkles, color: 'text-purple-400' },
-            { label: 'Marcas Aliadas', value: brandInquiries.filter(b => b.status === 'cerrado').length, subvalue: 'Activas', icon: Building, color: 'text-emerald-400' }
+            { label: 'Consultas Cerradas', value: brandInquiries.filter(b => b.status === 'cerrado').length, subvalue: 'Convertidos', icon: Building, color: 'text-emerald-400' }
           ].map((stat, i) => (
             <div key={i} className="p-5 rounded-xl bg-[#111111] border border-white/5">
               <div className="flex items-center gap-2 mb-3">
