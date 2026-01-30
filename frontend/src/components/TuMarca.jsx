@@ -518,6 +518,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                 </button>
               </div>
             ))}
+            </div>
           </div>
 
           {/* Included in ALL plans */}
