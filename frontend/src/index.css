@@ -265,11 +265,11 @@ nav[data-studio-nav="true"] {
 .lava-lamp-card-gold {
     background: linear-gradient(
         135deg,
-        rgba(212, 169, 104, 0.15) 0%,
-        rgba(245, 215, 142, 0.15) 25%,
-        rgba(196, 153, 88, 0.15) 50%,
-        rgba(232, 200, 145, 0.15) 75%,
-        rgba(212, 169, 104, 0.15) 100%
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(212, 169, 104, 0.3) 25%,
+        rgba(0, 0, 0, 0.9) 50%,
+        rgba(245, 215, 142, 0.3) 75%,
+        rgba(0, 0, 0, 0.95) 100%
     );
     background-size: 400% 400%;
     animation: lavaLamp 8s ease infinite, lavaLampGoldBorder 4s ease infinite;
@@ -283,7 +283,7 @@ nav[data-studio-nav="true"] {
     background: linear-gradient(
         to bottom,
         transparent 0%,
-        rgba(18, 18, 18, 0.8) 100%
+        rgba(0, 0, 0, 0.3) 100%
     );
     border-radius: inherit;
     pointer-events: none;
