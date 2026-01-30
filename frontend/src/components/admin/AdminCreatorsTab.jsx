@@ -136,7 +136,7 @@ const AdminCreatorsTab = ({
     <div className="space-y-4" data-testid="admin-creators-tab">
       {/* Filters */}
       <div className="flex flex-wrap gap-3 items-center justify-between">
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <select
             value={creatorFilter.level}
             onChange={(e) => { setCreatorFilter({...creatorFilter, level: e.target.value}); fetchCreators(); }}
@@ -157,6 +157,33 @@ const AdminCreatorsTab = ({
             <option value="true">Verificados</option>
             <option value="false">No verificados</option>
           </select>
+          <select
+            value={creatorFilter.hasAiVerified || ''}
+            onChange={(e) => { setCreatorFilter({...creatorFilter, hasAiVerified: e.target.value}); fetchCreators(); }}
+            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
+          >
+            <option value="">Todas las cuentas</option>
+            <option value="true">Con redes verificadas IA</option>
+          </select>
+          <select
+            value={sortBy}
+            onChange={(e) => { setSortBy(e.target.value); setSortOrder('desc'); }}
+            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
+          >
+            <option value="">Ordenar por...</option>
+            <option value="ig_followers">Seguidores IG</option>
+            <option value="tt_followers">Seguidores TT</option>
+            <option value="avg_views">Prom. Vistas</option>
+            <option value="avg_reach">Prom. Alcance</option>
+          </select>
+          {sortBy && (
+            <button
+              onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+              className="px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
+            >
+              {sortOrder === 'desc' ? '↓ Mayor' : '↑ Menor'}
+            </button>
+          )}
         </div>
         <div className="flex gap-2">
           <button 
