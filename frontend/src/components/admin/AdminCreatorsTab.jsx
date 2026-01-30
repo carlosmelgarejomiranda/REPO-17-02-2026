@@ -255,8 +255,8 @@ const AdminCreatorsTab = ({
             const ttUsername = verifiedTT?.username || unverifiedTT?.username;
             const igVerified = !!verifiedIG;
             const ttVerified = !!verifiedTT;
-            const igFollowers = verifiedIG?.followers || unverifiedIG?.followers || 0;
-            const ttFollowers = verifiedTT?.followers || unverifiedTT?.followers || 0;
+            const igFollowers = verifiedIG?.follower_count || unverifiedIG?.followers || 0;
+            const ttFollowers = verifiedTT?.follower_count || unverifiedTT?.followers || 0;
             
             return (
               <div 
