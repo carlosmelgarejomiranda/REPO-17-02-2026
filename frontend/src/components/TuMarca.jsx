@@ -244,6 +244,7 @@ const PROCESS_STEPS = [
 export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage }) => {
   const [productType, setProductType] = useState('percheros');
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [formStep, setFormStep] = useState(1); // 1 = questionnaire, 2 = contact info
   const [formData, setFormData] = useState({
     brand_name: '',
     contact_name: '',
@@ -253,9 +254,74 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
     interest: '',
     product_type: ''
   });
+  
+  // Questionnaire states
+  const [q1Situacion, setQ1Situacion] = useState([]); // max 3
+  const [q2Resultado, setQ2Resultado] = useState([]); // max 2
+  const [q3Obstaculo, setQ3Obstaculo] = useState([]); // max 3
+  const [q4Prioridad, setQ4Prioridad] = useState([]); // max 3
+  const [q5Inversion, setQ5Inversion] = useState(''); // single select
+  const [q6Adicional, setQ6Adicional] = useState(''); // open text
+  
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+
+  // Questionnaire options
+  const opcionesSituacion = [
+    'Mi marca necesita más visibilidad y posicionamiento',
+    'Ya tengo producto y redes, pero me falta un ecosistema que me impulse',
+    'Quiero presencia física premium sin abrir local propio',
+    'Necesito contenido profesional constante para elevar mi marca',
+    'Quiero data/reportes para decidir mejor',
+    'Quiero un partner que ejecute con estándar y consistencia'
+  ];
+
+  const opcionesResultado = [
+    'Aumentar visibilidad y reconocimiento en Asunción',
+    'Mejorar posicionamiento (percepción premium / confianza)',
+    'Generar contenido profesional (fotos/videos) de forma constante',
+    'Tener activación y exposición continua (online + físico + difusión)',
+    'Obtener reportes mensuales para entender performance y ajustar',
+    '(Opcional) Lograr también ventas más consistentes como resultado'
+  ];
+
+  const opcionesObstaculo = [
+    'No logro suficiente exposición frente a la audiencia correcta',
+    'Me falta contenido premium y consistencia',
+    'Me falta un partner que ejecute y mantenga la marca activa',
+    'No tengo claridad (datos/reportes) de lo que funciona',
+    'Mi marca no se presenta con el nivel/experiencia que quiero',
+    'Estoy compitiendo en un mercado saturado y me cuesta diferenciarme'
+  ];
+
+  const opcionesPrioridad = [
+    'Posicionamiento y visibilidad con presencia en un entorno premium',
+    'Contenido profesional mensual (fotos/videos) para elevar percepción y ventas',
+    'Difusión/marketing en canales de AVENUE (exposición)',
+    'Reportes mensuales (ventas/tendencias/performance) para decidir con data',
+    'Equipo de venta dedicado que represente bien mi marca',
+    'Activaciones/campañas (lanzamientos, fechas clave, novedades)',
+    'E-commerce / canal online para escalar alcance (si aplica)',
+    'No estoy seguro: recomiéndenme según mis respuestas'
+  ];
+
+  const opcionesInversion = [
+    'Menos de Gs. 1.000.000 / mes',
+    'Gs. 1.000.000 – 3.000.000 / mes',
+    'Gs. 3.000.000 – 6.000.000 / mes',
+    'Gs. 6.000.000 – 12.000.000 / mes',
+    'Más de Gs. 12.000.000 / mes',
+    'No estoy seguro todavía'
+  ];
+
+  const toggleMultiSelect = (value, currentArray, setArray, max) => {
+    if (currentArray.includes(value)) {
+      setArray(currentArray.filter(v => v !== value));
+    } else if (currentArray.length < max) {
+      setArray([...currentArray, value]);
+    }
+  };
 
   const API_URL = getApiUrl();
   const currentPricing = PRICING[productType];
