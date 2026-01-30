@@ -352,30 +352,62 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
         body: JSON.stringify({
           ...formData,
           product_type: productType,
-          selected_plan: selectedPlan?.name || formData.interest
+          selected_plan: selectedPlan?.name || formData.interest,
+          questionnaire: {
+            situacion: q1Situacion,
+            resultado: q2Resultado,
+            obstaculo: q3Obstaculo,
+            prioridad: q4Prioridad,
+            inversion: q5Inversion,
+            adicional: q6Adicional
+          }
         })
       });
 
       if (response.ok) {
         trackBrandInquiry(formData.interest || 'general');
         
-        // Build WhatsApp message with form data
+        // Build WhatsApp message with form data and questionnaire
         const planName = selectedPlan?.name || formData.interest || 'No especificado';
-        const productTypeLabel = productType === 'perchero' ? 'Percheros' : 'Exhibidores';
+        const productTypeLabel = productType === 'percheros' ? 'Percheros' : 'Exhibidores';
+        
+        const formatList = (arr) => arr.length > 0 ? arr.map(item => `  • ${item}`).join('\n') : '  • No especificado';
         
         const whatsappMessage = `*Nueva consulta - Tu Marca en Avenue*
 
 *Datos del contacto:*
-• Nombre: ${formData.name || 'No especificado'}
+• Nombre: ${formData.contact_name || 'No especificado'}
 • Email: ${formData.email || 'No especificado'}
 • Teléfono: ${formData.phone || 'No especificado'}
-• Marca: ${formData.brand || 'No especificado'}
+• Marca: ${formData.brand_name || 'No especificado'}
 
 *Interés:*
 • Tipo de producto: ${productTypeLabel}
 • Plan seleccionado: ${planName}
 
-*Mensaje:*
+━━━━━━━━━━━━━━━━━━━━
+*CUESTIONARIO*
+━━━━━━━━━━━━━━━━━━━━
+
+*1) Situación actual:*
+${formatList(q1Situacion)}
+
+*2) Objetivo en 90 días:*
+${formatList(q2Resultado)}
+
+*3) Obstáculo actual:*
+${formatList(q3Obstaculo)}
+
+*4) Prioridad en AVENUE:*
+${formatList(q4Prioridad)}
+
+*5) Inversión mensual:*
+  • ${q5Inversion || 'No especificado'}
+
+*6) Expectativa y contexto:*
+${q6Adicional || 'Sin información adicional'}
+
+*Mensaje adicional:*
 ${formData.message || 'Sin mensaje adicional'}`;
 
         // Encode and open WhatsApp
