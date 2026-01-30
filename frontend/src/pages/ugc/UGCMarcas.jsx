@@ -159,9 +159,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                       ? 'lava-lamp-card-gold'
                       : isEnterprise
                         ? 'lava-lamp-card'
-                        : pkg.type === 'standard' 
-                          ? 'bg-[#121212] border-2 border-[#d4a968]/50 hover:border-[#d4a968]' 
-                          : 'bg-[#121212] border border-white/5 hover:border-white/20'
+                        : 'bg-[#121212] border border-white/5 hover:border-white/20'
                   }`}
                   data-testid={`plan-${pkg.type}`}
                 >
@@ -176,13 +174,6 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                       <span className="lava-lamp-badge text-white text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
                         Enterprise
-                      </span>
-                    </div>
-                  )}
-                  {pkg.type === 'standard' && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="bg-[#d4a968] text-black text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-                        Popular
                       </span>
                     </div>
                   )}
