@@ -3,9 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 import { getApiUrl } from '../utils/api';
 import { 
   Calendar, Users, Plus, Edit, Trash2, Check, X, Filter, ShoppingBag, 
-  Image, ChevronLeft, Settings, BarChart3, Mail, Palette, Shield, UserCog, 
+  Image, ChevronLeft, ChevronDown, Settings, BarChart3, Mail, Palette, Shield, UserCog, 
   AlertCircle, Phone, CheckCircle, Building, Download, FileSpreadsheet, Tag, 
-  Percent, Loader2, FileText, Sparkles, Search, Bell, ChevronRight, 
+  Percent, Loader2, FileText, Sparkles, Search, Bell, ChevronRight, RefreshCw,
   TrendingUp, Package, Camera, Clock, ArrowRight, Command, Eye,
   LayoutDashboard, Zap, Activity, Star, ExternalLink, MoreHorizontal, Briefcase
 } from 'lucide-react';
