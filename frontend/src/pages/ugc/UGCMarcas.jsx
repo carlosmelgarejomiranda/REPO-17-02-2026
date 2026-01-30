@@ -146,18 +146,23 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
 
           {/* Plans Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {packages.map((pkg, idx) => {
-              const pricePerMaterial = getPricePerMaterial(pkg);
-              const isPro = pkg.type === 'pro';
-              const isEnterprise = pkg.type === 'enterprise';
-              
-              return (
-                <div 
-                  key={pkg.type}
-                  className={`relative flex flex-col p-5 rounded-lg transition-all ${
-                    isPro
-                      ? 'lava-lamp-card-gold'
-                      : isEnterprise
+            {packages.length === 0 ? (
+              <div className="col-span-4 text-center py-8 text-gray-500">
+                <p>Cargando planes...</p>
+              </div>
+            ) : (
+              packages.map((pkg, idx) => {
+                const pricePerMaterial = getPricePerMaterial(pkg);
+                const isPro = pkg.type === 'pro';
+                const isEnterprise = pkg.type === 'enterprise';
+                
+                return (
+                  <div 
+                    key={pkg.type}
+                    className={`relative flex flex-col p-5 rounded-lg transition-all ${
+                      isPro
+                        ? 'lava-lamp-card-gold'
+                        : isEnterprise
                         ? 'lava-lamp-card'
                         : 'bg-[#121212] border border-white/5 hover:border-white/20'
                   }`}
