@@ -52,6 +52,42 @@ const AdminCreatorsTab = ({
   const [showMetricsModal, setShowMetricsModal] = useState(null);
   const [showReviewsModal, setShowReviewsModal] = useState(null);
   const [exporting, setExporting] = useState(false);
+  const [sortBy, setSortBy] = useState(''); // '', 'ig_followers', 'tt_followers'
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc', 'desc'
+
+  // Sort creators locally
+  const sortedCreators = React.useMemo(() => {
+    if (!sortBy) return creators;
+    
+    return [...creators].sort((a, b) => {
+      let aVal = 0, bVal = 0;
+      
+      if (sortBy === 'ig_followers') {
+        aVal = a.verified_instagram?.followers || a.unverified_instagram?.followers || 0;
+        bVal = b.verified_instagram?.followers || b.unverified_instagram?.followers || 0;
+      } else if (sortBy === 'tt_followers') {
+        aVal = a.verified_tiktok?.followers || a.unverified_tiktok?.followers || 0;
+        bVal = b.verified_tiktok?.followers || b.unverified_tiktok?.followers || 0;
+      } else if (sortBy === 'avg_views') {
+        aVal = a.avg_views || 0;
+        bVal = b.avg_views || 0;
+      } else if (sortBy === 'avg_reach') {
+        aVal = a.avg_reach || 0;
+        bVal = b.avg_reach || 0;
+      }
+      
+      return sortOrder === 'desc' ? bVal - aVal : aVal - bVal;
+    });
+  }, [creators, sortBy, sortOrder]);
+
+  const toggleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortBy(field);
+      setSortOrder('desc');
+    }
+  };
 
   const handleExportCSV = async () => {
     setExporting(true);
