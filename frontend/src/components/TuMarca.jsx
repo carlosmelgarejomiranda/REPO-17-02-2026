@@ -1080,84 +1080,84 @@ ${formData.message || 'Sin mensaje adicional'}`;
               </div>
             </div>
           ) : (
-            /* STEP 2: Contact Info */
-            <div className="space-y-6">
+            /* STEP 2: Contact Info - Compact Version */
+            <div className="space-y-4">
               <button
                 type="button"
                 onClick={() => setFormStep(1)}
-                className="text-white/50 hover:text-white text-sm flex items-center gap-1 mb-4"
+                className="text-white/40 hover:text-white text-xs flex items-center gap-1"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-3 h-3" />
                 Volver al cuestionario
               </button>
 
               {/* Selected Plan Preview */}
               {selectedPlan && (
-                <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl p-4">
-                  <span className="text-white/70 text-sm">Plan seleccionado: </span>
-                  <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
+                <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-lg p-3">
+                  <span className="text-white/70 text-xs">Plan: </span>
+                  <span className="text-[#d4a968] font-medium text-sm">{selectedPlan.name}</span>
                 </div>
               )}
 
               <div className="rounded-xl overflow-hidden bg-[#121212] border border-white/5">
-                <div className="p-6 md:p-8">
+                <div className="p-5">
                   {error && (
-                    <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>
+                    <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">{error}</div>
                   )}
 
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs mb-2 text-white/40">Nombre de la Marca *</label>
+                        <label className="block text-xs mb-1.5 text-white/40">Marca *</label>
                         <input
                           type="text"
                           required
                           value={formData.brand_name}
                           onChange={(e) => updateField('brand_name', e.target.value)}
-                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
                           placeholder="Tu marca"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs mb-2 text-white/40">Nombre de Contacto *</label>
+                        <label className="block text-xs mb-1.5 text-white/40">Contacto *</label>
                         <input
                           type="text"
                           required
                           value={formData.contact_name}
                           onChange={(e) => updateField('contact_name', e.target.value)}
-                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
                           placeholder="Tu nombre"
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs mb-2 text-white/40">Email *</label>
+                        <label className="block text-xs mb-1.5 text-white/40">Email *</label>
                         <input
                           type="email"
                           required
                           value={formData.email}
                           onChange={(e) => updateField('email', e.target.value)}
-                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
                           placeholder="tu@email.com"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs mb-2 text-white/40">Teléfono</label>
+                        <label className="block text-xs mb-1.5 text-white/40">Teléfono</label>
                         <input
                           type="tel"
                           value={formData.phone}
                           onChange={(e) => updateField('phone', e.target.value)}
-                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
                           placeholder="+595 9XX XXX XXX"
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs mb-2 text-white/40">Tipo de producto *</label>
+                        <label className="block text-xs mb-1.5 text-white/40">Tipo de producto *</label>
                         <select
                           required
                           value={formData.product_type || productType}
@@ -1165,9 +1165,63 @@ ${formData.message || 'Sin mensaje adicional'}`;
                             updateField('product_type', e.target.value);
                             setProductType(e.target.value);
                           }}
-                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
+                          className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
                         >
-                          <option value="exhibidores">Exhibidores (joyas, accesorios...)</option>
+                          <option value="exhibidores">Exhibidores</option>
+                          <option value="percheros">Percheros</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs mb-1.5 text-white/40">Plan de interés *</label>
+                        <select
+                          required
+                          value={formData.interest}
+                          onChange={(e) => updateField('interest', e.target.value)}
+                          className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
+                        >
+                          <option value="">Seleccionar</option>
+                          <option value="starter">Showroom Starter</option>
+                          <option value="standard">Showroom Standard ⭐</option>
+                          <option value="pro">Showroom Pro+</option>
+                          <option value="consulta">Que me asesoren</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs mb-1.5 text-white/40">Mensaje adicional (opcional)</label>
+                      <textarea
+                        rows={2}
+                        value={formData.message}
+                        onChange={(e) => updateField('message', e.target.value)}
+                        className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
+                        placeholder="Algo más que quieras agregar..."
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full py-3 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium text-sm rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      data-testid="submit-form"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Enviando...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Enviar y contactar por WhatsApp</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
                           <option value="percheros">Percheros (ropa, indumentaria)</option>
                         </select>
                       </div>
