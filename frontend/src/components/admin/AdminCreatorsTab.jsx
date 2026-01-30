@@ -228,12 +228,18 @@ const AdminCreatorsTab = ({
           </div>
           
           {/* Table Header */}
-          <div className="grid grid-cols-[40px_180px_70px_130px_130px_200px_160px] gap-2 px-3 py-2 bg-white/5 border-b border-white/10 text-[10px] text-gray-500 uppercase tracking-wide">
+          <div className="grid grid-cols-[40px_160px_70px_110px_70px_110px_70px_180px_160px] gap-2 px-3 py-2 bg-white/5 border-b border-white/10 text-[10px] text-gray-500 uppercase tracking-wide">
             <div></div>
             <div>Nombre</div>
             <div className="text-center">Nivel</div>
             <div className="text-center">Instagram</div>
+            <div className="text-center cursor-pointer hover:text-white" onClick={() => toggleSort('ig_followers')}>
+              Seg. IG {sortBy === 'ig_followers' && (sortOrder === 'desc' ? '↓' : '↑')}
+            </div>
             <div className="text-center">TikTok</div>
+            <div className="text-center cursor-pointer hover:text-white" onClick={() => toggleSort('tt_followers')}>
+              Seg. TT {sortBy === 'tt_followers' && (sortOrder === 'desc' ? '↓' : '↑')}
+            </div>
             <div className="text-center">Métricas</div>
             <div className="text-center">Acciones</div>
           </div>
