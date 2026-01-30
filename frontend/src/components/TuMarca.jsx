@@ -389,16 +389,6 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
               <p className="text-white/40 text-xs mb-3">¿Qué tipo de productos vendés?</p>
               <div className="inline-flex bg-[#1a1a1a] rounded-lg p-1 border border-white/10">
                 <button
-                  onClick={() => setProductType('exhibidores')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                    productType === 'exhibidores' ? 'bg-[#d4a968] text-black' : 'text-white/60 hover:text-white'
-                  }`}
-                  data-testid="toggle-exhibidores"
-                >
-                  <Package className="w-4 h-4" />
-                  <span>Exhibidores</span>
-                </button>
-                <button
                   onClick={() => setProductType('percheros')}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                     productType === 'percheros' ? 'bg-[#d4a968] text-black' : 'text-white/60 hover:text-white'
@@ -407,6 +397,16 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                 >
                   <Store className="w-4 h-4" />
                   <span>Percheros</span>
+                </button>
+                <button
+                  onClick={() => setProductType('exhibidores')}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                    productType === 'exhibidores' ? 'bg-[#d4a968] text-black' : 'text-white/60 hover:text-white'
+                  }`}
+                  data-testid="toggle-exhibidores"
+                >
+                  <Package className="w-4 h-4" />
+                  <span>Exhibidores</span>
                 </button>
               </div>
               <p className="text-white/30 text-[10px] mt-2">{currentPricing.description}</p>
