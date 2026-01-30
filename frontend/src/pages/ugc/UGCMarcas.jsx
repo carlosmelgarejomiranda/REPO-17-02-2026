@@ -399,7 +399,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
               <ArrowRight className="w-4 h-4" />
             </a>
             <a
-              href="https://wa.me/595971000000"
+              href="https://wa.me/595976691520?text=Hola! Me interesa el servicio de UGC para marcas"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-white/5 transition-all rounded-lg"
@@ -407,6 +407,13 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
             >
               Contactar
             </a>
+            <Link
+              to="/ugc/brand/onboarding"
+              className="inline-flex items-center justify-center gap-2 border border-[#d4a968] text-[#d4a968] px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#d4a968]/10 transition-all rounded-lg"
+              data-testid="cta-register"
+            >
+              Registrarse
+            </Link>
           </div>
         </div>
       </section>
