@@ -1967,11 +1967,39 @@ async def get_creators_report(
             "status": {"$in": ["confirmed", "completed"]}
         })
         
+        # Get followers from verified and unverified sources
+        social_verification = creator.get("social_verification", {})
+        social_networks = creator.get("social_networks", [])
+        
+        # Instagram followers
+        ig_verified = social_verification.get("instagram")
+        ig_followers = ig_verified.get("followers") if ig_verified else None
+        ig_is_verified = ig_verified is not None
+        
+        if not ig_followers:
+            ig_network = next((sn for sn in social_networks if sn.get("platform") == "instagram"), None)
+            if ig_network:
+                ig_followers = ig_network.get("followers")
+        
+        # TikTok followers
+        tt_verified = social_verification.get("tiktok")
+        tt_followers = tt_verified.get("followers") if tt_verified else None
+        tt_is_verified = tt_verified is not None
+        
+        if not tt_followers:
+            tt_network = next((sn for sn in social_networks if sn.get("platform") == "tiktok"), None)
+            if tt_network:
+                tt_followers = tt_network.get("followers")
+        
         creators_report.append({
             "id": creator_id,
             "name": creator.get("name", "Sin nombre"),
             "instagram_handle": creator.get("instagram_handle"),
             "tiktok_handle": creator.get("tiktok_handle"),
+            "ig_followers": ig_followers or 0,
+            "tt_followers": tt_followers or 0,
+            "ig_verified": ig_is_verified,
+            "tt_verified": tt_is_verified,
             "level": creator.get("level", "rookie"),
             "is_active": creator.get("is_active", True),
             "campaigns_count": confirmed_campaigns,
