@@ -924,68 +924,6 @@ ${formData.message || 'Sin mensaje adicional'}`;
                   </form>
                 </div>
               )}
-                      </div>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-white/70 text-sm mb-1">Teléfono</label>
-                        <input
-                          type="tel"
-                          value={formData.phone}
-                          onChange={(e) => updateField('phone', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
-                          placeholder="+595 xxx xxx xxx"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-white/70 text-sm mb-1">Nombre de tu marca *</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.brand}
-                          onChange={(e) => updateField('brand', e.target.value)}
-                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
-                          placeholder="Tu marca"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-white/70 text-sm mb-1">Mensaje adicional (opcional)</label>
-                      <textarea
-                        value={formData.message}
-                        onChange={(e) => updateField('message', e.target.value)}
-                        rows={3}
-                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
-                        placeholder="Algo más que quieras agregar..."
-                      />
-                    </div>
-
-                    {error && (
-                      <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-                        {error}
-                      </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Enviando...
-                        </>
-                      ) : (
-                        <>
-                          Enviar y contactar por WhatsApp
-                          <ArrowRight className="w-4 h-4" />
-                        </>
-                      )}
-                    </button>
-                  </form>
-                </div>
-              )}
 
               {/* Additional CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center mt-10">
