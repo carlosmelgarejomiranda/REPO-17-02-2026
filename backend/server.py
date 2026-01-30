@@ -2104,16 +2104,23 @@ INTEREST_LABELS = {
 
 @api_router.post("/contact/brands")
 async def submit_brand_inquiry(inquiry: BrandInquiry):
-    """Submit a brand inquiry from Tu Marca page"""
+    """Submit a brand inquiry from Tu Marca or UGC Marcas page"""
+    # Handle field variations between forms
+    brand_name = inquiry.brand_name or inquiry.brand or ""
+    contact_name = inquiry.contact_name or inquiry.name or ""
+    
     inquiry_doc = {
         "inquiry_id": f"BRD-{str(uuid.uuid4())[:8].upper()}",
-        "brand_name": inquiry.brand_name,
-        "contact_name": inquiry.contact_name,
+        "brand_name": brand_name,
+        "contact_name": contact_name,
         "email": inquiry.email,
         "phone": inquiry.phone or "",
-        "interest": inquiry.interest,
-        "interest_label": INTEREST_LABELS.get(inquiry.interest, inquiry.interest),
+        "interest": inquiry.interest or "",
+        "interest_label": INTEREST_LABELS.get(inquiry.interest, inquiry.interest) if inquiry.interest else "",
         "message": inquiry.message or "",
+        "product_type": inquiry.product_type or "",
+        "selected_plan": inquiry.selected_plan or "",
+        "questionnaire": inquiry.questionnaire or {},
         "status": "nuevo",  # nuevo, contactado, en_proceso, cerrado
         "created_at": datetime.now(timezone.utc).isoformat(),
         "notes": ""
@@ -2126,11 +2133,11 @@ async def submit_brand_inquiry(inquiry: BrandInquiry):
     try:
         from whatsapp_service import notify_new_brand_inquiry
         await notify_new_brand_inquiry({
-            "brand_name": inquiry.brand_name,
-            "contact_name": inquiry.contact_name,
+            "brand_name": brand_name,
+            "contact_name": contact_name,
             "phone": inquiry.phone or 'N/A',
             "email": inquiry.email,
-            "interest_type": INTEREST_LABELS.get(inquiry.interest, inquiry.interest)
+            "interest_type": INTEREST_LABELS.get(inquiry.interest, inquiry.interest) if inquiry.interest else inquiry.selected_plan or 'Consulta'
         })
     except Exception as e:
         logger.error(f"Failed to send WhatsApp for brand inquiry: {e}")
