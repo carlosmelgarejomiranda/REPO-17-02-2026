@@ -55,7 +55,7 @@ export const AdminCreatorsReport = () => {
   };
 
   // Sort creators locally
-  const sortedCreators = React.useMemo(() => {
+  const sortedCreators = useMemo(() => {
     if (!sortBy) return creators;
     
     return [...creators].sort((a, b) => {
