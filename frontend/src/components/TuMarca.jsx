@@ -851,142 +851,321 @@ ${formData.message || 'Sin mensaje adicional'}`;
 
       {/* ============== FORMULARIO ============== */}
       <section id="contact-form" className="py-16 px-6 border-t border-white/5">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <span className="text-[#d4a968] text-[10px] tracking-[0.2em] uppercase font-medium mb-3 block">Contacto</span>
             <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
               Hablemos de tu <span className="italic text-[#d4a968]">marca</span>
             </h2>
-            <p className="text-white/50 text-sm">Completá el formulario y nuestro equipo se pondrá en contacto</p>
-            {selectedPlan && (
-              <div className="mt-4 inline-flex items-center gap-2 bg-[#d4a968]/10 border border-[#d4a968]/30 px-4 py-2 rounded-full">
-                <Check className="w-4 h-4 text-[#d4a968]" />
-                <span className="text-sm text-[#d4a968]">Plan seleccionado: {selectedPlan.name}</span>
-              </div>
-            )}
+            <p className="text-white/50 text-sm">Completá el cuestionario para entender mejor tus necesidades</p>
           </div>
           
-          <div className="rounded-xl overflow-hidden bg-[#121212] border border-white/5">
-            <div className="p-6 md:p-8">
-              {error && (
-                <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>
+          {/* Progress Indicator */}
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <div className={`w-3 h-3 rounded-full ${formStep >= 1 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+            <div className={`w-16 h-0.5 ${formStep >= 2 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+            <div className={`w-3 h-3 rounded-full ${formStep >= 2 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+          </div>
+
+          {formStep === 1 ? (
+            /* STEP 1: Questionnaire */
+            <div className="space-y-8">
+              {/* Selected Plan Preview */}
+              {selectedPlan && (
+                <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl p-4 flex items-center justify-between">
+                  <div>
+                    <span className="text-white/70 text-sm">Plan seleccionado: </span>
+                    <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
+                    <span className="text-white/50 text-sm ml-2">
+                      ({formatPrice(selectedPlan.price)} Gs/mes)
+                    </span>
+                  </div>
+                  <button onClick={() => setSelectedPlan(null)} className="text-white/50 hover:text-white text-sm underline">
+                    Cambiar
+                  </button>
+                </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs mb-2 text-white/40">Nombre de la Marca *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.brand_name}
-                      onChange={(e) => updateField('brand_name', e.target.value)}
-                      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
-                      placeholder="Tu marca"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs mb-2 text-white/40">Nombre de Contacto *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.contact_name}
-                      onChange={(e) => updateField('contact_name', e.target.value)}
-                      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
-                      placeholder="Tu nombre"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs mb-2 text-white/40">Email *</label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => updateField('email', e.target.value)}
-                      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
-                      placeholder="tu@email.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs mb-2 text-white/40">Teléfono</label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => updateField('phone', e.target.value)}
-                      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
-                      placeholder="+595 9XX XXX XXX"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs mb-2 text-white/40">Tipo de producto *</label>
-                    <select
-                      required
-                      value={formData.product_type || productType}
-                      onChange={(e) => {
-                        updateField('product_type', e.target.value);
-                        setProductType(e.target.value);
-                      }}
-                      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors"
+              {/* Q1: Situación actual */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h4 className="text-white font-medium mb-2">1) ¿Cuál describe mejor tu situación actual?</h4>
+                <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
+                <div className="space-y-2">
+                  {opcionesSituacion.map((opcion, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => toggleMultiSelect(opcion, q1Situacion, setQ1Situacion, 3)}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                        q1Situacion.includes(opcion)
+                          ? 'bg-[#d4a968] text-black'
+                          : 'bg-white/5 text-white/80 hover:bg-white/10'
+                      } ${q1Situacion.length >= 3 && !q1Situacion.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      <option value="exhibidores" className="bg-[#1a1a1a]">Exhibidores (joyas, accesorios...)</option>
-                      <option value="percheros" className="bg-[#1a1a1a]">Percheros (ropa, indumentaria)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs mb-2 text-white/40">Plan de interés *</label>
-                    <select
-                      required
-                      value={formData.interest}
-                      onChange={(e) => updateField('interest', e.target.value)}
-                      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
+                      {opcion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Q2: Resultado en 90 días */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h4 className="text-white font-medium mb-2">2) ¿Qué querés lograr en los próximos 90 días?</h4>
+                <p className="text-white/50 text-sm mb-4">Seleccioná hasta 2 opciones</p>
+                <div className="space-y-2">
+                  {opcionesResultado.map((opcion, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => toggleMultiSelect(opcion, q2Resultado, setQ2Resultado, 2)}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                        q2Resultado.includes(opcion)
+                          ? 'bg-[#d4a968] text-black'
+                          : 'bg-white/5 text-white/80 hover:bg-white/10'
+                      } ${q2Resultado.length >= 2 && !q2Resultado.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                      <option value="">Seleccionar</option>
-                      <option value="starter">Showroom Starter</option>
-                      <option value="standard">Showroom Standard ⭐</option>
-                      <option value="pro">Showroom Pro+</option>
-                      <option value="consulta">Quiero que me asesoren</option>
-                    </select>
-                  </div>
+                      {opcion}
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-xs mb-2 text-white/40">Mensaje (opcional)</label>
-                  <textarea
-                    rows={3}
-                    value={formData.message}
-                    onChange={(e) => updateField('message', e.target.value)}
-                    className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
-                    placeholder="Contanos más sobre tu marca..."
-                  />
+              {/* Q3: Obstáculo */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h4 className="text-white font-medium mb-2">3) ¿Qué obstáculo te frena hoy?</h4>
+                <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
+                <div className="space-y-2">
+                  {opcionesObstaculo.map((opcion, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => toggleMultiSelect(opcion, q3Obstaculo, setQ3Obstaculo, 3)}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                        q3Obstaculo.includes(opcion)
+                          ? 'bg-[#d4a968] text-black'
+                          : 'bg-white/5 text-white/80 hover:bg-white/10'
+                      } ${q3Obstaculo.length >= 3 && !q3Obstaculo.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {opcion}
+                    </button>
+                  ))}
                 </div>
+              </div>
 
+              {/* Q4: Prioridad en AVENUE */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h4 className="text-white font-medium mb-2">4) Dentro de AVENUE (con inventario y delivery incluidos), ¿qué es lo que más te interesa priorizar?</h4>
+                <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
+                <div className="space-y-2">
+                  {opcionesPrioridad.map((opcion, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => toggleMultiSelect(opcion, q4Prioridad, setQ4Prioridad, 3)}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                        q4Prioridad.includes(opcion)
+                          ? 'bg-[#d4a968] text-black'
+                          : 'bg-white/5 text-white/80 hover:bg-white/10'
+                      } ${q4Prioridad.length >= 3 && !q4Prioridad.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {opcion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Q5: Inversión */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h4 className="text-white font-medium mb-2">5) ¿Qué rango de inversión mensual te resulta razonable para una alianza de posicionamiento/visibilidad?</h4>
+                <p className="text-white/50 text-sm mb-4">Seleccioná una opción</p>
+                <div className="space-y-2">
+                  {opcionesInversion.map((opcion, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setQ5Inversion(opcion)}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                        q5Inversion === opcion
+                          ? 'bg-[#d4a968] text-black'
+                          : 'bg-white/5 text-white/80 hover:bg-white/10'
+                      }`}
+                    >
+                      {opcion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Q6: Expectativa + contexto */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h4 className="text-white font-medium mb-2">6) Expectativa principal + contexto</h4>
+                <p className="text-white/50 text-sm mb-4">
+                  ¿Qué esperás principalmente de AVENUE? Contanos si tu prioridad es: posicionamiento/visibilidad, contenido, activación, data/reportes o ventas; y cualquier info relevante: categoría, ticket promedio, stock, links, metas, restricciones.
+                </p>
+                <textarea
+                  value={q6Adicional}
+                  onChange={(e) => setQ6Adicional(e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
+                  placeholder="Contanos más sobre tu marca, objetivos o cualquier detalle relevante..."
+                />
+              </div>
+
+              {/* Next button */}
+              <div className="flex justify-end">
                 <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full py-3.5 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium text-sm rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  data-testid="submit-form"
+                  type="button"
+                  onClick={() => setFormStep(2)}
+                  className="px-8 py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors flex items-center gap-2"
                 >
-                  {submitting ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                      <span>Enviando...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      <span>Enviar Mensaje</span>
-                    </>
-                  )}
+                  Continuar
+                  <ArrowRight className="w-4 h-4" />
                 </button>
-              </form>
+              </div>
             </div>
-          </div>
+          ) : (
+            /* STEP 2: Contact Info */
+            <div className="space-y-6">
+              <button
+                type="button"
+                onClick={() => setFormStep(1)}
+                className="text-white/50 hover:text-white text-sm flex items-center gap-1 mb-4"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Volver al cuestionario
+              </button>
+
+              {/* Selected Plan Preview */}
+              {selectedPlan && (
+                <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl p-4">
+                  <span className="text-white/70 text-sm">Plan seleccionado: </span>
+                  <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
+                </div>
+              )}
+
+              <div className="rounded-xl overflow-hidden bg-[#121212] border border-white/5">
+                <div className="p-6 md:p-8">
+                  {error && (
+                    <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>
+                  )}
+
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs mb-2 text-white/40">Nombre de la Marca *</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.brand_name}
+                          onChange={(e) => updateField('brand_name', e.target.value)}
+                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          placeholder="Tu marca"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs mb-2 text-white/40">Nombre de Contacto *</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.contact_name}
+                          onChange={(e) => updateField('contact_name', e.target.value)}
+                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          placeholder="Tu nombre"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs mb-2 text-white/40">Email *</label>
+                        <input
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) => updateField('email', e.target.value)}
+                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          placeholder="tu@email.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs mb-2 text-white/40">Teléfono</label>
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => updateField('phone', e.target.value)}
+                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          placeholder="+595 9XX XXX XXX"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs mb-2 text-white/40">Tipo de producto *</label>
+                        <select
+                          required
+                          value={formData.product_type || productType}
+                          onChange={(e) => {
+                            updateField('product_type', e.target.value);
+                            setProductType(e.target.value);
+                          }}
+                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
+                        >
+                          <option value="exhibidores">Exhibidores (joyas, accesorios...)</option>
+                          <option value="percheros">Percheros (ropa, indumentaria)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs mb-2 text-white/40">Plan de interés *</label>
+                        <select
+                          required
+                          value={formData.interest}
+                          onChange={(e) => updateField('interest', e.target.value)}
+                          className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
+                        >
+                          <option value="">Seleccionar</option>
+                          <option value="starter">Showroom Starter</option>
+                          <option value="standard">Showroom Standard ⭐</option>
+                          <option value="pro">Showroom Pro+</option>
+                          <option value="consulta">Quiero que me asesoren</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs mb-2 text-white/40">Mensaje adicional (opcional)</label>
+                      <textarea
+                        rows={3}
+                        value={formData.message}
+                        onChange={(e) => updateField('message', e.target.value)}
+                        className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
+                        placeholder="Algo más que quieras agregar..."
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full py-3.5 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium text-sm rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      data-testid="submit-form"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Enviando...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Enviar y contactar por WhatsApp</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
