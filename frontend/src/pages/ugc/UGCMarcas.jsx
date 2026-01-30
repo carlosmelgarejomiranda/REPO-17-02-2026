@@ -69,6 +69,69 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
     return false;
   };
 
+  const handlePlanSelect = (pkg) => {
+    setSelectedPlan(pkg);
+    document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const updateField = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${API_URL}/api/contact/brands`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          interest: 'UGC para Marcas',
+          selected_plan: selectedPlan?.name || 'No especificado'
+        })
+      });
+
+      if (response.ok) {
+        // Build WhatsApp message with form data
+        const planName = selectedPlan?.name || 'No especificado';
+        const planDeliveries = selectedPlan?.deliveries || 'N/A';
+        const planPrice = selectedPlan?.price ? formatPrice(selectedPlan.price) : 'A consultar';
+        
+        const whatsappMessage = `*Nueva consulta - UGC para Marcas*
+
+*Datos del contacto:*
+• Nombre: ${formData.name || 'No especificado'}
+• Email: ${formData.email || 'No especificado'}
+• Teléfono: ${formData.phone || 'No especificado'}
+• Marca: ${formData.brand || 'No especificado'}
+
+*Plan seleccionado:*
+• Plan: ${planName}
+• Entregas: ${planDeliveries}
+• Precio: ${planPrice}
+
+*Mensaje:*
+${formData.message || 'Sin mensaje adicional'}`;
+
+        // Encode and open WhatsApp
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+        window.open(`https://wa.me/595976691520?text=${encodedMessage}`, '_blank');
+        
+        setSubmitted(true);
+      } else {
+        const data = await response.json();
+        setError(data.detail || 'Error al enviar el mensaje');
+      }
+    } catch (err) {
+      setError('Error de conexión. Por favor intenta de nuevo.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <Navbar 
