@@ -175,3 +175,72 @@ nav[data-studio-nav="true"] {
     background-color: #000000 !important;
 }
 
+/* Lava Lamp Animation for Pro+ Plans */
+@keyframes lavaLamp {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    25% {
+        background-position: 100% 50%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    75% {
+        background-position: 0% 100%;
+    }
+}
+
+@keyframes lavaLampBorder {
+    0%, 100% {
+        border-color: #9333ea;
+        box-shadow: 0 0 20px rgba(147, 51, 234, 0.4), 0 0 40px rgba(147, 51, 234, 0.2);
+    }
+    33% {
+        border-color: #ec4899;
+        box-shadow: 0 0 20px rgba(236, 72, 153, 0.4), 0 0 40px rgba(236, 72, 153, 0.2);
+    }
+    66% {
+        border-color: #a855f7;
+        box-shadow: 0 0 20px rgba(168, 85, 247, 0.4), 0 0 40px rgba(168, 85, 247, 0.2);
+    }
+}
+
+.lava-lamp-card {
+    background: linear-gradient(
+        135deg,
+        rgba(147, 51, 234, 0.15) 0%,
+        rgba(236, 72, 153, 0.15) 25%,
+        rgba(168, 85, 247, 0.15) 50%,
+        rgba(219, 39, 119, 0.15) 75%,
+        rgba(147, 51, 234, 0.15) 100%
+    );
+    background-size: 400% 400%;
+    animation: lavaLamp 8s ease infinite, lavaLampBorder 4s ease infinite;
+    border: 2px solid #9333ea;
+}
+
+.lava-lamp-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(18, 18, 18, 0.8) 100%
+    );
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.lava-lamp-badge {
+    background: linear-gradient(90deg, #9333ea, #ec4899, #a855f7, #db2777, #9333ea);
+    background-size: 300% 100%;
+    animation: lavaLamp 3s ease infinite;
+}
+
+.lava-lamp-btn {
+    background: linear-gradient(90deg, #9333ea, #ec4899, #a855f7, #db2777, #9333ea);
+    background-size: 300% 100%;
+    animation: lavaLamp 4s ease infinite;
+}
