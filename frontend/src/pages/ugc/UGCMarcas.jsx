@@ -212,11 +212,6 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
     }
   };
 
-  useEffect(() => {
-    setIsLoaded(true);
-    fetchPackages();
-  }, []);
-
   const fetchPackages = async () => {
     try {
       const res = await fetch(`${API_URL}/api/ugc/packages/pricing`);
@@ -227,6 +222,11 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    setIsLoaded(true);
+    fetchPackages();
+  }, []);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('es-PY').format(price) + ' Gs';
