@@ -4,12 +4,129 @@ import { Link } from 'react-router-dom';
 import { 
   ArrowRight, Building2, Users, BarChart3, CheckCircle, Sparkles,
   ArrowLeft, Heart, TrendingUp, MessageCircle, Shield,
-  Package, Zap, FileCheck, Check, Star, Eye, Clock, MessageSquare, Truck, Loader2
+  Package, Zap, FileCheck, Check, Star, Eye, Clock, MessageSquare, Truck, Loader2, ChevronDown
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { Footer } from '../../components/Footer';
 
 const API_URL = getApiUrl();
+
+// Componente de Dropdown Multiselect Compacto
+const MultiSelectDropdown = ({ question, subtitle, options, selected, setSelected, max }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const toggleOption = (option) => {
+    if (selected.includes(option)) {
+      setSelected(selected.filter(v => v !== option));
+    } else if (selected.length < max) {
+      setSelected([...selected, option]);
+    }
+  };
+  
+  return (
+    <div className="border border-white/10 rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-3 bg-white/5 flex items-center justify-between hover:bg-white/10 transition-colors"
+      >
+        <div className="text-left">
+          <p className="text-white font-medium text-sm">{question}</p>
+          <p className="text-white/40 text-xs mt-0.5">
+            {selected.length > 0 ? `${selected.length} seleccionado${selected.length > 1 ? 's' : ''}` : subtitle}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {selected.length > 0 && (
+            <span className="bg-[#d4a968] text-black text-xs font-medium px-2 py-0.5 rounded-full">
+              {selected.length}/{max}
+            </span>
+          )}
+          <ChevronDown className={`w-5 h-5 text-white/50 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </div>
+      </button>
+      
+      {isOpen && (
+        <div className="border-t border-white/10 bg-black/20 p-3 space-y-1.5 max-h-[280px] overflow-y-auto">
+          {options.map((option, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => toggleOption(option)}
+              disabled={!selected.includes(option) && selected.length >= max}
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 transition-all ${
+                selected.includes(option)
+                  ? 'bg-[#d4a968] text-black'
+                  : 'bg-white/5 text-white/80 hover:bg-white/10'
+              } ${!selected.includes(option) && selected.length >= max ? 'opacity-40 cursor-not-allowed' : ''}`}
+            >
+              <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
+                selected.includes(option) ? 'bg-black/20 border-black/30' : 'border-white/30'
+              }`}>
+                {selected.includes(option) && <Check className="w-3 h-3" />}
+              </div>
+              <span className="flex-1">{option}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Componente de Single Select Dropdown
+const SingleSelectDropdown = ({ question, subtitle, options, selected, setSelected }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <div className="border border-white/10 rounded-xl overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-3 bg-white/5 flex items-center justify-between hover:bg-white/10 transition-colors"
+      >
+        <div className="text-left">
+          <p className="text-white font-medium text-sm">{question}</p>
+          <p className="text-white/40 text-xs mt-0.5">
+            {selected || subtitle}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {selected && (
+            <span className="bg-[#d4a968] text-black text-xs font-medium px-2 py-0.5 rounded-full">
+              ✓
+            </span>
+          )}
+          <ChevronDown className={`w-5 h-5 text-white/50 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </div>
+      </button>
+      
+      {isOpen && (
+        <div className="border-t border-white/10 bg-black/20 p-3 space-y-1.5 max-h-[280px] overflow-y-auto">
+          {options.map((option, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => { setSelected(option); setIsOpen(false); }}
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 transition-all ${
+                selected === option
+                  ? 'bg-[#d4a968] text-black'
+                  : 'bg-white/5 text-white/80 hover:bg-white/10'
+              }`}
+            >
+              <div className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 ${
+                selected === option ? 'bg-black/20 border-black/30' : 'border-white/30'
+              }`}>
+                {selected === option && <div className="w-2 h-2 rounded-full bg-current" />}
+              </div>
+              <span className="flex-1">{option}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) => {
   const [isLoaded, setIsLoaded] = useState(false);
