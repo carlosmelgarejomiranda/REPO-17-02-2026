@@ -445,11 +445,24 @@ ${formData.message || 'Sin mensaje adicional'}`;
                 ¡Mensaje <span className="italic text-[#d4a968]">Enviado</span>!
               </h2>
               <p className="text-gray-400 mb-8">Gracias por tu interés en ser parte de Avenue</p>
-              <p className="text-gray-500 text-sm mb-8">Nuestro equipo se pondrá en contacto contigo pronto.</p>
-              <a href="/" className="inline-flex items-center gap-2 px-8 py-4 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors">
-                Volver al Inicio
-                <ArrowRight className="w-5 h-5" />
-              </a>
+              <p className="text-gray-500 text-sm mb-8">Se abrió WhatsApp con tu consulta. Nuestro equipo se pondrá en contacto pronto.</p>
+              <button 
+                onClick={() => {
+                  setSubmitted(false);
+                  setSelectedPlan(null);
+                  setFormData({ brand_name: '', contact_name: '', email: '', phone: '', message: '', interest: '', product_type: '' });
+                  setQ1Situacion([]);
+                  setQ2Resultado([]);
+                  setQ3Obstaculo([]);
+                  setQ4Prioridad([]);
+                  setQ5Inversion('');
+                  setQ6Adicional('');
+                  setFormStep(1);
+                }}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors"
+              >
+                Enviar otra consulta
+              </button>
             </div>
           </div>
         </div>
