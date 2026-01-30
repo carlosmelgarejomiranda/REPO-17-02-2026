@@ -1847,7 +1847,8 @@ async def get_creators_report(
     request: Request,
     level: Optional[str] = None,
     search: Optional[str] = None,
-    platform: Optional[str] = None  # instagram, tiktok, all
+    platform: Optional[str] = None,  # instagram, tiktok, all
+    has_ai_verified: Optional[bool] = None  # Filter only AI verified accounts
 ):
     """Get detailed report of all creators with their metrics (averages and totals)"""
     await require_admin(request)
@@ -1863,6 +1864,13 @@ async def get_creators_report(
             {"name": {"$regex": search, "$options": "i"}},
             {"instagram_handle": {"$regex": search, "$options": "i"}},
             {"tiktok_handle": {"$regex": search, "$options": "i"}}
+        ]
+    
+    # Filter for AI verified accounts
+    if has_ai_verified:
+        query["$or"] = [
+            {"social_verification.instagram": {"$exists": True}},
+            {"social_verification.tiktok": {"$exists": True}}
         ]
     
     # Get all creators
