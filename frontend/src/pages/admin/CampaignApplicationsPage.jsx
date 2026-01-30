@@ -69,8 +69,48 @@ const CampaignApplicationsPage = () => {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
+  const [hasAiVerified, setHasAiVerified] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
   const [error, setError] = useState('');
   const [expandedMotivation, setExpandedMotivation] = useState(null); // Track which application's motivation is expanded
+
+  // Sort applications locally
+  const sortedApplications = React.useMemo(() => {
+    let filtered = applications;
+    
+    // Filter by AI verified if set
+    if (hasAiVerified === 'true') {
+      filtered = applications.filter(app => {
+        const creator = app.creator || {};
+        return creator.verified_instagram || creator.verified_tiktok;
+      });
+    }
+    
+    if (!sortBy) return filtered;
+    
+    return [...filtered].sort((a, b) => {
+      const creatorA = a.creator || {};
+      const creatorB = b.creator || {};
+      let aVal = 0, bVal = 0;
+      
+      if (sortBy === 'ig_followers') {
+        aVal = creatorA.verified_instagram?.followers || creatorA.unverified_instagram?.followers || 0;
+        bVal = creatorB.verified_instagram?.followers || creatorB.unverified_instagram?.followers || 0;
+      } else if (sortBy === 'tt_followers') {
+        aVal = creatorA.verified_tiktok?.followers || creatorA.unverified_tiktok?.followers || 0;
+        bVal = creatorB.verified_tiktok?.followers || creatorB.unverified_tiktok?.followers || 0;
+      } else if (sortBy === 'avg_views') {
+        aVal = creatorA.avg_views || 0;
+        bVal = creatorB.avg_views || 0;
+      } else if (sortBy === 'rating') {
+        aVal = creatorA.avg_rating || a.creator_rating || 0;
+        bVal = creatorB.avg_rating || b.creator_rating || 0;
+      }
+      
+      return sortOrder === 'desc' ? bVal - aVal : aVal - bVal;
+    });
+  }, [applications, sortBy, sortOrder, hasAiVerified]);
 
   // Fetch campaign and applications
   const fetchData = async () => {
