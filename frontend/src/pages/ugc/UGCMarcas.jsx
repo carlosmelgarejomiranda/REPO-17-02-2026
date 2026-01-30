@@ -254,9 +254,11 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                     </ul>
                   </div>
 
-                  {/* CTA */}
-                  <Link
-                    to={pkg.type === 'enterprise' ? '#contacto' : '/ugc/brand/onboarding'}
+                  {/* CTA - All buttons lead to WhatsApp */}
+                  <a
+                    href="https://wa.me/595976691520?text=Hola! Me interesa el plan de UGC para marcas"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`block w-full text-center py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg mt-auto hover:scale-105 ${
                       isPro
                         ? 'lava-lamp-btn-gold text-black'
@@ -265,8 +267,8 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                           : 'border border-white/20 text-white hover:bg-white/5'
                     }`}
                   >
-                    {pkg.type === 'enterprise' ? 'Contactar' : 'Elegir plan'}
-                  </Link>
+                    Contactar
+                  </a>
                 </div>
               );
             }))
