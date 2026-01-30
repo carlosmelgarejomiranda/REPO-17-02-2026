@@ -3,7 +3,7 @@ import { getApiUrl } from '../utils/api';
 import { 
   Users, Search, Filter, Star, TrendingUp, Clock, Award,
   Instagram, Music2, Loader2, RefreshCw, Download, Eye,
-  ChevronLeft, ExternalLink, BarChart2, Hash
+  ChevronLeft, ExternalLink, BarChart2, Hash, BadgeCheck
 } from 'lucide-react';
 import { Button } from './ui/button';
 
