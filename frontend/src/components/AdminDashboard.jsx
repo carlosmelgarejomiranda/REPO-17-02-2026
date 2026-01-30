@@ -288,6 +288,8 @@ const ReservationsPanel = ({ reservations, loading, onRefresh, stats }) => {
 // ============== BRANDS INQUIRIES PANEL ==============
 const BrandsInquiriesPanel = ({ inquiries, loading, onRefresh }) => {
   const [filter, setFilter] = useState('');
+  const [expandedId, setExpandedId] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(null); // null, 'first', or inquiry_id
   
   const getAuthHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` });
 
@@ -298,18 +300,91 @@ const BrandsInquiriesPanel = ({ inquiries, loading, onRefresh }) => {
     } catch (err) { console.error(err); }
   };
 
-  const statusColors = { nuevo: 'bg-blue-500/20 text-blue-400', contactado: 'bg-amber-500/20 text-amber-400', cerrado: 'bg-green-500/20 text-green-400' };
+  const deleteInquiry = async (id) => {
+    try {
+      await fetch(`${API_URL}/api/admin/brand-inquiries/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+      setDeleteConfirm(null);
+      onRefresh();
+    } catch (err) { console.error(err); }
+  };
+
+  const handleDeleteClick = (id) => {
+    if (deleteConfirm === id) {
+      // Second click - confirm delete
+      deleteInquiry(id);
+    } else {
+      // First click - show confirmation
+      setDeleteConfirm(id);
+      // Auto-reset after 3 seconds
+      setTimeout(() => setDeleteConfirm(null), 3000);
+    }
+  };
+
+  const statusColors = { 
+    nuevo: 'bg-blue-500/20 text-blue-400 border-blue-500/30', 
+    contactado: 'bg-amber-500/20 text-amber-400 border-amber-500/30', 
+    en_proceso: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+    cerrado: 'bg-green-500/20 text-green-400 border-green-500/30' 
+  };
+  
+  const statusLabels = {
+    nuevo: 'Nuevo',
+    contactado: 'Contactado', 
+    en_proceso: 'En Proceso',
+    cerrado: 'Cerrado'
+  };
+
   const filtered = filter ? inquiries.filter(i => i.status === filter) : inquiries;
+  
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '-';
+    return new Date(dateStr).toLocaleDateString('es-PY', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+
+  const formatList = (arr) => {
+    if (!arr || arr.length === 0) return null;
+    return arr;
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-3">
-        <select value={filter} onChange={(e) => setFilter(e.target.value)} className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm">
-          <option value="" className="bg-[#1a1a1a]">Todos</option>
-          <option value="nuevo" className="bg-[#1a1a1a]">Nuevos</option>
-          <option value="contactado" className="bg-[#1a1a1a]">Contactados</option>
-          <option value="cerrado" className="bg-[#1a1a1a]">Cerrados</option>
-        </select>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-medium text-white">Consultas de Marcas</h2>
+          <p className="text-white/50 text-sm">Leads recibidos desde los formularios de contacto</p>
+        </div>
+        <button onClick={onRefresh} className="p-2 rounded-lg bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
+          <RefreshCw className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-2 flex-wrap">
+        <button 
+          onClick={() => setFilter('')}
+          className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${!filter ? 'bg-[#d4a968] text-black' : 'bg-white/5 text-white/70 hover:bg-white/10'}`}
+        >
+          Todos ({inquiries.length})
+        </button>
+        <button 
+          onClick={() => setFilter('nuevo')}
+          className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${filter === 'nuevo' ? 'bg-blue-500 text-white' : 'bg-white/5 text-white/70 hover:bg-white/10'}`}
+        >
+          Nuevos ({inquiries.filter(i => i.status === 'nuevo').length})
+        </button>
+        <button 
+          onClick={() => setFilter('contactado')}
+          className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${filter === 'contactado' ? 'bg-amber-500 text-white' : 'bg-white/5 text-white/70 hover:bg-white/10'}`}
+        >
+          Contactados ({inquiries.filter(i => i.status === 'contactado').length})
+        </button>
+        <button 
+          onClick={() => setFilter('cerrado')}
+          className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${filter === 'cerrado' ? 'bg-green-500 text-white' : 'bg-white/5 text-white/70 hover:bg-white/10'}`}
+        >
+          Cerrados ({inquiries.filter(i => i.status === 'cerrado').length})
+        </button>
       </div>
 
       {loading ? (
@@ -319,23 +394,198 @@ const BrandsInquiriesPanel = ({ inquiries, loading, onRefresh }) => {
       ) : (
         <div className="grid gap-3">
           {filtered.map((inquiry) => (
-            <div key={inquiry.id} className="p-4 rounded-xl bg-white/5 border border-white/10">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <h4 className="text-white font-medium">{inquiry.brand_name}</h4>
-                    <span className={`px-2 py-0.5 rounded text-xs ${statusColors[inquiry.status]}`}>{inquiry.status}</span>
+            <div key={inquiry.id || inquiry.inquiry_id} className="rounded-xl bg-white/5 border border-white/10 overflow-hidden hover:border-white/20 transition-colors">
+              {/* Header Row - Clickable to expand */}
+              <div 
+                className="p-4 cursor-pointer"
+                onClick={() => setExpandedId(expandedId === (inquiry.id || inquiry.inquiry_id) ? null : (inquiry.id || inquiry.inquiry_id))}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h4 className="text-white font-medium">{inquiry.brand_name || inquiry.brand || 'Sin nombre'}</h4>
+                      <span className={`px-2 py-0.5 rounded text-xs border ${statusColors[inquiry.status] || statusColors.nuevo}`}>
+                        {statusLabels[inquiry.status] || 'Nuevo'}
+                      </span>
+                      {inquiry.selected_plan && (
+                        <span className="px-2 py-0.5 rounded text-xs bg-[#d4a968]/20 text-[#d4a968] border border-[#d4a968]/30">
+                          {inquiry.selected_plan}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-white/60 text-sm">{inquiry.contact_name || inquiry.name || '-'} • {inquiry.email}</p>
+                    <p className="text-white/40 text-xs mt-1">{formatDate(inquiry.created_at)}</p>
                   </div>
-                  <p className="text-white/60 text-sm">{inquiry.contact_name} • {inquiry.email}</p>
-                  {inquiry.phone && <p className="text-white/40 text-sm">{inquiry.phone}</p>}
-                  {inquiry.message && <p className="text-white/50 text-sm mt-2 italic">"{inquiry.message}"</p>}
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    {/* Quick actions */}
+                    {inquiry.phone && (
+                      <a 
+                        href={`https://wa.me/${inquiry.phone.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
+                        title="Contactar por WhatsApp"
+                      >
+                        <Phone className="w-4 h-4" />
+                      </a>
+                    )}
+                    <a 
+                      href={`mailto:${inquiry.email}`}
+                      className="p-2 rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
+                      title="Enviar email"
+                    >
+                      <Mail className="w-4 h-4" />
+                    </a>
+                    {/* Mark as contacted button */}
+                    {inquiry.status === 'nuevo' && (
+                      <button
+                        onClick={() => updateStatus(inquiry.id || inquiry.inquiry_id, 'contactado')}
+                        className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 text-xs font-medium transition-colors"
+                        title="Marcar como contactado"
+                      >
+                        Marcar contactado
+                      </button>
+                    )}
+                    {/* Delete button with double confirmation */}
+                    <button
+                      onClick={() => handleDeleteClick(inquiry.id || inquiry.inquiry_id)}
+                      className={`p-2 rounded-lg transition-colors ${
+                        deleteConfirm === (inquiry.id || inquiry.inquiry_id) 
+                          ? 'bg-red-500 text-white animate-pulse' 
+                          : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                      }`}
+                      title={deleteConfirm === (inquiry.id || inquiry.inquiry_id) ? 'Click de nuevo para confirmar' : 'Eliminar'}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                    <ChevronDown className={`w-5 h-5 text-white/40 transition-transform ${expandedId === (inquiry.id || inquiry.inquiry_id) ? 'rotate-180' : ''}`} />
+                  </div>
                 </div>
-                <select value={inquiry.status} onChange={(e) => updateStatus(inquiry.id, e.target.value)} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm">
-                  <option value="nuevo" className="bg-[#1a1a1a]">Nuevo</option>
-                  <option value="contactado" className="bg-[#1a1a1a]">Contactado</option>
-                  <option value="cerrado" className="bg-[#1a1a1a]">Cerrado</option>
-                </select>
               </div>
+
+              {/* Expanded Details */}
+              {expandedId === (inquiry.id || inquiry.inquiry_id) && (
+                <div className="border-t border-white/10 p-4 bg-black/20 space-y-4">
+                  {/* Contact Info */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <p className="text-white/40 text-xs mb-1">Contacto</p>
+                      <p className="text-white text-sm">{inquiry.contact_name || inquiry.name || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-xs mb-1">Email</p>
+                      <p className="text-white text-sm">{inquiry.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-xs mb-1">Teléfono</p>
+                      <p className="text-white text-sm">{inquiry.phone || '-'}</p>
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-xs mb-1">Tipo Producto</p>
+                      <p className="text-white text-sm">{inquiry.product_type || inquiry.interest || '-'}</p>
+                    </div>
+                  </div>
+
+                  {/* Message */}
+                  {inquiry.message && (
+                    <div>
+                      <p className="text-white/40 text-xs mb-1">Mensaje</p>
+                      <p className="text-white/70 text-sm bg-white/5 rounded-lg p-3 italic">"{inquiry.message}"</p>
+                    </div>
+                  )}
+
+                  {/* Questionnaire */}
+                  {inquiry.questionnaire && Object.keys(inquiry.questionnaire).length > 0 && (
+                    <div>
+                      <p className="text-[#d4a968] text-xs font-medium uppercase tracking-wider mb-3">Respuestas del Cuestionario</p>
+                      <div className="grid gap-3">
+                        {inquiry.questionnaire.situacion && formatList(inquiry.questionnaire.situacion) && (
+                          <div className="bg-white/5 rounded-lg p-3">
+                            <p className="text-white/50 text-xs mb-1">1) Situación actual</p>
+                            <ul className="text-white/80 text-sm space-y-1">
+                              {inquiry.questionnaire.situacion.map((item, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <span className="text-[#d4a968]">•</span>
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {inquiry.questionnaire.resultado && formatList(inquiry.questionnaire.resultado) && (
+                          <div className="bg-white/5 rounded-lg p-3">
+                            <p className="text-white/50 text-xs mb-1">2) Resultado en 90 días</p>
+                            <ul className="text-white/80 text-sm space-y-1">
+                              {inquiry.questionnaire.resultado.map((item, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <span className="text-[#d4a968]">•</span>
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {(inquiry.questionnaire.obstaculo || inquiry.questionnaire.frustracion) && formatList(inquiry.questionnaire.obstaculo || inquiry.questionnaire.frustracion) && (
+                          <div className="bg-white/5 rounded-lg p-3">
+                            <p className="text-white/50 text-xs mb-1">3) Obstáculo/Frustración</p>
+                            <ul className="text-white/80 text-sm space-y-1">
+                              {(inquiry.questionnaire.obstaculo || inquiry.questionnaire.frustracion).map((item, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <span className="text-[#d4a968]">•</span>
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {(inquiry.questionnaire.prioridad || inquiry.questionnaire.solucion) && formatList(inquiry.questionnaire.prioridad || inquiry.questionnaire.solucion) && (
+                          <div className="bg-white/5 rounded-lg p-3">
+                            <p className="text-white/50 text-xs mb-1">4) Prioridad/Solución preferida</p>
+                            <ul className="text-white/80 text-sm space-y-1">
+                              {(inquiry.questionnaire.prioridad || inquiry.questionnaire.solucion).map((item, i) => (
+                                <li key={i} className="flex items-start gap-2">
+                                  <span className="text-[#d4a968]">•</span>
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {inquiry.questionnaire.inversion && (
+                          <div className="bg-white/5 rounded-lg p-3">
+                            <p className="text-white/50 text-xs mb-1">5) Inversión mensual</p>
+                            <p className="text-white/80 text-sm">{inquiry.questionnaire.inversion}</p>
+                          </div>
+                        )}
+                        {inquiry.questionnaire.adicional && (
+                          <div className="bg-white/5 rounded-lg p-3">
+                            <p className="text-white/50 text-xs mb-1">6) Información adicional</p>
+                            <p className="text-white/80 text-sm">{inquiry.questionnaire.adicional}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Status Change */}
+                  <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white/40 text-xs">Estado:</span>
+                      <select 
+                        value={inquiry.status} 
+                        onChange={(e) => updateStatus(inquiry.id || inquiry.inquiry_id, e.target.value)} 
+                        className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm [&>option]:bg-[#1a1a1a] [&>option]:text-white"
+                      >
+                        <option value="nuevo">Nuevo</option>
+                        <option value="contactado">Contactado</option>
+                        <option value="en_proceso">En Proceso</option>
+                        <option value="cerrado">Cerrado</option>
+                      </select>
+                    </div>
+                    <p className="text-white/30 text-xs">ID: {inquiry.inquiry_id || inquiry.id}</p>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
