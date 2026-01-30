@@ -39,6 +39,7 @@ export const AdminCreatorsReport = () => {
       if (levelFilter) params.append('level', levelFilter);
       if (searchTerm) params.append('search', searchTerm);
       if (platformFilter && platformFilter !== 'all') params.append('platform', platformFilter);
+      if (hasAiVerified === 'true') params.append('has_ai_verified', 'true');
       if (params.toString()) url += `?${params}`;
       
       const res = await fetch(url, { headers: getAuthHeaders() });
@@ -52,6 +53,31 @@ export const AdminCreatorsReport = () => {
       setLoading(false);
     }
   };
+
+  // Sort creators locally
+  const sortedCreators = React.useMemo(() => {
+    if (!sortBy) return creators;
+    
+    return [...creators].sort((a, b) => {
+      let aVal = 0, bVal = 0;
+      
+      if (sortBy === 'ig_followers') {
+        aVal = a.ig_followers || 0;
+        bVal = b.ig_followers || 0;
+      } else if (sortBy === 'tt_followers') {
+        aVal = a.tt_followers || 0;
+        bVal = b.tt_followers || 0;
+      } else if (sortBy === 'avg_views') {
+        aVal = a.avg_views || 0;
+        bVal = b.avg_views || 0;
+      } else if (sortBy === 'avg_reach') {
+        aVal = a.avg_reach || 0;
+        bVal = b.avg_reach || 0;
+      }
+      
+      return sortOrder === 'desc' ? bVal - aVal : aVal - bVal;
+    });
+  }, [creators, sortBy, sortOrder]);
 
   const fetchCreatorDetail = async (creatorId) => {
     setLoadingDetail(true);
