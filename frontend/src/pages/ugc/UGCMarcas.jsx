@@ -243,11 +243,11 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
                   {/* CTA */}
                   <Link
                     to={pkg.type === 'enterprise' ? '#contacto' : '/ugc/brand/onboarding'}
-                    className={`block w-full text-center py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg mt-auto ${
+                    className={`block w-full text-center py-2.5 text-xs font-medium uppercase tracking-wider transition-all rounded-lg mt-auto hover:scale-105 ${
                       isPro
-                        ? 'lava-lamp-btn-gold text-black hover:scale-105'
+                        ? 'lava-lamp-btn-gold text-black'
                         : isEnterprise
-                          ? 'lava-lamp-btn text-white hover:scale-105'
+                          ? 'lava-lamp-btn text-white'
                           : 'border border-white/20 text-white hover:bg-white/5'
                     }`}
                   >
