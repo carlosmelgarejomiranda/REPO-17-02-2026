@@ -278,8 +278,8 @@ const PackagePricing = () => {
 
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Calculator className="w-5 h-5 text-purple-400" />
-                  <span className="text-purple-400 text-sm">Calculá tu plan</span>
+                  <Calculator className="w-5 h-5 text-pink-400" />
+                  <span className="text-pink-400 text-sm">Calculá tu plan</span>
                 </div>
 
                 <div className="space-y-4">
@@ -310,8 +310,8 @@ const PackagePricing = () => {
                 </div>
 
                 {enterpriseQuote && (
-                  <div className="mt-4 p-3 bg-purple-500/10 rounded-lg">
-                    <p className="text-purple-400 text-xs mb-1">Total estimado:</p>
+                  <div className="mt-4 p-3 bg-pink-500/10 rounded-lg">
+                    <p className="text-pink-400 text-xs mb-1">Total estimado:</p>
                     <p className="text-white font-medium">{formatPrice(enterpriseQuote.total_price)}</p>
                     <p className="text-gray-500 text-xs">{enterpriseQuote.total_deliveries} entregas totales</p>
                     <p className="text-gray-500 text-xs">{formatPrice(enterpriseQuote.monthly_payment)}/mes</p>
@@ -322,7 +322,7 @@ const PackagePricing = () => {
               <ul className="space-y-3 mb-8">
                 {enterprisePackage.features?.map((feature, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
-                    <Check className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
+                    <Check className="w-4 h-4 text-pink-400 mt-0.5 flex-shrink-0" />
                     {feature}
                   </li>
                 ))}
@@ -331,7 +331,7 @@ const PackagePricing = () => {
               <button
                 onClick={() => handleSelectPackage('enterprise')}
                 disabled={purchasing}
-                className="w-full py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 bg-purple-600 text-white hover:bg-purple-700"
+                className="w-full py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 lava-lamp-btn text-white hover:opacity-90"
               >
                 {purchasing ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
