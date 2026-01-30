@@ -103,7 +103,7 @@ const PRICING = {
           { item: '4 horas de estudio/mes', value: 450000 },
           { item: '1 Campaña UGC Standard (12 mat.)/Mes', value: 1990000 }
         ],
-        features: ['2 Percheros en Showroom', '8 Reels producidos por mes', '30 fotos de estudio mensuales', '4 horas de estudio incluidas', 'Campaña UGC Standard con 12 materiales', '4 posteos en redes de Avenue'],
+        features: ['2 Percheros en Showroom', '8 Reels producidos por mes', '30 fotos de estudio mensuales', '4 horas de estudio incluidas', 'Campaña UGC Standard con 12 materiales', '4 posteos en redes'],
         highlight: true,
         isPro: true
       }
