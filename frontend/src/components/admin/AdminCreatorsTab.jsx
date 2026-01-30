@@ -63,11 +63,11 @@ const AdminCreatorsTab = ({
       let aVal = 0, bVal = 0;
       
       if (sortBy === 'ig_followers') {
-        aVal = a.verified_instagram?.follower_count || a.unverified_instagram?.followers || 0;
-        bVal = b.verified_instagram?.follower_count || b.unverified_instagram?.followers || 0;
+        aVal = a.ig_followers || 0;
+        bVal = b.ig_followers || 0;
       } else if (sortBy === 'tt_followers') {
-        aVal = a.verified_tiktok?.follower_count || a.unverified_tiktok?.followers || 0;
-        bVal = b.verified_tiktok?.follower_count || b.unverified_tiktok?.followers || 0;
+        aVal = a.tt_followers || 0;
+        bVal = b.tt_followers || 0;
       } else if (sortBy === 'avg_views') {
         aVal = a.avg_views || 0;
         bVal = b.avg_views || 0;
