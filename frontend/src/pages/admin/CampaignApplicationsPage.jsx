@@ -295,19 +295,25 @@ const CampaignApplicationsPage = () => {
         ) : (
           <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
             {/* Table Header */}
-            <div className="grid grid-cols-[50px_200px_80px_140px_140px_180px_100px_1fr] gap-2 px-4 py-3 bg-white/5 border-b border-white/10 text-xs text-gray-500 uppercase tracking-wide">
+            <div className="grid grid-cols-[50px_180px_80px_110px_70px_110px_70px_160px_100px_1fr] gap-2 px-4 py-3 bg-white/5 border-b border-white/10 text-xs text-gray-500 uppercase tracking-wide">
               <div></div>
               <div>Creador</div>
               <div className="text-center">Nivel</div>
               <div className="text-center">Instagram</div>
+              <div className="text-center cursor-pointer hover:text-white" onClick={() => { setSortBy('ig_followers'); setSortOrder(sortBy === 'ig_followers' && sortOrder === 'desc' ? 'asc' : 'desc'); }}>
+                Seg. IG {sortBy === 'ig_followers' && (sortOrder === 'desc' ? '↓' : '↑')}
+              </div>
               <div className="text-center">TikTok</div>
+              <div className="text-center cursor-pointer hover:text-white" onClick={() => { setSortBy('tt_followers'); setSortOrder(sortBy === 'tt_followers' && sortOrder === 'desc' ? 'asc' : 'desc'); }}>
+                Seg. TT {sortBy === 'tt_followers' && (sortOrder === 'desc' ? '↓' : '↑')}
+              </div>
               <div className="text-center">Métricas</div>
               <div className="text-center">Estado</div>
               <div className="text-center">Acciones</div>
             </div>
             
             {/* Table Body */}
-            {applications.map((app, idx) => {
+            {sortedApplications.map((app, idx) => {
               const creator = app.creator || {};
               const verifiedIG = creator.verified_instagram;
               const verifiedTT = creator.verified_tiktok;
@@ -324,6 +330,8 @@ const CampaignApplicationsPage = () => {
               const ttUsername = verifiedTT?.username || ttFromNetworks?.username || socialAccounts.tiktok?.username;
               const igVerified = !!verifiedIG;
               const ttVerified = !!verifiedTT;
+              const igFollowers = verifiedIG?.followers || igFromNetworks?.followers || 0;
+              const ttFollowers = verifiedTT?.followers || ttFromNetworks?.followers || 0;
               
               return (
                 <div 
@@ -332,7 +340,7 @@ const CampaignApplicationsPage = () => {
                   className={`bg-[#0d0d0d] border border-white/10 rounded-lg overflow-hidden transition-all ${idx !== 0 ? 'mt-3' : ''}`}
                 >
                   {/* Main Row */}
-                  <div className="grid grid-cols-[50px_200px_80px_140px_140px_180px_100px_1fr] gap-2 px-4 py-3 items-center">
+                  <div className="grid grid-cols-[50px_180px_80px_110px_70px_110px_70px_160px_100px_1fr] gap-2 px-4 py-3 items-center">
                     {/* Avatar */}
                     <div className="relative">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-sm">
