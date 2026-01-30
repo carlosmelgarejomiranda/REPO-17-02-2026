@@ -833,14 +833,13 @@ ${formData.message || 'Sin mensaje adicional'}`;
                       required
                       value={formData.interest}
                       onChange={(e) => updateField('interest', e.target.value)}
-                      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors"
+                      className="w-full p-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-[#d4a968] focus:outline-none transition-colors [&>option]:bg-[#1a1a1a] [&>option]:text-white"
                     >
-                      <option value="" className="bg-[#1a1a1a]">Seleccionar</option>
-                      <option value="ecommerce" className="bg-[#1a1a1a]">E-commerce</option>
-                      <option value="online-pro" className="bg-[#1a1a1a]">Online PRO</option>
-                      <option value="showroom" className="bg-[#1a1a1a]">Showroom + Online</option>
-                      <option value="showroom-pro" className="bg-[#1a1a1a]">Showroom + Online PRO ⭐</option>
-                      <option value="consulta" className="bg-[#1a1a1a]">Quiero que me asesoren</option>
+                      <option value="">Seleccionar</option>
+                      <option value="starter">Showroom Starter</option>
+                      <option value="standard">Showroom Standard ⭐</option>
+                      <option value="pro">Showroom Pro+</option>
+                      <option value="consulta">Quiero que me asesoren</option>
                     </select>
                   </div>
                 </div>
