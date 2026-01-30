@@ -15,6 +15,7 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
   const [isLoaded, setIsLoaded] = useState(false);
   const [packages, setPackages] = useState([]);
   const [promoActive, setPromoActive] = useState(false);
+  const [formStep, setFormStep] = useState(1); // 1 = questionnaire, 2 = contact info
   
   // Form states
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -25,9 +26,74 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
     brand: '',
     message: ''
   });
+  
+  // Questionnaire states
+  const [q1Situacion, setQ1Situacion] = useState([]); // max 3
+  const [q2Resultado, setQ2Resultado] = useState([]); // max 2
+  const [q3Frustracion, setQ3Frustracion] = useState([]); // max 3
+  const [q4Solucion, setQ4Solucion] = useState([]); // max 3
+  const [q5Inversion, setQ5Inversion] = useState(''); // single select
+  const [q6Adicional, setQ6Adicional] = useState(''); // open text
+  
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+
+  // Questionnaire options
+  const opcionesSituacion = [
+    'No estoy haciendo UGC hoy (quiero empezar bien)',
+    'Hacemos contenido in-house, pero no alcanza (necesito volumen)',
+    'Probé con creadores y fue un caos (entregas inconsistentes)',
+    'Invierto en ads, pero me falta contenido que convierta',
+    'Tengo contenido, pero no sé cómo escalar distribución/volumen',
+    'Tengo agencia/proveedor, pero quiero bajar costo y tener control/visibilidad'
+  ];
+
+  const opcionesResultado = [
+    'Conseguir 30–60 piezas UGC listas para usar en ads',
+    'Mejorar performance en ads (CTR/CVR) con creatividades nuevas',
+    'Aumentar ventas online (Shopify/IG/WhatsApp) con contenido que convierta',
+    'Generar más contenido para redes (constancia semanal)',
+    'Lanzar una colección/producto con UGC (campaña de lanzamiento)',
+    'Construir un sistema mensual de UGC "siempre activo" (always-on)'
+  ];
+
+  const opcionesFrustracion = [
+    'No consigo creadores "buenos" para mi nicho',
+    'Los creadores entregan tarde o no cumplen el brief',
+    'Me cuesta coordinar, revisar y hacer seguimiento (gestión)',
+    'No tengo un brief claro / no sé qué pedir para que funcione en ads',
+    'Necesito volumen, pero no quiero disparar costos',
+    'No tengo forma de organizar/centralizar assets y reportes'
+  ];
+
+  const opcionesSolucion = [
+    'Autogestionado: yo cargo el brief, elijo creadores y hago el seguimiento desde la plataforma',
+    'Asistido: yo cargo el brief, y AVENUE me ayuda a seleccionar creadores y a controlar entregas',
+    'Gestionado por AVENUE: AVENUE arma el brief, selecciona creadores, gestiona entregas y yo solo apruebo',
+    'Solo contenido (producción): quiero recibir piezas UGC listas, sin foco en reporting/gestión',
+    'Contenido + performance: quiero rotación de creatividades y aprendizaje para mejorar ads',
+    'Siempre activo (mensual): quiero un flujo constante de UGC todo el mes',
+    'Campaña puntual: necesito UGC para lanzamiento/fecha específica',
+    'No estoy seguro: recomiéndenme según mis respuestas'
+  ];
+
+  const opcionesInversion = [
+    'Menos de Gs. 1.000.000 / mes',
+    'Gs. 1.000.000 – 3.000.000 / mes',
+    'Gs. 3.000.000 – 6.000.000 / mes',
+    'Gs. 6.000.000 – 12.000.000 / mes',
+    'Más de Gs. 12.000.000 / mes',
+    'No estoy seguro todavía'
+  ];
+
+  const toggleMultiSelect = (value, currentArray, setArray, max) => {
+    if (currentArray.includes(value)) {
+      setArray(currentArray.filter(v => v !== value));
+    } else if (currentArray.length < max) {
+      setArray([...currentArray, value]);
+    }
+  };
 
   useEffect(() => {
     setIsLoaded(true);
