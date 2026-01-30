@@ -559,7 +559,7 @@ ${formData.message || 'Sin mensaje adicional'}`;
               Empezá con tu primera <span className="italic text-[#d4a968]">campaña</span>
             </h2>
             <p className="text-white/50 text-sm max-w-lg mx-auto">
-              Completá el formulario y nos pondremos en contacto contigo para comenzar.
+              Completá el cuestionario para entender mejor tus necesidades y ofrecerte la mejor solución.
             </p>
           </div>
 
@@ -576,7 +576,18 @@ ${formData.message || 'Sin mensaje adicional'}`;
                   </h3>
                   <p className="text-gray-400 mb-6">Se abrió WhatsApp con tu consulta</p>
                   <button 
-                    onClick={() => { setSubmitted(false); setSelectedPlan(null); setFormData({ name: '', email: '', phone: '', brand: '', message: '' }); }}
+                    onClick={() => { 
+                      setSubmitted(false); 
+                      setSelectedPlan(null); 
+                      setFormData({ name: '', email: '', phone: '', brand: '', message: '' });
+                      setQ1Situacion([]);
+                      setQ2Resultado([]);
+                      setQ3Frustracion([]);
+                      setQ4Solucion([]);
+                      setQ5Inversion('');
+                      setQ6Adicional('');
+                      setFormStep(1);
+                    }}
                     className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors"
                   >
                     Enviar otra consulta
@@ -585,39 +596,286 @@ ${formData.message || 'Sin mensaje adicional'}`;
               </div>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Selected Plan Preview */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h3 className="text-lg font-medium text-white mb-4">Plan Seleccionado</h3>
-                {selectedPlan ? (
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/70">Plan:</span>
-                      <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
+            <div className="max-w-3xl mx-auto">
+              {/* Progress Indicator */}
+              <div className="flex items-center justify-center gap-2 mb-8">
+                <div className={`w-3 h-3 rounded-full ${formStep >= 1 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+                <div className={`w-16 h-0.5 ${formStep >= 2 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+                <div className={`w-3 h-3 rounded-full ${formStep >= 2 ? 'bg-[#d4a968]' : 'bg-white/20'}`}></div>
+              </div>
+
+              {formStep === 1 ? (
+                /* STEP 1: Questionnaire */
+                <div className="space-y-8">
+                  {/* Selected Plan Preview */}
+                  {selectedPlan && (
+                    <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl p-4 flex items-center justify-between">
+                      <div>
+                        <span className="text-white/70 text-sm">Plan seleccionado: </span>
+                        <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
+                        <span className="text-white/50 text-sm ml-2">
+                          ({selectedPlan.deliveries} materiales - {formatPrice(selectedPlan.price)})
+                        </span>
+                      </div>
+                      <button onClick={() => setSelectedPlan(null)} className="text-white/50 hover:text-white text-sm underline">
+                        Cambiar
+                      </button>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/70">Entregas:</span>
-                      <span className="text-white">{selectedPlan.deliveries} materiales</span>
+                  )}
+
+                  {/* Q1: Situación actual */}
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-2">1) ¿Cuál describe mejor tu situación actual?</h4>
+                    <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
+                    <div className="space-y-2">
+                      {opcionesSituacion.map((opcion, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => toggleMultiSelect(opcion, q1Situacion, setQ1Situacion, 3)}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                            q1Situacion.includes(opcion)
+                              ? 'bg-[#d4a968] text-black'
+                              : 'bg-white/5 text-white/80 hover:bg-white/10'
+                          } ${q1Situacion.length >= 3 && !q1Situacion.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {opcion}
+                        </button>
+                      ))}
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-white/70">Precio:</span>
-                      <span className="text-white font-medium">
-                        {selectedPlan.is_promo_active && selectedPlan.promo_price 
-                          ? formatPrice(selectedPlan.promo_price) 
-                          : formatPrice(selectedPlan.price)}
-                      </span>
+                  </div>
+
+                  {/* Q2: Resultado en 90 días */}
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-2">2) ¿Cuál describe mejor el resultado que querés lograr en los próximos 90 días?</h4>
+                    <p className="text-white/50 text-sm mb-4">Seleccioná hasta 2 opciones</p>
+                    <div className="space-y-2">
+                      {opcionesResultado.map((opcion, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => toggleMultiSelect(opcion, q2Resultado, setQ2Resultado, 2)}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                            q2Resultado.includes(opcion)
+                              ? 'bg-[#d4a968] text-black'
+                              : 'bg-white/5 text-white/80 hover:bg-white/10'
+                          } ${q2Resultado.length >= 2 && !q2Resultado.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {opcion}
+                        </button>
+                      ))}
                     </div>
-                    <hr className="border-white/10 my-4" />
-                    <button 
-                      onClick={() => setSelectedPlan(null)}
-                      className="text-sm text-white/50 hover:text-white underline"
+                  </div>
+
+                  {/* Q3: Frustración */}
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-2">3) ¿Cuál describe mejor la frustración u obstáculo que hoy se interpone?</h4>
+                    <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
+                    <div className="space-y-2">
+                      {opcionesFrustracion.map((opcion, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => toggleMultiSelect(opcion, q3Frustracion, setQ3Frustracion, 3)}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                            q3Frustracion.includes(opcion)
+                              ? 'bg-[#d4a968] text-black'
+                              : 'bg-white/5 text-white/80 hover:bg-white/10'
+                          } ${q3Frustracion.length >= 3 && !q3Frustracion.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {opcion}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Q4: Tipo de solución */}
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-2">4) ¿Qué tipo de solución preferís?</h4>
+                    <p className="text-white/50 text-sm mb-4">Seleccioná hasta 3 opciones</p>
+                    <div className="space-y-2">
+                      {opcionesSolucion.map((opcion, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => toggleMultiSelect(opcion, q4Solucion, setQ4Solucion, 3)}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                            q4Solucion.includes(opcion)
+                              ? 'bg-[#d4a968] text-black'
+                              : 'bg-white/5 text-white/80 hover:bg-white/10'
+                          } ${q4Solucion.length >= 3 && !q4Solucion.includes(opcion) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {opcion}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Q5: Inversión */}
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-2">5) ¿Qué rango de inversión mensual te resultaría razonable para UGC en el corto plazo?</h4>
+                    <p className="text-white/50 text-sm mb-4">Seleccioná una opción</p>
+                    <div className="space-y-2">
+                      {opcionesInversion.map((opcion, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setQ5Inversion(opcion)}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-all ${
+                            q5Inversion === opcion
+                              ? 'bg-[#d4a968] text-black'
+                              : 'bg-white/5 text-white/80 hover:bg-white/10'
+                          }`}
+                        >
+                          {opcion}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Q6: Información adicional */}
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-2">6) ¿Hay algo más que quieras que sepamos?</h4>
+                    <p className="text-white/50 text-sm mb-4">Categoría, links, objetivo, plazos, restricciones, qué ya probaste, etc.</p>
+                    <textarea
+                      value={q6Adicional}
+                      onChange={(e) => setQ6Adicional(e.target.value)}
+                      rows={4}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
+                      placeholder="Contanos más sobre tu marca, objetivos o cualquier detalle relevante..."
+                    />
+                  </div>
+
+                  {/* Next button */}
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setFormStep(2)}
+                      className="px-8 py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors flex items-center gap-2"
                     >
-                      Cambiar plan
+                      Continuar
+                      <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-white/50 text-sm mb-4">No has seleccionado un plan</p>
+                </div>
+              ) : (
+                /* STEP 2: Contact Info */
+                <div className="space-y-6">
+                  <button
+                    type="button"
+                    onClick={() => setFormStep(1)}
+                    className="text-white/50 hover:text-white text-sm flex items-center gap-1 mb-4"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Volver al cuestionario
+                  </button>
+
+                  {/* Selected Plan Preview */}
+                  {selectedPlan && (
+                    <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl p-4">
+                      <span className="text-white/70 text-sm">Plan seleccionado: </span>
+                      <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-white/70 text-sm mb-1">Nombre completo *</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.name}
+                          onChange={(e) => updateField('name', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          placeholder="Tu nombre"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-white/70 text-sm mb-1">Email *</label>
+                        <input
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) => updateField('email', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          placeholder="tu@email.com"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-white/70 text-sm mb-1">Teléfono</label>
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => updateField('phone', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          placeholder="+595 xxx xxx xxx"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-white/70 text-sm mb-1">Nombre de tu marca *</label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.brand}
+                          onChange={(e) => updateField('brand', e.target.value)}
+                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                          placeholder="Tu marca"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-white/70 text-sm mb-1">Mensaje adicional (opcional)</label>
+                      <textarea
+                        value={formData.message}
+                        onChange={(e) => updateField('message', e.target.value)}
+                        rows={3}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
+                        placeholder="Algo más que quieras agregar..."
+                      />
+                    </div>
+
+                    {error && (
+                      <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                        {error}
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          Enviar y contactar por WhatsApp
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {/* Additional CTAs */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-10">
+                <Link
+                  to="/ugc/brand/onboarding"
+                  className="inline-flex items-center justify-center gap-2 border border-[#d4a968] text-[#d4a968] px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#d4a968]/10 transition-all rounded-lg"
+                  data-testid="cta-register"
+                >
+                  Registrarse directamente
+                </Link>
+              </div>
+            </div>
+          )}
                     <a href="#planes" className="text-[#d4a968] text-sm hover:underline">
                       Ver planes disponibles ↑
                     </a>
