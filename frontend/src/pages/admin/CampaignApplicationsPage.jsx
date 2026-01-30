@@ -330,8 +330,8 @@ const CampaignApplicationsPage = () => {
               const ttUsername = verifiedTT?.username || ttFromNetworks?.username || socialAccounts.tiktok?.username;
               const igVerified = !!verifiedIG;
               const ttVerified = !!verifiedTT;
-              const igFollowers = verifiedIG?.followers || igFromNetworks?.followers || 0;
-              const ttFollowers = verifiedTT?.followers || ttFromNetworks?.followers || 0;
+              const igFollowers = verifiedIG?.follower_count || igFromNetworks?.followers || 0;
+              const ttFollowers = verifiedTT?.follower_count || ttFromNetworks?.followers || 0;
               
               return (
                 <div 
