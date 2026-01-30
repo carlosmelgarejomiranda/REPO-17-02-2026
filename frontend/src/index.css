@@ -244,6 +244,9 @@ nav[data-studio-nav="true"] {
     background-size: 300% 100%;
     animation: lavaLamp 4s ease infinite;
     box-shadow: 0 0 20px rgba(147, 51, 234, 0.5), 0 0 40px rgba(236, 72, 153, 0.3);
+    border: 2px solid #000;
+    position: relative;
+    z-index: 10;
 }
 
 /* Gold Lava Lamp Animation for Recommended Plans */
