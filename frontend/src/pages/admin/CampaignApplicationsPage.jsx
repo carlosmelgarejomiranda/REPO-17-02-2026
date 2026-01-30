@@ -233,7 +233,7 @@ const CampaignApplicationsPage = () => {
 
       {/* Filters */}
       <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-gray-500" />
             <select
@@ -249,6 +249,33 @@ const CampaignApplicationsPage = () => {
               <option value="cancelled">Cancelados</option>
             </select>
           </div>
+          <select
+            value={hasAiVerified}
+            onChange={(e) => setHasAiVerified(e.target.value)}
+            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+          >
+            <option value="">Todas las cuentas</option>
+            <option value="true">Con redes verificadas IA</option>
+          </select>
+          <select
+            value={sortBy}
+            onChange={(e) => { setSortBy(e.target.value); setSortOrder('desc'); }}
+            className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+          >
+            <option value="">Ordenar por...</option>
+            <option value="ig_followers">Seguidores IG</option>
+            <option value="tt_followers">Seguidores TT</option>
+            <option value="avg_views">Prom. Vistas</option>
+            <option value="rating">Rating</option>
+          </select>
+          {sortBy && (
+            <button
+              onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+              className="px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+            >
+              {sortOrder === 'desc' ? '↓ Mayor' : '↑ Menor'}
+            </button>
+          )}
           <button 
             onClick={fetchData}
             className="p-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
