@@ -413,34 +413,35 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
             </div>
           </div>
 
-          {/* Plans Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {currentPricing.plans.map((plan) => (
-              <div 
-                key={plan.id}
-                className={`relative flex flex-col p-5 rounded-xl transition-all ${
-                  plan.isPro
-                    ? 'bg-gradient-to-b from-pink-500/10 to-[#121212] border-2 border-pink-500 shadow-lg shadow-pink-500/10' 
-                    : plan.highlight 
-                      ? 'bg-gradient-to-b from-[#d4a968]/10 to-[#121212] border-2 border-[#d4a968] shadow-lg shadow-[#d4a968]/10' 
-                      : 'bg-[#121212] border border-white/5 hover:border-white/20'
-                }`}
-                data-testid={`plan-${plan.id}`}
-              >
-                {plan.isPro && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
-                      ⭐ Pro+
-                    </span>
-                  </div>
-                )}
-                {plan.highlight && !plan.isPro && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-[#d4a968] text-black text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
-                      ⭐ Recomendado
-                    </span>
-                  </div>
-                )}
+          {/* Plans Grid - Centered for 3 plans */}
+          <div className="flex justify-center mb-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
+              {currentPricing.plans.map((plan) => (
+                <div 
+                  key={plan.id}
+                  className={`relative flex flex-col p-5 rounded-xl transition-all ${
+                    plan.isPro
+                      ? 'lava-lamp-card' 
+                      : plan.highlight 
+                        ? 'bg-gradient-to-b from-[#d4a968]/10 to-[#121212] border-2 border-[#d4a968] shadow-lg shadow-[#d4a968]/10' 
+                        : 'bg-[#121212] border border-white/5 hover:border-white/20'
+                  }`}
+                  data-testid={`plan-${plan.id}`}
+                >
+                  {plan.isPro && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                      <span className="lava-lamp-badge text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                        ⭐ Pro+
+                      </span>
+                    </div>
+                  )}
+                  {plan.highlight && !plan.isPro && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="bg-[#d4a968] text-black text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                        ⭐ Recomendado
+                      </span>
+                    </div>
+                  )}
 
                 {/* Plan Header */}
                 <div className="mb-3 mt-2">
