@@ -341,11 +341,17 @@ export const AdminCreatorsReport = () => {
       {/* Table */}
       <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1600px]">
+          <table className="w-full min-w-[1800px]">
             <thead>
               <tr className="border-b border-white/10 bg-white/5">
                 <th className="text-left p-4 text-[#d4a968] text-sm font-medium">Creador</th>
                 <th className="text-center p-4 text-[#d4a968] text-sm font-medium">Redes</th>
+                <th className="text-right p-4 text-[#d4a968] text-sm font-medium cursor-pointer hover:text-white" onClick={() => { setSortBy('ig_followers'); setSortOrder(sortBy === 'ig_followers' && sortOrder === 'desc' ? 'asc' : 'desc'); }}>
+                  Seg. IG {sortBy === 'ig_followers' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </th>
+                <th className="text-right p-4 text-[#d4a968] text-sm font-medium cursor-pointer hover:text-white" onClick={() => { setSortBy('tt_followers'); setSortOrder(sortBy === 'tt_followers' && sortOrder === 'desc' ? 'asc' : 'desc'); }}>
+                  Seg. TT {sortBy === 'tt_followers' && (sortOrder === 'desc' ? '↓' : '↑')}
+                </th>
                 <th className="text-center p-4 text-[#d4a968] text-sm font-medium">Nivel</th>
                 <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Campañas</th>
                 <th className="text-right p-4 text-[#d4a968] text-sm font-medium">Views</th>
@@ -364,19 +370,19 @@ export const AdminCreatorsReport = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={15} className="p-8 text-center">
+                  <td colSpan={17} className="p-8 text-center">
                     <Loader2 className="w-8 h-8 mx-auto text-[#d4a968] animate-spin" />
                   </td>
                 </tr>
               ) : creators.length === 0 ? (
                 <tr>
-                  <td colSpan={15} className="p-8 text-center text-gray-500">
+                  <td colSpan={17} className="p-8 text-center text-gray-500">
                     <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     No hay creadores para mostrar
                   </td>
                 </tr>
               ) : (
-                creators.map((c, idx) => {
+                sortedCreators.map((c, idx) => {
                   const level = levelConfig[c.level] || levelConfig.rookie;
                   const prefix = viewMode === 'totals' ? 'total_' : 'avg_';
                   
@@ -405,18 +411,44 @@ export const AdminCreatorsReport = () => {
                           {c.instagram_handle && (
                             <a href={`https://instagram.com/${c.instagram_handle.replace('@', '')}`}
                               target="_blank" rel="noopener noreferrer"
-                              className="text-pink-400 hover:text-pink-300" title={c.instagram_handle}>
+                              className={`flex items-center gap-1 ${c.ig_verified ? 'text-pink-400' : 'text-gray-500'}`} title={c.instagram_handle}>
                               <Instagram className="w-4 h-4" />
+                              {c.ig_verified && <BadgeCheck className="w-3 h-3 text-green-400" />}
                             </a>
                           )}
                           {c.tiktok_handle && (
                             <a href={`https://tiktok.com/@${c.tiktok_handle.replace('@', '')}`}
                               target="_blank" rel="noopener noreferrer"
-                              className="text-cyan-400 hover:text-cyan-300" title={c.tiktok_handle}>
+                              className={`flex items-center gap-1 ${c.tt_verified ? 'text-cyan-400' : 'text-gray-500'}`} title={c.tiktok_handle}>
                               <Music2 className="w-4 h-4" />
+                              {c.tt_verified && <BadgeCheck className="w-3 h-3 text-green-400" />}
                             </a>
                           )}
                         </div>
+                      </td>
+                      
+                      {/* IG Followers */}
+                      <td className="p-4 text-right">
+                        {c.ig_followers ? (
+                          <span className={`font-medium ${c.ig_verified ? 'text-pink-400' : 'text-gray-400'}`}>
+                            {formatNumber(c.ig_followers)}
+                            {c.ig_verified && <BadgeCheck className="w-3 h-3 text-green-400 inline ml-1" />}
+                          </span>
+                        ) : (
+                          <span className="text-gray-600">—</span>
+                        )}
+                      </td>
+                      
+                      {/* TT Followers */}
+                      <td className="p-4 text-right">
+                        {c.tt_followers ? (
+                          <span className={`font-medium ${c.tt_verified ? 'text-cyan-400' : 'text-gray-400'}`}>
+                            {formatNumber(c.tt_followers)}
+                            {c.tt_verified && <BadgeCheck className="w-3 h-3 text-green-400 inline ml-1" />}
+                          </span>
+                        ) : (
+                          <span className="text-gray-600">—</span>
+                        )}
                       </td>
                       
                       {/* Level */}
