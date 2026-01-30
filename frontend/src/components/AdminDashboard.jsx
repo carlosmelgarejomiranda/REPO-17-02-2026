@@ -490,7 +490,7 @@ const BrandsInquiriesPanel = ({ inquiries, loading, onRefresh }) => {
                   {inquiry.message && (
                     <div>
                       <p className="text-white/40 text-xs mb-1">Mensaje</p>
-                      <p className="text-white/70 text-sm bg-white/5 rounded-lg p-3 italic">"{inquiry.message}"</p>
+                      <p className="text-white/70 text-sm bg-white/5 rounded-lg p-3 italic">&quot;{inquiry.message}&quot;</p>
                     </div>
                   )}
 
