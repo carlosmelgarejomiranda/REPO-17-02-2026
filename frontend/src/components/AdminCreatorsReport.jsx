@@ -264,7 +264,7 @@ export const AdminCreatorsReport = () => {
             placeholder="Buscar por nombre o @handle..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
+            className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-white placeholder-gray-500 focus:border-[#d4a968] focus:outline-none"
           />
         </div>
         
@@ -274,7 +274,7 @@ export const AdminCreatorsReport = () => {
           <select
             value={levelFilter}
             onChange={(e) => setLevelFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:border-[#d4a968] focus:outline-none"
+            className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-white focus:border-[#d4a968] focus:outline-none [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Todos los niveles</option>
             <option value="rookie">🌱 Rookie</option>
@@ -289,7 +289,7 @@ export const AdminCreatorsReport = () => {
           <select
             value={platformFilter}
             onChange={(e) => setPlatformFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:border-[#d4a968] focus:outline-none"
+            className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-white focus:border-[#d4a968] focus:outline-none [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="all">📱 Todas las plataformas</option>
             <option value="instagram">📸 Instagram</option>
@@ -302,7 +302,7 @@ export const AdminCreatorsReport = () => {
           <select
             value={hasAiVerified}
             onChange={(e) => setHasAiVerified(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:border-[#d4a968] focus:outline-none"
+            className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-white focus:border-[#d4a968] focus:outline-none [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Todas las cuentas</option>
             <option value="true">🤖 Con redes verificadas IA</option>
@@ -314,7 +314,7 @@ export const AdminCreatorsReport = () => {
           <select
             value={sortBy}
             onChange={(e) => { setSortBy(e.target.value); setSortOrder('desc'); }}
-            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:border-[#d4a968] focus:outline-none"
+            className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-white focus:border-[#d4a968] focus:outline-none [&>option]:bg-[#1a1a1a] [&>option]:text-white"
           >
             <option value="">Ordenar por...</option>
             <option value="ig_followers">Seguidores IG</option>
@@ -325,7 +325,7 @@ export const AdminCreatorsReport = () => {
           {sortBy && (
             <button
               onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-              className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white"
+              className="px-3 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-white"
             >
               {sortOrder === 'desc' ? '↓' : '↑'}
             </button>
