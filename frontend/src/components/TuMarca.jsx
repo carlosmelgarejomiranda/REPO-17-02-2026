@@ -98,7 +98,7 @@ const PRICING = {
         breakdown: [
           { item: '2 Percheros en Showroom', value: 3400000 },
           { item: 'Producción 8 Reels/Mes', value: 3600000 },
-          { item: '4 Posteos dedicados en redes Avenue/mes', value: 400000 },
+          { item: '4 Posteos dedicados en redes/mes', value: 400000 },
           { item: 'Producción de 30 fotos estudio/Mes', value: 1500000 },
           { item: '4 horas de estudio/mes', value: 450000 },
           { item: '1 Campaña UGC Standard (12 mat.)/Mes', value: 1990000 }
@@ -159,7 +159,7 @@ const PRICING = {
         breakdown: [
           { item: '2 Exhibidores en Showroom', value: 2600000 },
           { item: 'Producción 8 Reels/Mes', value: 3600000 },
-          { item: '4 Posteos dedicados en redes Avenue/mes', value: 400000 },
+          { item: '4 Posteos dedicados en redes/mes', value: 400000 },
           { item: 'Producción de 30 fotos estudio/Mes', value: 1500000 },
           { item: '4 horas de estudio/mes', value: 450000 },
           { item: '1 Campaña UGC Standard (12 mat.)/Mes', value: 1990000 }
