@@ -245,7 +245,7 @@ const AdminCreatorsTab = ({
           </div>
           
           {/* Table Body */}
-          {creators.map((creator, idx) => {
+          {sortedCreators.map((creator, idx) => {
             const verifiedIG = creator.verified_instagram;
             const verifiedTT = creator.verified_tiktok;
             const unverifiedIG = creator.unverified_instagram;
@@ -255,12 +255,14 @@ const AdminCreatorsTab = ({
             const ttUsername = verifiedTT?.username || unverifiedTT?.username;
             const igVerified = !!verifiedIG;
             const ttVerified = !!verifiedTT;
+            const igFollowers = verifiedIG?.followers || unverifiedIG?.followers || 0;
+            const ttFollowers = verifiedTT?.followers || unverifiedTT?.followers || 0;
             
             return (
               <div 
                 key={creator.id}
                 data-testid={`creator-row-${creator.id}`}
-                className={`grid grid-cols-[40px_180px_70px_130px_130px_200px_160px] gap-2 px-3 py-2 items-center hover:bg-white/5 transition-colors ${idx !== 0 ? 'border-t border-white/5' : ''}`}
+                className={`grid grid-cols-[40px_160px_70px_110px_70px_110px_70px_180px_160px] gap-2 px-3 py-2 items-center hover:bg-white/5 transition-colors ${idx !== 0 ? 'border-t border-white/5' : ''}`}
               >
                 {/* Avatar */}
                 <div className="relative">
