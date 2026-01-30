@@ -111,14 +111,23 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
           </p>
 
           {/* CTA */}
-          <a
-            href="#planes"
-            className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
-            data-testid="hero-cta"
-          >
-            Ver planes
-            <ArrowRight className="w-4 h-4" />
-          </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="#planes"
+              className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
+              data-testid="hero-cta"
+            >
+              Ver planes
+              <ArrowRight className="w-4 h-4" />
+            </a>
+            <Link
+              to="/ugc/brand/onboarding"
+              className="inline-flex items-center justify-center gap-2 border border-[#d4a968] text-[#d4a968] px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#d4a968]/10 transition-all rounded-lg"
+              data-testid="hero-register-btn"
+            >
+              Registrarse
+            </Link>
+          </div>
         </div>
       </section>
 
