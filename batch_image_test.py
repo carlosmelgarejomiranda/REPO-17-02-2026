@@ -9,7 +9,7 @@ import json
 import sys
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://creator-central-9.preview.emergentagent.com/api"
+BACKEND_URL = "https://brand-form-upgrade.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
