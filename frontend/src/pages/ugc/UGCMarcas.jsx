@@ -453,40 +453,171 @@ ${formData.message || 'Sin mensaje adicional'}`;
       </section>
 
       {/* ============== CTA FINAL ============== */}
+      {/* Contact Form Section */}
       <section id="contacto" className="py-12 md:py-16 px-6 border-t border-white/5">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
-            Empezá con tu primera <span className="italic text-[#d4a968]">campaña</span>
-          </h2>
-          <p className="text-white/50 mb-6 text-sm max-w-lg mx-auto">
-            Elegí un plan, creá tu campaña y empezá a recibir 
-            contenido auténtico de creadores reales.
-          </p>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-light text-white mb-3">
+              Empezá con tu primera <span className="italic text-[#d4a968]">campaña</span>
+            </h2>
+            <p className="text-white/50 text-sm max-w-lg mx-auto">
+              Completá el formulario y nos pondremos en contacto contigo para comenzar.
+            </p>
+          </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a
-              href="#planes"
-              className="inline-flex items-center justify-center gap-2 bg-[#d4a968] text-black px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#e8c891] transition-all rounded-lg"
-              data-testid="cta-plans"
-            >
-              Ver planes
-              <ArrowRight className="w-4 h-4" />
-            </a>
-            <a
-              href="https://wa.me/595976691520?text=Hola! Me interesa el servicio de UGC para marcas"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-white/5 transition-all rounded-lg"
-              data-testid="cta-contact"
-            >
-              Contactar
-            </a>
+          {submitted ? (
+            <div className="max-w-lg mx-auto">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border border-white/10 p-10 text-center">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-[#d4a968]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                <div className="relative z-10">
+                  <div className="w-20 h-20 mx-auto mb-8 rounded-full bg-[#d4a968] flex items-center justify-center">
+                    <Check className="w-10 h-10 text-black" />
+                  </div>
+                  <h3 className="text-2xl font-light text-white mb-2">
+                    ¡Mensaje <span className="italic text-[#d4a968]">Enviado</span>!
+                  </h3>
+                  <p className="text-gray-400 mb-6">Se abrió WhatsApp con tu consulta</p>
+                  <button 
+                    onClick={() => { setSubmitted(false); setSelectedPlan(null); setFormData({ name: '', email: '', phone: '', brand: '', message: '' }); }}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors"
+                  >
+                    Enviar otra consulta
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Selected Plan Preview */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                <h3 className="text-lg font-medium text-white mb-4">Plan Seleccionado</h3>
+                {selectedPlan ? (
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">Plan:</span>
+                      <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">Entregas:</span>
+                      <span className="text-white">{selectedPlan.deliveries} materiales</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/70">Precio:</span>
+                      <span className="text-white font-medium">
+                        {selectedPlan.is_promo_active && selectedPlan.promo_price 
+                          ? formatPrice(selectedPlan.promo_price) 
+                          : formatPrice(selectedPlan.price)}
+                      </span>
+                    </div>
+                    <hr className="border-white/10 my-4" />
+                    <button 
+                      onClick={() => setSelectedPlan(null)}
+                      className="text-sm text-white/50 hover:text-white underline"
+                    >
+                      Cambiar plan
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-white/50 text-sm mb-4">No has seleccionado un plan</p>
+                    <a href="#planes" className="text-[#d4a968] text-sm hover:underline">
+                      Ver planes disponibles ↑
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {/* Contact Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-white/70 text-sm mb-1">Nombre completo *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => updateField('name', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                    placeholder="Tu nombre"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/70 text-sm mb-1">Email *</label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => updateField('email', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                    placeholder="tu@email.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/70 text-sm mb-1">Teléfono</label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => updateField('phone', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                    placeholder="+595 xxx xxx xxx"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/70 text-sm mb-1">Nombre de tu marca *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.brand}
+                    onChange={(e) => updateField('brand', e.target.value)}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                    placeholder="Tu marca"
+                  />
+                </div>
+                <div>
+                  <label className="block text-white/70 text-sm mb-1">Mensaje (opcional)</label>
+                  <textarea
+                    value={formData.message}
+                    onChange={(e) => updateField('message', e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
+                    placeholder="Cuéntanos sobre tu marca y tus objetivos..."
+                  />
+                </div>
+
+                {error && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-3 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      Enviar y contactar por WhatsApp
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Additional CTAs */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-10">
             <Link
               to="/ugc/brand/onboarding"
               className="inline-flex items-center justify-center gap-2 border border-[#d4a968] text-[#d4a968] px-6 py-3 text-xs tracking-[0.1em] uppercase font-semibold hover:bg-[#d4a968]/10 transition-all rounded-lg"
               data-testid="cta-register"
             >
-              Registrarse
+              Registrarse directamente
             </Link>
           </div>
         </div>
