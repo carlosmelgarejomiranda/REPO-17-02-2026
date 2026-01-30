@@ -16,6 +16,9 @@ export const AdminCreatorsReport = () => {
   const [levelFilter, setLevelFilter] = useState('');
   const [platformFilter, setPlatformFilter] = useState('all');
   const [viewMode, setViewMode] = useState('averages'); // 'averages' or 'totals'
+  const [hasAiVerified, setHasAiVerified] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
   
   // Detail view state
   const [selectedCreator, setSelectedCreator] = useState(null);
