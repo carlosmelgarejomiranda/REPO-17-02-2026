@@ -139,12 +139,17 @@ class UGCApplication(BaseModel):
 
 # Brand Inquiry Model (for "Tu Marca" form)
 class BrandInquiry(BaseModel):
-    brand_name: str
-    contact_name: str
+    brand_name: Optional[str] = None
+    contact_name: Optional[str] = None
+    name: Optional[str] = None  # For UGC form
+    brand: Optional[str] = None  # For UGC form
     email: EmailStr
     phone: Optional[str] = None
-    interest: str
+    interest: Optional[str] = None
     message: Optional[str] = None
+    product_type: Optional[str] = None
+    selected_plan: Optional[str] = None
+    questionnaire: Optional[dict] = None
 
 class UserCreate(BaseModel):
     email: EmailStr
