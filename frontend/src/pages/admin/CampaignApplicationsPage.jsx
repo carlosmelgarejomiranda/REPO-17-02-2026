@@ -95,11 +95,11 @@ const CampaignApplicationsPage = () => {
       let aVal = 0, bVal = 0;
       
       if (sortBy === 'ig_followers') {
-        aVal = creatorA.verified_instagram?.followers || creatorA.unverified_instagram?.followers || 0;
-        bVal = creatorB.verified_instagram?.followers || creatorB.unverified_instagram?.followers || 0;
+        aVal = creatorA.verified_instagram?.follower_count || creatorA.unverified_instagram?.followers || 0;
+        bVal = creatorB.verified_instagram?.follower_count || creatorB.unverified_instagram?.followers || 0;
       } else if (sortBy === 'tt_followers') {
-        aVal = creatorA.verified_tiktok?.followers || creatorA.unverified_tiktok?.followers || 0;
-        bVal = creatorB.verified_tiktok?.followers || creatorB.unverified_tiktok?.followers || 0;
+        aVal = creatorA.verified_tiktok?.follower_count || creatorA.unverified_tiktok?.followers || 0;
+        bVal = creatorB.verified_tiktok?.follower_count || creatorB.unverified_tiktok?.followers || 0;
       } else if (sortBy === 'avg_views') {
         aVal = creatorA.avg_views || 0;
         bVal = creatorB.avg_views || 0;
