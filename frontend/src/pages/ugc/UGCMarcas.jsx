@@ -722,11 +722,11 @@ ${formData.message || 'Sin mensaje adicional'}`;
               </div>
 
               {formStep === 1 ? (
-                /* STEP 1: Questionnaire - Compact Version */
-                <div className="space-y-3">
+                /* STEP 1: Contact Info First */
+                <div className="space-y-4">
                   {/* Selected Plan Preview */}
                   {selectedPlan && (
-                    <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl p-3 flex items-center justify-between mb-4">
+                    <div className="bg-[#d4a968]/10 border border-[#d4a968]/30 rounded-lg p-3 flex items-center justify-between">
                       <div>
                         <span className="text-white/70 text-sm">Plan: </span>
                         <span className="text-[#d4a968] font-medium">{selectedPlan.name}</span>
@@ -739,6 +739,96 @@ ${formData.message || 'Sin mensaje adicional'}`;
                       </button>
                     </div>
                   )}
+
+                  <div className="rounded-xl overflow-hidden bg-[#121212] border border-white/5">
+                    <div className="p-5">
+                      {error && (
+                        <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">{error}</div>
+                      )}
+
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs mb-1.5 text-white/40">Nombre *</label>
+                            <input
+                              type="text"
+                              required
+                              value={formData.name}
+                              onChange={(e) => updateField('name', e.target.value)}
+                              className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                              placeholder="Tu nombre"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs mb-1.5 text-white/40">Email *</label>
+                            <input
+                              type="email"
+                              required
+                              value={formData.email}
+                              onChange={(e) => updateField('email', e.target.value)}
+                              className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                              placeholder="tu@email.com"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs mb-1.5 text-white/40">Teléfono</label>
+                            <input
+                              type="tel"
+                              value={formData.phone}
+                              onChange={(e) => updateField('phone', e.target.value)}
+                              className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                              placeholder="+595 9XX XXX XXX"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs mb-1.5 text-white/40">Marca *</label>
+                            <input
+                              type="text"
+                              required
+                              value={formData.brand}
+                              onChange={(e) => updateField('brand', e.target.value)}
+                              className="w-full p-2.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors"
+                              placeholder="Tu marca"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Continue button */}
+                        <div className="flex justify-end pt-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (formData.name && formData.email && formData.brand) {
+                                setFormStep(2);
+                                setError(null);
+                              } else {
+                                setError('Por favor completá los campos obligatorios');
+                              }
+                            }}
+                            className="px-6 py-2.5 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors flex items-center gap-2 text-sm"
+                          >
+                            Continuar
+                            <ArrowRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* STEP 2: Questionnaire + Submit */
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => setFormStep(1)}
+                    className="text-white/40 hover:text-white text-xs flex items-center gap-1 mb-2"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                    Volver a datos de contacto
+                  </button>
 
                   {/* Q1: Situación actual */}
                   <MultiSelectDropdown
@@ -806,28 +896,50 @@ ${formData.message || 'Sin mensaje adicional'}`;
                     </div>
                   </div>
 
-                  {/* Next button */}
-                  <div className="flex justify-end pt-4">
+                  {/* Message field */}
+                  <div className="border border-white/10 rounded-xl overflow-hidden">
+                    <div className="px-4 py-3 bg-white/5">
+                      <p className="text-white font-medium text-sm">Mensaje adicional (opcional)</p>
+                    </div>
+                    <div className="p-3 border-t border-white/10">
+                      <textarea
+                        value={formData.message}
+                        onChange={(e) => updateField('message', e.target.value)}
+                        rows={2}
+                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-white/30 focus:border-[#d4a968] focus:outline-none transition-colors resize-none"
+                        placeholder="Algo más que quieras agregar..."
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">{error}</div>
+                  )}
+
+                  {/* Submit button */}
+                  <div className="pt-4">
                     <button
                       type="button"
-                      onClick={() => setFormStep(2)}
-                      className="px-6 py-2.5 bg-[#d4a968] text-black font-medium rounded-lg hover:bg-[#c49958] transition-colors flex items-center gap-2 text-sm"
+                      onClick={handleSubmit}
+                      disabled={submitting}
+                      className="w-full py-3 bg-[#d4a968] hover:bg-[#c49958] text-black font-medium text-sm rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      data-testid="submit-ugc-form"
                     >
-                      Continuar
-                      <ArrowRight className="w-4 h-4" />
+                      {submitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Enviando...</span>
+                        </>
+                      ) : (
+                        <>
+                          <ArrowRight className="w-4 h-4" />
+                          <span>Enviar y contactar por WhatsApp</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
-              ) : (
-                /* STEP 2: Contact Info - Compact Version */
-                <div className="space-y-4">
-                  <button
-                    type="button"
-                    onClick={() => setFormStep(1)}
-                    className="text-white/40 hover:text-white text-xs flex items-center gap-1"
-                  >
-                    <ArrowLeft className="w-3 h-3" />
-                    Volver al cuestionario
+              )}
                   </button>
 
                   {/* Selected Plan Preview */}
