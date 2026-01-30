@@ -15,6 +15,19 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
   const [isLoaded, setIsLoaded] = useState(false);
   const [packages, setPackages] = useState([]);
   const [promoActive, setPromoActive] = useState(false);
+  
+  // Form states
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    brand: '',
+    message: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setIsLoaded(true);
