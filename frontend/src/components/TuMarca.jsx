@@ -145,7 +145,7 @@ const PRICING = {
           { item: '1 Campaña UGC Starter (4 mat.)/Mes', value: 790000 }
         ],
         features: ['Todo de Showroom Starter', 'Producción de contenido mensual', '2 horas de estudio incluidas', 'Post dedicado en redes Avenue'],
-        highlight: false,
+        highlight: true,
         isPro: false
       },
       {
