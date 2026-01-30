@@ -156,15 +156,25 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
         body: JSON.stringify({
           ...formData,
           interest: 'UGC para Marcas',
-          selected_plan: selectedPlan?.name || 'No especificado'
+          selected_plan: selectedPlan?.name || 'No especificado',
+          questionnaire: {
+            situacion: q1Situacion,
+            resultado: q2Resultado,
+            frustracion: q3Frustracion,
+            solucion: q4Solucion,
+            inversion: q5Inversion,
+            adicional: q6Adicional
+          }
         })
       });
 
       if (response.ok) {
-        // Build WhatsApp message with form data
+        // Build WhatsApp message with form data and questionnaire
         const planName = selectedPlan?.name || 'No especificado';
         const planDeliveries = selectedPlan?.deliveries || 'N/A';
         const planPrice = selectedPlan?.price ? formatPrice(selectedPlan.price) : 'A consultar';
+        
+        const formatList = (arr) => arr.length > 0 ? arr.map(item => `  • ${item}`).join('\n') : '  • No especificado';
         
         const whatsappMessage = `*Nueva consulta - UGC para Marcas*
 
@@ -178,6 +188,28 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
 • Plan: ${planName}
 • Entregas: ${planDeliveries}
 • Precio: ${planPrice}
+
+━━━━━━━━━━━━━━━━━━━━
+*CUESTIONARIO*
+━━━━━━━━━━━━━━━━━━━━
+
+*1) Situación actual:*
+${formatList(q1Situacion)}
+
+*2) Resultado en 90 días:*
+${formatList(q2Resultado)}
+
+*3) Frustración/obstáculo:*
+${formatList(q3Frustracion)}
+
+*4) Tipo de solución preferida:*
+${formatList(q4Solucion)}
+
+*5) Inversión mensual:*
+  • ${q5Inversion || 'No especificado'}
+
+*6) Información adicional:*
+${q6Adicional || 'Sin información adicional'}
 
 *Mensaje:*
 ${formData.message || 'Sin mensaje adicional'}`;
