@@ -209,11 +209,11 @@ nav[data-studio-nav="true"] {
 .lava-lamp-card {
     background: linear-gradient(
         135deg,
-        rgba(147, 51, 234, 0.15) 0%,
-        rgba(236, 72, 153, 0.15) 25%,
-        rgba(168, 85, 247, 0.15) 50%,
-        rgba(219, 39, 119, 0.15) 75%,
-        rgba(147, 51, 234, 0.15) 100%
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(147, 51, 234, 0.25) 25%,
+        rgba(0, 0, 0, 0.9) 50%,
+        rgba(236, 72, 153, 0.25) 75%,
+        rgba(0, 0, 0, 0.95) 100%
     );
     background-size: 400% 400%;
     animation: lavaLamp 8s ease infinite, lavaLampBorder 4s ease infinite;
@@ -227,7 +227,7 @@ nav[data-studio-nav="true"] {
     background: linear-gradient(
         to bottom,
         transparent 0%,
-        rgba(18, 18, 18, 0.8) 100%
+        rgba(0, 0, 0, 0.3) 100%
     );
     border-radius: inherit;
     pointer-events: none;
