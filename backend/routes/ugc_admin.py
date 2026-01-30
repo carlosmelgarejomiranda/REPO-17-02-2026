@@ -173,6 +173,23 @@ async def get_all_creators(
         creator["unverified_instagram"] = unverified_ig
         creator["unverified_tiktok"] = unverified_tt
         
+        # Pre-calculate followers for easy access
+        ig_followers = 0
+        tt_followers = 0
+        
+        if creator["verified_instagram"]:
+            ig_followers = creator["verified_instagram"].get("follower_count") or 0
+        elif unverified_ig:
+            ig_followers = unverified_ig.get("followers") or 0
+            
+        if creator["verified_tiktok"]:
+            tt_followers = creator["verified_tiktok"].get("follower_count") or 0
+        elif unverified_tt:
+            tt_followers = unverified_tt.get("followers") or 0
+        
+        creator["ig_followers"] = ig_followers
+        creator["tt_followers"] = tt_followers
+        
         # Get campaigns participated count
         campaigns_participated = await db.ugc_applications.count_documents({
             "creator_id": creator_id,
