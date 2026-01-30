@@ -458,7 +458,7 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setSubmitting(true);
     setError(null);
 
