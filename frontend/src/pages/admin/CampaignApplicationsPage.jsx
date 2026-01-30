@@ -317,21 +317,16 @@ const CampaignApplicationsPage = () => {
               const creator = app.creator || {};
               const verifiedIG = creator.verified_instagram;
               const verifiedTT = creator.verified_tiktok;
+              const unverifiedIG = creator.unverified_instagram;
+              const unverifiedTT = creator.unverified_tiktok;
               
-              // Try both social_accounts (legacy) and social_networks (new)
-              const socialAccounts = creator.social_accounts || {};
-              const socialNetworks = creator.social_networks || [];
-              
-              // Get Instagram username from verified, social_networks, or social_accounts
-              const igFromNetworks = socialNetworks.find(s => s.platform === 'instagram');
-              const ttFromNetworks = socialNetworks.find(s => s.platform === 'tiktok');
-              
-              const igUsername = verifiedIG?.username || igFromNetworks?.username || socialAccounts.instagram?.username;
-              const ttUsername = verifiedTT?.username || ttFromNetworks?.username || socialAccounts.tiktok?.username;
+              const igUsername = verifiedIG?.username || unverifiedIG?.username;
+              const ttUsername = verifiedTT?.username || unverifiedTT?.username;
               const igVerified = !!verifiedIG;
               const ttVerified = !!verifiedTT;
-              const igFollowers = verifiedIG?.follower_count || igFromNetworks?.followers || 0;
-              const ttFollowers = verifiedTT?.follower_count || ttFromNetworks?.followers || 0;
+              // Use pre-calculated followers from backend
+              const igFollowers = creator.ig_followers || 0;
+              const ttFollowers = creator.tt_followers || 0;
               
               return (
                 <div 
