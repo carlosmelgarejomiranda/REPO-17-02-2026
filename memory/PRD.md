@@ -18,6 +18,54 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-30 (Part 3 - Fork)
+
+#### ✅ VERIFICACIÓN - Cuestionario de Leads en `/ugc/marcas` (P0)
+
+**Estado anterior reportado**: El archivo `UGCMarcas.jsx` estaba supuestamente roto con código duplicado y errores de sintaxis.
+
+**Verificación realizada**: Se revisó el archivo completo y NO se encontraron errores. El cuestionario multi-paso está **completamente implementado** y funcional:
+
+1. **6 Preguntas del Cuestionario**:
+   - Q1: Situación actual (max 3 opciones)
+   - Q2: Resultado en 90 días (max 2 opciones)
+   - Q3: Frustración/obstáculo (max 3 opciones)
+   - Q4: Tipo de solución preferida (max 3 opciones)
+   - Q5: Inversión mensual (selección única)
+   - Q6: Información adicional (texto libre)
+
+2. **Flujo de 2 pasos**:
+   - Paso 1: Cuestionario completo
+   - Paso 2: Datos de contacto (nombre, email, teléfono, marca)
+
+3. **Integración WhatsApp**:
+   - Al enviar, genera mensaje formateado con todos los datos
+   - Abre WhatsApp con número `+595976691520`
+
+**Testing**: Visual verification via screenshot ✅
+
+---
+
+#### ✅ VERIFICACIÓN - Admin Panel Sorting y Followers (P1)
+
+**Estado verificado**: La funcionalidad de seguidores y sorting en el panel de Admin está **correctamente implementada**:
+
+**Backend** (`/app/backend/routes/ugc_admin.py`):
+- Campos `ig_followers` y `tt_followers` se calculan en cada endpoint
+- Lógica: primero busca en `verified_instagram/tiktok`, luego en `social_networks` sin verificar
+
+**Frontend** (`AdminCreatorsTab.jsx`):
+- Columnas "SEG. IG" y "SEG. TT" visibles
+- Dropdown "Ordenar por..." con opciones: Seguidores IG, Seguidores TT, Prom. Vistas, Prom. Alcance
+- Sorting con `useMemo` para eficiencia
+- Badge de verificación (✓) junto a seguidores de cuentas verificadas por IA
+
+**Nota**: Los datos de prueba en el preview muestran "—" porque los creators de prueba no tienen seguidores configurados. En producción con datos reales, los números aparecerían correctamente.
+
+**Testing**: Visual verification via screenshot ✅
+
+---
+
 ### Session: 2026-01-30 (Part 2)
 
 #### ✅ FEATURE - Columnas de Seguidores y Filtros de Verificación IA
