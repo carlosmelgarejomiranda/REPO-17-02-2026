@@ -148,16 +148,37 @@ const UGCMarcas = ({ user, onLoginClick, onLogout, language, setLanguage, t }) =
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             {packages.map((pkg, idx) => {
               const pricePerMaterial = getPricePerMaterial(pkg);
+              const isPro = pkg.type === 'pro';
+              const isEnterprise = pkg.type === 'enterprise';
+              
               return (
                 <div 
                   key={pkg.type}
                   className={`relative flex flex-col p-5 rounded-lg transition-all ${
-                    pkg.type === 'standard' 
-                      ? 'bg-[#121212] border-2 border-[#d4a968]/50 hover:border-[#d4a968]' 
-                      : 'bg-[#121212] border border-white/5 hover:border-white/20'
+                    isPro
+                      ? 'lava-lamp-card-gold'
+                      : isEnterprise
+                        ? 'lava-lamp-card'
+                        : pkg.type === 'standard' 
+                          ? 'bg-[#121212] border-2 border-[#d4a968]/50 hover:border-[#d4a968]' 
+                          : 'bg-[#121212] border border-white/5 hover:border-white/20'
                   }`}
                   data-testid={`plan-${pkg.type}`}
                 >
+                  {isPro && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                      <span className="lava-lamp-badge-gold text-black text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                        Recomendado
+                      </span>
+                    </div>
+                  )}
+                  {isEnterprise && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                      <span className="lava-lamp-badge text-white text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                        Enterprise
+                      </span>
+                    </div>
+                  )}
                   {pkg.type === 'standard' && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                       <span className="bg-[#d4a968] text-black text-[10px] font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
