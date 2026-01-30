@@ -297,18 +297,23 @@ const BrandsInquiriesPanel = ({ inquiries, loading, onRefresh }) => {
     try {
       await fetch(`${API_URL}/api/admin/brand-inquiries/${id}`, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify({ status }) });
       onRefresh();
-    } catch (err) { console.error(err); }
+    } catch (err) { console.error('Error updating status:', err); }
   };
 
   const deleteInquiry = async (id) => {
     try {
-      await fetch(`${API_URL}/api/admin/brand-inquiries/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
-      setDeleteConfirm(null);
-      onRefresh();
-    } catch (err) { console.error(err); }
+      const response = await fetch(`${API_URL}/api/admin/brand-inquiries/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+      if (response.ok) {
+        setDeleteConfirm(null);
+        onRefresh();
+      } else {
+        console.error('Delete failed:', await response.text());
+      }
+    } catch (err) { console.error('Error deleting:', err); }
   };
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = (id, e) => {
+    if (e) e.stopPropagation();
     if (deleteConfirm === id) {
       // Second click - confirm delete
       deleteInquiry(id);
@@ -316,7 +321,7 @@ const BrandsInquiriesPanel = ({ inquiries, loading, onRefresh }) => {
       // First click - show confirmation
       setDeleteConfirm(id);
       // Auto-reset after 3 seconds
-      setTimeout(() => setDeleteConfirm(null), 3000);
+      setTimeout(() => setDeleteConfirm(prev => prev === id ? null : prev), 3000);
     }
   };
 
