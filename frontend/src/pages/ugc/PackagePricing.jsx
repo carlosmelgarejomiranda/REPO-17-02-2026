@@ -244,8 +244,8 @@ const PackagePricing = () => {
                   onClick={() => handleSelectPackage(pkg.type)}
                   disabled={purchasing}
                   className={`w-full py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-                    isPopular
-                      ? 'bg-[#d4a968] text-black hover:bg-[#c49958]'
+                    isPro
+                      ? 'lava-lamp-btn-gold text-black hover:opacity-90'
                       : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
@@ -264,9 +264,9 @@ const PackagePricing = () => {
 
           {/* Enterprise Package */}
           {enterprisePackage && (
-            <div className="relative bg-gradient-to-br from-purple-900/30 to-black border border-purple-500/30 rounded-2xl p-6 transition-all hover:border-purple-500/50">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+            <div className="relative lava-lamp-card rounded-2xl p-6 transition-all">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                <span className="lava-lamp-badge text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
                   <Crown className="w-3 h-3" /> ENTERPRISE
                 </span>
               </div>
