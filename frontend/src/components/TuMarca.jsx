@@ -435,13 +435,6 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
                       </span>
                     </div>
                   )}
-                  {plan.highlight && !plan.isPro && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="bg-[#d4a968] text-black text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
-                        ⭐ Recomendado
-                      </span>
-                    </div>
-                  )}
 
                 {/* Plan Header */}
                 <div className="mb-3 mt-2">
