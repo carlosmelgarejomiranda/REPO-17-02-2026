@@ -297,6 +297,41 @@ export const AdminCreatorsReport = () => {
           </select>
         </div>
         
+        {/* AI Verified filter */}
+        <div className="flex items-center gap-2">
+          <select
+            value={hasAiVerified}
+            onChange={(e) => setHasAiVerified(e.target.value)}
+            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:border-[#d4a968] focus:outline-none"
+          >
+            <option value="">Todas las cuentas</option>
+            <option value="true">🤖 Con redes verificadas IA</option>
+          </select>
+        </div>
+        
+        {/* Sort */}
+        <div className="flex items-center gap-2">
+          <select
+            value={sortBy}
+            onChange={(e) => { setSortBy(e.target.value); setSortOrder('desc'); }}
+            className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:border-[#d4a968] focus:outline-none"
+          >
+            <option value="">Ordenar por...</option>
+            <option value="ig_followers">Seguidores IG</option>
+            <option value="tt_followers">Seguidores TT</option>
+            <option value="avg_views">Prom. Vistas</option>
+            <option value="avg_reach">Prom. Alcance</option>
+          </select>
+          {sortBy && (
+            <button
+              onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+              className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white"
+            >
+              {sortOrder === 'desc' ? '↓' : '↑'}
+            </button>
+          )}
+        </div>
+        
         {/* Stats */}
         <div className="text-gray-400 text-sm">
           {creators.length} creadores
