@@ -1967,24 +1967,24 @@ async def get_creators_report(
             "status": {"$in": ["confirmed", "completed"]}
         })
         
-        # Get followers from verified and unverified sources
-        social_verification = creator.get("social_verification", {})
+        # Get followers from verified (social_accounts) and unverified (social_networks) sources
+        social_accounts = creator.get("social_accounts", {})
         social_networks = creator.get("social_networks", [])
         
-        # Instagram followers
-        ig_verified = social_verification.get("instagram")
-        ig_followers = ig_verified.get("followers") if ig_verified else None
-        ig_is_verified = ig_verified is not None
+        # Instagram followers - check social_accounts first (verified by AI), then social_networks
+        ig_verified_account = social_accounts.get("instagram")
+        ig_followers = ig_verified_account.get("follower_count") if ig_verified_account else None
+        ig_is_verified = ig_verified_account is not None and ig_verified_account.get("verified_by_ai", False)
         
         if not ig_followers:
             ig_network = next((sn for sn in social_networks if sn.get("platform") == "instagram"), None)
             if ig_network:
                 ig_followers = ig_network.get("followers")
         
-        # TikTok followers
-        tt_verified = social_verification.get("tiktok")
-        tt_followers = tt_verified.get("followers") if tt_verified else None
-        tt_is_verified = tt_verified is not None
+        # TikTok followers - check social_accounts first (verified by AI), then social_networks
+        tt_verified_account = social_accounts.get("tiktok")
+        tt_followers = tt_verified_account.get("follower_count") if tt_verified_account else None
+        tt_is_verified = tt_verified_account is not None and tt_verified_account.get("verified_by_ai", False)
         
         if not tt_followers:
             tt_network = next((sn for sn in social_networks if sn.get("platform") == "tiktok"), None)
