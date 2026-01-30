@@ -453,13 +453,13 @@ const BrandsInquiriesPanel = ({ inquiries, loading, onRefresh }) => {
                     )}
                     {/* Delete button with double confirmation */}
                     <button
-                      onClick={() => handleDeleteClick(inquiry.id || inquiry.inquiry_id)}
+                      onClick={(e) => handleDeleteClick(inquiry.inquiry_id || inquiry.id, e)}
                       className={`p-2 rounded-lg transition-colors ${
-                        deleteConfirm === (inquiry.id || inquiry.inquiry_id) 
+                        deleteConfirm === (inquiry.inquiry_id || inquiry.id) 
                           ? 'bg-red-500 text-white animate-pulse' 
                           : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
                       }`}
-                      title={deleteConfirm === (inquiry.id || inquiry.inquiry_id) ? 'Click de nuevo para confirmar' : 'Eliminar'}
+                      title={deleteConfirm === (inquiry.inquiry_id || inquiry.id) ? 'Click de nuevo para confirmar' : 'Eliminar'}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
