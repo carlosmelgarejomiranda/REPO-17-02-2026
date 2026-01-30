@@ -101,7 +101,7 @@ export const AdminCreatorsReport = () => {
 
   useEffect(() => {
     fetchCreators();
-  }, [levelFilter, platformFilter]);
+  }, [levelFilter, platformFilter, hasAiVerified]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
