@@ -56,7 +56,7 @@ const AdminCreatorsTab = ({
   const [sortOrder, setSortOrder] = useState('desc'); // 'asc', 'desc'
 
   // Sort creators locally
-  const sortedCreators = React.useMemo(() => {
+  const sortedCreators = useMemo(() => {
     if (!sortBy) return creators;
     
     return [...creators].sort((a, b) => {
