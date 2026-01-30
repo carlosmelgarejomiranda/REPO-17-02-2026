@@ -231,6 +231,7 @@ nav[data-studio-nav="true"] {
     );
     border-radius: inherit;
     pointer-events: none;
+    z-index: 1;
 }
 
 .lava-lamp-badge {
