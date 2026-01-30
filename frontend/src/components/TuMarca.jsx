@@ -292,6 +292,30 @@ export const TuMarca = ({ t, user, onLoginClick, onLogout, language, setLanguage
 
       if (response.ok) {
         trackBrandInquiry(formData.interest || 'general');
+        
+        // Build WhatsApp message with form data
+        const planName = selectedPlan?.name || formData.interest || 'No especificado';
+        const productTypeLabel = productType === 'perchero' ? 'Percheros' : 'Exhibidores';
+        
+        const whatsappMessage = `*Nueva consulta - Tu Marca en Avenue*
+
+*Datos del contacto:*
+• Nombre: ${formData.name || 'No especificado'}
+• Email: ${formData.email || 'No especificado'}
+• Teléfono: ${formData.phone || 'No especificado'}
+• Marca: ${formData.brand || 'No especificado'}
+
+*Interés:*
+• Tipo de producto: ${productTypeLabel}
+• Plan seleccionado: ${planName}
+
+*Mensaje:*
+${formData.message || 'Sin mensaje adicional'}`;
+
+        // Encode and open WhatsApp
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+        window.open(`https://wa.me/595976691520?text=${encodedMessage}`, '_blank');
+        
         setSubmitted(true);
       } else {
         const data = await response.json();
