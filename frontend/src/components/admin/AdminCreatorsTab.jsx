@@ -179,7 +179,7 @@ const AdminCreatorsTab = ({
           {sortBy && (
             <button
               onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-              className="px-2 py-1.5 bg-white/5 border border-white/10 rounded-lg text-white text-xs"
+              className="px-2 py-1.5 bg-[#1a1a1a] border border-white/10 rounded-lg text-white text-xs"
             >
               {sortOrder === 'desc' ? '↓ Mayor' : '↑ Menor'}
             </button>
