@@ -413,6 +413,11 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
       {activeSubTab === 'metrics' && (
         <MetricsPanel />
       )}
+
+      {/* System Tab */}
+      {activeSubTab === 'system' && (
+        <SystemPanel getAuthHeaders={getHeaders} />
+      )}
     </div>
   );
 };
