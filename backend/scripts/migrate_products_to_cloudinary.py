@@ -22,7 +22,7 @@ db = client['test_database']
 
 async def get_legacy_image_content(url: str) -> bytes:
     """
-    Fetch image content from legacy storage (MongoDB base64 or GridFS)
+    Fetch image content from legacy storage (filesystem, MongoDB base64, or GridFS)
     """
     if not url:
         return None
@@ -38,19 +38,39 @@ async def get_legacy_image_content(url: str) -> bytes:
         filename = url.split('/')[-1]
         image_id = filename.rsplit('.', 1)[0] if '.' in filename else filename
         
+        # Try filesystem FIRST (in products subdirectory)
+        filepath_products = f"/app/backend/uploads/products/{filename}"
+        if os.path.exists(filepath_products):
+            print(f"   📁 Found in filesystem: {filepath_products}")
+            with open(filepath_products, 'rb') as f:
+                return f.read()
+        
+        # Try filesystem (root uploads)
+        filepath = f"/app/backend/uploads/{filename}"
+        if os.path.exists(filepath):
+            print(f"   📁 Found in filesystem: {filepath}")
+            with open(filepath, 'rb') as f:
+                return f.read()
+        
         # Try MongoDB base64 storage
         image_doc = await db.product_images_data.find_one({"image_id": image_id})
         if image_doc and image_doc.get("data"):
             try:
+                print(f"   📦 Found in MongoDB base64")
                 return base64.b64decode(image_doc["data"])
             except Exception as e:
-                print(f"  ⚠️ Error decoding base64: {e}")
+                print(f"   ⚠️ Error decoding base64: {e}")
         
-        # Try filesystem (probably won't work in container)
-        filepath = f"/app/backend/uploads/{filename}"
-        if os.path.exists(filepath):
-            with open(filepath, 'rb') as f:
-                return f.read()
+        # Try GridFS by filename pattern
+        gridfs_file = await db.product_images.files.find_one(
+            {"metadata.original_filename": {"$regex": image_id}}
+        )
+        if gridfs_file:
+            file_id = str(gridfs_file.get("_id"))
+            content, _, _ = await gridfs_get(file_id, bucket_name="product_images")
+            if content:
+                print(f"   📦 Found in GridFS")
+                return content
     
     return None
 
