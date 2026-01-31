@@ -147,6 +147,52 @@ def send_backup_alert(success: bool, details: dict):
         return False
 
 
+def create_system_notification_sync(success: bool, details: dict):
+    """Create a system notification in the database (sync version for script)"""
+    try:
+        from pymongo import MongoClient
+        
+        # Connect directly to MongoDB (sync)
+        client = MongoClient(MONGO_URL)
+        db = client[DB_NAME]
+        
+        timestamp = datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')
+        
+        if success:
+            notification = {
+                "id": str(uuid.uuid4()),
+                "type": "backup_success",
+                "title": "✅ Backup Completado",
+                "message": f"Backup de {details.get('size_mb', 0)} MB subido a Cloudinary exitosamente.",
+                "severity": "info",
+                "metadata": details,
+                "is_read": False,
+                "read_by": [],
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+        else:
+            notification = {
+                "id": str(uuid.uuid4()),
+                "type": "backup_failed",
+                "title": "🚨 Backup Fallido",
+                "message": f"Error: {details.get('error', 'Error desconocido')}. Acción requerida.",
+                "severity": "critical",
+                "metadata": details,
+                "is_read": False,
+                "read_by": [],
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+        
+        db.system_notifications.insert_one(notification)
+        client.close()
+        logger.info(f"System notification created: {notification['title']}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to create system notification: {e}")
+        return False
+
+
 def create_backup():
     """Create a MongoDB dump and compress it"""
     timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
