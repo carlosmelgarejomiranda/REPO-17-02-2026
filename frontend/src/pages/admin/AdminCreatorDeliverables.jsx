@@ -51,17 +51,27 @@ const AdminCreatorDeliverables = () => {
     }
   };
 
-  // Calculate deadline status
+  // Calculate deadline status using stored deadlines
   const getDeadlineStatus = (deliverable, type) => {
-    const confirmationDate = deliverable.confirmed_at || deliverable.created_at;
-    if (!confirmationDate) return null;
-
     const isCancelledDel = deliverable.status === 'cancelled' || deliverable.application_status === 'cancelled';
 
-    const confirmed = new Date(confirmationDate);
-    const daysLimit = type === 'url' ? 7 : 14;
-    const deadline = new Date(confirmed);
-    deadline.setDate(deadline.getDate() + daysLimit);
+    // Use stored deadline from deliverable if available
+    const storedDeadline = type === 'url' ? deliverable.url_deadline : deliverable.metrics_deadline;
+    
+    let deadline;
+    if (storedDeadline) {
+      // Use the pre-calculated deadline from the database
+      deadline = new Date(storedDeadline);
+    } else {
+      // Fallback: calculate from confirmation date with default 7/14 days
+      const confirmationDate = deliverable.confirmed_at || deliverable.created_at;
+      if (!confirmationDate) return null;
+      
+      const confirmed = new Date(confirmationDate);
+      const daysLimit = type === 'url' ? 7 : 14;
+      deadline = new Date(confirmed);
+      deadline.setDate(deadline.getDate() + daysLimit);
+    }
 
     let referenceDate = new Date();
     if (isCancelledDel && deliverable.cancelled_at) {
