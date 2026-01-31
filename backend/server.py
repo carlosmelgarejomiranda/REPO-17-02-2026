@@ -2850,10 +2850,19 @@ async def startup_event():
         replace_existing=True
     )
     
+    # Schedule daily database backup at 3:00 AM (Paraguay time, UTC-3 = 6:00 UTC)
+    scheduler.add_job(
+        scheduled_database_backup,
+        CronTrigger(hour=6, minute=0),  # 6:00 UTC = 3:00 AM Paraguay
+        id="database_backup",
+        replace_existing=True
+    )
+    
     scheduler.start()
     logger.info("Scheduler started:")
     logger.info("  - Contract jobs: daily at 6:00 AM Paraguay time")
     logger.info("  - Email reminders: daily at 12:00 PM Paraguay time")
+    logger.info("  - Database backup: daily at 3:00 AM Paraguay time")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
