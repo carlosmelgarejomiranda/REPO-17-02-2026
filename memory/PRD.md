@@ -20,6 +20,72 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ### Session: 2026-01-31 (Fork - Campaign Deadlines Fix)
 
+#### ✅ BUG FIX - Fechas de Entrega No Se Mostraban en Reportes (P0)
+
+**Problema reportado por usuario**: Aunque los días de límite de entrega se actualizaban en la configuración de la campaña, las fechas no se modificaban en los reportes de entregas tanto en el panel admin como en el panel de marcas.
+
+**Causa raíz identificada**: 
+1. El frontend calculaba los plazos localmente con valores hardcodeados (7 días para URL, 14 días para métricas) en lugar de usar los deadlines guardados en la base de datos.
+2. El backend no enriquecía los deliverables con los campos `url_deadline` y `metrics_deadline` desde las aplicaciones.
+
+**Solución implementada**:
+
+**Frontend (4 archivos modificados)**:
+- `/app/frontend/src/pages/ugc/BrandDeliverables.jsx`
+- `/app/frontend/src/pages/admin/AdminDeliverables.jsx`
+- `/app/frontend/src/pages/ugc/CreatorDeliverables.jsx`
+- `/app/frontend/src/pages/admin/AdminCreatorDeliverables.jsx`
+
+Cambio en función `getDeadlineStatus()`:
+```javascript
+// ANTES (hardcodeado):
+const daysLimit = type === 'url' ? 7 : 14;
+
+// DESPUÉS (usa deadlines guardados):
+const storedDeadline = type === 'url' ? deliverable.url_deadline : deliverable.metrics_deadline;
+let deadline;
+if (storedDeadline) {
+  deadline = new Date(storedDeadline);
+} else {
+  // Fallback con campaign settings o defaults
+  const daysLimit = type === 'url' 
+    ? (campaign?.url_delivery_days || 7) 
+    : (campaign?.metrics_delivery_days || 14);
+  ...
+}
+```
+
+**Backend (1 archivo modificado)**:
+- `/app/backend/routes/ugc_deliverables.py`
+
+Se enriquecen los deliverables con datos de la aplicación:
+```python
+# Get application data for deadlines
+if d.get("application_id"):
+    application = await db.ugc_applications.find_one(...)
+    if application:
+        if not d.get("url_deadline"):
+            d["url_deadline"] = application.get("url_deadline")
+        if not d.get("metrics_deadline"):
+            d["metrics_deadline"] = application.get("metrics_deadline")
+        if not d.get("confirmed_at"):
+            d["confirmed_at"] = application.get("confirmed_at")
+```
+
+**Testing realizado**:
+```bash
+# 1. Actualizar campaña con nuevos plazos (15/25 días)
+PUT /api/ugc/admin/campaigns/{id}
+Response: "Se actualizaron los plazos de 1 creadores confirmados"
+
+# 2. Verificar que el endpoint retorna los deadlines actualizados
+GET /api/ugc/deliverables/campaign/{id}
+- url_deadline: 2026-02-13 (15 días desde confirmación) ✅
+- metrics_deadline: 2026-02-23 (25 días desde confirmación) ✅
+```
+
+---
+
 #### ✅ BUG FIX - Campaign Delivery Deadlines Not Updating (P0)
 
 **Problema reportado**: Cuando un admin editaba una campaña para cambiar los días de plazo de entrega de URL o métricas, los cambios no se guardaban ni se aplicaban a los creadores que ya habían sido confirmados para esa campaña.
