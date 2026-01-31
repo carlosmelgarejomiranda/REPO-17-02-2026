@@ -44,17 +44,20 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 - URLs originales preservadas en campo `original_image_url` (rollback)
 - Backend devuelve `cloudinary_url` preferentemente sobre URLs legacy
 
-**Carpetas configuradas en Cloudinary:**
-- `avenue/products` - Imágenes de productos
-- `avenue/campaigns` - Portadas de campañas
-- `avenue/creators` - Fotos de perfil
-- `avenue/metrics` - Screenshots de métricas
-- `avenue/receipts` - Comprobantes (privado)
-- `avenue/general` - Website builder y otros
-
-**Credenciales:**
+**Configuración:**
 - Cloud Name: `did4blamy`
-- Configurado en `/app/backend/.env`
+- Credenciales en: `/app/backend/.env`
+- Carpetas: `avenue/products`, `avenue/creators`, `avenue/campaigns`, `avenue/general`
+
+**Comportamiento:**
+- **Sin fallback**: Si Cloudinary falla, error claro al usuario
+- **Reintentos**: 3 intentos con backoff exponencial (1s, 2s)
+- **Error claro**: "No se pudo subir el archivo después de 3 intentos. Por favor intente de nuevo."
+
+**Razón del diseño:**
+- Un solo sistema de storage = menos complejidad
+- Error visible > problema oculto descubierto después
+- Cloudinary 99.9% uptime, los reintentos cubren glitches temporales
 
 ---
 
