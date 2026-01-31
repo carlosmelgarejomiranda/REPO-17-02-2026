@@ -2708,9 +2708,6 @@ async def serve_upload(filename: str):
     
     return FileResponse(file_path, media_type=content_type)
 
-# Include the router in the main app
-app.include_router(api_router)
-
 # Include e-commerce router and set database
 from ecommerce import ecommerce_router, set_database, start_sync_on_startup
 set_database(db)
