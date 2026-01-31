@@ -965,10 +965,10 @@ async def get_product(product_id: str):
                 int(x.get("size") or "0") if (x.get("size") or "").isdigit() else (x.get("size") or "")
             ))
             
-            # Use custom image if available
-            display_image = product.get("custom_image") or product.get("image")
-            # Get all images (up to 3)
-            all_images = product.get("images", [])
+            # Use Cloudinary URL if available, then custom_image, then ERP image
+            display_image = product.get("cloudinary_url") or product.get("custom_image") or product.get("image")
+            # Get all images (up to 3) - prefer cloudinary_images
+            all_images = product.get("cloudinary_images") or product.get("images", [])
             if not all_images or not isinstance(all_images, list):
                 all_images = [display_image] if display_image else []
             all_images = [img for img in all_images if img]
