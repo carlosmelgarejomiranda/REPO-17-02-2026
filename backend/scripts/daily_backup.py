@@ -271,21 +271,37 @@ def cleanup_local_backups():
 
 
 def run_backup():
-    """Main backup function"""
+    """Main backup function with email alerts"""
     logger.info("=" * 50)
     logger.info("DAILY BACKUP STARTED")
     logger.info("=" * 50)
     
+    backup_details = {
+        'db_name': DB_NAME,
+        'size_mb': 0,
+        'total_backups': 0,
+        'error': None
+    }
+    
     # Step 1: Create backup
     backup_file = create_backup()
     if not backup_file:
-        logger.error("BACKUP FAILED: Could not create backup")
+        error_msg = "No se pudo crear el dump de MongoDB"
+        logger.error(f"BACKUP FAILED: {error_msg}")
+        backup_details['error'] = error_msg
+        send_backup_alert(success=False, details=backup_details)
         return False
+    
+    # Get file size
+    backup_details['size_mb'] = round(backup_file.stat().st_size / (1024 * 1024), 2)
     
     # Step 2: Upload to Cloudinary
     upload_result = upload_to_cloudinary(backup_file)
     if not upload_result:
-        logger.error("BACKUP FAILED: Could not upload to Cloudinary")
+        error_msg = "No se pudo subir el backup a Cloudinary"
+        logger.error(f"BACKUP FAILED: {error_msg}")
+        backup_details['error'] = error_msg
+        send_backup_alert(success=False, details=backup_details)
         return False
     
     # Step 3: Cleanup old backups in Cloudinary
@@ -294,9 +310,24 @@ def run_backup():
     # Step 4: Cleanup local files
     cleanup_local_backups()
     
+    # Step 5: Count total backups for report
+    try:
+        result = cloudinary.api.resources(
+            type="upload",
+            resource_type="raw",
+            prefix="avenue/backups/mongodb_backup_",
+            max_results=100
+        )
+        backup_details['total_backups'] = len(result.get('resources', []))
+    except:
+        backup_details['total_backups'] = '?'
+    
     logger.info("=" * 50)
     logger.info("DAILY BACKUP COMPLETED SUCCESSFULLY")
     logger.info("=" * 50)
+    
+    # Send success alert
+    send_backup_alert(success=True, details=backup_details)
     
     return True
 
