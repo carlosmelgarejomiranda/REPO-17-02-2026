@@ -2743,6 +2743,7 @@ async def assign_images_to_product(assignment: ImageAssignment):
     
     # Process each temp image from MongoDB
     assigned_images = []
+    cloudinary_images = []
     
     for idx, img_id in enumerate(assignment.image_ids):
         # Find the temp image in MongoDB
@@ -2755,44 +2756,54 @@ async def assign_images_to_product(assignment: ImageAssignment):
             logger.warning(f"Temp image not found: {img_id} in batch {assignment.batch_id}")
             continue
         
-        # Create permanent image entry
+        # Get image data and decode from base64
+        import base64
+        image_data = temp_image.get("data")
+        if not image_data:
+            logger.warning(f"Temp image has no data: {img_id}")
+            continue
+        
+        try:
+            image_bytes = base64.b64decode(image_data)
+        except Exception as e:
+            logger.error(f"Failed to decode image {img_id}: {e}")
+            continue
+        
+        # Use process_and_save_image which uses Cloudinary
         permanent_image_id = f"{assignment.product_id}_{idx}"
-        ext = temp_image.get("extension", "jpg")
+        filename = temp_image.get("filename", f"{permanent_image_id}.jpg")
         
-        # Store in permanent images collection
-        await db.product_images_data.update_one(
-            {"image_id": permanent_image_id},
-            {"$set": {
-                "image_id": permanent_image_id,
-                "product_id": assignment.product_id,
-                "filename": temp_image.get("filename"),
-                "extension": ext,
-                "content_type": temp_image.get("content_type", "image/jpeg"),
-                "data": temp_image.get("data"),  # base64 data
-                "size": temp_image.get("size"),
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "position": idx
-            }},
-            upsert=True
-        )
+        image_result = await process_and_save_image(image_bytes, filename, permanent_image_id)
         
-        # Generate permanent URL
-        image_url = f"/api/shop/images/{permanent_image_id}.{ext}"
-        assigned_images.append(image_url)
+        image_url = image_result.get("url")
+        cloudinary_url = image_result.get("cloudinary_url")
+        
+        if image_url:
+            assigned_images.append(image_url)
+            if cloudinary_url:
+                cloudinary_images.append(cloudinary_url)
+            else:
+                cloudinary_images.append(None)
+            
+            logger.info(f"Assigned image {idx} to product {assignment.product_id}: {image_url} (storage: {image_result.get('storage')})")
     
     if not assigned_images:
         raise HTTPException(status_code=400, detail="No se pudieron procesar las imágenes")
     
     # Update product with image URLs
-    # Pad array to 3 elements
+    # Pad arrays to 3 elements
     images_array = assigned_images + [None] * (3 - len(assigned_images))
+    cloudinary_array = cloudinary_images + [None] * (3 - len(cloudinary_images))
     
     update_result = await db.shop_products_grouped.update_one(
         {"grouped_id": assignment.product_id},
         {"$set": {
             "images": images_array[:3],
+            "cloudinary_images": cloudinary_array[:3],
             "custom_image": assigned_images[0] if assigned_images else None,
-            "image_updated_at": datetime.now(timezone.utc).isoformat()
+            "cloudinary_url": cloudinary_images[0] if cloudinary_images and cloudinary_images[0] else None,
+            "image_updated_at": datetime.now(timezone.utc).isoformat(),
+            "image_storage": "cloudinary" if cloudinary_images and cloudinary_images[0] else "gridfs"
         }}
     )
     
@@ -2813,7 +2824,9 @@ async def assign_images_to_product(assignment: ImageAssignment):
         "product_name": product_name,
         "product_brand": product_brand,
         "images_assigned": len(assigned_images),
-        "images": images_array[:3]
+        "images": images_array[:3],
+        "cloudinary_images": cloudinary_array[:3],
+        "storage": "cloudinary" if cloudinary_images and cloudinary_images[0] else "gridfs"
     }
 
 
