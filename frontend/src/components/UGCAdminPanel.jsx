@@ -642,7 +642,7 @@ const MetricsPanel = () => {
             <p className="text-xs text-gray-400">Eng. Rate Prom.</p>
           </div>
           <div className="p-4 bg-gradient-to-br from-[#d4a968]/20 to-[#d4a968]/10 border border-[#d4a968]/30 rounded-xl text-center">
-            <FileCheck className="w-6 h-6 text-[#d4a968] mx-auto mb-2" />
+            <CheckCircle className="w-6 h-6 text-[#d4a968] mx-auto mb-2" />
             <p className="text-2xl font-bold text-white">{campaignStats.count}</p>
             <p className="text-xs text-gray-400">Entregas c/ Métricas</p>
           </div>
