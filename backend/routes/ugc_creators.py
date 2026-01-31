@@ -98,13 +98,15 @@ async def complete_creator_onboarding(
     # Build full phone number
     phone_full = f"{data.phone_country_code}{data.phone}".replace(" ", "")
     
-    # Handle profile picture upload to GridFS if provided as base64
+    # Handle profile picture upload to Cloudinary (preferred) or GridFS (fallback)
     profile_picture_url = None
     if data.profile_picture:
         try:
             # Check if it's base64 data
             if data.profile_picture.startswith('data:image'):
-                from services.gridfs_storage import upload_image
+                from services.cloudinary_storage import upload_image as cloudinary_upload, CLOUDINARY_CONFIGURED
+                from services.image_migration_helper import CLOUDINARY_ENABLED
+                from services.gridfs_storage import upload_image as gridfs_upload
                 
                 # Extract base64 content
                 header, base64_data = data.profile_picture.split(',', 1)
@@ -126,20 +128,36 @@ async def complete_creator_onboarding(
                 
                 filename = f"creator_profile_{user['user_id']}{ext}"
                 
-                # Upload to GridFS
-                file_id = await upload_image(
-                    file_content=image_bytes,
-                    filename=filename,
-                    content_type=content_type,
-                    metadata={"user_id": user["user_id"], "type": "profile_picture"},
-                    bucket_name="images"
-                )
+                # Try Cloudinary first
+                if CLOUDINARY_ENABLED and CLOUDINARY_CONFIGURED:
+                    try:
+                        result = await cloudinary_upload(
+                            file_content=image_bytes,
+                            filename=filename,
+                            folder="avenue/creators",
+                            public=True,
+                            metadata={"user_id": user["user_id"], "type": "profile_picture"}
+                        )
+                        if result.get("success"):
+                            profile_picture_url = result.get("url")
+                            logger.info(f"Uploaded profile picture to Cloudinary for user {user['user_id']}: {profile_picture_url}")
+                        else:
+                            logger.warning(f"Cloudinary upload failed, falling back to GridFS: {result.get('error')}")
+                    except Exception as cloud_err:
+                        logger.warning(f"Cloudinary error, falling back to GridFS: {cloud_err}")
                 
-                # Build the URL
-                from server import get_api_base_url
-                api_base = os.environ.get('REACT_APP_BACKEND_URL', '')
-                profile_picture_url = f"{api_base}/api/images/{file_id}"
-                logger.info(f"Uploaded profile picture for user {user['user_id']}: {file_id}")
+                # Fallback to GridFS if Cloudinary failed or not enabled
+                if not profile_picture_url:
+                    file_id = await gridfs_upload(
+                        file_content=image_bytes,
+                        filename=filename,
+                        content_type=content_type,
+                        metadata={"user_id": user["user_id"], "type": "profile_picture"},
+                        bucket_name="images"
+                    )
+                    api_base = os.environ.get('REACT_APP_BACKEND_URL', '')
+                    profile_picture_url = f"{api_base}/api/images/{file_id}"
+                    logger.info(f"Uploaded profile picture to GridFS for user {user['user_id']}: {file_id}")
             else:
                 # It's already a URL
                 profile_picture_url = data.profile_picture
