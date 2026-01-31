@@ -15,6 +15,7 @@ import subprocess
 import shutil
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+import uuid
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
