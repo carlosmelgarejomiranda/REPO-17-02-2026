@@ -337,6 +337,7 @@ def run_backup():
         logger.error(f"BACKUP FAILED: {error_msg}")
         backup_details['error'] = error_msg
         send_backup_alert(success=False, details=backup_details)
+        create_system_notification_sync(success=False, details=backup_details)
         return False
     
     # Get file size
@@ -349,6 +350,7 @@ def run_backup():
         logger.error(f"BACKUP FAILED: {error_msg}")
         backup_details['error'] = error_msg
         send_backup_alert(success=False, details=backup_details)
+        create_system_notification_sync(success=False, details=backup_details)
         return False
     
     # Step 3: Cleanup old backups in Cloudinary
