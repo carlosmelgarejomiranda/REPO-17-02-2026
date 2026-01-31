@@ -2562,7 +2562,6 @@ from services.cloudinary_storage import (
     delete_asset as cloudinary_delete,
     CLOUDINARY_CONFIGURED
 )
-from services.image_migration_helper import CLOUDINARY_ENABLED
 
 # Legacy: Keep uploads directory for backwards compatibility during migration
 UPLOAD_DIR = Path("/app/backend/uploads")
