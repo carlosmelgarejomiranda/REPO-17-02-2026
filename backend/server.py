@@ -2574,7 +2574,8 @@ async def upload_file(
     file: UploadFile = File(...),
     folder: str = "avenue/general"
 ):
-    """Upload a file to Cloudinary (preferred) or GridFS (fallback) and return its URL"""
+    """Upload a file to Cloudinary. Retries on failure."""
+    import asyncio
     user = await require_auth(request)
     
     # Validate file type
@@ -2587,8 +2588,13 @@ async def upload_file(
     if len(contents) > 5 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="Archivo demasiado grande. Máximo 5MB.")
     
-    # Try Cloudinary first (if enabled and configured)
-    if CLOUDINARY_ENABLED and CLOUDINARY_CONFIGURED:
+    # Check Cloudinary is configured
+    if not CLOUDINARY_CONFIGURED:
+        raise HTTPException(status_code=503, detail="Cloudinary no está configurado. Contacte al administrador.")
+    
+    # Upload with retries
+    last_error = None
+    for attempt in range(3):
         try:
             result = await cloudinary_upload(
                 file_content=contents,
@@ -2607,23 +2613,20 @@ async def upload_file(
                     "filename": file.filename
                 }
             else:
-                logger.warning(f"Cloudinary upload failed, falling back to GridFS: {result.get('error')}")
+                last_error = result.get("error", "Error desconocido")
+                logger.warning(f"Upload attempt {attempt + 1} failed: {last_error}")
         except Exception as e:
-            logger.warning(f"Cloudinary error, falling back to GridFS: {e}")
+            last_error = str(e)
+            logger.warning(f"Upload attempt {attempt + 1} exception: {e}")
+        
+        if attempt < 2:
+            await asyncio.sleep(1 * (attempt + 1))
     
-    # Fallback to GridFS (legacy)
-    file_id = await gridfs_upload(
-        file_content=contents,
-        filename=file.filename,
-        content_type=file.content_type,
-        metadata={"uploaded_by": user.get("user_id", "unknown")}
+    # All retries failed
+    raise HTTPException(
+        status_code=503,
+        detail=f"No se pudo subir el archivo después de 3 intentos. Error: {last_error}. Por favor intente de nuevo."
     )
-    
-    # Return URL using the GridFS endpoint
-    base_url = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
-    file_url = f"{base_url}/api/images/{file_id}"
-    
-    return {"url": file_url, "file_id": file_id, "filename": file.filename, "storage": "gridfs"}
 
 @api_router.get("/images/{file_id}")
 async def serve_gridfs_image(file_id: str):
