@@ -2939,9 +2939,26 @@ async def delete_product_custom_image(product_id: str):
     if not product:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
-    # Get current custom image to delete from filesystem
+    # Delete from Cloudinary if applicable
+    cloudinary_images = product.get("cloudinary_images", [])
+    for img_url in cloudinary_images:
+        if img_url and "cloudinary.com" in img_url:
+            try:
+                # Extract public_id from URL
+                # URL format: https://res.cloudinary.com/{cloud}/image/upload/v{version}/{folder}/{filename}
+                parts = img_url.split("/upload/")
+                if len(parts) > 1:
+                    public_id = parts[1].split(".")[0]  # Remove version and extension
+                    if public_id.startswith("v"):
+                        public_id = "/".join(public_id.split("/")[1:])  # Remove version prefix
+                    cloudinary_delete(public_id)
+                    logger.info(f"Deleted from Cloudinary: {public_id}")
+            except Exception as e:
+                logger.warning(f"Could not delete from Cloudinary: {e}")
+    
+    # Also try to delete from filesystem (legacy)
     custom_image = product.get("custom_image")
-    if custom_image:
+    if custom_image and "/api/shop/images/" in custom_image:
         base_upload_dir = "/app/backend/uploads/products"
         filename = custom_image.split("/")[-1] if "/" in custom_image else custom_image
         filepath = os.path.join(base_upload_dir, filename)
@@ -2951,11 +2968,11 @@ async def delete_product_custom_image(product_id: str):
             except Exception as e:
                 logger.warning(f"Could not delete image file {filepath}: {e}")
     
-    # Also delete images array
+    # Also delete images array from filesystem (legacy)
     current_images = product.get("images", [])
     base_upload_dir = "/app/backend/uploads/products"
     for img_url in current_images:
-        if img_url:
+        if img_url and "/api/shop/images/" in img_url:
             filename = img_url.split("/")[-1] if "/" in img_url else img_url
             filepath = os.path.join(base_upload_dir, filename)
             if os.path.exists(filepath):
@@ -2969,7 +2986,9 @@ async def delete_product_custom_image(product_id: str):
         {"grouped_id": product_id},
         {"$set": {
             "images": [None, None, None],
+            "cloudinary_images": [None, None, None],
             "custom_image": None,
+            "cloudinary_url": None,
             "image_updated_at": datetime.now(timezone.utc).isoformat()
         }}
     )
