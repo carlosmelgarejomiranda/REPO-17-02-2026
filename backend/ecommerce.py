@@ -1019,8 +1019,8 @@ async def get_featured_products():
         
         result = []
         for p in products:
-            # Use custom image if available
-            display_image = p.get("custom_image") or p.get("image")
+            # Use Cloudinary URL if available, then custom_image, then ERP image
+            display_image = p.get("cloudinary_url") or p.get("custom_image") or p.get("image")
             result.append({
                 "id": p.get("grouped_id"),
                 "name": p.get("base_model"),
