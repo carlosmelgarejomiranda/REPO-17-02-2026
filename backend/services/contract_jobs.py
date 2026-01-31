@@ -196,7 +196,7 @@ async def send_rejection_notification(creator_email: str, creator_name: str, cam
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
-                <a href="https://deadline-sync.preview.emergentagent.com/ugc/campaigns" 
+                <a href="https://error-tracker-setup.preview.emergentagent.com/ugc/campaigns" 
                    style="background: #d4a968; color: #000; padding: 12px 30px; 
                           text-decoration: none; border-radius: 5px; font-weight: bold;">
                     Ver Campañas Disponibles
