@@ -2126,8 +2126,10 @@ async def upload_product_image(
     if len(content) > 10 * 1024 * 1024:  # 10MB max upload, will be reduced
         raise HTTPException(status_code=400, detail="File too large. Maximum 10MB")
     
-    # Process and save image with unique name for each index
-    image_url = await process_and_save_image(content, file.filename, f"{product_id}_{image_index}")
+    # Process and save image (returns dict with url and cloudinary_url)
+    image_result = await process_and_save_image(content, file.filename, f"{product_id}_{image_index}")
+    image_url = image_result.get("url")
+    cloudinary_url = image_result.get("cloudinary_url")
     
     # Get current product
     product = await db.shop_products_grouped.find_one({"grouped_id": product_id}, {"_id": 0})
@@ -2146,11 +2148,25 @@ async def upload_product_image(
     # Update the image at the specified index
     images[image_index] = image_url
     
+    # Get or create cloudinary_images array (for migration tracking)
+    cloudinary_images = product.get("cloudinary_images", [None, None, None])
+    if not isinstance(cloudinary_images, list):
+        cloudinary_images = [None, None, None]
+    while len(cloudinary_images) < 3:
+        cloudinary_images.append(None)
+    
+    # Update cloudinary URL if we used Cloudinary
+    if cloudinary_url:
+        cloudinary_images[image_index] = cloudinary_url
+    
     # Update product in database
     update_data = {
         "images": images,
+        "cloudinary_images": cloudinary_images,
         "custom_image": images[0] if images[0] else product.get("custom_image"),  # Keep first as main
-        "image_updated_at": datetime.now(timezone.utc).isoformat()
+        "cloudinary_url": cloudinary_images[0] if cloudinary_images[0] else product.get("cloudinary_url"),
+        "image_updated_at": datetime.now(timezone.utc).isoformat(),
+        "image_storage": image_result.get("storage", "unknown")
     }
     
     await db.shop_products_grouped.update_one(
@@ -2161,8 +2177,10 @@ async def upload_product_image(
     return {
         "message": "Image uploaded successfully",
         "image_url": image_url,
+        "cloudinary_url": cloudinary_url,
         "image_index": image_index,
-        "all_images": images
+        "all_images": images,
+        "storage": image_result.get("storage")
     }
 
 @ecommerce_router.delete("/admin/product-image/{product_id}/{image_index}")
