@@ -17,7 +17,7 @@ from services.cloudinary_storage import (
 )
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/cloudinary", tags=["cloudinary"])
+router = APIRouter(prefix="/api/cloudinary", tags=["cloudinary"])
 
 
 @router.get("/status")
