@@ -6,7 +6,7 @@ import {
   RefreshCw, Eye, EyeOff, ChevronDown, Image as ImageIcon,
   UserCheck, XCircle, Star, ClipboardList, List, Type, Minus, Pencil, ArrowRightLeft,
   BadgeCheck, TrendingUp, Heart, MessageCircle, Share2, Bookmark, BarChart3, Award,
-  Search, MoreVertical, Filter, Link as LinkIcon, LineChart
+  Search, MoreVertical, Filter, Link as LinkIcon, LineChart, Download, FileText
 } from 'lucide-react';
 import { getApiUrl } from '../utils/api';
 
