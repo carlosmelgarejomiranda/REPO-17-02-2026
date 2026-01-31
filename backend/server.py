@@ -34,6 +34,17 @@ from security import (
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Initialize Sentry for error monitoring
+sentry_dsn = os.environ.get('SENTRY_DSN')
+if sentry_dsn:
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        traces_sample_rate=0.1,  # 10% of transactions for performance monitoring
+        environment="production",
+        send_default_pii=False,  # Don't send personally identifiable information
+    )
+    logging.info("Sentry initialized successfully")
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
