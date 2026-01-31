@@ -2838,6 +2838,9 @@ async def admin_trigger_backup(request: Request):
         logger.error(f"Manual backup trigger failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Include the router in the main app (moved here to include backup endpoint)
+app.include_router(api_router)
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
