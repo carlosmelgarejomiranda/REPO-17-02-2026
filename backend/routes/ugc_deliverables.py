@@ -105,12 +105,12 @@ async def get_my_deliverables_full(request: Request):
         {"_id": 0}
     ).sort("created_at", -1).to_list(200)
     
-    # Enrich with campaign, brand, and rating info
+    # Enrich with campaign, brand, rating info, and application deadlines
     for d in deliverables:
         # Campaign info
         campaign = await db.ugc_campaigns.find_one(
             {"id": d.get("campaign_id")},
-            {"_id": 0, "name": 1, "brand_id": 1, "requirements": 1, "status": 1}
+            {"_id": 0, "name": 1, "brand_id": 1, "requirements": 1, "status": 1, "url_delivery_days": 1, "metrics_delivery_days": 1}
         )
         if campaign:
             d["campaign"] = {"name": campaign.get("name"), "status": campaign.get("status")}
@@ -131,13 +131,20 @@ async def get_my_deliverables_full(request: Request):
         if rating:
             d["brand_rating"] = rating
         
-        # Application status for cancelled check
+        # Application data for cancelled check AND deadlines
         application = await db.ugc_applications.find_one(
             {"deliverable_id": d.get("id")},
-            {"_id": 0, "status": 1}
+            {"_id": 0, "status": 1, "url_deadline": 1, "metrics_deadline": 1, "confirmed_at": 1}
         )
         if application:
             d["application_status"] = application.get("status")
+            # Enrich with deadlines from application if not present in deliverable
+            if not d.get("url_deadline") and application.get("url_deadline"):
+                d["url_deadline"] = application["url_deadline"]
+            if not d.get("metrics_deadline") and application.get("metrics_deadline"):
+                d["metrics_deadline"] = application["metrics_deadline"]
+            if not d.get("confirmed_at") and application.get("confirmed_at"):
+                d["confirmed_at"] = application["confirmed_at"]
     
     return {
         "deliverables": deliverables,
