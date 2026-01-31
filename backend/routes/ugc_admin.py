@@ -1460,6 +1460,12 @@ async def admin_update_campaign(
     if "admin_notes" in data:
         update_fields["admin_notes"] = data["admin_notes"]
     
+    # Update delivery days settings
+    if "url_delivery_days" in data:
+        update_fields["url_delivery_days"] = int(data["url_delivery_days"])
+    if "metrics_delivery_days" in data:
+        update_fields["metrics_delivery_days"] = int(data["metrics_delivery_days"])
+    
     # Update nested objects
     if "requirements" in data:
         update_fields["requirements"] = data["requirements"]
@@ -1478,9 +1484,53 @@ async def admin_update_campaign(
         {"$set": update_fields}
     )
     
+    # If delivery days changed, update deadlines for confirmed creators
+    url_days_changed = "url_delivery_days" in data
+    metrics_days_changed = "metrics_delivery_days" in data
+    
+    if url_days_changed or metrics_days_changed:
+        new_url_days = data.get("url_delivery_days", campaign.get("url_delivery_days", 7))
+        new_metrics_days = data.get("metrics_delivery_days", campaign.get("metrics_delivery_days", 14))
+        
+        # Get all confirmed applications for this campaign
+        confirmed_apps = await db.ugc_applications.find({
+            "campaign_id": campaign_id,
+            "status": "confirmed"
+        }).to_list(1000)
+        
+        for app in confirmed_apps:
+            confirmed_at = app.get("confirmed_at")
+            if confirmed_at:
+                if isinstance(confirmed_at, str):
+                    confirmed_at = datetime.fromisoformat(confirmed_at.replace('Z', '+00:00'))
+                
+                # Calculate new deadlines
+                new_url_deadline = confirmed_at + timedelta(days=int(new_url_days))
+                new_metrics_deadline = confirmed_at + timedelta(days=int(new_metrics_days))
+                
+                # Update application with new deadlines
+                await db.ugc_applications.update_one(
+                    {"id": app["id"]},
+                    {"$set": {
+                        "url_deadline": new_url_deadline.isoformat(),
+                        "metrics_deadline": new_metrics_deadline.isoformat()
+                    }}
+                )
+                
+                # Also update the deliverable if exists
+                await db.ugc_deliverables.update_many(
+                    {"application_id": app["id"]},
+                    {"$set": {
+                        "url_deadline": new_url_deadline.isoformat(),
+                        "metrics_deadline": new_metrics_deadline.isoformat()
+                    }}
+                )
+        
+        logger.info(f"Updated deadlines for {len(confirmed_apps)} confirmed creators in campaign {campaign_id}")
+    
     return {
         "success": True,
-        "message": "Campaña actualizada exitosamente"
+        "message": "Campaña actualizada exitosamente" + (f" - Se actualizaron los plazos de {len(confirmed_apps) if (url_days_changed or metrics_days_changed) else 0} creadores confirmados" if (url_days_changed or metrics_days_changed) else "")
     }
 
 @router.put("/campaigns/{campaign_id}/add-slots", response_model=dict)
