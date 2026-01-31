@@ -11,7 +11,7 @@ import os
 from datetime import datetime, timedelta
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://brand-form-upgrade.preview.emergentagent.com/api"
+BACKEND_URL = "https://deadline-sync.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
