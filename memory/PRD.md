@@ -30,9 +30,15 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 3. Sube a Cloudinary en carpeta `avenue/backups`
 4. Mantiene los últimos 7 backups (elimina antiguos automáticamente)
 5. Se ejecuta diariamente a las 3:00 AM hora Paraguay
+6. **Envía email de alerta** en caso de éxito o fallo
 
-**Archivos creados:**
-- `/app/backend/scripts/daily_backup.py` - Script de backup completo
+**Archivos creados/modificados:**
+- `/app/backend/scripts/daily_backup.py` - Script de backup con alertas
+- `/app/frontend/src/components/UGCAdminPanel.jsx` - Tab "Sistema" con botón de backup manual
+
+**Alertas por email:**
+- ✅ **Backup exitoso**: Email con detalles (tamaño, cantidad de backups)
+- 🚨 **Backup fallido**: Email URGENTE con error y pasos a seguir
 
 **Configuración del scheduler:**
 - `CronTrigger(hour=6, minute=0)` - 6:00 UTC = 3:00 AM Paraguay
@@ -41,21 +47,14 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 **Endpoint manual (admin):**
 - `POST /api/admin/trigger-backup` - Ejecuta backup inmediatamente
 
-**Testing realizado:**
-```bash
-# Backup manual exitoso
-POST /api/admin/trigger-backup
-Response: {"success":true,"message":"Backup completed and uploaded to Cloudinary"}
+**UI Admin:**
+- Panel Admin → UGC Platform → Sistema → "Crear Backup Ahora"
 
-# Backup subido a Cloudinary
-URL: https://res.cloudinary.com/did4blamy/raw/upload/avenue/backups/mongodb_backup_test_database_YYYYMMDD_HHMMSS.tar.gz
-```
-
-**Restauración (manual si necesario):**
+**Protocolo de recuperación:**
 ```bash
-# 1. Descargar backup de Cloudinary
+# 1. Descargar backup de Cloudinary (console.cloudinary.com → avenue/backups)
 # 2. Descomprimir: tar -xzf mongodb_backup_*.tar.gz
-# 3. Restaurar: mongorestore --uri="mongodb://localhost:27017" ./backup_folder
+# 3. Restaurar: mongorestore --uri="mongodb://localhost:27017" --drop ./backup_folder
 ```
 
 ---
