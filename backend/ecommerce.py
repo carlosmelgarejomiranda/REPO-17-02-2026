@@ -1963,8 +1963,8 @@ def find_matching_product(filename: str, products: list) -> Optional[dict]:
 
 async def process_and_save_image(file_content: bytes, filename: str, product_id: str) -> dict:
     """
-    Process image (resize if needed) and save to Cloudinary (preferred) or GridFS (fallback).
-    Returns dict with 'url' and 'cloudinary_url' (if applicable).
+    Process image (resize if needed) and save to Cloudinary.
+    Retries 2 times on failure, then returns clear error.
     """
     try:
         # Open image with PIL
@@ -2003,8 +2003,12 @@ async def process_and_save_image(file_content: bytes, filename: str, product_id:
         processed_content = output.read()
         safe_filename = re.sub(r'[^a-zA-Z0-9_-]', '_', product_id) + '.jpg'
         
-        # Try Cloudinary first (if enabled and configured)
-        if CLOUDINARY_ENABLED and CLOUDINARY_CONFIGURED:
+        # Upload to Cloudinary with retries
+        if not CLOUDINARY_CONFIGURED:
+            raise HTTPException(status_code=503, detail="Cloudinary no está configurado. Contacte al administrador.")
+        
+        last_error = None
+        for attempt in range(3):  # 3 attempts total
             try:
                 result = await cloudinary_upload(
                     file_content=processed_content,
@@ -2026,34 +2030,27 @@ async def process_and_save_image(file_content: bytes, filename: str, product_id:
                         "storage": "cloudinary"
                     }
                 else:
-                    logger.warning(f"Cloudinary upload failed, falling back to GridFS: {result.get('error')}")
+                    last_error = result.get("error", "Error desconocido")
+                    logger.warning(f"Cloudinary attempt {attempt + 1} failed: {last_error}")
             except Exception as e:
-                logger.warning(f"Cloudinary error, falling back to GridFS: {e}")
+                last_error = str(e)
+                logger.warning(f"Cloudinary attempt {attempt + 1} exception: {e}")
+            
+            # Wait before retry (exponential backoff)
+            if attempt < 2:
+                await asyncio.sleep(1 * (attempt + 1))
         
-        # Fallback to GridFS (legacy)
-        file_id = await gridfs_upload(
-            file_content=processed_content,
-            filename=safe_filename,
-            content_type="image/jpeg",
-            metadata={
-                "product_id": product_id,
-                "original_filename": filename,
-                "type": "product_image"
-            },
-            bucket_name="product_images"
+        # All retries failed
+        raise HTTPException(
+            status_code=503, 
+            detail=f"No se pudo subir la imagen después de 3 intentos. Error: {last_error}. Por favor intente de nuevo."
         )
         
-        gridfs_url = f"/api/shop/images/gridfs/{file_id}"
-        logger.info(f"Product image uploaded to GridFS: {gridfs_url}")
-        return {
-            "url": gridfs_url,
-            "cloudinary_url": None,
-            "storage": "gridfs"
-        }
-        
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error processing image: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error procesando imagen: {str(e)}")
         logger.error(f"Error processing image: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
 
