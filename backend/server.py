@@ -2820,6 +2820,24 @@ async def admin_trigger_reminders(request: Request):
         logger.error(f"Manual reminder trigger failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/admin/trigger-backup")
+async def admin_trigger_backup(request: Request):
+    """Manually trigger database backup (admin only)"""
+    await require_admin(request)
+    
+    try:
+        from scripts.daily_backup import run_backup
+        import asyncio
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, run_backup)
+        if result:
+            return {"success": True, "message": "Backup completed and uploaded to Cloudinary"}
+        else:
+            raise HTTPException(status_code=500, detail="Backup failed - check logs")
+    except Exception as e:
+        logger.error(f"Manual backup trigger failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
