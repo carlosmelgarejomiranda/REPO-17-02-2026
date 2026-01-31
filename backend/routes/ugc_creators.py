@@ -98,15 +98,14 @@ async def complete_creator_onboarding(
     # Build full phone number
     phone_full = f"{data.phone_country_code}{data.phone}".replace(" ", "")
     
-    # Handle profile picture upload to Cloudinary (preferred) or GridFS (fallback)
+    # Handle profile picture upload to Cloudinary (with retries, no fallback)
     profile_picture_url = None
     if data.profile_picture:
         try:
             # Check if it's base64 data
             if data.profile_picture.startswith('data:image'):
                 from services.cloudinary_storage import upload_image as cloudinary_upload, CLOUDINARY_CONFIGURED
-                from services.image_migration_helper import CLOUDINARY_ENABLED
-                from services.gridfs_storage import upload_image as gridfs_upload
+                import asyncio
                 
                 # Extract base64 content
                 header, base64_data = data.profile_picture.split(',', 1)
@@ -128,8 +127,13 @@ async def complete_creator_onboarding(
                 
                 filename = f"creator_profile_{user['user_id']}{ext}"
                 
-                # Try Cloudinary first
-                if CLOUDINARY_ENABLED and CLOUDINARY_CONFIGURED:
+                # Check Cloudinary is configured
+                if not CLOUDINARY_CONFIGURED:
+                    raise HTTPException(status_code=503, detail="Cloudinary no está configurado. Contacte al administrador.")
+                
+                # Upload with retries
+                last_error = None
+                for attempt in range(3):
                     try:
                         result = await cloudinary_upload(
                             file_content=image_bytes,
@@ -141,30 +145,30 @@ async def complete_creator_onboarding(
                         if result.get("success"):
                             profile_picture_url = result.get("url")
                             logger.info(f"Uploaded profile picture to Cloudinary for user {user['user_id']}: {profile_picture_url}")
+                            break
                         else:
-                            logger.warning(f"Cloudinary upload failed, falling back to GridFS: {result.get('error')}")
-                    except Exception as cloud_err:
-                        logger.warning(f"Cloudinary error, falling back to GridFS: {cloud_err}")
+                            last_error = result.get("error", "Error desconocido")
+                            logger.warning(f"Profile picture upload attempt {attempt + 1} failed: {last_error}")
+                    except Exception as e:
+                        last_error = str(e)
+                        logger.warning(f"Profile picture upload attempt {attempt + 1} exception: {e}")
+                    
+                    if attempt < 2:
+                        await asyncio.sleep(1 * (attempt + 1))
                 
-                # Fallback to GridFS if Cloudinary failed or not enabled
                 if not profile_picture_url:
-                    file_id = await gridfs_upload(
-                        file_content=image_bytes,
-                        filename=filename,
-                        content_type=content_type,
-                        metadata={"user_id": user["user_id"], "type": "profile_picture"},
-                        bucket_name="images"
+                    raise HTTPException(
+                        status_code=503,
+                        detail=f"No se pudo subir la foto de perfil después de 3 intentos. Error: {last_error}"
                     )
-                    api_base = os.environ.get('REACT_APP_BACKEND_URL', '')
-                    profile_picture_url = f"{api_base}/api/images/{file_id}"
-                    logger.info(f"Uploaded profile picture to GridFS for user {user['user_id']}: {file_id}")
             else:
                 # It's already a URL
                 profile_picture_url = data.profile_picture
+        except HTTPException:
+            raise
         except Exception as e:
             logger.error(f"Failed to upload profile picture: {e}")
-            # Continue without profile picture instead of failing
-            profile_picture_url = user.get("picture")  # Fallback to Google picture
+            raise HTTPException(status_code=500, detail=f"Error al subir foto de perfil: {str(e)}")
     else:
         # Use Google picture if available
         profile_picture_url = user.get("picture")
