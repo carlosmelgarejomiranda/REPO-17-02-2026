@@ -2546,7 +2546,7 @@ from fastapi import UploadFile, File
 import base64
 import hashlib
 
-# GridFS-based persistent image storage
+# GridFS-based persistent image storage (legacy - keeping for backwards compatibility)
 from services.gridfs_storage import (
     upload_image as gridfs_upload,
     get_image as gridfs_get,
@@ -2556,6 +2556,14 @@ from services.gridfs_storage import (
     list_images as gridfs_list
 )
 
+# Cloudinary storage (new - preferred)
+from services.cloudinary_storage import (
+    upload_image as cloudinary_upload,
+    delete_asset as cloudinary_delete,
+    CLOUDINARY_CONFIGURED
+)
+from services.image_migration_helper import CLOUDINARY_ENABLED
+
 # Legacy: Keep uploads directory for backwards compatibility during migration
 UPLOAD_DIR = Path("/app/backend/uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
@@ -2563,9 +2571,10 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 @api_router.post("/upload")
 async def upload_file(
     request: Request,
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    folder: str = "avenue/general"
 ):
-    """Upload a file to persistent GridFS storage and return its URL"""
+    """Upload a file to Cloudinary (preferred) or GridFS (fallback) and return its URL"""
     user = await require_auth(request)
     
     # Validate file type
@@ -2578,7 +2587,31 @@ async def upload_file(
     if len(contents) > 5 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="Archivo demasiado grande. Máximo 5MB.")
     
-    # Upload to GridFS (persistent storage)
+    # Try Cloudinary first (if enabled and configured)
+    if CLOUDINARY_ENABLED and CLOUDINARY_CONFIGURED:
+        try:
+            result = await cloudinary_upload(
+                file_content=contents,
+                filename=file.filename,
+                folder=folder,
+                public=True,
+                metadata={"uploaded_by": user.get("user_id", "unknown")}
+            )
+            
+            if result.get("success"):
+                return {
+                    "url": result.get("url"),
+                    "cloudinary_url": result.get("url"),
+                    "public_id": result.get("public_id"),
+                    "storage": "cloudinary",
+                    "filename": file.filename
+                }
+            else:
+                logger.warning(f"Cloudinary upload failed, falling back to GridFS: {result.get('error')}")
+        except Exception as e:
+            logger.warning(f"Cloudinary error, falling back to GridFS: {e}")
+    
+    # Fallback to GridFS (legacy)
     file_id = await gridfs_upload(
         file_content=contents,
         filename=file.filename,
@@ -2586,11 +2619,11 @@ async def upload_file(
         metadata={"uploaded_by": user.get("user_id", "unknown")}
     )
     
-    # Return URL using the new GridFS endpoint
+    # Return URL using the GridFS endpoint
     base_url = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
     file_url = f"{base_url}/api/images/{file_id}"
     
-    return {"url": file_url, "file_id": file_id, "filename": file.filename}
+    return {"url": file_url, "file_id": file_id, "filename": file.filename, "storage": "gridfs"}
 
 @api_router.get("/images/{file_id}")
 async def serve_gridfs_image(file_id: str):
