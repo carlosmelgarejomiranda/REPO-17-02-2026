@@ -193,7 +193,46 @@ const AdminCreatorsTab = ({
             data-testid="export-creators-btn"
           >
             <Download className="w-3.5 h-3.5" />
-            {exporting ? 'Exportando...' : 'Exportar CSV'}
+            {exporting ? 'Exportando...' : 'CSV'}
+          </button>
+          <button 
+            onClick={async () => {
+              setExporting(true);
+              try {
+                const API_URL = getApiUrl();
+                const token = localStorage.getItem('auth_token');
+                const params = new URLSearchParams();
+                if (creatorFilter.level) params.append('level', creatorFilter.level);
+                if (creatorFilter.verified) params.append('is_active', creatorFilter.verified);
+                
+                const response = await fetch(`${API_URL}/api/ugc/admin/creators/export-pdf?${params.toString()}`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) throw new Error('Export failed');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `creators_avenue_${new Date().toISOString().slice(0,10)}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+              } catch (err) {
+                console.error('PDF Export error:', err);
+                alert('Error al exportar PDF.');
+              } finally {
+                setExporting(false);
+              }
+            }}
+            disabled={exporting || creators.length === 0}
+            className="px-3 py-1.5 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors text-xs flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+            data-testid="export-creators-pdf-btn"
+          >
+            <Download className="w-3.5 h-3.5" />
+            PDF
           </button>
           <button 
             onClick={fetchCreators}
