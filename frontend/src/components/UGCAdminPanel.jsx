@@ -286,7 +286,8 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
     { id: 'creators', label: 'Creators', icon: Users },
     { id: 'brands', label: 'Marcas', icon: Building2 },
     { id: 'campaigns', label: 'Campañas', icon: Briefcase },
-    { id: 'metrics', label: 'Métricas', icon: TrendingUp }
+    { id: 'metrics', label: 'Métricas', icon: TrendingUp },
+    { id: 'system', label: 'Sistema', icon: Shield }
   ];
 
   if (loading) {
