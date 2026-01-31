@@ -18,6 +18,47 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-31 (Fork - Webhooks & PDF Export)
+
+#### ✅ INTEGRACIÓN - Webhooks de Sentry y UptimeRobot
+
+**Problema**: Las alertas de Sentry y UptimeRobot llegaban solo por email, no aparecían en el centro de notificaciones interno.
+
+**Solución implementada**: Endpoints webhook que reciben alertas y crean notificaciones del sistema.
+
+**Endpoints creados:**
+- `POST /api/notifications/webhooks/sentry` - Recibe alertas de Sentry
+- `POST /api/notifications/webhooks/uptimerobot` - Recibe alertas de UptimeRobot
+
+**Configuración requerida:**
+1. **Sentry**: Settings → Integrations → Webhooks → URL: `https://avenue.com.py/api/notifications/webhooks/sentry`
+2. **UptimeRobot**: My Settings → Add Alert Contact → Webhook → URL: `https://avenue.com.py/api/notifications/webhooks/uptimerobot`
+
+**Archivos modificados:**
+- `/app/backend/routes/notifications.py`
+
+#### ✅ FEATURE - Exportar Reportes como PDF
+
+**Solución implementada**: Generación de PDFs profesionales con branding Avenue para reportes de campañas y creadores.
+
+**Endpoints creados:**
+- `GET /api/ugc/admin/creators/export-pdf` - Exporta lista de creadores
+- `GET /api/ugc/admin/campaigns/{id}/export-pdf` - Exporta reporte de campaña
+
+**UI implementada:**
+- Botón "PDF" (rojo) junto a "CSV" en tab Creators
+- Opción "Exportar PDF" en menú de acciones de cada campaña
+
+**Archivos creados:**
+- `/app/backend/services/pdf_generator.py`
+
+**Archivos modificados:**
+- `/app/backend/routes/ugc_admin.py`
+- `/app/frontend/src/components/admin/AdminCreatorsTab.jsx`
+- `/app/frontend/src/components/AdminCampaignManager.jsx`
+
+---
+
 ### Session: 2026-01-31 (Fork - Daily Database Backup)
 
 #### ✅ INFRAESTRUCTURA - Backup Diario Automático a Cloudinary (P1)
