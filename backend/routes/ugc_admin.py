@@ -341,6 +341,99 @@ async def export_creators_csv(
     )
 
 
+@router.get("/creators/export-pdf", response_class=StreamingResponse)
+async def export_creators_pdf(
+    request: Request,
+    level: Optional[str] = None,
+    is_active: Optional[str] = None
+):
+    """Export creators list to PDF"""
+    await require_admin(request)
+    db = await get_db()
+    
+    from services.pdf_generator import create_creators_report_pdf
+    
+    # Build query
+    query = {}
+    if level and level != "all":
+        query["level"] = level
+    if is_active and is_active != "all":
+        query["is_active"] = is_active == "true"
+    
+    # Fetch creators
+    creators = await db.ugc_creators.find(query, {"_id": 0}).sort("created_at", -1).to_list(500)
+    
+    # Generate PDF
+    filters = {"status": level, "active": is_active}
+    pdf_buffer = create_creators_report_pdf(creators, filters)
+    
+    filename = f"creators_avenue_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+    
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+            "Content-Type": "application/pdf"
+        }
+    )
+
+
+@router.get("/campaigns/{campaign_id}/export-pdf", response_class=StreamingResponse)
+async def export_campaign_pdf(
+    campaign_id: str,
+    request: Request
+):
+    """Export campaign report to PDF"""
+    await require_admin(request)
+    db = await get_db()
+    
+    from services.pdf_generator import create_campaign_report_pdf
+    
+    # Get campaign
+    campaign = await db.ugc_campaigns.find_one({"id": campaign_id}, {"_id": 0})
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    # Get applications with creator data
+    applications = await db.ugc_applications.find(
+        {"campaign_id": campaign_id},
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Enrich with creator data
+    for app in applications:
+        creator = await db.ugc_creators.find_one(
+            {"id": app.get("creator_id")},
+            {"_id": 0, "name": 1, "full_name": 1, "instagram_handle": 1}
+        )
+        app["creator"] = creator or {}
+    
+    # Calculate stats
+    stats = {
+        "total_applications": len(applications),
+        "confirmed": sum(1 for a in applications if a.get("status") == "confirmed"),
+        "pending": sum(1 for a in applications if a.get("status") == "pending"),
+        "rejected": sum(1 for a in applications if a.get("status") == "rejected"),
+        "delivered": sum(1 for a in applications if a.get("deliverables"))
+    }
+    
+    # Generate PDF
+    pdf_buffer = create_campaign_report_pdf(campaign, applications, stats)
+    
+    campaign_name = campaign.get("name", "campaign").replace(" ", "_")[:20]
+    filename = f"reporte_{campaign_name}_{datetime.now().strftime('%Y%m%d')}.pdf"
+    
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+            "Content-Type": "application/pdf"
+        }
+    )
+
+
 @router.put("/creators/{creator_id}/level", response_model=dict)
 async def update_creator_level(
     creator_id: str,
