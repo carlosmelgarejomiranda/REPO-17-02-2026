@@ -285,8 +285,10 @@ async def reset_page_content(page_id: str):
 
 @router.post("/upload-media")
 async def upload_media(file: UploadFile = File(...)):
-    """Upload image or video file"""
+    """Upload image or video file to Cloudinary (persistent storage)"""
     import uuid
+    from services.cloudinary_storage import upload_image as cloudinary_upload, upload_video as cloudinary_video_upload, CLOUDINARY_CONFIGURED
+    from services.image_migration_helper import CLOUDINARY_ENABLED
     
     # Validate file type
     allowed_types = [
@@ -320,8 +322,43 @@ async def upload_media(file: UploadFile = File(...)):
     # Check if it's a video file
     is_video = file_ext in video_extensions or content_type.startswith('video/')
     
-    # For videos (any size) or large files (>5MB), save to disk instead of base64
-    # Videos should ALWAYS be saved to disk to avoid browser memory issues
+    # Try Cloudinary first (preferred for persistence)
+    if CLOUDINARY_ENABLED and CLOUDINARY_CONFIGURED:
+        try:
+            if is_video:
+                result = await cloudinary_video_upload(
+                    file_content=content,
+                    filename=file.filename,
+                    folder="avenue/general",
+                    metadata={"type": "website_builder", "original_filename": file.filename}
+                )
+            else:
+                result = await cloudinary_upload(
+                    file_content=content,
+                    filename=file.filename,
+                    folder="avenue/general",
+                    public=True,
+                    metadata={"type": "website_builder", "original_filename": file.filename}
+                )
+            
+            if result.get("success"):
+                return {
+                    "success": True,
+                    "url": result.get("url"),
+                    "cloudinary_url": result.get("url"),
+                    "public_id": result.get("public_id"),
+                    "filename": file.filename,
+                    "content_type": content_type,
+                    "size": len(content),
+                    "storage": "cloudinary"
+                }
+            else:
+                # Log but continue to fallback
+                print(f"Cloudinary upload failed: {result.get('error')}")
+        except Exception as e:
+            print(f"Cloudinary error: {e}")
+    
+    # Fallback: For videos or large files, save to disk (not persistent!)
     if is_video or len(content) > 5 * 1024 * 1024:
         # Create uploads directory if it doesn't exist
         uploads_dir = "/app/frontend/public/uploads"
@@ -344,7 +381,8 @@ async def upload_media(file: UploadFile = File(...)):
             "filename": file.filename,
             "content_type": content_type,
             "size": len(content),
-            "storage": "disk"
+            "storage": "disk",
+            "warning": "Archivo guardado localmente. Se perderá en el próximo deploy. Configure Cloudinary para persistencia."
         }
     else:
         # For smaller image files, use base64 data URL
