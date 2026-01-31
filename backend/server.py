@@ -94,18 +94,6 @@ async def health_check():
     """Health check endpoint for deployment readiness probes"""
     return {"status": "healthy"}
 
-# Temporary Sentry test endpoint - REMOVE AFTER VERIFICATION
-@app.get("/api/sentry-test")
-async def sentry_test():
-    """Temporary endpoint to test Sentry error capture - DELETE AFTER TESTING"""
-    try:
-        # This will raise a division by zero error
-        result = 1 / 0
-    except Exception as e:
-        # Manually capture the exception in Sentry
-        sentry_sdk.capture_exception(e)
-        return {"status": "error_sent", "message": "Test error sent to Sentry. Check your dashboard."}
-
 # Security Headers Middleware
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
