@@ -5,7 +5,7 @@ import {
   TrendingUp, DollarSign, Clock, CheckCircle, AlertCircle, Eye,
   Star, Award, ArrowUpRight, ArrowDownRight, Loader2, RefreshCw,
   Filter, Search, ChevronDown, MoreVertical, ExternalLink, Heart,
-  Settings
+  Settings, Database, Shield
 } from 'lucide-react';
 import AdminCampaignManager from './AdminCampaignManager';
 import AdminStatsDashboard from './AdminStatsDashboard';
