@@ -18,6 +18,7 @@ import asyncio
 import resend
 import httpx
 from twilio.rest import Client as TwilioClient
+import sentry_sdk
 
 # Import security module
 from security import (
