@@ -342,3 +342,145 @@ async def delete_notification(
         raise HTTPException(status_code=404, detail="Notification not found")
     
     return {"success": True}
+
+
+
+# ==================== SYSTEM NOTIFICATIONS (ADMIN) ====================
+
+class SystemNotificationType:
+    BACKUP_SUCCESS = "backup_success"
+    BACKUP_FAILED = "backup_failed"
+    ERROR_ALERT = "error_alert"
+    UPTIME_ALERT = "uptime_alert"
+    SECURITY_ALERT = "security_alert"
+    SYSTEM_INFO = "system_info"
+
+async def create_system_notification(
+    notification_type: str,
+    title: str,
+    message: str,
+    severity: str = "info",  # info, warning, error, critical
+    metadata: Optional[dict] = None
+) -> dict:
+    """Create a system notification visible to all admins"""
+    db = await get_db()
+    
+    notification = {
+        "id": str(uuid.uuid4()),
+        "type": notification_type,
+        "title": title,
+        "message": message,
+        "severity": severity,
+        "metadata": metadata or {},
+        "is_read": False,
+        "read_by": [],  # List of admin user_ids who have read this
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.system_notifications.insert_one(notification)
+    return notification
+
+@router.get("/system", response_model=dict)
+async def get_system_notifications(
+    request: Request,
+    unread_only: bool = False,
+    limit: int = 50
+):
+    """Get system notifications (admin only)"""
+    db = await get_db()
+    user = await get_current_user(request)
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Only admins can see system notifications
+    if user.get("role") not in ["admin", "superadmin", "staff"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    query = {}
+    if unread_only:
+        # Unread means user hasn't read it yet
+        query["read_by"] = {"$ne": user["user_id"]}
+    
+    notifications = await db.system_notifications.find(
+        query,
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    # Count unread for this user
+    unread_count = await db.system_notifications.count_documents({
+        "read_by": {"$ne": user["user_id"]}
+    })
+    
+    return {
+        "notifications": notifications,
+        "unread_count": unread_count,
+        "total": len(notifications)
+    }
+
+@router.post("/system/{notification_id}/mark-read", response_model=dict)
+async def mark_system_notification_read(
+    notification_id: str,
+    request: Request
+):
+    """Mark a system notification as read by current admin"""
+    db = await get_db()
+    user = await get_current_user(request)
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if user.get("role") not in ["admin", "superadmin", "staff"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Add user to read_by list
+    result = await db.system_notifications.update_one(
+        {"id": notification_id},
+        {"$addToSet": {"read_by": user["user_id"]}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    
+    return {"success": True}
+
+@router.post("/system/mark-all-read", response_model=dict)
+async def mark_all_system_notifications_read(request: Request):
+    """Mark all system notifications as read by current admin"""
+    db = await get_db()
+    user = await get_current_user(request)
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if user.get("role") not in ["admin", "superadmin", "staff"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    result = await db.system_notifications.update_many(
+        {"read_by": {"$ne": user["user_id"]}},
+        {"$addToSet": {"read_by": user["user_id"]}}
+    )
+    
+    return {"marked_count": result.modified_count}
+
+@router.delete("/system/{notification_id}", response_model=dict)
+async def delete_system_notification(
+    notification_id: str,
+    request: Request
+):
+    """Delete a system notification (superadmin only)"""
+    db = await get_db()
+    user = await get_current_user(request)
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if user.get("role") != "superadmin":
+        raise HTTPException(status_code=403, detail="Superadmin access required")
+    
+    result = await db.system_notifications.delete_one({"id": notification_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    
+    return {"success": True}
