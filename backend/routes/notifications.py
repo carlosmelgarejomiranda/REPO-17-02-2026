@@ -484,3 +484,127 @@ async def delete_system_notification(
         raise HTTPException(status_code=404, detail="Notification not found")
     
     return {"success": True}
+
+
+
+# ==================== EXTERNAL WEBHOOKS ====================
+
+@router.post("/webhooks/sentry", response_model=dict)
+async def sentry_webhook(request: Request):
+    """
+    Webhook endpoint for Sentry alerts.
+    Configure in Sentry: Settings > Integrations > Webhooks
+    URL: https://your-domain.com/api/notifications/webhooks/sentry
+    """
+    try:
+        payload = await request.json()
+        
+        # Extract relevant info from Sentry webhook
+        event_data = payload.get("data", {})
+        event = event_data.get("event", {})
+        
+        # Get error details
+        title = event.get("title", payload.get("message", "Error en Sentry"))
+        culprit = event.get("culprit", "Desconocido")
+        url = payload.get("url", "")
+        project = payload.get("project_name", payload.get("project", "Avenue"))
+        level = event.get("level", payload.get("level", "error"))
+        
+        # Determine severity
+        severity_map = {
+            "fatal": "critical",
+            "error": "error",
+            "warning": "warning",
+            "info": "info"
+        }
+        severity = severity_map.get(level, "error")
+        
+        # Create notification
+        await create_system_notification(
+            notification_type=SystemNotificationType.ERROR_ALERT,
+            title=f"🚨 Sentry: {title[:50]}{'...' if len(title) > 50 else ''}",
+            message=f"Error en {culprit}. Proyecto: {project}",
+            severity=severity,
+            metadata={
+                "source": "sentry",
+                "project": project,
+                "culprit": culprit,
+                "level": level,
+                "url": url,
+                "raw_event": event.get("event_id")
+            }
+        )
+        
+        return {"status": "ok", "message": "Notification created"}
+        
+    except Exception as e:
+        # Log but don't fail - webhooks should return 200
+        import logging
+        logging.error(f"Sentry webhook error: {e}")
+        return {"status": "error", "message": str(e)}
+
+
+@router.post("/webhooks/uptimerobot", response_model=dict)
+async def uptimerobot_webhook(request: Request):
+    """
+    Webhook endpoint for UptimeRobot alerts.
+    Configure in UptimeRobot: My Settings > Add Alert Contact > Webhook
+    URL: https://your-domain.com/api/notifications/webhooks/uptimerobot
+    POST Type: Send as JSON
+    """
+    try:
+        # UptimeRobot can send form data or JSON
+        content_type = request.headers.get("content-type", "")
+        
+        if "application/json" in content_type:
+            payload = await request.json()
+        else:
+            form = await request.form()
+            payload = dict(form)
+        
+        # Extract UptimeRobot fields
+        monitor_name = payload.get("monitorFriendlyName", payload.get("monitor", "Monitor"))
+        alert_type = payload.get("alertType", payload.get("alertTypeFriendlyName", "unknown"))
+        alert_details = payload.get("alertDetails", payload.get("alertDetail", ""))
+        monitor_url = payload.get("monitorURL", "")
+        
+        # Determine if it's down (1) or up (2)
+        alert_type_id = payload.get("alertType", 0)
+        try:
+            alert_type_id = int(alert_type_id)
+        except:
+            alert_type_id = 0
+        
+        is_down = alert_type_id == 1 or "down" in str(alert_type).lower()
+        
+        if is_down:
+            title = f"🔴 CAÍDO: {monitor_name}"
+            message = f"El servicio {monitor_name} está caído. {alert_details}"
+            severity = "critical"
+        else:
+            title = f"🟢 RECUPERADO: {monitor_name}"
+            message = f"El servicio {monitor_name} está funcionando nuevamente."
+            severity = "info"
+        
+        # Create notification
+        await create_system_notification(
+            notification_type=SystemNotificationType.UPTIME_ALERT,
+            title=title,
+            message=message,
+            severity=severity,
+            metadata={
+                "source": "uptimerobot",
+                "monitor_name": monitor_name,
+                "monitor_url": monitor_url,
+                "alert_type": alert_type,
+                "alert_details": alert_details,
+                "is_down": is_down
+            }
+        )
+        
+        return {"status": "ok", "message": "Notification created"}
+        
+    except Exception as e:
+        import logging
+        logging.error(f"UptimeRobot webhook error: {e}")
+        return {"status": "error", "message": str(e)}
