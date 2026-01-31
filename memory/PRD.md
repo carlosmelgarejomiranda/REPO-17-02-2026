@@ -18,6 +18,34 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-31 (Fork - Sentry Integration)
+
+#### ✅ INFRAESTRUCTURA - Integración de Sentry para Monitoreo de Errores (P0)
+
+**Problema**: La aplicación carecía de monitoreo proactivo de errores. Los problemas solo se detectaban cuando los usuarios los reportaban, lo que causaba impacto significativo en el negocio (ej: formularios de contacto rotos durante campañas de ads).
+
+**Solución implementada**: Integración de Sentry SDK para captura automática de excepciones.
+
+**Configuración:**
+- DSN agregado a `/app/backend/.env` como `SENTRY_DSN`
+- SDK inicializado en `/app/backend/server.py` después de cargar variables de entorno
+- `traces_sample_rate=0.1` (10% de transacciones para monitoreo de performance)
+- `send_default_pii=False` (no envía información personal identificable)
+- `environment="production"`
+
+**Archivos modificados:**
+- `/app/backend/.env` - Agregado SENTRY_DSN
+- `/app/backend/server.py` - Import de sentry_sdk e inicialización
+
+**Testing realizado:**
+- Endpoint temporal `/api/sentry-test` creado para verificar captura
+- Error de división por cero enviado exitosamente a Sentry
+- Endpoint de prueba eliminado después de verificación
+
+**Resultado:** El backend ahora captura automáticamente todas las excepciones no manejadas y las envía a Sentry para análisis.
+
+---
+
 ### Session: 2026-01-31 (Fork - Cloudinary Migration)
 
 #### ✅ INFRAESTRUCTURA - Migración a Cloudinary para Persistencia de Archivos
