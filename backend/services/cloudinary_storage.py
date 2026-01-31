@@ -39,18 +39,20 @@ CLOUDINARY_CONFIGURED = init_cloudinary()
 
 # Allowed folders for security
 ALLOWED_FOLDERS = (
-    "avenue/brands/",      # Brand logos
-    "avenue/creators/",    # Creator profile pictures
-    "avenue/campaigns/",   # Campaign cover images
-    "avenue/metrics/",     # Metrics screenshots
-    "avenue/receipts/",    # Payment receipts (private)
-    "avenue/products/",    # Product images
-    "avenue/general/",     # General uploads
+    "avenue/brands",      # Brand logos
+    "avenue/creators",    # Creator profile pictures
+    "avenue/campaigns",   # Campaign cover images
+    "avenue/metrics",     # Metrics screenshots
+    "avenue/receipts",    # Payment receipts (private)
+    "avenue/products",    # Product images
+    "avenue/general",     # General uploads
 )
 
 def is_folder_allowed(folder: str) -> bool:
     """Check if folder path is allowed"""
-    return any(folder.startswith(allowed) for allowed in ALLOWED_FOLDERS)
+    # Normalize folder (remove trailing slash)
+    folder = folder.rstrip('/')
+    return folder in ALLOWED_FOLDERS or any(folder.startswith(f"{allowed}/") for allowed in ALLOWED_FOLDERS)
 
 
 async def upload_image(
