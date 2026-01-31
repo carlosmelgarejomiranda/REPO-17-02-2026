@@ -2691,6 +2691,7 @@ from routes.ugc_brand_reports import router as ugc_brand_reports_router
 from routes.social_verification import router as social_verification_router
 from routes.notifications import router as notifications_router
 from routes.terms import router as terms_router
+from routes.cloudinary_routes import router as cloudinary_router
 
 app.include_router(ugc_creators_router)
 app.include_router(ugc_brands_router)
