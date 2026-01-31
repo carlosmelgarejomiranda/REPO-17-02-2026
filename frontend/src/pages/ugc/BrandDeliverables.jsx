@@ -133,18 +133,31 @@ const BrandDeliverables = () => {
     }
   };
 
-  // Calculate deadline status for URL (7 days) and Metrics (14 days) from confirmation
+  // Calculate deadline status for URL and Metrics from stored deadlines or campaign settings
   const getDeadlineStatus = (deliverable, type) => {
-    const confirmationDate = deliverable.confirmed_at || deliverable.created_at;
-    if (!confirmationDate) return null;
-
     // Check if deliverable is cancelled
     const isCancelledDel = deliverable.status === 'cancelled' || deliverable.application_status === 'cancelled';
 
-    const confirmed = new Date(confirmationDate);
-    const daysLimit = type === 'url' ? 7 : 14;
-    const deadline = new Date(confirmed);
-    deadline.setDate(deadline.getDate() + daysLimit);
+    // Use stored deadline from deliverable if available
+    const storedDeadline = type === 'url' ? deliverable.url_deadline : deliverable.metrics_deadline;
+    
+    let deadline;
+    if (storedDeadline) {
+      // Use the pre-calculated deadline from the database
+      deadline = new Date(storedDeadline);
+    } else {
+      // Fallback: calculate from confirmation date using campaign settings or defaults
+      const confirmationDate = deliverable.confirmed_at || deliverable.created_at;
+      if (!confirmationDate) return null;
+      
+      const confirmed = new Date(confirmationDate);
+      // Use campaign settings if available, otherwise default to 7/14 days
+      const daysLimit = type === 'url' 
+        ? (campaign?.url_delivery_days || 7) 
+        : (campaign?.metrics_delivery_days || 14);
+      deadline = new Date(confirmed);
+      deadline.setDate(deadline.getDate() + daysLimit);
+    }
 
     // If cancelled, freeze the calculation at cancellation time
     let referenceDate = new Date();
