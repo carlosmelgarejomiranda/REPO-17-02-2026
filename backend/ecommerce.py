@@ -38,7 +38,6 @@ from services.cloudinary_storage import (
 
 # Import migration helper
 from services.image_migration_helper import (
-    CLOUDINARY_ENABLED,
     get_product_image_url,
     get_product_all_images,
     is_cloudinary_url
