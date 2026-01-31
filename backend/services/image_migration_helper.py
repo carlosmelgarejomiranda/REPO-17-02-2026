@@ -1,15 +1,12 @@
 """
 Image Migration Helper
-Handles dual-write strategy for safe migration to Cloudinary
+Utility functions for handling image URLs during migration
 """
 from typing import Optional, Dict, Any
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Flag to enable/disable Cloudinary for new uploads
-# Set to True to start using Cloudinary for new uploads
-CLOUDINARY_ENABLED = True
 
 def get_best_image_url(item: Dict[str, Any], field_priority: list = None) -> Optional[str]:
     """
