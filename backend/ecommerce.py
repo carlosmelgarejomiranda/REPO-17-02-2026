@@ -903,10 +903,10 @@ async def get_products(
             # Filter None from sizes_list
             sizes_list = [s for s in p.get("sizes_list", []) if s]
             
-            # Use custom image if available, otherwise use ERP image
-            display_image = p.get("custom_image") or p.get("image")
-            # Get all images (up to 3)
-            all_images = p.get("images", [])
+            # Use Cloudinary URL if available, then custom_image, then ERP image
+            display_image = p.get("cloudinary_url") or p.get("custom_image") or p.get("image")
+            # Get all images (up to 3) - prefer cloudinary_images
+            all_images = p.get("cloudinary_images") or p.get("images", [])
             if not all_images or not isinstance(all_images, list):
                 all_images = [display_image] if display_image else []
             # Filter None values
