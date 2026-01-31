@@ -4,6 +4,7 @@ Daily MongoDB Backup to Cloudinary
 ===================================
 Backs up the MongoDB database daily and uploads to Cloudinary.
 Keeps the last 7 backups for recovery purposes.
+Sends email alerts on success/failure.
 
 Run manually: python scripts/daily_backup.py
 Scheduled: Runs automatically every day at 3:00 AM Paraguay time
@@ -19,6 +20,7 @@ import cloudinary.uploader
 import cloudinary.api
 from dotenv import load_dotenv
 import logging
+import resend
 
 # Setup logging
 logging.basicConfig(
@@ -30,6 +32,10 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 ROOT_DIR = Path(__file__).parent.parent
 load_dotenv(ROOT_DIR / '.env')
+
+# Resend configuration for alerts
+resend.api_key = os.environ.get('RESEND_API_KEY', '')
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'avenuepy@gmail.com')
 
 # Cloudinary configuration
 cloudinary.config(
@@ -43,6 +49,102 @@ MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 DB_NAME = os.environ.get('DB_NAME', 'test_database')
 BACKUP_DIR = ROOT_DIR / 'backups'
 MAX_BACKUPS_TO_KEEP = 7  # Keep last 7 days of backups in Cloudinary
+
+
+def send_backup_alert(success: bool, details: dict):
+    """Send email alert about backup status"""
+    try:
+        timestamp = datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M UTC')
+        
+        if success:
+            subject = f"✅ Backup Exitoso - Avenue DB - {timestamp}"
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #f5ede4; padding: 40px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #22c55e; margin: 0;">✅ Backup Exitoso</h1>
+                    <p style="color: #a8a8a8; margin-top: 10px;">{timestamp}</p>
+                </div>
+                
+                <div style="background-color: #1a1a1a; padding: 20px; border: 1px solid #22c55e; border-radius: 8px;">
+                    <h3 style="color: #d4a968; margin-top: 0;">Detalles del Backup</h3>
+                    <table style="width: 100%; color: #f5ede4;">
+                        <tr>
+                            <td style="padding: 8px 0; color: #a8a8a8;">Base de datos:</td>
+                            <td style="padding: 8px 0;">{details.get('db_name', 'N/A')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #a8a8a8;">Tamaño:</td>
+                            <td style="padding: 8px 0;">{details.get('size_mb', 'N/A')} MB</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #a8a8a8;">Ubicación:</td>
+                            <td style="padding: 8px 0;">Cloudinary</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #a8a8a8;">Backups almacenados:</td>
+                            <td style="padding: 8px 0;">{details.get('total_backups', 'N/A')}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <p style="color: #666; font-size: 12px; margin-top: 20px; text-align: center;">
+                    Este es un mensaje automático del sistema de backups de Avenue.
+                </p>
+            </div>
+            """
+        else:
+            subject = f"🚨 ALERTA: Backup FALLÓ - Avenue DB - {timestamp}"
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0d0d0d; color: #f5ede4; padding: 40px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #ef4444; margin: 0;">🚨 BACKUP FALLÓ</h1>
+                    <p style="color: #a8a8a8; margin-top: 10px;">{timestamp}</p>
+                </div>
+                
+                <div style="background-color: #1a1a1a; padding: 20px; border: 2px solid #ef4444; border-radius: 8px;">
+                    <h3 style="color: #ef4444; margin-top: 0;">⚠️ Acción Requerida</h3>
+                    <p style="color: #f5ede4;">El backup automático de la base de datos ha fallado.</p>
+                    
+                    <h4 style="color: #d4a968; margin-top: 20px;">Error:</h4>
+                    <p style="color: #ef4444; background: #ef444420; padding: 10px; border-radius: 4px; font-family: monospace;">
+                        {details.get('error', 'Error desconocido')}
+                    </p>
+                    
+                    <h4 style="color: #d4a968; margin-top: 20px;">Pasos a seguir:</h4>
+                    <ol style="color: #a8a8a8;">
+                        <li>Verificar que el servidor esté funcionando</li>
+                        <li>Revisar los logs del backend</li>
+                        <li>Ejecutar backup manual desde el panel admin</li>
+                        <li>Si persiste, contactar soporte técnico</li>
+                    </ol>
+                </div>
+                
+                <div style="background-color: #ef444420; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
+                    <p style="color: #ef4444; margin: 0; font-weight: bold;">
+                        ⏰ Último backup exitoso podría tener hasta 24 horas de antigüedad
+                    </p>
+                </div>
+                
+                <p style="color: #666; font-size: 12px; margin-top: 20px; text-align: center;">
+                    Este es un mensaje automático del sistema de backups de Avenue.
+                </p>
+            </div>
+            """
+        
+        params = {
+            "from": "Avenue Sistema <sistema@avenue.com.py>",
+            "to": [ADMIN_EMAIL],
+            "subject": subject,
+            "html": html_content
+        }
+        
+        resend.Emails.send(params)
+        logger.info(f"Backup alert email sent to {ADMIN_EMAIL}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to send backup alert email: {e}")
+        return False
 
 
 def create_backup():
