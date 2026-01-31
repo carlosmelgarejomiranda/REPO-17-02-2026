@@ -210,7 +210,7 @@ const AdminCampaignManager = ({ onClose, onSuccess }) => {
 
     try {
       const token = localStorage.getItem('auth_token');
-      const res = await fetch(`${API_URL}/api/upload`, {
+      const res = await fetch(`${API_URL}/api/upload?folder=avenue/campaigns`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formDataUpload
