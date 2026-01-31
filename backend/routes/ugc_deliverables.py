@@ -511,13 +511,29 @@ async def get_campaign_deliverables(
         {"_id": 0}
     ).sort("created_at", -1).to_list(100)
     
-    # Enrich with creator info
+    # Enrich with creator info and application deadlines
     for d in deliverables:
         creator = await db.ugc_creators.find_one(
             {"id": d["creator_id"]},
             {"_id": 0, "name": 1, "profile_picture": 1, "social_networks": 1, "level": 1}
         )
         d["creator"] = creator
+        
+        # Get application data for deadlines and confirmed_at
+        if d.get("application_id"):
+            application = await db.ugc_applications.find_one(
+                {"id": d["application_id"]},
+                {"_id": 0, "url_deadline": 1, "metrics_deadline": 1, "confirmed_at": 1, "status": 1}
+            )
+            if application:
+                # Enrich deliverable with application data
+                if not d.get("url_deadline") and application.get("url_deadline"):
+                    d["url_deadline"] = application["url_deadline"]
+                if not d.get("metrics_deadline") and application.get("metrics_deadline"):
+                    d["metrics_deadline"] = application["metrics_deadline"]
+                if not d.get("confirmed_at") and application.get("confirmed_at"):
+                    d["confirmed_at"] = application["confirmed_at"]
+                d["application_status"] = application.get("status")
         
         # Get metrics if exists
         metrics = await db.ugc_metrics.find_one(
