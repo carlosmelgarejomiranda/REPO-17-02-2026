@@ -370,7 +370,6 @@ async def upload_media(file: UploadFile = File(...)):
         status_code=503,
         detail=f"No se pudo subir el archivo después de 3 intentos. Error: {last_error}. Por favor intente de nuevo."
     )
-        }
 
 @router.post("/sections/{page_id}/reorder")
 async def reorder_sections(page_id: str, section_orders: List[Dict[str, Any]]):
