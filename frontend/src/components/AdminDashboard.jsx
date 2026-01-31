@@ -19,6 +19,7 @@ import { MFASettings } from './MFAComponents';
 import { AuditLogViewer } from './AuditLogViewer';
 import UGCAdminPanel from './UGCAdminPanel';
 import { AdminCreatorsReport } from './AdminCreatorsReport';
+import SystemNotifications from './SystemNotifications';
 
 const API_URL = getApiUrl();
 
