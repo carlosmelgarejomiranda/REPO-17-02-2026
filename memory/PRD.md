@@ -18,6 +18,46 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-31 (Fork - Campaign Deadlines Fix)
+
+#### ✅ BUG FIX - Campaign Delivery Deadlines Not Updating (P0)
+
+**Problema reportado**: Cuando un admin editaba una campaña para cambiar los días de plazo de entrega de URL o métricas, los cambios no se guardaban ni se aplicaban a los creadores que ya habían sido confirmados para esa campaña.
+
+**Causa raíz identificada**: El endpoint `PUT /api/ugc/admin/campaigns/{campaign_id}` solo actualizaba los campos de la campaña, pero no propagaba los nuevos valores de `url_delivery_days` y `metrics_delivery_days` a las aplicaciones (`ugc_applications`) existentes.
+
+**Solución implementada**:
+El agente anterior ya había implementado la corrección en `/app/backend/routes/ugc_admin.py` (líneas 1487-1529). La lógica ahora:
+
+1. Detecta si `url_delivery_days` o `metrics_delivery_days` fueron modificados
+2. Obtiene todas las aplicaciones confirmadas (`status: "confirmed"`) de la campaña
+3. Para cada aplicación:
+   - Lee la fecha `confirmed_at` del creador
+   - Calcula el nuevo `url_deadline` = `confirmed_at` + `url_delivery_days` días
+   - Calcula el nuevo `metrics_deadline` = `confirmed_at` + `metrics_delivery_days` días
+   - Actualiza tanto `ugc_applications` como `ugc_deliverables`
+4. Retorna mensaje indicando cuántos creadores fueron actualizados
+
+**Testing realizado**:
+```bash
+# Creada aplicación de prueba con confirmed_at: 2026-01-29
+# Update campaña con url_delivery_days=10, metrics_delivery_days=21
+
+PUT /api/ugc/admin/campaigns/{campaign_id}
+Response: {"success":true,"message":"Campaña actualizada exitosamente - Se actualizaron los plazos de 1 creadores confirmados"}
+
+# Verificación de datos:
+- url_deadline: 2026-02-08 (10 días después de confirmación) ✅
+- metrics_deadline: 2026-02-19 (21 días después de confirmación) ✅
+```
+
+**Archivo modificado:**
+- `/app/backend/routes/ugc_admin.py` (líneas 1487-1534)
+
+**Testing**: Backend API verified via curl ✅
+
+---
+
 ### Session: 2026-01-30 (Part 3 - Fork)
 
 #### ✅ VERIFICACIÓN - Cuestionario de Leads en `/ugc/marcas` (P0)
