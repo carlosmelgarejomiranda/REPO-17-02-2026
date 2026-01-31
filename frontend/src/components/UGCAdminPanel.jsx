@@ -422,6 +422,138 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
   );
 };
 
+// System Panel Component - Database backup and system utilities
+const SystemPanel = ({ getAuthHeaders }) => {
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [backupResult, setBackupResult] = useState(null);
+  const [lastBackupTime, setLastBackupTime] = useState(null);
+
+  const handleBackup = async () => {
+    setBackupLoading(true);
+    setBackupResult(null);
+    
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/trigger-backup`, {
+        method: 'POST',
+        headers
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setBackupResult({ success: true, message: data.message });
+        setLastBackupTime(new Date().toLocaleString('es-PY'));
+      } else {
+        setBackupResult({ success: false, message: data.detail || 'Error al crear backup' });
+      }
+    } catch (err) {
+      setBackupResult({ success: false, message: 'Error de conexión' });
+    } finally {
+      setBackupLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-light text-white">Configuración del Sistema</h2>
+          <p className="text-sm text-gray-500 mt-1">Herramientas de mantenimiento y seguridad</p>
+        </div>
+      </div>
+
+      {/* Backup Section */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+            <Database className="w-6 h-6 text-blue-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-medium text-white">Backup de Base de Datos</h3>
+            <p className="text-sm text-gray-400 mt-1">
+              Crea una copia de seguridad de toda la base de datos y la sube a Cloudinary.
+            </p>
+            <p className="text-xs text-gray-500 mt-2">
+              <Clock className="w-3 h-3 inline mr-1" />
+              Backup automático: todos los días a las 3:00 AM
+            </p>
+            
+            {lastBackupTime && (
+              <p className="text-xs text-green-400 mt-1">
+                <CheckCircle className="w-3 h-3 inline mr-1" />
+                Último backup manual: {lastBackupTime}
+              </p>
+            )}
+
+            {backupResult && (
+              <div className={`mt-3 p-3 rounded-lg ${backupResult.success ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                {backupResult.success ? (
+                  <CheckCircle className="w-4 h-4 inline mr-2" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 inline mr-2" />
+                )}
+                {backupResult.message}
+              </div>
+            )}
+
+            <button
+              onClick={handleBackup}
+              disabled={backupLoading}
+              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {backupLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Creando backup...
+                </>
+              ) : (
+                <>
+                  <Database className="w-4 h-4" />
+                  Crear Backup Ahora
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* System Info Section */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-lg bg-[#d4a968]/20 flex items-center justify-center flex-shrink-0">
+            <Shield className="w-6 h-6 text-[#d4a968]" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-medium text-white">Estado del Sistema</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="bg-black/30 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Monitoreo de Errores</p>
+                <p className="text-sm text-green-400 flex items-center gap-1 mt-1">
+                  <CheckCircle className="w-3 h-3" /> Sentry Activo
+                </p>
+              </div>
+              <div className="bg-black/30 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Monitoreo de Uptime</p>
+                <p className="text-sm text-green-400 flex items-center gap-1 mt-1">
+                  <CheckCircle className="w-3 h-3" /> UptimeRobot Activo
+                </p>
+              </div>
+              <div className="bg-black/30 rounded-lg p-3">
+                <p className="text-xs text-gray-500">Backup Automático</p>
+                <p className="text-sm text-green-400 flex items-center gap-1 mt-1">
+                  <CheckCircle className="w-3 h-3" /> Diario 3:00 AM
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Metrics Panel Component
 const MetricsPanel = () => {
   const [metrics, setMetrics] = useState([]);
