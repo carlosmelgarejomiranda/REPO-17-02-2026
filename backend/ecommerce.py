@@ -22,11 +22,26 @@ from dotenv import load_dotenv
 # Import security functions
 from security import check_rate_limit, get_rate_limit_key, RateLimitExceeded, get_client_ip
 
-# Import GridFS storage service
+# Import GridFS storage service (legacy - keeping for backwards compatibility)
 from services.gridfs_storage import (
     upload_image as gridfs_upload,
     get_image as gridfs_get,
     delete_image as gridfs_delete
+)
+
+# Import Cloudinary storage service (new)
+from services.cloudinary_storage import (
+    upload_image as cloudinary_upload,
+    delete_asset as cloudinary_delete,
+    CLOUDINARY_CONFIGURED
+)
+
+# Import migration helper
+from services.image_migration_helper import (
+    CLOUDINARY_ENABLED,
+    get_product_image_url,
+    get_product_all_images,
+    is_cloudinary_url
 )
 
 # Load environment variables
