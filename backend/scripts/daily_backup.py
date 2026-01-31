@@ -373,8 +373,9 @@ def run_backup():
     logger.info("DAILY BACKUP COMPLETED SUCCESSFULLY")
     logger.info("=" * 50)
     
-    # Send success alert
+    # Send success alert (email + system notification)
     send_backup_alert(success=True, details=backup_details)
+    create_system_notification_sync(success=True, details=backup_details)
     
     return True
 
