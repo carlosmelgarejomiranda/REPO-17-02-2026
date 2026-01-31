@@ -1961,8 +1961,11 @@ def find_matching_product(filename: str, products: list) -> Optional[dict]:
     
     return None
 
-async def process_and_save_image(file_content: bytes, filename: str, product_id: str) -> str:
-    """Process image (resize if needed) and save to GridFS for persistent storage"""
+async def process_and_save_image(file_content: bytes, filename: str, product_id: str) -> dict:
+    """
+    Process image (resize if needed) and save to Cloudinary (preferred) or GridFS (fallback).
+    Returns dict with 'url' and 'cloudinary_url' (if applicable).
+    """
     try:
         # Open image with PIL
         img = PILImage.open(BytesIO(file_content))
@@ -1996,12 +1999,38 @@ async def process_and_save_image(file_content: bytes, filename: str, product_id:
             
             quality -= 10
         
-        # Save to GridFS (persistent storage)
         output.seek(0)
         processed_content = output.read()
-        
         safe_filename = re.sub(r'[^a-zA-Z0-9_-]', '_', product_id) + '.jpg'
         
+        # Try Cloudinary first (if enabled and configured)
+        if CLOUDINARY_ENABLED and CLOUDINARY_CONFIGURED:
+            try:
+                result = await cloudinary_upload(
+                    file_content=processed_content,
+                    filename=safe_filename,
+                    folder="avenue/products",
+                    public=True,
+                    metadata={
+                        "product_id": product_id,
+                        "original_filename": filename
+                    }
+                )
+                
+                if result.get("success"):
+                    logger.info(f"Product image uploaded to Cloudinary: {result.get('url')}")
+                    return {
+                        "url": result.get("url"),
+                        "cloudinary_url": result.get("url"),
+                        "public_id": result.get("public_id"),
+                        "storage": "cloudinary"
+                    }
+                else:
+                    logger.warning(f"Cloudinary upload failed, falling back to GridFS: {result.get('error')}")
+            except Exception as e:
+                logger.warning(f"Cloudinary error, falling back to GridFS: {e}")
+        
+        # Fallback to GridFS (legacy)
         file_id = await gridfs_upload(
             file_content=processed_content,
             filename=safe_filename,
@@ -2014,10 +2043,17 @@ async def process_and_save_image(file_content: bytes, filename: str, product_id:
             bucket_name="product_images"
         )
         
-        # Return URL using GridFS endpoint
-        return f"/api/shop/images/gridfs/{file_id}"
+        gridfs_url = f"/api/shop/images/gridfs/{file_id}"
+        logger.info(f"Product image uploaded to GridFS: {gridfs_url}")
+        return {
+            "url": gridfs_url,
+            "cloudinary_url": None,
+            "storage": "gridfs"
+        }
         
     except Exception as e:
+        logger.error(f"Error processing image: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
         logger.error(f"Error processing image: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
 
