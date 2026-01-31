@@ -2790,6 +2790,24 @@ async def scheduled_email_reminders():
     except Exception as e:
         logger.error(f"Email reminders failed: {e}")
 
+async def scheduled_database_backup():
+    """Daily database backup to Cloudinary at 3:00 AM Paraguay"""
+    logger.info("Running scheduled database backup...")
+    try:
+        from scripts.daily_backup import run_backup
+        import asyncio
+        # Run backup in thread pool to avoid blocking
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, run_backup)
+        if result:
+            logger.info("Scheduled database backup completed successfully")
+        else:
+            logger.error("Scheduled database backup failed")
+    except Exception as e:
+        logger.error(f"Scheduled database backup failed: {e}")
+        # Capture in Sentry
+        sentry_sdk.capture_exception(e)
+
 @api_router.post("/admin/trigger-reminders")
 async def admin_trigger_reminders(request: Request):
     """Manually trigger email reminders (admin only)"""
