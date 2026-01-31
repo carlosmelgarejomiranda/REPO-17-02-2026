@@ -18,6 +18,48 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-31 (Fork - Daily Database Backup)
+
+#### ✅ INFRAESTRUCTURA - Backup Diario Automático a Cloudinary (P1)
+
+**Problema**: La base de datos MongoDB local no tenía backups. Si el servidor fallaba o se corrompía, se perdían todos los datos.
+
+**Solución implementada**: Script de backup automático que:
+1. Ejecuta `mongodump` para exportar la base de datos
+2. Comprime el dump en `.tar.gz` (~1MB)
+3. Sube a Cloudinary en carpeta `avenue/backups`
+4. Mantiene los últimos 7 backups (elimina antiguos automáticamente)
+5. Se ejecuta diariamente a las 3:00 AM hora Paraguay
+
+**Archivos creados:**
+- `/app/backend/scripts/daily_backup.py` - Script de backup completo
+
+**Configuración del scheduler:**
+- `CronTrigger(hour=6, minute=0)` - 6:00 UTC = 3:00 AM Paraguay
+- Job ID: `database_backup`
+
+**Endpoint manual (admin):**
+- `POST /api/admin/trigger-backup` - Ejecuta backup inmediatamente
+
+**Testing realizado:**
+```bash
+# Backup manual exitoso
+POST /api/admin/trigger-backup
+Response: {"success":true,"message":"Backup completed and uploaded to Cloudinary"}
+
+# Backup subido a Cloudinary
+URL: https://res.cloudinary.com/did4blamy/raw/upload/avenue/backups/mongodb_backup_test_database_YYYYMMDD_HHMMSS.tar.gz
+```
+
+**Restauración (manual si necesario):**
+```bash
+# 1. Descargar backup de Cloudinary
+# 2. Descomprimir: tar -xzf mongodb_backup_*.tar.gz
+# 3. Restaurar: mongorestore --uri="mongodb://localhost:27017" ./backup_folder
+```
+
+---
+
 ### Session: 2026-01-31 (Fork - Sentry Integration)
 
 #### ✅ INFRAESTRUCTURA - Integración de Sentry para Monitoreo de Errores (P0)
