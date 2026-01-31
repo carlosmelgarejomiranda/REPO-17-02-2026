@@ -1703,6 +1703,33 @@ Ejemplo de formato:
                               <><EyeOff className="w-4 h-4" /> Ocultar de creadores</>
                             )}
                           </button>
+                          <div className="border-t border-white/10 my-1"></div>
+                          <button
+                            onClick={async () => {
+                              try {
+                                const token = localStorage.getItem('auth_token');
+                                const response = await fetch(`${API_URL}/api/ugc/admin/campaigns/${campaign.id}/export-pdf`, {
+                                  headers: { 'Authorization': `Bearer ${token}` }
+                                });
+                                if (!response.ok) throw new Error('Export failed');
+                                const blob = await response.blob();
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = `reporte_${campaign.name?.replace(/\s+/g, '_').slice(0, 20) || 'campaign'}_${new Date().toISOString().slice(0,10)}.pdf`;
+                                document.body.appendChild(a);
+                                a.click();
+                                window.URL.revokeObjectURL(url);
+                                a.remove();
+                              } catch (err) {
+                                console.error('PDF Export error:', err);
+                                alert('Error al exportar PDF');
+                              }
+                            }}
+                            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/5 flex items-center gap-2"
+                          >
+                            <FileText className="w-4 h-4" /> Exportar PDF
+                          </button>
                         </div>
                       </div>
                     </>
