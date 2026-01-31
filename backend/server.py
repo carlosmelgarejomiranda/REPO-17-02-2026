@@ -2706,6 +2706,7 @@ app.include_router(ugc_brand_reports_router)
 app.include_router(social_verification_router)
 app.include_router(notifications_router)
 app.include_router(terms_router)
+app.include_router(cloudinary_router)
 
 app.add_middleware(
     CORSMiddleware,
