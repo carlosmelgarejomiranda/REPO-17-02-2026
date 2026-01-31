@@ -285,10 +285,10 @@ async def reset_page_content(page_id: str):
 
 @router.post("/upload-media")
 async def upload_media(file: UploadFile = File(...)):
-    """Upload image or video file to Cloudinary (persistent storage)"""
+    """Upload image or video file to Cloudinary. Retries on failure."""
     import uuid
+    import asyncio
     from services.cloudinary_storage import upload_image as cloudinary_upload, upload_video as cloudinary_video_upload, CLOUDINARY_CONFIGURED
-    from services.image_migration_helper import CLOUDINARY_ENABLED
     
     # Validate file type
     allowed_types = [
@@ -296,7 +296,6 @@ async def upload_media(file: UploadFile = File(...)):
         "video/mp4", "video/webm", "video/quicktime", "video/x-msvideo", "video/x-m4v"
     ]
     
-    # Also check by file extension for .mov files that might have wrong mime type
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.mp4', '.webm', '.mov', '.avi', '.m4v']
     video_extensions = ['.mp4', '.webm', '.mov', '.avi', '.m4v']
     file_ext = os.path.splitext(file.filename.lower())[1] if file.filename else ''
@@ -319,11 +318,15 @@ async def upload_media(file: UploadFile = File(...)):
     elif file_ext == '.mp4' and content_type == 'application/octet-stream':
         content_type = 'video/mp4'
     
-    # Check if it's a video file
     is_video = file_ext in video_extensions or content_type.startswith('video/')
     
-    # Try Cloudinary first (preferred for persistence)
-    if CLOUDINARY_ENABLED and CLOUDINARY_CONFIGURED:
+    # Check Cloudinary is configured
+    if not CLOUDINARY_CONFIGURED:
+        raise HTTPException(status_code=503, detail="Cloudinary no está configurado. Contacte al administrador.")
+    
+    # Upload with retries
+    last_error = None
+    for attempt in range(3):
         try:
             if is_video:
                 result = await cloudinary_video_upload(
@@ -353,49 +356,20 @@ async def upload_media(file: UploadFile = File(...)):
                     "storage": "cloudinary"
                 }
             else:
-                # Log but continue to fallback
-                print(f"Cloudinary upload failed: {result.get('error')}")
+                last_error = result.get("error", "Error desconocido")
+                print(f"Upload attempt {attempt + 1} failed: {last_error}")
         except Exception as e:
-            print(f"Cloudinary error: {e}")
+            last_error = str(e)
+            print(f"Upload attempt {attempt + 1} exception: {e}")
+        
+        if attempt < 2:
+            await asyncio.sleep(1 * (attempt + 1))
     
-    # Fallback: For videos or large files, save to disk (not persistent!)
-    if is_video or len(content) > 5 * 1024 * 1024:
-        # Create uploads directory if it doesn't exist
-        uploads_dir = "/app/frontend/public/uploads"
-        os.makedirs(uploads_dir, exist_ok=True)
-        
-        # Generate unique filename
-        unique_filename = f"{uuid.uuid4().hex}{file_ext}"
-        file_path = os.path.join(uploads_dir, unique_filename)
-        
-        # Save file
-        with open(file_path, "wb") as f:
-            f.write(content)
-        
-        # Return URL that can be accessed from frontend
-        file_url = f"/uploads/{unique_filename}"
-        
-        return {
-            "success": True,
-            "url": file_url,
-            "filename": file.filename,
-            "content_type": content_type,
-            "size": len(content),
-            "storage": "disk",
-            "warning": "Archivo guardado localmente. Se perderá en el próximo deploy. Configure Cloudinary para persistencia."
-        }
-    else:
-        # For smaller image files, use base64 data URL
-        base64_content = base64.b64encode(content).decode('utf-8')
-        data_url = f"data:{content_type};base64,{base64_content}"
-        
-        return {
-            "success": True,
-            "url": data_url,
-            "filename": file.filename,
-            "content_type": content_type,
-            "size": len(content),
-            "storage": "base64"
+    # All retries failed
+    raise HTTPException(
+        status_code=503,
+        detail=f"No se pudo subir el archivo después de 3 intentos. Error: {last_error}. Por favor intente de nuevo."
+    )
         }
 
 @router.post("/sections/{page_id}/reorder")
