@@ -18,6 +18,46 @@ Avenue es una "agencia de posicionamiento y visibilidad" que utiliza su platafor
 
 ## What's Been Implemented
 
+### Session: 2026-01-31 (Fork - Cloudinary Migration)
+
+#### ✅ INFRAESTRUCTURA - Migración a Cloudinary para Persistencia de Archivos
+
+**Problema**: Los archivos subidos (imágenes de productos, fotos de perfil, media del website builder) se guardaban en filesystem local o GridFS, lo que causaba pérdida de datos en cada deploy.
+
+**Solución implementada**: Integración completa con Cloudinary como storage persistente.
+
+**Archivos creados:**
+- `/app/backend/services/cloudinary_storage.py` - Servicio de upload/delete/URLs firmadas
+- `/app/backend/routes/cloudinary_routes.py` - API endpoints para Cloudinary
+- `/app/backend/services/image_migration_helper.py` - Helper para migración gradual
+- `/app/backend/scripts/migrate_products_to_cloudinary.py` - Script de migración
+- `/app/frontend/src/utils/cloudinaryUpload.js` - Helper frontend
+
+**Endpoints actualizados para usar Cloudinary:**
+1. `POST /api/shop/admin/upload-product-image` - Imágenes de productos ✅
+2. `POST /api/upload` - Upload genérico (campañas, etc.) ✅
+3. `POST /api/builder/upload-media` - Website Builder ✅
+4. Fotos de perfil de creadores (onboarding y update) ✅
+
+**Migración de datos existentes:**
+- 9 imágenes de productos migradas de filesystem a Cloudinary ✅
+- URLs originales preservadas en campo `original_image_url` (rollback)
+- Backend devuelve `cloudinary_url` preferentemente sobre URLs legacy
+
+**Carpetas configuradas en Cloudinary:**
+- `avenue/products` - Imágenes de productos
+- `avenue/campaigns` - Portadas de campañas
+- `avenue/creators` - Fotos de perfil
+- `avenue/metrics` - Screenshots de métricas
+- `avenue/receipts` - Comprobantes (privado)
+- `avenue/general` - Website builder y otros
+
+**Credenciales:**
+- Cloud Name: `did4blamy`
+- Configurado en `/app/backend/.env`
+
+---
+
 ### Session: 2026-01-31 (Fork - Campaign Deadlines Fix)
 
 #### ✅ BUG FIX - Fechas de Entrega No Se Mostraban en Reportes (P0)
