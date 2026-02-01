@@ -599,9 +599,13 @@ const SystemPanel = ({ getAuthHeaders }) => {
             <Eye className="w-6 h-6 text-amber-400" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-medium text-white">Debug: Verificar Colecciones</h3>
+            <h3 className="text-lg font-medium text-white">Debug: Verificar TODAS las Colecciones</h3>
             <p className="text-sm text-gray-400 mt-1">
-              SELECT * FROM ugc_ratings, ugc_notifications + conteo de todas las colecciones
+              Inspecciona colecciones críticas y potencialmente vacías para verificar integridad del backup
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Colecciones inspeccionadas: ugc_ratings, ugc_notifications, page_content, notifications, 
+              image_assignment_logs, ugc_audit_logs, ugc_reviews, payment_transactions, migration_backups
             </p>
 
             <button
@@ -612,12 +616,12 @@ const SystemPanel = ({ getAuthHeaders }) => {
               {collectionsCheckLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Consultando...
+                  Consultando BD...
                 </>
               ) : (
                 <>
                   <Eye className="w-4 h-4" />
-                  Ejecutar Query
+                  Ejecutar Query Completo
                 </>
               )}
             </button>
@@ -630,44 +634,81 @@ const SystemPanel = ({ getAuthHeaders }) => {
                   </div>
                 ) : (
                   <>
-                    {/* ugc_ratings */}
-                    <div className="bg-black/30 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-amber-400 mb-2">
-                        ugc_ratings ({collectionsData.ugc_ratings?.count || 0} registros)
-                      </h4>
-                      {collectionsData.ugc_ratings?.count === 0 ? (
-                        <p className="text-gray-500 text-xs">Colección vacía</p>
-                      ) : (
-                        <pre className="text-xs text-gray-300 overflow-auto max-h-40 bg-black/50 p-2 rounded">
-                          {JSON.stringify(collectionsData.ugc_ratings?.documents, null, 2)}
-                        </pre>
-                      )}
-                    </div>
+                    {/* Summary */}
+                    {collectionsData.summary && (
+                      <div className="bg-black/50 rounded-lg p-4 border border-amber-500/50">
+                        <h4 className="text-sm font-medium text-amber-400 mb-3">📊 RESUMEN</h4>
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                          <div>
+                            <p className="text-2xl font-bold text-white">{collectionsData.summary.total_collections}</p>
+                            <p className="text-xs text-gray-400">Total Colecciones</p>
+                          </div>
+                          <div>
+                            <p className="text-2xl font-bold text-green-400">{collectionsData.summary.collections_with_data?.length || 0}</p>
+                            <p className="text-xs text-gray-400">Con Datos</p>
+                          </div>
+                          <div>
+                            <p className="text-2xl font-bold text-red-400">{collectionsData.summary.empty_collections?.length || 0}</p>
+                            <p className="text-xs text-gray-400">Vacías</p>
+                          </div>
+                        </div>
+                        {collectionsData.summary.empty_collections?.length > 0 && (
+                          <div className="mt-3 pt-3 border-t border-white/10">
+                            <p className="text-xs text-red-400">
+                              ⚠️ Vacías: {collectionsData.summary.empty_collections.join(', ')}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                    {/* ugc_notifications */}
+                    {/* Inspected Collections */}
                     <div className="bg-black/30 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-amber-400 mb-2">
-                        ugc_notifications ({collectionsData.ugc_notifications?.count || 0} registros)
-                      </h4>
-                      {collectionsData.ugc_notifications?.count === 0 ? (
-                        <p className="text-gray-500 text-xs">Colección vacía</p>
-                      ) : (
-                        <pre className="text-xs text-gray-300 overflow-auto max-h-40 bg-black/50 p-2 rounded">
-                          {JSON.stringify(collectionsData.ugc_notifications?.documents, null, 2)}
-                        </pre>
-                      )}
+                      <h4 className="text-sm font-medium text-amber-400 mb-3">🔍 COLECCIONES INSPECCIONADAS</h4>
+                      <div className="space-y-3">
+                        {Object.entries(collectionsData.inspected_collections || {}).map(([name, data]) => (
+                          <div key={name} className="border border-white/10 rounded-lg p-3">
+                            <div className="flex items-center justify-between mb-2">
+                              <h5 className="text-sm font-medium text-white flex items-center gap-2">
+                                {data.status === 'empty' ? (
+                                  <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                ) : data.status === 'error' ? (
+                                  <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+                                ) : (
+                                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                                )}
+                                {name}
+                              </h5>
+                              <span className={`text-xs px-2 py-1 rounded ${
+                                data.status === 'empty' ? 'bg-red-500/20 text-red-400' :
+                                data.status === 'error' ? 'bg-yellow-500/20 text-yellow-400' :
+                                'bg-green-500/20 text-green-400'
+                              }`}>
+                                {data.count} registros
+                              </span>
+                            </div>
+                            {data.error ? (
+                              <p className="text-xs text-yellow-400">Error: {data.error}</p>
+                            ) : data.count === 0 ? (
+                              <p className="text-xs text-gray-500 italic">Colección vacía - sin documentos</p>
+                            ) : (
+                              <pre className="text-xs text-gray-300 overflow-auto max-h-32 bg-black/50 p-2 rounded">
+                                {JSON.stringify(data.documents, null, 2)}
+                              </pre>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     {/* All collections count */}
                     <div className="bg-black/30 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-amber-400 mb-2">
-                        Todas las colecciones
-                      </h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      <h4 className="text-sm font-medium text-amber-400 mb-3">📁 TODAS LAS COLECCIONES (Conteo)</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                         {Object.entries(collectionsData.all_collections || {}).map(([name, count]) => (
-                          <div key={name} className="text-xs">
-                            <span className="text-gray-400">{name}:</span>
-                            <span className="text-white ml-1">{count}</span>
+                          <div key={name} className={`text-xs p-2 rounded ${count === 0 ? 'bg-red-500/10' : 'bg-white/5'}`}>
+                            <span className={count === 0 ? 'text-red-400' : 'text-gray-400'}>{name}:</span>
+                            <span className={`ml-1 font-medium ${count === 0 ? 'text-red-400' : 'text-white'}`}>{count}</span>
                           </div>
                         ))}
                       </div>
