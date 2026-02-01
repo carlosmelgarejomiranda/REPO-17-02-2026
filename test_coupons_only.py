@@ -8,7 +8,7 @@ import json
 import sys
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://error-tracker-setup.preview.emergentagent.com/api"
+BACKEND_URL = "https://db-migration-tools.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
