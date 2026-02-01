@@ -425,8 +425,11 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
 // System Panel Component - Database backup and system utilities
 const SystemPanel = ({ getAuthHeaders }) => {
   const [backupLoading, setBackupLoading] = useState(false);
+  const [fullBackupLoading, setFullBackupLoading] = useState(false);
+  const [collectionsCheckLoading, setCollectionsCheckLoading] = useState(false);
   const [backupResult, setBackupResult] = useState(null);
   const [lastBackupTime, setLastBackupTime] = useState(null);
+  const [collectionsData, setCollectionsData] = useState(null);
 
   const handleBackup = async () => {
     setBackupLoading(true);
@@ -451,6 +454,56 @@ const SystemPanel = ({ getAuthHeaders }) => {
       setBackupResult({ success: false, message: 'Error de conexión' });
     } finally {
       setBackupLoading(false);
+    }
+  };
+
+  const handleFullBackup = async () => {
+    setFullBackupLoading(true);
+    setBackupResult(null);
+    
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/trigger-full-backup`, {
+        method: 'POST',
+        headers
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setBackupResult({ success: true, message: `Full backup completado: ${data.file}` });
+        setLastBackupTime(new Date().toLocaleString('es-PY'));
+      } else {
+        setBackupResult({ success: false, message: data.detail || 'Error al crear full backup' });
+      }
+    } catch (err) {
+      setBackupResult({ success: false, message: 'Error de conexión' });
+    } finally {
+      setFullBackupLoading(false);
+    }
+  };
+
+  const handleCollectionsCheck = async () => {
+    setCollectionsCheckLoading(true);
+    setCollectionsData(null);
+    
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/debug/collections-check`, {
+        headers
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setCollectionsData(data);
+      } else {
+        setCollectionsData({ error: data.detail || 'Error al verificar colecciones' });
+      }
+    } catch (err) {
+      setCollectionsData({ error: 'Error de conexión' });
+    } finally {
+      setCollectionsCheckLoading(false);
     }
   };
 
@@ -498,23 +551,131 @@ const SystemPanel = ({ getAuthHeaders }) => {
               </div>
             )}
 
+            <div className="flex flex-wrap gap-3 mt-4">
+              <button
+                onClick={handleBackup}
+                disabled={backupLoading || fullBackupLoading}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {backupLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creando...
+                  </>
+                ) : (
+                  <>
+                    <Database className="w-4 h-4" />
+                    Backup Rápido
+                  </>
+                )}
+              </button>
+              
+              <button
+                onClick={handleFullBackup}
+                disabled={backupLoading || fullBackupLoading}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {fullBackupLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creando Full...
+                  </>
+                ) : (
+                  <>
+                    <Database className="w-4 h-4" />
+                    Full Backup (incluye vacías)
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Debug Collections Section */}
+      <div className="bg-white/5 border border-amber-500/30 rounded-xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+            <Eye className="w-6 h-6 text-amber-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-medium text-white">Debug: Verificar Colecciones</h3>
+            <p className="text-sm text-gray-400 mt-1">
+              SELECT * FROM ugc_ratings, ugc_notifications + conteo de todas las colecciones
+            </p>
+
             <button
-              onClick={handleBackup}
-              disabled={backupLoading}
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              onClick={handleCollectionsCheck}
+              disabled={collectionsCheckLoading}
+              className="mt-4 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {backupLoading ? (
+              {collectionsCheckLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Creando backup...
+                  Consultando...
                 </>
               ) : (
                 <>
-                  <Database className="w-4 h-4" />
-                  Crear Backup Ahora
+                  <Eye className="w-4 h-4" />
+                  Ejecutar Query
                 </>
               )}
             </button>
+
+            {collectionsData && (
+              <div className="mt-4 space-y-4">
+                {collectionsData.error ? (
+                  <div className="p-3 bg-red-500/20 text-red-400 rounded-lg">
+                    Error: {collectionsData.error}
+                  </div>
+                ) : (
+                  <>
+                    {/* ugc_ratings */}
+                    <div className="bg-black/30 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-amber-400 mb-2">
+                        ugc_ratings ({collectionsData.ugc_ratings?.count || 0} registros)
+                      </h4>
+                      {collectionsData.ugc_ratings?.count === 0 ? (
+                        <p className="text-gray-500 text-xs">Colección vacía</p>
+                      ) : (
+                        <pre className="text-xs text-gray-300 overflow-auto max-h-40 bg-black/50 p-2 rounded">
+                          {JSON.stringify(collectionsData.ugc_ratings?.documents, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+
+                    {/* ugc_notifications */}
+                    <div className="bg-black/30 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-amber-400 mb-2">
+                        ugc_notifications ({collectionsData.ugc_notifications?.count || 0} registros)
+                      </h4>
+                      {collectionsData.ugc_notifications?.count === 0 ? (
+                        <p className="text-gray-500 text-xs">Colección vacía</p>
+                      ) : (
+                        <pre className="text-xs text-gray-300 overflow-auto max-h-40 bg-black/50 p-2 rounded">
+                          {JSON.stringify(collectionsData.ugc_notifications?.documents, null, 2)}
+                        </pre>
+                      )}
+                    </div>
+
+                    {/* All collections count */}
+                    <div className="bg-black/30 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-amber-400 mb-2">
+                        Todas las colecciones
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {Object.entries(collectionsData.all_collections || {}).map(([name, count]) => (
+                          <div key={name} className="text-xs">
+                            <span className="text-gray-400">{name}:</span>
+                            <span className="text-white ml-1">{count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
