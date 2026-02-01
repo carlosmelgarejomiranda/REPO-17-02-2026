@@ -2853,6 +2853,52 @@ async def admin_trigger_full_backup(request: Request):
         logger.error(f"Full backup trigger failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/admin/debug/collections-check")
+async def admin_debug_collections_check(request: Request):
+    """Debug endpoint to check specific collections content (admin only)"""
+    await require_admin(request)
+    
+    db = await get_db()
+    
+    result = {
+        "ugc_ratings": {
+            "count": 0,
+            "documents": []
+        },
+        "ugc_notifications": {
+            "count": 0,
+            "documents": []
+        },
+        "all_collections": {}
+    }
+    
+    # Get ugc_ratings
+    try:
+        ratings = await db.ugc_ratings.find({}, {"_id": 0}).to_list(100)
+        result["ugc_ratings"]["count"] = len(ratings)
+        result["ugc_ratings"]["documents"] = ratings
+    except Exception as e:
+        result["ugc_ratings"]["error"] = str(e)
+    
+    # Get ugc_notifications
+    try:
+        notifications = await db.ugc_notifications.find({}, {"_id": 0}).to_list(100)
+        result["ugc_notifications"]["count"] = len(notifications)
+        result["ugc_notifications"]["documents"] = notifications
+    except Exception as e:
+        result["ugc_notifications"]["error"] = str(e)
+    
+    # Get count of all collections
+    try:
+        collections = await db.list_collection_names()
+        for coll_name in sorted(collections):
+            count = await db[coll_name].count_documents({})
+            result["all_collections"][coll_name] = count
+    except Exception as e:
+        result["all_collections"]["error"] = str(e)
+    
+    return result
+
 # Include the router in the main app (moved here to include backup endpoint)
 app.include_router(api_router)
 
