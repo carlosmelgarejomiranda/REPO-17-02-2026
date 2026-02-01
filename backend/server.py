@@ -2855,43 +2855,70 @@ async def admin_trigger_full_backup(request: Request):
 
 @api_router.get("/admin/debug/collections-check")
 async def admin_debug_collections_check(request: Request):
-    """Debug endpoint to check specific collections content (admin only)"""
+    """Debug endpoint to check ALL critical collections content (admin only)
+    
+    Returns content of collections that might be empty or have issues,
+    useful for verifying backup integrity.
+    """
     await require_admin(request)
     
+    # Collections to inspect with full content
+    collections_to_inspect = [
+        # Original ones
+        "ugc_ratings",
+        "ugc_notifications",
+        # Potentially empty collections
+        "page_content",
+        "notifications",
+        "image_assignment_logs",
+        "ugc_audit_logs",
+        "ugc_reviews",
+        # Legacy/special collections
+        "payment_transactions",
+        "migration_backups",
+    ]
+    
     result = {
-        "ugc_ratings": {
-            "count": 0,
-            "documents": []
-        },
-        "ugc_notifications": {
-            "count": 0,
-            "documents": []
-        },
-        "all_collections": {}
+        "inspected_collections": {},
+        "all_collections": {},
+        "summary": {
+            "total_collections": 0,
+            "empty_collections": [],
+            "collections_with_data": []
+        }
     }
     
-    # Get ugc_ratings
-    try:
-        ratings = await db.ugc_ratings.find({}, {"_id": 0}).to_list(100)
-        result["ugc_ratings"]["count"] = len(ratings)
-        result["ugc_ratings"]["documents"] = ratings
-    except Exception as e:
-        result["ugc_ratings"]["error"] = str(e)
+    # Inspect each collection with full content (up to 50 docs)
+    for coll_name in collections_to_inspect:
+        try:
+            docs = await db[coll_name].find({}, {"_id": 0}).to_list(50)
+            count = await db[coll_name].count_documents({})
+            result["inspected_collections"][coll_name] = {
+                "count": count,
+                "documents": docs,
+                "status": "with_data" if count > 0 else "empty"
+            }
+        except Exception as e:
+            result["inspected_collections"][coll_name] = {
+                "count": 0,
+                "documents": [],
+                "error": str(e),
+                "status": "error"
+            }
     
-    # Get ugc_notifications
-    try:
-        notifications = await db.ugc_notifications.find({}, {"_id": 0}).to_list(100)
-        result["ugc_notifications"]["count"] = len(notifications)
-        result["ugc_notifications"]["documents"] = notifications
-    except Exception as e:
-        result["ugc_notifications"]["error"] = str(e)
-    
-    # Get count of all collections
+    # Get count of ALL collections
     try:
         collections = await db.list_collection_names()
+        result["summary"]["total_collections"] = len(collections)
+        
         for coll_name in sorted(collections):
             count = await db[coll_name].count_documents({})
             result["all_collections"][coll_name] = count
+            
+            if count == 0:
+                result["summary"]["empty_collections"].append(coll_name)
+            else:
+                result["summary"]["collections_with_data"].append(coll_name)
     except Exception as e:
         result["all_collections"]["error"] = str(e)
     
