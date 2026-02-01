@@ -7,7 +7,7 @@ import {
   AlertCircle, Phone, CheckCircle, Building, Download, FileSpreadsheet, Tag, 
   Percent, Loader2, FileText, Sparkles, Search, Bell, ChevronRight, RefreshCw,
   TrendingUp, Package, Camera, Clock, ArrowRight, Command, Eye,
-  LayoutDashboard, Zap, Activity, Star, ExternalLink, MoreHorizontal, Briefcase
+  LayoutDashboard, Zap, Activity, Star, ExternalLink, MoreHorizontal, Briefcase, Database
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { OrdersManagement } from './OrdersManagement';
