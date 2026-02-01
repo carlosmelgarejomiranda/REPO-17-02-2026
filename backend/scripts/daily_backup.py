@@ -6,14 +6,16 @@ Backs up the MongoDB database daily and uploads to Cloudinary.
 Keeps the last 7 backups for recovery purposes.
 Sends email alerts on success/failure.
 
+Uses PyMongo for direct export (no mongodump dependency).
+
 Run manually: python scripts/daily_backup.py
 Scheduled: Runs automatically every day at 3:00 AM Paraguay time
 """
 
 import os
-import subprocess
+import json
 import shutil
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
 import uuid
 import cloudinary
@@ -22,6 +24,7 @@ import cloudinary.api
 from dotenv import load_dotenv
 import logging
 import resend
+from bson import ObjectId, json_util
 
 # Setup logging
 logging.basicConfig(
@@ -51,6 +54,13 @@ DB_NAME = os.environ.get('DB_NAME', 'test_database')
 BACKUP_DIR = ROOT_DIR / 'backups'
 MAX_BACKUPS_TO_KEEP = 7  # Keep last 7 days of backups in Cloudinary
 
+# Collections to skip (large binary data, temp files, etc.)
+SKIP_COLLECTIONS = [
+    'images.chunks', 'images.files',
+    'product_images.chunks', 'product_images.files',
+    'temp_images', 'temp_image_batches'
+]
+
 
 def send_backup_alert(success: bool, details: dict):
     """Send email alert about backup status"""
@@ -78,12 +88,16 @@ def send_backup_alert(success: bool, details: dict):
                             <td style="padding: 8px 0;">{details.get('size_mb', 'N/A')} MB</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; color: #a8a8a8;">Ubicación:</td>
-                            <td style="padding: 8px 0;">Cloudinary</td>
+                            <td style="padding: 8px 0; color: #a8a8a8;">Colecciones:</td>
+                            <td style="padding: 8px 0;">{details.get('collections_count', 'N/A')}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; color: #a8a8a8;">Backups almacenados:</td>
-                            <td style="padding: 8px 0;">{details.get('total_backups', 'N/A')}</td>
+                            <td style="padding: 8px 0; color: #a8a8a8;">Documentos:</td>
+                            <td style="padding: 8px 0;">{details.get('total_documents', 'N/A')}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #a8a8a8;">Ubicación:</td>
+                            <td style="padding: 8px 0;">Cloudinary</td>
                         </tr>
                     </table>
                 </div>
@@ -107,23 +121,17 @@ def send_backup_alert(success: bool, details: dict):
                     <p style="color: #f5ede4;">El backup automático de la base de datos ha fallado.</p>
                     
                     <h4 style="color: #d4a968; margin-top: 20px;">Error:</h4>
-                    <p style="color: #ef4444; background: #ef444420; padding: 10px; border-radius: 4px; font-family: monospace;">
+                    <p style="color: #ef4444; background: #ef444420; padding: 10px; border-radius: 4px; font-family: monospace; word-break: break-all;">
                         {details.get('error', 'Error desconocido')}
                     </p>
                     
                     <h4 style="color: #d4a968; margin-top: 20px;">Pasos a seguir:</h4>
                     <ol style="color: #a8a8a8;">
-                        <li>Verificar que el servidor esté funcionando</li>
+                        <li>Verificar que MongoDB esté funcionando</li>
                         <li>Revisar los logs del backend</li>
                         <li>Ejecutar backup manual desde el panel admin</li>
                         <li>Si persiste, contactar soporte técnico</li>
                     </ol>
-                </div>
-                
-                <div style="background-color: #ef444420; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
-                    <p style="color: #ef4444; margin: 0; font-weight: bold;">
-                        ⏰ Último backup exitoso podría tener hasta 24 horas de antigüedad
-                    </p>
                 </div>
                 
                 <p style="color: #666; font-size: 12px; margin-top: 20px; text-align: center;">
@@ -153,18 +161,15 @@ def create_system_notification_sync(success: bool, details: dict):
     try:
         from pymongo import MongoClient
         
-        # Connect directly to MongoDB (sync)
         client = MongoClient(MONGO_URL)
         db = client[DB_NAME]
-        
-        timestamp = datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M')
         
         if success:
             notification = {
                 "id": str(uuid.uuid4()),
                 "type": "backup_success",
                 "title": "✅ Backup Completado",
-                "message": f"Backup de {details.get('size_mb', 0)} MB subido a Cloudinary exitosamente.",
+                "message": f"Backup de {details.get('size_mb', 0)} MB ({details.get('collections_count', 0)} colecciones, {details.get('total_documents', 0)} docs) subido a Cloudinary.",
                 "severity": "info",
                 "metadata": details,
                 "is_read": False,
@@ -195,7 +200,12 @@ def create_system_notification_sync(success: bool, details: dict):
 
 
 def create_backup():
-    """Create a MongoDB dump and compress it"""
+    """
+    Create a MongoDB backup using PyMongo direct export.
+    This method doesn't require mongodump to be installed.
+    """
+    from pymongo import MongoClient
+    
     timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
     backup_name = f"mongodb_backup_{DB_NAME}_{timestamp}"
     backup_path = BACKUP_DIR / backup_name
@@ -203,27 +213,68 @@ def create_backup():
     
     # Create backup directory if not exists
     BACKUP_DIR.mkdir(exist_ok=True)
+    backup_path.mkdir(exist_ok=True)
     
     logger.info(f"Starting backup of database: {DB_NAME}")
+    logger.info(f"Using PyMongo direct export method")
     
     try:
-        # Run mongodump
-        cmd = [
-            'mongodump',
-            '--uri', MONGO_URL,
-            '--db', DB_NAME,
-            '--out', str(backup_path)
-        ]
+        # Connect to MongoDB
+        client = MongoClient(MONGO_URL, serverSelectionTimeoutMS=5000)
         
-        result = subprocess.run(cmd, capture_output=True, text=True)
+        # Test connection
+        client.admin.command('ping')
+        logger.info("MongoDB connection successful")
         
-        if result.returncode != 0:
-            logger.error(f"mongodump failed: {result.stderr}")
-            return None
+        db = client[DB_NAME]
         
-        logger.info(f"Database dumped to: {backup_path}")
+        # Get all collection names
+        collections = db.list_collection_names()
+        logger.info(f"Found {len(collections)} collections")
+        
+        total_documents = 0
+        exported_collections = 0
+        
+        # Export each collection to JSON
+        for coll_name in collections:
+            # Skip large binary collections
+            if coll_name in SKIP_COLLECTIONS:
+                logger.info(f"  Skipping {coll_name} (binary/temp data)")
+                continue
+            
+            try:
+                collection = db[coll_name]
+                doc_count = collection.count_documents({})
+                
+                if doc_count == 0:
+                    logger.info(f"  Skipping {coll_name} (empty)")
+                    continue
+                
+                # Export documents
+                documents = list(collection.find({}))
+                
+                # Write to JSON file using bson json_util for proper serialization
+                output_file = backup_path / f"{coll_name}.json"
+                with open(output_file, 'w', encoding='utf-8') as f:
+                    json.dump(documents, f, default=json_util.default, ensure_ascii=False, indent=2)
+                
+                total_documents += doc_count
+                exported_collections += 1
+                logger.info(f"  Exported {coll_name}: {doc_count} documents")
+                
+            except Exception as e:
+                logger.warning(f"  Failed to export {coll_name}: {e}")
+                continue
+        
+        client.close()
+        
+        if exported_collections == 0:
+            raise Exception("No collections were exported")
+        
+        logger.info(f"Exported {exported_collections} collections, {total_documents} documents total")
         
         # Compress the backup
+        logger.info("Compressing backup...")
         shutil.make_archive(
             str(backup_path),  # Output filename (without extension)
             'gztar',           # Format
@@ -237,14 +288,21 @@ def create_backup():
         shutil.rmtree(backup_path)
         
         # Get file size
-        size_mb = archive_path.stat().st_size / (1024 * 1024)
-        logger.info(f"Backup size: {size_mb:.2f} MB")
+        size_mb = round(archive_path.stat().st_size / (1024 * 1024), 2)
+        logger.info(f"Backup size: {size_mb} MB")
         
-        return archive_path
+        return archive_path, {
+            'collections_count': exported_collections,
+            'total_documents': total_documents,
+            'size_mb': size_mb
+        }
         
     except Exception as e:
         logger.error(f"Backup creation failed: {e}")
-        return None
+        # Cleanup on failure
+        if backup_path.exists():
+            shutil.rmtree(backup_path, ignore_errors=True)
+        return None, {'error': str(e)}
 
 
 def upload_to_cloudinary(file_path: Path):
@@ -326,22 +384,25 @@ def run_backup():
     backup_details = {
         'db_name': DB_NAME,
         'size_mb': 0,
+        'collections_count': 0,
+        'total_documents': 0,
         'total_backups': 0,
         'error': None
     }
     
-    # Step 1: Create backup
-    backup_file = create_backup()
+    # Step 1: Create backup using PyMongo
+    backup_file, backup_info = create_backup()
+    
     if not backup_file:
-        error_msg = "No se pudo crear el dump de MongoDB"
+        error_msg = backup_info.get('error', 'Error desconocido al crear backup')
         logger.error(f"BACKUP FAILED: {error_msg}")
         backup_details['error'] = error_msg
         send_backup_alert(success=False, details=backup_details)
         create_system_notification_sync(success=False, details=backup_details)
         return False
     
-    # Get file size
-    backup_details['size_mb'] = round(backup_file.stat().st_size / (1024 * 1024), 2)
+    # Update details with backup info
+    backup_details.update(backup_info)
     
     # Step 2: Upload to Cloudinary
     upload_result = upload_to_cloudinary(backup_file)
