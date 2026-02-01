@@ -717,9 +717,31 @@ export const AdminDashboard = ({ user }) => {
   ].filter(m => hasPermission(userRole, m.permission));
 
   // Quick actions
+  // Handle backup
+  const handleBackup = async () => {
+    setBackupLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/trigger-backup`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert('✅ Backup completado exitosamente');
+      } else {
+        alert(`❌ Error: ${data.detail || 'Error al crear backup'}`);
+      }
+    } catch (err) {
+      alert('❌ Error de conexión al crear backup');
+    } finally {
+      setBackupLoading(false);
+    }
+  };
+
   const quickActions = [
     { label: 'Nueva Campaña UGC', icon: Plus, action: () => { setActiveModule('ugc'); setActiveSubTab('overview'); }, color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
     { label: 'Editar Web', icon: Palette, action: () => setShowBuilder(true), color: 'bg-[#d4a968]/20 text-[#d4a968] border-[#d4a968]/30' },
+    { label: backupLoading ? 'Creando...' : 'Backup DB', icon: backupLoading ? Loader2 : Database, action: handleBackup, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', disabled: backupLoading, spin: backupLoading },
     ...(pendingActions > 0 ? [{ label: `${pendingActions} Pendientes`, icon: Bell, action: () => {}, color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' }] : [])
   ];
 
