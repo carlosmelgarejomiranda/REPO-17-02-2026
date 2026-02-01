@@ -633,6 +633,7 @@ export const AdminDashboard = ({ user }) => {
   const [brandInquiries, setBrandInquiries] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [backupLoading, setBackupLoading] = useState(false);
 
   const userRole = user?.role || 'user';
   const getAuthHeaders = () => ({ 'Content-Type': 'application/json', ...(localStorage.getItem('auth_token') ? { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` } : {}) });
