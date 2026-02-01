@@ -2858,8 +2858,6 @@ async def admin_debug_collections_check(request: Request):
     """Debug endpoint to check specific collections content (admin only)"""
     await require_admin(request)
     
-    db = await get_db()
-    
     result = {
         "ugc_ratings": {
             "count": 0,
