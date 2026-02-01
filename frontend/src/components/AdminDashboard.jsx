@@ -943,9 +943,10 @@ export const AdminDashboard = ({ user }) => {
             <button
               key={i}
               onClick={action.action}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all hover:scale-[1.02] ${action.color}`}
+              disabled={action.disabled}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all hover:scale-[1.02] ${action.color} ${action.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <action.icon className="w-4 h-4" />
+              <action.icon className={`w-4 h-4 ${action.spin ? 'animate-spin' : ''}`} />
               <span className="text-sm font-medium">{action.label}</span>
             </button>
           ))}
