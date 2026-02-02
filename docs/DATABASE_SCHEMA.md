@@ -252,40 +252,47 @@
 ---
 
 ### UGC_APPLICATIONS
-**Descripción:** Aplicaciones de creadores a campañas.
+**Descripción:** Aplicaciones de creadores a campañas.  
+**Última actualización:** 2026-02-02 (Normalizado)
 
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
-| `application_id` | string | **PK** - Identificador único |
+| `id` | string | Identificador interno (legacy) |
+| `application_id` | string | **PK** - Identificador único (= id) |
 | `campaign_id` | string | **FK** → UGC_CAMPAIGNS |
-| `email` | string | Email del aplicante |
-| `nombre` | string | Nombre |
-| `apellido` | string | Apellido |
-| `sexo` | string | Sexo |
-| `fecha_nacimiento` | string | Fecha de nacimiento |
-| `instagram_url` | string | URL de Instagram |
-| `instagram_privado` | string | ¿Cuenta privada? |
-| `instagram_seguidores` | string | Cantidad de seguidores |
-| `tiktok_url` | string | URL de TikTok |
-| `tiktok_privado` | string | ¿Cuenta privada? |
-| `tiktok_seguidores` | string | Cantidad de seguidores |
-| `video_link_1` | string | Link de video muestra 1 |
-| `video_link_2` | string | Link de video muestra 2 |
-| `confirma_grabar_tienda` | bool | Confirma grabar en tienda |
-| `ciudad` | string | Ciudad |
-| `whatsapp` | string | Número de WhatsApp |
-| `acepta_condiciones` | bool | Acepta T&C |
-| `acepta_whatsapp` | bool | Acepta contacto WhatsApp |
-| `autoriza_contenido` | bool | Autoriza uso de contenido |
-| `status` | string | Estado: pending, confirmed, rejected |
-| `motivo_no_elegible` | array[string] | Motivos de rechazo |
-| `created_at` | datetime | Fecha de aplicación |
+| `creator_id` | string | **FK** → UGC_CREATORS |
+| `creator_name` | string | Nombre del creador (denormalizado) |
+| `creator_username` | string | Username del creador |
+| `creator_level` | string | Nivel del creador al momento de aplicar |
+| `creator_followers` | number | Seguidores al momento de aplicar |
+| `creator_rating` | number | Rating del creador |
+| `motivation` | string | Motivación para la campaña |
+| `proposed_content` | string | Contenido propuesto |
+| `portfolio_links` | array | Links de portfolio |
+| `status` | string | Estado: applied, confirmed, rejected, cancelled |
+| `status_history` | array | Historial de cambios de estado |
+| `motivo_no_elegible` | array | Motivos de no elegibilidad |
+| `rejection_reason` | string | Razón de rechazo |
+| `applied_at` | datetime | Fecha de aplicación |
+| `confirmed_at` | datetime | Fecha de confirmación |
+| `rejected_at` | datetime | Fecha de rechazo |
+| `cancelled_at` | datetime | Fecha de cancelación |
+| `cancelled_by` | string | Quién canceló (admin/creator) |
+| `url_deadline` | datetime | Fecha límite para subir URL |
+| `metrics_deadline` | datetime | Fecha límite para métricas |
+| `created_at` | datetime | Fecha de creación |
+| `updated_at` | datetime | Última actualización |
 
 **Relaciones:**
 - ← `UGC_CAMPAIGNS.id` (N:1)
+- ← `UGC_CREATORS.id` (N:1)
 - → `UGC_DELIVERABLES.application_id` (1:N)
 
-> ⚠️ **NOTA DE NORMALIZACIÓN:** Esta tabla duplica datos del creador (nombre, email, redes sociales). Debería usar `creator_id` como FK hacia UGC_CREATORS.
+> ✅ **NORMALIZACIÓN COMPLETADA (2026-02-02):**
+> - Eliminados 3 registros de prueba sin `creator_id`
+> - Campo `application_id` ahora presente en todos los registros (351)
+> - Todos los registros tienen `creator_id` vinculado
+> - Los campos legacy del flujo público (`nombre`, `apellido`, `whatsapp`, etc.) ya no se usan
 
 ---
 
