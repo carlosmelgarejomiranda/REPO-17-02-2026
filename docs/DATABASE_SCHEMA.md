@@ -1,9 +1,12 @@
 # Avenue Database Schema
 ## Diccionario de Datos y Diagrama Entidad-Relación
 
-**Última actualización:** 2026-01-31  
+**Última actualización:** 2026-02-02  
 **Base de datos:** MongoDB  
-**Total de colecciones:** 32
+**Total de colecciones:** 31
+
+### Cambios recientes:
+- **2026-02-02:** Normalización de `ugc_applications` - eliminados 3 registros de prueba, normalizado campo `application_id`
 
 ---
 
