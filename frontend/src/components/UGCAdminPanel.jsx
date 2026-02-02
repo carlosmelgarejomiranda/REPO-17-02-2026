@@ -860,6 +860,119 @@ const SystemPanel = ({ getAuthHeaders }) => {
           </div>
         </div>
       </div>
+
+      {/* Excel Export Section */}
+      <div className="bg-white/5 border border-emerald-500/30 rounded-xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+            <Download className="w-6 h-6 text-emerald-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-medium text-white">Exportar a Excel</h3>
+            <p className="text-sm text-gray-400 mt-1">
+              Descarga datos de cualquier colección en formato XLSX
+            </p>
+
+            <div className="mt-4 space-y-4">
+              {/* Collection Select */}
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">Seleccionar Colección</label>
+                <select
+                  value={selectedCollection}
+                  onChange={(e) => setSelectedCollection(e.target.value)}
+                  className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-emerald-500"
+                >
+                  <option value="">-- Seleccionar --</option>
+                  {collections.map(coll => (
+                    <option key={coll} value={coll}>{coll}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Fields Multi-select */}
+              {selectedCollection && (
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm text-gray-400">
+                      Seleccionar Campos {selectedFields.length > 0 && `(${selectedFields.length} seleccionados)`}
+                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={selectAllFields}
+                        className="text-xs text-emerald-400 hover:text-emerald-300"
+                      >
+                        Seleccionar todos
+                      </button>
+                      <span className="text-gray-600">|</span>
+                      <button
+                        onClick={clearAllFields}
+                        className="text-xs text-gray-400 hover:text-gray-300"
+                      >
+                        Limpiar
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {fieldsLoading ? (
+                    <div className="flex items-center gap-2 text-gray-400">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Cargando campos...
+                    </div>
+                  ) : (
+                    <div className="bg-black/30 border border-white/10 rounded-lg p-3 max-h-48 overflow-y-auto">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                        {collectionFields.map(field => (
+                          <label
+                            key={field}
+                            className={`flex items-center gap-2 text-xs p-2 rounded cursor-pointer transition-colors ${
+                              selectedFields.includes(field) 
+                                ? 'bg-emerald-500/20 text-emerald-400' 
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedFields.includes(field)}
+                              onChange={() => toggleField(field)}
+                              className="w-3 h-3 rounded border-gray-600 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-black/50"
+                            />
+                            <span className="truncate">{field}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {collectionFields.length === 0 && (
+                        <p className="text-xs text-gray-500 italic">No hay campos en esta colección</p>
+                      )}
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 mt-2">
+                    Si no seleccionas campos, se exportarán todos
+                  </p>
+                </div>
+              )}
+
+              {/* Download Button */}
+              <button
+                onClick={handleExportExcel}
+                disabled={!selectedCollection || exportLoading}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {exportLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Exportando...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    Descargar Excel
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
