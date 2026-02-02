@@ -2924,6 +2924,133 @@ async def admin_debug_collections_check(request: Request):
     
     return result
 
+# ==================== EXCEL EXPORT ENDPOINTS ====================
+
+@api_router.get("/admin/export/collections")
+async def get_collections_list(request: Request):
+    """Get list of all collections for export dropdown (admin only)"""
+    await require_admin(request)
+    
+    try:
+        collections = await db.list_collection_names()
+        # Filter out GridFS chunks and sort alphabetically
+        filtered = sorted([c for c in collections if not c.endswith('.chunks')])
+        return {"collections": filtered}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/export/collections/{collection_name}/fields")
+async def get_collection_fields(collection_name: str, request: Request):
+    """Get list of all fields in a collection (admin only)"""
+    await require_admin(request)
+    
+    try:
+        # Get all documents to find all possible fields
+        all_docs = await db[collection_name].find({}, {"_id": 0}).to_list(None)
+        
+        all_fields = set()
+        for doc in all_docs:
+            all_fields.update(doc.keys())
+        
+        return {"fields": sorted(list(all_fields))}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/export/download")
+async def export_collection_to_excel(request: Request):
+    """Export collection data to Excel file (admin only)"""
+    await require_admin(request)
+    
+    import io
+    import xlsxwriter
+    from fastapi.responses import StreamingResponse
+    
+    try:
+        body = await request.json()
+        collection_name = body.get("collection")
+        fields = body.get("fields", [])
+        
+        if not collection_name:
+            raise HTTPException(status_code=400, detail="Collection name required")
+        
+        # Build projection
+        projection = {"_id": 0}
+        if fields:
+            for field in fields:
+                projection[field] = 1
+        
+        # Get data
+        docs = await db[collection_name].find({}, projection).to_list(None)
+        
+        if not docs:
+            raise HTTPException(status_code=404, detail="No data found in collection")
+        
+        # Get all fields from documents if no specific fields requested
+        if not fields:
+            fields = set()
+            for doc in docs:
+                fields.update(doc.keys())
+            fields = sorted(list(fields))
+        
+        # Create Excel file in memory
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet(collection_name[:31])  # Sheet name max 31 chars
+        
+        # Formats
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#4CAF50',
+            'font_color': 'white',
+            'border': 1
+        })
+        cell_format = workbook.add_format({'border': 1})
+        date_format = workbook.add_format({'border': 1, 'num_format': 'yyyy-mm-dd hh:mm:ss'})
+        
+        # Write headers
+        for col, field in enumerate(fields):
+            worksheet.write(0, col, field, header_format)
+        
+        # Write data
+        for row, doc in enumerate(docs, start=1):
+            for col, field in enumerate(fields):
+                value = doc.get(field, "")
+                
+                # Handle different types
+                if isinstance(value, dict):
+                    value = str(value)
+                elif isinstance(value, list):
+                    value = ", ".join([str(v) for v in value])
+                elif value is None:
+                    value = ""
+                
+                worksheet.write(row, col, value, cell_format)
+        
+        # Auto-adjust column widths
+        for col, field in enumerate(fields):
+            max_len = max(len(str(field)), 
+                         max((len(str(doc.get(field, ""))) for doc in docs), default=10))
+            worksheet.set_column(col, col, min(max_len + 2, 50))
+        
+        workbook.close()
+        output.seek(0)
+        
+        # Generate filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{collection_name}_{timestamp}.xlsx"
+        
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Excel export error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app (moved here to include backup endpoint)
 app.include_router(api_router)
 
