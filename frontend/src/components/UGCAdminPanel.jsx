@@ -430,6 +430,114 @@ const SystemPanel = ({ getAuthHeaders }) => {
   const [backupResult, setBackupResult] = useState(null);
   const [lastBackupTime, setLastBackupTime] = useState(null);
   const [collectionsData, setCollectionsData] = useState(null);
+  
+  // Excel Export State
+  const [collections, setCollections] = useState([]);
+  const [selectedCollection, setSelectedCollection] = useState('');
+  const [collectionFields, setCollectionFields] = useState([]);
+  const [selectedFields, setSelectedFields] = useState([]);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [fieldsLoading, setFieldsLoading] = useState(false);
+
+  // Fetch collections list on mount
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const headers = getAuthHeaders();
+        const res = await fetch(`${API_URL}/api/admin/export/collections`, { headers });
+        if (res.ok) {
+          const data = await res.json();
+          setCollections(data.collections || []);
+        }
+      } catch (err) {
+        console.error('Error fetching collections:', err);
+      }
+    };
+    fetchCollections();
+  }, []);
+
+  // Fetch fields when collection changes
+  useEffect(() => {
+    if (!selectedCollection) {
+      setCollectionFields([]);
+      setSelectedFields([]);
+      return;
+    }
+    
+    const fetchFields = async () => {
+      setFieldsLoading(true);
+      try {
+        const headers = getAuthHeaders();
+        const res = await fetch(`${API_URL}/api/admin/export/collections/${selectedCollection}/fields`, { headers });
+        if (res.ok) {
+          const data = await res.json();
+          setCollectionFields(data.fields || []);
+          setSelectedFields([]); // Reset selected fields
+        }
+      } catch (err) {
+        console.error('Error fetching fields:', err);
+      } finally {
+        setFieldsLoading(false);
+      }
+    };
+    fetchFields();
+  }, [selectedCollection]);
+
+  const handleExportExcel = async () => {
+    if (!selectedCollection) return;
+    
+    setExportLoading(true);
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/export/download`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          collection: selectedCollection,
+          fields: selectedFields.length > 0 ? selectedFields : []
+        })
+      });
+      
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${selectedCollection}_${new Date().toISOString().slice(0,10)}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      } else {
+        const error = await res.json();
+        alert(error.detail || 'Error al exportar');
+      }
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Error de conexión');
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const toggleField = (field) => {
+    setSelectedFields(prev => 
+      prev.includes(field) 
+        ? prev.filter(f => f !== field)
+        : [...prev, field]
+    );
+  };
+
+  const selectAllFields = () => {
+    setSelectedFields(collectionFields);
+  };
+
+  const clearAllFields = () => {
+    setSelectedFields([]);
+  };
 
   const handleBackup = async () => {
     setBackupLoading(true);
