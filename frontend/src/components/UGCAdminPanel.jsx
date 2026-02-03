@@ -425,7 +425,6 @@ const UGCAdminPanel = ({ getAuthHeaders, initialSubTab = 'overview', onSubTabCha
 // System Panel Component - Database backup and system utilities
 const SystemPanel = ({ getAuthHeaders }) => {
   const [backupLoading, setBackupLoading] = useState(false);
-  const [fullBackupLoading, setFullBackupLoading] = useState(false);
   const [collectionsCheckLoading, setCollectionsCheckLoading] = useState(false);
   const [backupResult, setBackupResult] = useState(null);
   const [lastBackupTime, setLastBackupTime] = useState(null);
