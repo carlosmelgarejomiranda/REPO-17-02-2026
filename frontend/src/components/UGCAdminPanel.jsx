@@ -1025,6 +1025,142 @@ const SystemPanel = ({ getAuthHeaders }) => {
           </div>
         </div>
       </div>
+
+      {/* Backup Verification Section */}
+      <div className="bg-white/5 border border-blue-500/30 rounded-xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+            <Shield className="w-6 h-6 text-blue-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-medium text-white">Verificar Integridad de Backup</h3>
+            <p className="text-sm text-gray-400 mt-1">
+              Compara un backup contra el estado actual de la BD para detectar colecciones o registros faltantes
+            </p>
+
+            <div className="mt-4 space-y-4">
+              {/* Step 1: Get current DB state */}
+              <div className="bg-black/30 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-400 mb-2">Paso 1: Estado Actual de la BD</h4>
+                <button
+                  onClick={fetchCurrentDbState}
+                  disabled={verifyLoading}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {verifyLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Database className="w-4 h-4" />
+                  )}
+                  Obtener Estado Actual
+                </button>
+
+                {currentDbState && (
+                  <div className="mt-3 p-3 bg-black/50 rounded-lg">
+                    <div className="flex gap-4 text-sm mb-2">
+                      <span className="text-gray-400">Colecciones: <strong className="text-white">{currentDbState.total_collections}</strong></span>
+                      <span className="text-gray-400">Documentos: <strong className="text-white">{currentDbState.total_documents?.toLocaleString()}</strong></span>
+                    </div>
+                    <details className="text-xs">
+                      <summary className="cursor-pointer text-blue-400 hover:text-blue-300">Ver detalle por colección</summary>
+                      <pre className="mt-2 p-2 bg-black/50 rounded overflow-auto max-h-40 text-gray-300">
+                        {JSON.stringify(currentDbState.collections, null, 2)}
+                      </pre>
+                    </details>
+                  </div>
+                )}
+              </div>
+
+              {/* Step 2: Input backup data */}
+              <div className="bg-black/30 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-400 mb-2">Paso 2: Datos del Backup a Verificar</h4>
+                <p className="text-xs text-gray-500 mb-2">
+                  Pega aquí el JSON con el conteo de colecciones del backup (ej: {`{"users": 381, "ugc_creators": 270, ...}`})
+                </p>
+                <textarea
+                  value={backupFileInput}
+                  onChange={(e) => setBackupFileInput(e.target.value)}
+                  placeholder='{"users": 381, "ugc_creators": 270, ...}'
+                  className="w-full h-32 bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-blue-500"
+                />
+              </div>
+
+              {/* Step 3: Verify */}
+              <div className="bg-black/30 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-400 mb-2">Paso 3: Ejecutar Verificación</h4>
+                <button
+                  onClick={handleVerifyBackup}
+                  disabled={verifyLoading || !backupFileInput}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {verifyLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="w-4 h-4" />
+                  )}
+                  Verificar Backup
+                </button>
+
+                {verificationResult && (
+                  <div className="mt-4">
+                    {/* Summary */}
+                    <div className={`p-3 rounded-lg mb-3 ${verificationResult.is_complete ? 'bg-green-500/20 border border-green-500/50' : 'bg-red-500/20 border border-red-500/50'}`}>
+                      <div className="flex items-center gap-2">
+                        {verificationResult.is_complete ? (
+                          <CheckCircle className="w-5 h-5 text-green-400" />
+                        ) : (
+                          <AlertCircle className="w-5 h-5 text-red-400" />
+                        )}
+                        <span className={`font-medium ${verificationResult.is_complete ? 'text-green-400' : 'text-red-400'}`}>
+                          {verificationResult.is_complete ? '✅ Backup COMPLETO' : '❌ Backup INCOMPLETO'}
+                        </span>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-300">
+                        <span className="mr-4">BD: {verificationResult.summary?.collections_in_db} colecciones</span>
+                        <span className="mr-4">Backup: {verificationResult.summary?.collections_in_backup} colecciones</span>
+                        <span>Problemas: {verificationResult.summary?.issues_count}</span>
+                      </div>
+                    </div>
+
+                    {/* Issues */}
+                    {verificationResult.issues?.length > 0 && (
+                      <div className="mb-3">
+                        <h5 className="text-sm font-medium text-red-400 mb-2">⚠️ Problemas encontrados:</h5>
+                        <div className="space-y-1">
+                          {verificationResult.issues.map((issue, idx) => (
+                            <div key={idx} className={`text-xs p-2 rounded ${
+                              issue.severity === 'HIGH' ? 'bg-red-500/20 text-red-400' :
+                              issue.severity === 'MEDIUM' ? 'bg-yellow-500/20 text-yellow-400' :
+                              'bg-gray-500/20 text-gray-400'
+                            }`}>
+                              <strong>[{issue.severity}]</strong> {issue.type}: {issue.collection}
+                              {issue.db_count !== undefined && ` (BD: ${issue.db_count}, Backup: ${issue.backup_count || 0})`}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Missing collections */}
+                    {verificationResult.summary?.missing_in_backup?.length > 0 && (
+                      <div className="mb-3">
+                        <h5 className="text-sm font-medium text-red-400 mb-2">❌ Colecciones faltantes en backup:</h5>
+                        <div className="flex flex-wrap gap-1">
+                          {verificationResult.summary.missing_in_backup.map(coll => (
+                            <span key={coll} className="text-xs px-2 py-1 bg-red-500/20 text-red-400 rounded">
+                              {coll}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
