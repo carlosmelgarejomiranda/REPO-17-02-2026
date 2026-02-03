@@ -54,11 +54,10 @@ DB_NAME = os.environ.get('DB_NAME', 'test_database')
 BACKUP_DIR = ROOT_DIR / 'backups'
 MAX_BACKUPS_TO_KEEP = 7  # Keep last 7 days of backups in Cloudinary
 
-# Collections to skip (large binary data, temp files, etc.)
+# Collections to skip (ONLY large binary GridFS chunks - files metadata is kept)
 SKIP_COLLECTIONS = [
-    'images.chunks', 'images.files',
-    'product_images.chunks', 'product_images.files',
-    'temp_images', 'temp_image_batches'
+    'images.chunks',           # GridFS binary chunks (large)
+    'product_images.chunks',   # GridFS binary chunks (large)
 ]
 
 
