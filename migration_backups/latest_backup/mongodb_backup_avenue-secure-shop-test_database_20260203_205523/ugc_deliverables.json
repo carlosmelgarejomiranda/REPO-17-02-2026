@@ -1,0 +1,1010 @@
+[
+  {
+    "_id": {
+      "$oid": "6969212b5e0fb8603b45a425"
+    },
+    "id": "f376ac6a-f8b3-444f-836c-1d95f04f728e",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "5d79bc89-3445-4f08-9741-8a79ee1c8fb5",
+    "creator_id": "a107253b-208c-4758-9cc4-8c0da5ea8427",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-15T17:17:31.502297+00:00",
+    "updated_at": "2026-01-15T17:17:31.502297+00:00",
+    "cancelled_at": "2026-01-15T21:05:20.626194+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69695697d52731e47aa42c67"
+    },
+    "id": "36ee4b67-5656-4513-91fe-2e23fe6decc6",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "a3618d34-ad62-4130-a16b-94acd68b950e",
+    "creator_id": "a5b8854b-0623-4397-8668-a4d487295a91",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-15T21:05:27.831715+00:00",
+    "updated_at": "2026-01-15T21:05:27.831715+00:00",
+    "cancelled_at": "2026-01-25T20:01:03.531222+00:00",
+    "metrics_deadline": "2026-02-08T21:49:21.072778+00:00",
+    "url_deadline": "2026-02-04T21:49:21.072778+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69698d796c4335aef9cd58cd"
+    },
+    "id": "bb8148be-9bc4-4521-b192-845ab383329a",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "dc95faf1-6251-4bcc-a782-6b3186de8123",
+    "creator_id": "e33133f9-c64a-489d-a6a7-6ffd51a12060",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-16T00:59:37.787668+00:00",
+    "updated_at": "2026-01-16T00:59:37.787668+00:00",
+    "cancelled_at": "2026-01-16T18:39:56.737140+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69698d7d6c4335aef9cd58ce"
+    },
+    "id": "ae2fdc85-7f7d-41aa-940a-a7320596316a",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "a0bee298-e93d-4be4-a954-a82304c1b0c4",
+    "creator_id": "c597aa09-6419-4192-96b3-77405c8a73bf",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-16T00:59:41.419849+00:00",
+    "updated_at": "2026-01-16T00:59:41.419849+00:00",
+    "cancelled_at": "2026-01-16T01:04:54.994717+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69698e3ecd4bf7a55599d2dc"
+    },
+    "id": "35369c8a-e709-4a48-b780-6ab12edfe324",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-16T01:02:54.285099+00:00",
+    "updated_at": "2026-01-16T01:02:54.285099+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6972bac180a99eebe09aca7f"
+    },
+    "id": "81b8dd6c-18f5-45f5-b4fd-f62cb38ab8e5",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T00:03:13.702227+00:00",
+    "updated_at": "2026-01-23T00:03:13.702227+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6972cb4b683d2387ab82a52b"
+    },
+    "id": "e310ca28-7905-4f8f-af10-5bf401575337",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T01:13:47.034263+00:00",
+    "updated_at": "2026-01-23T01:13:47.034263+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69731e79aa3f37f07744e712"
+    },
+    "id": "69c01850-9aab-4888-a292-17cfe7c70be9",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T07:08:41.443249+00:00",
+    "updated_at": "2026-01-23T07:13:14.887114+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DRYKogIjgxt/?igsh=N3JnZHB3d3NncXZj",
+    "metrics_window_closes": "2026-02-06T07:13:14.887114+00:00",
+    "metrics_window_opens": "2026-01-30T07:13:14.887114+00:00",
+    "post_url": "https://www.instagram.com/reel/DRYKogIjgxt/?igsh=N3JnZHB3d3NncXZj",
+    "published_at": "2026-01-23T07:13:14.887114+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-23T07:13:14.887114+00:00",
+        "by": "creator"
+      }
+    ],
+    "tiktok_url": "",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973a71c833318c7c1a65921"
+    },
+    "id": "39dcf19c-d09f-4c94-8ef8-17a4158ebc0f",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "a3618d34-ad62-4130-a16b-94acd68b950e",
+    "creator_id": "a5b8854b-0623-4397-8668-a4d487295a91",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T16:51:40.597490+00:00",
+    "updated_at": "2026-01-25T19:34:30.359289+00:00",
+    "confirmed_at": "2026-01-23T16:51:40.597490+00:00",
+    "instagram_url": null,
+    "metrics_window_closes": "2026-02-06T16:51:40.597490+00:00",
+    "metrics_window_opens": "2026-01-25T05:02:36.786430+00:00",
+    "post_url": null,
+    "published_at": "2026-01-25T05:02:36.786430+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-23T16:57:33.934153+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-24T00:44:13.785919+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "published",
+        "timestamp": "2026-01-25T05:02:36.786430+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-25T05:05:13.695237+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-25T05:02:36.786430+00:00",
+    "tiktok_url": null,
+    "metrics_is_late": false,
+    "metrics_submitted_at": null,
+    "admin_reset_at": "2026-01-25T19:34:30.359310+00:00",
+    "cancelled_at": "2026-01-25T20:01:03.531222+00:00",
+    "metrics_deadline": "2026-02-08T21:49:21.072778+00:00",
+    "url_deadline": "2026-02-04T21:49:21.072778+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973b611c28ecbbc41613213"
+    },
+    "id": "70173f1d-d59b-472c-9dea-d16109141e60",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T17:55:29.968799+00:00",
+    "updated_at": "2026-01-23T17:55:29.968799+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973bd2f47c5a697c326ca67"
+    },
+    "id": "06fa69d0-7ec6-451a-83ba-3e1b56b9d354",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T18:25:51.102850+00:00",
+    "updated_at": "2026-01-23T18:25:51.102850+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973c1232e1739a1b003320f"
+    },
+    "id": "7da9c082-2aaf-4643-90ce-a4d3b805c07d",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T18:42:43.182021+00:00",
+    "updated_at": "2026-01-23T18:42:43.182021+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973cf00f285ccd7ce985ecc"
+    },
+    "id": "35f878ba-ce86-4260-a8b4-139cdbf4ef01",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T19:41:52.064614+00:00",
+    "updated_at": "2026-01-23T19:41:52.064614+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973ddf0e51d7ff508582413"
+    },
+    "id": "48b79479-44d8-488a-b391-2ce95ab03edf",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T20:45:36.159346+00:00",
+    "updated_at": "2026-01-23T20:45:36.159346+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973fa833a4ff24b2d05938f"
+    },
+    "id": "5167070a-85f1-4807-b904-6b67bba5894a",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-23T22:47:31.849516+00:00",
+    "updated_at": "2026-01-25T04:58:56.612047+00:00",
+    "confirmed_at": "2026-01-23T22:47:31.849516+00:00",
+    "instagram_url": null,
+    "metrics_window_closes": "2026-02-06T22:47:31.849516+00:00",
+    "metrics_window_opens": "2026-01-23T22:56:43.697721+00:00",
+    "post_url": null,
+    "published_at": "2026-01-23T22:56:43.697721+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-23T22:56:43.697721+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-23T23:53:31.362525+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-23T22:56:43.697721+00:00",
+    "tiktok_url": null,
+    "metrics_is_late": false,
+    "metrics_submitted_at": null,
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "admin_reset_at": "2026-01-25T04:58:56.612062+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973fae83a4ff24b2d059390"
+    },
+    "id": "8c95e685-ab6a-4418-a5b2-bc75b2ddd191",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "7f52537b-2791-4cfc-88b4-a402cd3c08b6",
+    "creator_id": "c540caff-e0a6-4152-abda-ae1d1a3b5b57",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-23T22:49:12.439193+00:00",
+    "updated_at": "2026-01-23T22:49:12.439193+00:00",
+    "metrics_deadline": "2026-02-06T22:49:12.439193+00:00",
+    "url_deadline": "2026-02-02T22:49:12.439193+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973faf23a4ff24b2d059391"
+    },
+    "id": "c83fbb19-04bc-4dcc-920f-e7215f4ea70e",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "c7825c24-da80-4ad9-a0ae-b7773ee3af40",
+    "creator_id": "274f87da-4448-40d1-a0d3-7335098c8e76",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "metrics_submitted",
+    "created_at": "2026-01-23T22:49:22.960952+00:00",
+    "updated_at": "2026-02-01T18:00:27.887626+00:00",
+    "confirmed_at": "2026-01-23T22:49:22.960952+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DUJtGqwATny/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+    "metrics_window_closes": "2026-02-06T22:49:22.960952+00:00",
+    "metrics_window_opens": "2026-01-30T23:09:54.571372+00:00",
+    "post_url": "https://www.instagram.com/reel/DUJtGqwATny/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA== | https://vt.tiktok.com/ZSaXMj6TM/",
+    "published_at": "2026-01-30T23:09:54.571372+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-30T23:09:54.571372+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-02-01T18:00:27.887626+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-30T23:09:54.571372+00:00",
+    "tiktok_url": "https://vt.tiktok.com/ZSaXMj6TM/",
+    "metrics_deadline": "2026-02-06T22:49:22.960952+00:00",
+    "url_deadline": "2026-02-02T22:49:22.960952+00:00",
+    "metrics_is_late": false,
+    "metrics_submitted_at": "2026-02-01T18:00:27.887626+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973faf71a2b13a4ab8a1a4a"
+    },
+    "id": "615da7b7-67cf-4ba4-a920-2098604ecfb2",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "11771f29-7bf1-4f71-a20f-0e9573241161",
+    "creator_id": "29571ef6-7915-40a7-b8aa-0db6eaae6b8b",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "metrics_submitted",
+    "created_at": "2026-01-23T22:49:27.823960+00:00",
+    "updated_at": "2026-01-30T22:36:27.077770+00:00",
+    "confirmed_at": "2026-01-23T22:49:27.823960+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DUB3jTwEnMX/?igsh=MTZseXRlMmVpbmhlbA==",
+    "metrics_window_closes": "2026-02-06T22:49:27.823960+00:00",
+    "metrics_window_opens": "2026-01-29T12:13:17.652542+00:00",
+    "post_url": "https://www.instagram.com/reel/DUB3jTwEnMX/?igsh=MTZseXRlMmVpbmhlbA== | https://vt.tiktok.com/ZSax2TwUf/",
+    "published_at": "2026-01-29T12:13:17.652542+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-29T12:13:17.652542+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-29T12:20:25.336292+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-29T12:13:17.652542+00:00",
+    "tiktok_url": "https://vt.tiktok.com/ZSax2TwUf/",
+    "metrics_is_late": false,
+    "metrics_submitted_at": "2026-01-29T12:20:25.336292+00:00",
+    "brand_rating": {
+      "rating": 5,
+      "comment": "Increible el video!!! Gracias Elias!!!",
+      "rated_by": "user_595c96f7c631",
+      "rated_by_brand": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+      "rated_at": "2026-01-30T22:36:27.077770+00:00"
+    },
+    "metrics_deadline": "2026-02-06T22:49:27.823960+00:00",
+    "url_deadline": "2026-02-02T22:49:27.823960+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973fb183a4ff24b2d059392"
+    },
+    "id": "8db24672-05ec-451f-ba00-03c427914a16",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "aed7a278-61a0-45a4-8132-4e709a170486",
+    "creator_id": "ae1b3318-508d-4bea-90c5-1034de015055",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-23T22:50:00.837445+00:00",
+    "updated_at": "2026-01-23T22:50:00.837445+00:00",
+    "metrics_deadline": "2026-02-06T22:50:00.837445+00:00",
+    "url_deadline": "2026-02-02T22:50:00.837445+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973fb241a2b13a4ab8a1a4b"
+    },
+    "id": "907e396b-5998-4924-8645-994e390ab0c3",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "d8671701-5987-4dc5-a9bc-ae4b349682e5",
+    "creator_id": "1ff6ad2a-60ef-4f58-bc53-2149e6940dbc",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-23T22:50:12.696704+00:00",
+    "updated_at": "2026-01-25T18:58:46.286412+00:00",
+    "confirmed_at": "2026-01-23T22:50:12.696704+00:00",
+    "instagram_url": null,
+    "metrics_window_closes": "2026-02-06T22:50:12.696704+00:00",
+    "metrics_window_opens": "2026-01-24T16:29:33.623326+00:00",
+    "post_url": null,
+    "published_at": "2026-01-24T16:29:33.623326+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-24T16:29:33.623326+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-24T16:29:33.623326+00:00",
+    "tiktok_url": null,
+    "admin_reset_at": "2026-01-25T18:58:46.286427+00:00",
+    "metrics_submitted_at": null,
+    "metrics_deadline": "2026-02-06T22:50:12.696704+00:00",
+    "url_deadline": "2026-02-02T22:50:12.696704+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973fb361a2b13a4ab8a1a4c"
+    },
+    "id": "254ad5b0-464f-48fb-a5ff-722a9c8d1baa",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "1f2a32cc-550c-4bd5-bd05-6aa5e05143ad",
+    "creator_id": "36fc7ae8-775d-4286-b231-6cec34d6113b",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-23T22:50:30.910264+00:00",
+    "updated_at": "2026-01-23T22:50:30.910264+00:00",
+    "metrics_deadline": "2026-02-06T22:50:30.910264+00:00",
+    "url_deadline": "2026-02-02T22:50:30.910264+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973fb5e1a2b13a4ab8a1a4d"
+    },
+    "id": "036e50db-b8b1-4899-8ffd-0d7acbd1ac38",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "bbbd5d3e-7f97-4e83-8205-682a764391e9",
+    "creator_id": "f3dc027b-43de-4966-ac8e-ccd69f7d9c00",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "metrics_submitted",
+    "created_at": "2026-01-23T22:51:10.290523+00:00",
+    "updated_at": "2026-01-31T20:00:17.021759+00:00",
+    "confirmed_at": "2026-01-23T22:51:10.290523+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DUEhZ5qCbjG/?igsh=YWNvbGN0dDFmMHlz",
+    "metrics_window_closes": "2026-02-06T22:51:10.290523+00:00",
+    "metrics_window_opens": "2026-01-29T00:51:36.787214+00:00",
+    "post_url": "https://www.instagram.com/reel/DUEhZ5qCbjG/?igsh=YWNvbGN0dDFmMHlz | https://vt.tiktok.com/ZSaHKL8kE/",
+    "published_at": "2026-01-29T00:51:36.787214+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-29T00:51:36.787214+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-31T20:00:17.021759+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-29T00:51:36.787214+00:00",
+    "tiktok_url": "https://vt.tiktok.com/ZSaHKL8kE/",
+    "metrics_deadline": "2026-02-06T22:51:10.290523+00:00",
+    "url_deadline": "2026-02-02T22:51:10.290523+00:00",
+    "metrics_is_late": false,
+    "metrics_submitted_at": "2026-01-31T20:00:17.021759+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69753f44c5b7dc5e169e8aac"
+    },
+    "id": "cc9c2693-abd9-41d9-a822-1075299fb043",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "91976b31-aba4-493f-9ef8-37fe462e6d2f",
+    "creator_id": "995df523-5fcf-471c-baba-b99f20585caf",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-24T21:53:08.175183+00:00",
+    "updated_at": "2026-01-24T21:53:08.175183+00:00",
+    "metrics_deadline": "2026-02-07T21:53:08.175183+00:00",
+    "url_deadline": "2026-02-03T21:53:08.175183+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6975430de89fce958925e4ca"
+    },
+    "id": "6322c584-2b72-4d47-9d83-9c7ce0f5122d",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-24T22:09:17.045795+00:00",
+    "updated_at": "2026-01-25T19:58:49.372197+00:00",
+    "confirmed_at": "2026-01-24T22:09:17.045795+00:00",
+    "instagram_url": null,
+    "metrics_window_closes": "2026-02-07T22:09:17.045795+00:00",
+    "metrics_window_opens": "2026-01-24T22:12:03.052768+00:00",
+    "post_url": null,
+    "published_at": "2026-01-24T22:12:03.052768+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-24T22:12:03.052768+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-24T22:14:58.957302+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-24T22:12:03.052768+00:00",
+    "tiktok_url": null,
+    "metrics_is_late": false,
+    "metrics_submitted_at": null,
+    "admin_reset_at": "2026-01-25T19:58:49.372212+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69759bfee89fce958926d274"
+    },
+    "id": "6c5f3afa-b28d-45f8-b0fa-0a820161ca43",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "dbf4c010-ede7-4fe2-91f3-96c48f1ea62a",
+    "creator_id": "f9774404-109f-4d7b-8d95-905ee7b4f67f",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "metrics_submitted",
+    "created_at": "2026-01-25T04:28:46.897786+00:00",
+    "updated_at": "2026-01-25T04:36:33.156599+00:00",
+    "confirmed_at": "2026-01-25T04:28:46.897786+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DRkynn6kkIq/?igsh=Z25wejhpcHRkNWc=",
+    "metrics_window_closes": "2026-02-08T04:28:46.897786+00:00",
+    "metrics_window_opens": "2026-01-25T04:32:22.452370+00:00",
+    "post_url": "https://www.instagram.com/reel/DRkynn6kkIq/?igsh=Z25wejhpcHRkNWc=",
+    "published_at": "2026-01-25T04:32:22.452370+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-25T04:32:22.452370+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-25T04:33:49.571476+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-25T04:32:22.452370+00:00",
+    "tiktok_url": "",
+    "metrics_is_late": false,
+    "metrics_submitted_at": "2026-01-25T04:33:49.571476+00:00",
+    "brand_rating": {
+      "rating": 5,
+      "comment": "Bien hecho Jota",
+      "rated_by": "user_595c96f7c631",
+      "rated_by_brand": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+      "rated_at": "2026-01-25T04:36:33.156599+00:00"
+    },
+    "metrics_deadline": "2026-02-08T04:28:46.897786+00:00",
+    "url_deadline": "2026-02-04T04:28:46.897786+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69768fe18ebedba02984d528"
+    },
+    "id": "7e66dce5-596a-4bdc-ac23-9f4465f9f615",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "a3618d34-ad62-4130-a16b-94acd68b950e",
+    "creator_id": "a5b8854b-0623-4397-8668-a4d487295a91",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "metrics_submitted",
+    "created_at": "2026-01-25T21:49:21.072778+00:00",
+    "updated_at": "2026-01-30T22:37:00.593005+00:00",
+    "confirmed_at": "2026-01-25T21:49:21.072778+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DS6B46iEQov/?igsh=MWRxOWxrZXV6bGptYw==",
+    "metrics_window_closes": "2026-02-08T21:49:21.072778+00:00",
+    "metrics_window_opens": "2026-01-26T02:12:11.018671+00:00",
+    "post_url": "https://www.instagram.com/reel/DS6B46iEQov/?igsh=MWRxOWxrZXV6bGptYw== | https://vt.tiktok.com/ZSafHJWSU/",
+    "published_at": "2026-01-26T02:12:11.018671+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-26T02:12:11.018671+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-26T02:13:55.963593+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-26T02:12:11.018671+00:00",
+    "tiktok_url": "https://vt.tiktok.com/ZSafHJWSU/",
+    "metrics_is_late": false,
+    "metrics_submitted_at": "2026-01-26T02:13:55.963593+00:00",
+    "brand_rating": {
+      "rating": 5,
+      "comment": "La hermosa del mundo!!! Genia total !! Increible contenido!!",
+      "rated_by": "user_595c96f7c631",
+      "rated_by_brand": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+      "rated_at": "2026-01-30T22:37:00.593005+00:00"
+    },
+    "metrics_deadline": "2026-02-08T21:49:21.072778+00:00",
+    "url_deadline": "2026-02-04T21:49:21.072778+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69768fe18ebedba02984d529"
+    },
+    "id": "c4003dce-849b-4f7e-8ead-e3ac49c98ec1",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-25T21:49:21.931881+00:00",
+    "updated_at": "2026-01-25T21:49:21.931881+00:00",
+    "cancelled_at": "2026-01-26T17:29:18.993837+00:00",
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6977a47bdaa2866882933713"
+    },
+    "id": "0b2ecc4e-dd0e-4731-8ffe-663bb71767bc",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "60331af5-8075-4c28-b5f5-f96ccc25dab3",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "metrics_submitted",
+    "created_at": "2026-01-26T17:29:31.609204+00:00",
+    "updated_at": "2026-01-30T22:37:14.109071+00:00",
+    "confirmed_at": "2026-01-26T17:29:31.609204+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DRYKogIjgxt/?igsh=N3JnZHB3d3NncXZj",
+    "metrics_window_closes": "2026-02-09T17:29:31.609204+00:00",
+    "metrics_window_opens": "2026-01-29T14:39:27.652509+00:00",
+    "post_url": "https://www.instagram.com/reel/DRYKogIjgxt/?igsh=N3JnZHB3d3NncXZj | https://vt.tiktok.com/ZSaxfK6Wk/",
+    "published_at": "2026-01-29T14:39:27.652509+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-29T14:39:27.652509+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-29T14:42:18.242627+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-29T14:39:27.652509+00:00",
+    "tiktok_url": "https://vt.tiktok.com/ZSaxfK6Wk/",
+    "metrics_is_late": false,
+    "metrics_submitted_at": "2026-01-29T14:42:18.242627+00:00",
+    "brand_rating": {
+      "rating": 5,
+      "comment": "Crack total!!!",
+      "rated_by": "user_595c96f7c631",
+      "rated_by_brand": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+      "rated_at": "2026-01-30T22:37:14.109071+00:00"
+    },
+    "metrics_deadline": "2026-02-09T17:29:31.609204+00:00",
+    "url_deadline": "2026-02-05T17:29:31.609204+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a7a71edbfb11f165947f9"
+    },
+    "id": "56081497-2f89-495a-9cb6-80ab4a0e8577",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "14b9080f-f5c0-4946-9b4d-0793890a3a78",
+    "creator_id": "f6d3e469-c071-4487-8f52-9b5e15dc63d7",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "cancelled",
+    "created_at": "2026-01-28T21:06:57.391878+00:00",
+    "updated_at": "2026-01-28T21:13:11.296194+00:00",
+    "confirmed_at": "2026-01-28T21:06:57.391878+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DT_NTP4jzWV/?igsh=MTliamVwcWEwMmEyMA==",
+    "metrics_window_closes": "2026-02-11T21:06:57.391878+00:00",
+    "metrics_window_opens": "2026-01-28T21:09:48.000551+00:00",
+    "post_url": "https://www.instagram.com/reel/DT_NTP4jzWV/?igsh=MTliamVwcWEwMmEyMA== | https://vt.tiktok.com/ZSaHgkmAj/",
+    "published_at": "2026-01-28T21:09:48.000551+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-28T21:09:48.000551+00:00",
+        "by": "creator"
+      },
+      {
+        "status": "metrics_submitted",
+        "timestamp": "2026-01-28T21:13:11.296194+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-28T21:09:48.000551+00:00",
+    "tiktok_url": "https://vt.tiktok.com/ZSaHgkmAj/",
+    "metrics_is_late": false,
+    "metrics_submitted_at": "2026-01-28T21:13:11.296194+00:00",
+    "cancelled_at": "2026-01-30T20:33:45.482044+00:00",
+    "metrics_deadline": "2026-02-13T20:34:26.910210+00:00",
+    "url_deadline": "2026-02-09T20:34:26.910210+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc5b880beef5f2f856993"
+    },
+    "id": "6e28f3d2-9624-415f-8cbf-0b3c39da8b3d",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "6c1ceda8-08e8-4bca-80ba-3781c1ecb80a",
+    "creator_id": "57926b4e-d64f-4ef2-97e3-2c84bd0aa0ae",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-29T20:40:24.483563+00:00",
+    "updated_at": "2026-01-29T20:40:24.483563+00:00",
+    "metrics_deadline": "2026-02-12T20:40:24.483563+00:00",
+    "url_deadline": "2026-02-08T20:40:24.483563+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc5e475712e1b0bdf9e62"
+    },
+    "id": "1790b721-86b6-49dd-ae43-7e92c012400c",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "372dc300-1f07-49f3-8572-d193f6e9e59a",
+    "creator_id": "08288a23-825f-4a5f-b65f-abb4cce78982",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-29T20:41:08.719709+00:00",
+    "updated_at": "2026-01-29T20:41:08.719709+00:00",
+    "metrics_deadline": "2026-02-12T20:41:08.719709+00:00",
+    "url_deadline": "2026-02-08T20:41:08.719709+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc5e980beef5f2f856994"
+    },
+    "id": "82bd6818-c0ce-4677-8d3a-2fe58ab51b8c",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "b9f154f2-4e10-4cc4-838d-a354bff507b0",
+    "creator_id": "b0b0d546-dde2-4335-afc9-0d934ce1dc65",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-29T20:41:13.739246+00:00",
+    "updated_at": "2026-01-29T20:41:13.739246+00:00",
+    "metrics_deadline": "2026-02-12T20:41:13.739246+00:00",
+    "url_deadline": "2026-02-08T20:41:13.739246+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc5f080beef5f2f856995"
+    },
+    "id": "b6310927-f999-4204-bcfd-67be400a5b26",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "9871cba7-9d82-49a4-983f-f243c528db72",
+    "creator_id": "3c1afada-807f-4a82-8f10-22247a50d366",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-29T20:41:20.729756+00:00",
+    "updated_at": "2026-01-29T20:41:20.729756+00:00",
+    "metrics_deadline": "2026-02-12T20:41:20.729756+00:00",
+    "url_deadline": "2026-02-08T20:41:20.729756+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc5f780beef5f2f856996"
+    },
+    "id": "b235ce5d-904e-406b-a4f8-913cdc1aad74",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "f9cf2df3-f70e-477c-b0cd-f6fd61f1559d",
+    "creator_id": "d891216c-136a-4fba-b841-64ee3ffdc2f7",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-29T20:41:27.149306+00:00",
+    "updated_at": "2026-01-29T20:41:27.149306+00:00",
+    "metrics_deadline": "2026-02-12T20:41:27.149306+00:00",
+    "url_deadline": "2026-02-08T20:41:27.149306+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc60480beef5f2f8569a2"
+    },
+    "id": "97e08143-63b6-4169-ba4c-bc63ce6f068e",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "4791c4fe-8106-4268-9708-f3b02b0e383e",
+    "creator_id": "a597ecea-839f-4a9a-833d-5fb06cf5364d",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-29T20:41:40.923344+00:00",
+    "updated_at": "2026-01-29T20:41:40.923344+00:00",
+    "metrics_deadline": "2026-02-12T20:41:40.923344+00:00",
+    "url_deadline": "2026-02-08T20:41:40.923344+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc60c80beef5f2f8569a3"
+    },
+    "id": "e18f8697-e772-49d1-830a-0d6c76664cf5",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "186c6a25-05cc-4967-a31d-e27224ab4dc4",
+    "creator_id": "2ef2cf7e-b0b2-42fd-a7f1-0b81e3b13383",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-29T20:41:48.327527+00:00",
+    "updated_at": "2026-01-29T20:41:48.327527+00:00",
+    "metrics_deadline": "2026-02-12T20:41:48.327527+00:00",
+    "url_deadline": "2026-02-08T20:41:48.327527+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cdda938a8d441e37eb945"
+    },
+    "id": "4277f030-9964-47f6-88fe-48b1ad993e1f",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "6584909f-5162-4884-9800-530e4d30b780",
+    "creator_id": "309c2873-a4ec-4bf1-a9e6-9d4db8137c7a",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-30T16:34:49.507364+00:00",
+    "updated_at": "2026-01-30T16:34:49.507364+00:00",
+    "metrics_deadline": "2026-02-13T16:34:49.507364+00:00",
+    "url_deadline": "2026-02-09T16:34:49.507364+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cdded38a8d441e37eb946"
+    },
+    "id": "073ebfac-7c7c-4848-90c2-f0e433a02c7e",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "c5d32efb-4187-41dc-b588-3401e33e02d7",
+    "creator_id": "3d724bdf-dfac-4572-8ab2-acf1a8e32e08",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-30T16:35:57.153015+00:00",
+    "updated_at": "2026-01-30T16:35:57.153015+00:00",
+    "metrics_deadline": "2026-02-13T16:35:57.153015+00:00",
+    "url_deadline": "2026-02-09T16:35:57.153015+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cde7338a8d441e37eb947"
+    },
+    "id": "0ef91c6f-ea68-4bf3-89e8-66512823c29b",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "04480218-d132-4bc0-aea9-b189bcd7079a",
+    "creator_id": "370f3f56-5c8b-445e-86c0-cd2c68280559",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-30T16:38:11.804701+00:00",
+    "updated_at": "2026-01-30T16:38:11.804701+00:00",
+    "metrics_deadline": "2026-02-13T16:38:11.804701+00:00",
+    "url_deadline": "2026-02-09T16:38:11.804701+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cdea1745e36e4896f0513"
+    },
+    "id": "91fed5d3-df4d-45a8-816b-f20f83cdc5b2",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "5f6cda26-e915-462c-bc6f-73d81497db73",
+    "creator_id": "4d559409-b78c-4ee7-9f50-c8b89fcf4ca1",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-30T16:38:57.835573+00:00",
+    "updated_at": "2026-01-30T16:38:57.835573+00:00",
+    "metrics_deadline": "2026-02-13T16:38:57.835573+00:00",
+    "url_deadline": "2026-02-09T16:38:57.835573+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cdf1d745e36e4896f0514"
+    },
+    "id": "311ebe81-b5ad-4c6f-9ca3-c4d14097719c",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "e3e1a5bd-6439-4c5e-afe1-2c89ce4df7bb",
+    "creator_id": "d23d62ed-47d2-4b60-846b-a28ae71c8899",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-30T16:41:01.305134+00:00",
+    "updated_at": "2026-01-30T16:41:01.305134+00:00",
+    "metrics_deadline": "2026-02-13T16:41:01.305134+00:00",
+    "url_deadline": "2026-02-09T16:41:01.305134+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cdfe6745e36e4896f0b37"
+    },
+    "id": "97fb9035-4eac-45a4-b180-c0cac625bbc4",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "f29733ac-6518-45c0-9256-4e84ebb033b9",
+    "creator_id": "9c99da84-8491-40e6-8e07-de988a1f2127",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "awaiting_publish",
+    "created_at": "2026-01-30T16:44:22.342364+00:00",
+    "updated_at": "2026-01-30T16:44:22.342364+00:00",
+    "metrics_deadline": "2026-02-13T16:44:22.342364+00:00",
+    "url_deadline": "2026-02-09T16:44:22.342364+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697d15d2b6c51f90a380ffbf"
+    },
+    "id": "4ba33fe8-c4d9-46f1-ad47-a5b18297fd5c",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "application_id": "14b9080f-f5c0-4946-9b4d-0793890a3a78",
+    "creator_id": "f6d3e469-c071-4487-8f52-9b5e15dc63d7",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "platform": "instagram",
+    "status": "published",
+    "created_at": "2026-01-30T20:34:26.910210+00:00",
+    "updated_at": "2026-01-30T23:09:45.793763+00:00",
+    "admin_reset_at": "2026-01-30T23:08:55.475702+00:00",
+    "instagram_url": "https://www.instagram.com/reel/DT_NTP4jzWV/?igsh=MTliamVwcWEwMmEyMA==",
+    "metrics_submitted_at": null,
+    "post_url": "https://www.instagram.com/reel/DT_NTP4jzWV/?igsh=MTliamVwcWEwMmEyMA== | https://vt.tiktok.com/ZSaXMe1uy/",
+    "tiktok_url": "https://vt.tiktok.com/ZSaXMe1uy/",
+    "confirmed_at": "2026-01-30T20:34:26.910210+00:00",
+    "metrics_window_closes": "2026-02-13T20:34:26.910210+00:00",
+    "metrics_window_opens": "2026-01-30T23:09:45.793763+00:00",
+    "published_at": "2026-01-30T23:09:45.793763+00:00",
+    "status_history": [
+      {
+        "status": "published",
+        "timestamp": "2026-01-30T23:09:45.793763+00:00",
+        "by": "creator"
+      }
+    ],
+    "submitted_at": "2026-01-30T23:09:45.793763+00:00",
+    "metrics_deadline": "2026-02-13T20:34:26.910210+00:00",
+    "url_deadline": "2026-02-09T20:34:26.910210+00:00"
+  }
+]

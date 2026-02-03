@@ -1,0 +1,170 @@
+[
+  {
+    "_id": {
+      "$oid": "6954845852dc97a39d8b71a4"
+    },
+    "transaction_id": "TXN-FAB75295",
+    "order_id": "ORD-D248BF65",
+    "session_id": "cs_test_a1PaMz7h5OUe2tm4KHgjnOVmaZC2G0oGQMYOTS0nkeHs9efbBJ8HIgIZVg",
+    "amount_usd": 20.55,
+    "amount_pyg": 150000.0,
+    "currency": "usd",
+    "customer_email": "test@example.com",
+    "payment_status": "pending",
+    "metadata": {
+      "order_id": "ORD-D248BF65",
+      "customer_email": "test@example.com",
+      "items": "100065-N-Pollera volado simple-Negro (M) x1",
+      "total_pyg": "150000",
+      "webhook_url": "http://ugc-platform-8.preview.emergentagent.comapi/shop/webhook/stripe"
+    },
+    "created_at": "2025-12-31T02:03:04.381716+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6954853352dc97a39d8b7784"
+    },
+    "transaction_id": "TXN-C75CD974",
+    "order_id": "ORD-48197618",
+    "session_id": "cs_test_a1ghgkHSmaqcWcCoSCu3QpumMebhzxQnUQIPYgTBtmUKwAxa2Za8nu3Zhu",
+    "amount_usd": 20.55,
+    "amount_pyg": 150000.0,
+    "currency": "usd",
+    "customer_email": "test@example.com",
+    "payment_status": "pending",
+    "metadata": {
+      "order_id": "ORD-48197618",
+      "customer_email": "test@example.com",
+      "items": "Test Product (M) x1",
+      "total_pyg": "150000",
+      "webhook_url": "http://ugc-platform-8.preview.emergentagent.comapi/shop/webhook/stripe"
+    },
+    "created_at": "2025-12-31T02:06:43.734284+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69556348163897078d2b1643"
+    },
+    "transaction_id": "TXN-1A33B085",
+    "order_id": "ORD-7091832E",
+    "session_id": "cs_test_a18oLg2ygQMCqflvsNyLaDUh3HzVNLoB9Mw0ApJRFTugNNk04kQc9ZpvR7",
+    "amount_usd": 20.55,
+    "amount_pyg": 150000.0,
+    "currency": "usd",
+    "customer_email": "avenuepy@gmail.com",
+    "payment_status": "pending",
+    "metadata": {
+      "order_id": "ORD-7091832E",
+      "customer_email": "avenuepy@gmail.com",
+      "items": "100065-N-Pollera volado simple-Negro (G) x1",
+      "total_pyg": "150000",
+      "webhook_url": "http://avenue-shop-1.preview.emergentagent.comapi/shop/webhook/stripe"
+    },
+    "created_at": "2025-12-31T17:54:16.313005+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6955b02aefd4b3735dfdab98"
+    },
+    "transaction_id": "TXN-85ED4310",
+    "order_id": "ORD-41137B9B",
+    "session_id": "cs_test_a1d6hlwbhRM8Lr10tbgToMtjerThS8p3egMNyJHraxaCLa8OUNFmiMqWpG",
+    "amount_usd": 47.95,
+    "amount_pyg": 350000.0,
+    "currency": "usd",
+    "customer_email": "avenuepy@gmail.com",
+    "payment_status": "pending",
+    "metadata": {
+      "order_id": "ORD-41137B9B",
+      "customer_email": "avenuepy@gmail.com",
+      "items": "100065-N-Pollera volado simple-Negro (G) x1, 100100-N-Calza Metalizada-Negro (P) x1",
+      "total_pyg": "350000",
+      "webhook_url": "http://avenue-shop-1.preview.emergentagent.comapi/shop/webhook/stripe"
+    },
+    "created_at": "2025-12-31T23:22:18.975357+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6957af651a803e0296230a92"
+    },
+    "transaction_id": "TXN-2D918447",
+    "order_id": "ORD-55F18C24",
+    "session_id": "cs_test_a1WWtirLSkwpjTqYOiFhUD7wGXVRPi9aOV3E0rT7ITIlLkOEVtctRw4ost",
+    "amount_usd": 20.55,
+    "amount_pyg": 150000.0,
+    "currency": "usd",
+    "customer_email": "test@example.com",
+    "payment_status": "pending",
+    "metadata": {
+      "order_id": "ORD-55F18C24",
+      "customer_email": "test@example.com",
+      "items": "Test Product (M) x1",
+      "total_pyg": "150000",
+      "webhook_url": "http://avenue-builder.preview.emergentagent.comapi/shop/webhook/stripe"
+    },
+    "created_at": "2026-01-02T11:43:33.261727+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695485c252dc97a39d8b7786"
+    },
+    "transaction_id": "TXN-B8BB9205",
+    "order_id": "ORD-AC1483C2",
+    "session_id": "cs_test_a1GvFgk5NbFeuEl01p73gWX8irTVcNKNyidYS2IuNKT1gQSV0h2JzcZ1ea",
+    "amount_usd": 20.55,
+    "amount_pyg": 150000.0,
+    "currency": "usd",
+    "customer_email": "avenuepy@gmail.com",
+    "payment_status": "pending",
+    "metadata": {
+      "order_id": "ORD-AC1483C2",
+      "customer_email": "avenuepy@gmail.com",
+      "items": "100065-N-Pollera volado simple-Negro (G) x1",
+      "total_pyg": "150000",
+      "webhook_url": "http://ugc-platform-8.preview.emergentagent.comapi/shop/webhook/stripe"
+    },
+    "created_at": "2025-12-31T02:09:06.389677+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6954864b52dc97a39d8b7d66"
+    },
+    "transaction_id": "TXN-6504C27A",
+    "order_id": "ORD-D890E840",
+    "session_id": "cs_test_a1Fi1ZJdqQy345HDd4yL1aDyEQMgFGSQLiXKRiqnkokXDhdLUmE9SZ8Fjg",
+    "amount_usd": 20.55,
+    "amount_pyg": 150000.0,
+    "currency": "usd",
+    "customer_email": "avenuepy@gmail.com",
+    "payment_status": "pending",
+    "metadata": {
+      "order_id": "ORD-D890E840",
+      "customer_email": "avenuepy@gmail.com",
+      "items": "100065-N-Pollera volado simple-Negro (M) x1",
+      "total_pyg": "150000",
+      "webhook_url": "http://ugc-platform-8.preview.emergentagent.comapi/shop/webhook/stripe"
+    },
+    "created_at": "2025-12-31T02:11:23.806480+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69551ca54b303d4b1330ef21"
+    },
+    "transaction_id": "TXN-D0A10722",
+    "order_id": "ORD-A0A2A89F",
+    "session_id": "cs_test_a1jTFGKqGzQPFIjht6fX9SD0jAo0B8LemmuHWiZrE0GPQyRLZHHIYF96bF",
+    "amount_usd": 27.4,
+    "amount_pyg": 200000.0,
+    "currency": "usd",
+    "customer_email": "avenuepy@gmail.com",
+    "payment_status": "pending",
+    "metadata": {
+      "order_id": "ORD-A0A2A89F",
+      "customer_email": "avenuepy@gmail.com",
+      "items": "100100-Calza Metalizada-Gris (M) x1",
+      "total_pyg": "200000",
+      "webhook_url": "http://avenue-shop-1.preview.emergentagent.comapi/shop/webhook/stripe"
+    },
+    "created_at": "2025-12-31T12:52:53.883079+00:00"
+  }
+]

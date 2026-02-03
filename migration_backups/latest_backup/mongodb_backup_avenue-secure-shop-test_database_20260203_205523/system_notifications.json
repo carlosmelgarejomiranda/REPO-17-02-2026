@@ -1,0 +1,145 @@
+[
+  {
+    "_id": {
+      "$oid": "697eebe0b758685bdd831bd7"
+    },
+    "id": "a93f847e-c1eb-4844-bfbf-aa909d544a22",
+    "type": "backup_failed",
+    "title": "🚨 Backup Fallido",
+    "message": "Error: No se pudo crear el dump de MongoDB. Acción requerida.",
+    "severity": "critical",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0,
+      "total_backups": 0,
+      "error": "No se pudo crear el dump de MongoDB"
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-01T06:00:00.505829+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697eebe0ff9711064ddf71c7"
+    },
+    "id": "40c7dd5f-84c8-49ae-9ee9-a9bc1bdfac62",
+    "type": "backup_failed",
+    "title": "🚨 Backup Fallido",
+    "message": "Error: No se pudo crear el dump de MongoDB. Acción requerida.",
+    "severity": "critical",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0,
+      "total_backups": 0,
+      "error": "No se pudo crear el dump de MongoDB"
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-01T06:00:00.496351+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697fb73fca02d7c4af020b49"
+    },
+    "id": "b0010c2d-09f7-4fa9-80d6-ef0db8c4d398",
+    "type": "backup_success",
+    "title": "✅ Backup Completado",
+    "message": "Backup de 0.73 MB (22 colecciones, 7316 docs) subido a Cloudinary.",
+    "severity": "info",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0.73,
+      "collections_count": 22,
+      "total_documents": 7316,
+      "total_backups": 7,
+      "error": null
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-01T20:27:43.536583+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69803d6494b8105b192885cd"
+    },
+    "id": "b812f39b-e655-4870-94d8-e2f49d19e227",
+    "type": "backup_success",
+    "title": "✅ Backup Completado",
+    "message": "Backup de 0.73 MB (22 colecciones, 7337 docs) subido a Cloudinary.",
+    "severity": "info",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0.73,
+      "collections_count": 22,
+      "total_documents": 7337,
+      "total_backups": 7,
+      "error": null
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-02T06:00:04.881194+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69803d653981d0a4939fa2a4"
+    },
+    "id": "c859922f-9ba4-4bde-ad19-56e55adac41e",
+    "type": "backup_success",
+    "title": "✅ Backup Completado",
+    "message": "Backup de 0.73 MB (22 colecciones, 7337 docs) subido a Cloudinary.",
+    "severity": "info",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0.73,
+      "collections_count": 22,
+      "total_documents": 7337,
+      "total_backups": 7,
+      "error": null
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-02T06:00:05.124620+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69818ee2ecde7d4f3544371e"
+    },
+    "id": "37581063-96ec-41e3-9b46-58aea0e46bdb",
+    "type": "backup_success",
+    "title": "✅ Backup Completado",
+    "message": "Backup de 0.74 MB (22 colecciones, 7565 docs) subido a Cloudinary.",
+    "severity": "info",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0.74,
+      "collections_count": 22,
+      "total_documents": 7565,
+      "total_backups": 7,
+      "error": null
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-03T06:00:02.833344+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69818ee294b8105b192ca9f4"
+    },
+    "id": "148f6751-83d0-439f-aa55-36c2b45b9593",
+    "type": "backup_success",
+    "title": "✅ Backup Completado",
+    "message": "Backup de 0.74 MB (22 colecciones, 7565 docs) subido a Cloudinary.",
+    "severity": "info",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0.74,
+      "collections_count": 22,
+      "total_documents": 7565,
+      "total_backups": 7,
+      "error": null
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-03T06:00:02.943857+00:00"
+  }
+]

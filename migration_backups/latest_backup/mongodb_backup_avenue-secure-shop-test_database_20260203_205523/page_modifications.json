@@ -1,0 +1,27 @@
+[
+  {
+    "_id": {
+      "$oid": "6957a81d7515c39a447c5441"
+    },
+    "page_id": "main-landing",
+    "modifications": {},
+    "updated_at": "2026-01-03T16:51:18.265876+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695cad7ed06747c0351517c9"
+    },
+    "page_id": "studio-landing",
+    "modifications": {
+      "text:text-studio-landing-32": "100% Gratis para Creators",
+      "text:text-studio-landing-8": "Compartí.",
+      "text:text-studio-landing-33": "",
+      "text:text-studio-landing-14": "",
+      "text:text-studio-landing-18": "Win-Win",
+      "text:text-studio-landing-20": "Collab",
+      "text:text-studio-landing-15": "Luces Godox",
+      "text:text-studio-landing-31": "100% Gratis para Creators"
+    },
+    "updated_at": "2026-01-06T06:38:03.575150+00:00"
+  }
+]

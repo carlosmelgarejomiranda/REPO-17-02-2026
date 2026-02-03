@@ -1,0 +1,444 @@
+[
+  {
+    "_id": {
+      "$oid": "695aba2bf5e86f734423fdb1"
+    },
+    "id": "email_20260104190619_BRD-4C6CAFD7",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - Test Brand - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-4C6CAFD7",
+    "status": "failed",
+    "error_message": "Too many requests. You can only make 2 requests per second. See rate limit response headers for more information. Or contact support to increase rate limit.",
+    "message_id": null,
+    "created_at": "2026-01-04T19:06:19.705398+00:00",
+    "sent_at": null
+  },
+  {
+    "_id": {
+      "$oid": "695b1648a14b8756267222b9"
+    },
+    "id": "email_20260105013920_BRD-75EDFC03",
+    "to_email": "carlos.melgarejo.miranda@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - test - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-75EDFC03",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "c1245d9f-eee3-4d4c-9dc1-a182b0251403",
+    "created_at": "2026-01-05T01:39:20.464010+00:00",
+    "sent_at": "2026-01-05T01:39:20.725604+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695b182ea14b8756267228a2"
+    },
+    "id": "email_20260105014725_BRD-0CD1A265",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - papaya",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-0CD1A265",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "70c2faf9-8b3c-4c96-8f0b-9c1d0158815c",
+    "created_at": "2026-01-05T01:47:25.815489+00:00",
+    "sent_at": "2026-01-05T01:47:26.041854+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695c24525a7d9a47a4c6ade1"
+    },
+    "id": "email_20260105205130_BRD-F1579348",
+    "to_email": "test@prueba.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - Test Brand - PRUEBA - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-F1579348",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "8a87e696-3d47-4ea8-9b31-e7d46e4daa55",
+    "created_at": "2026-01-05T20:51:30.138049+00:00",
+    "sent_at": "2026-01-05T20:51:30.403353+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695c256dfeea2686ad2ad7c3"
+    },
+    "id": "email_20260105205613_BRD-B9F70CF1",
+    "to_email": "test@example.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - PRUEBA WHATSAPP 2 - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-B9F70CF1",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "b7287763-2d0d-4c13-abd5-af7f45db08bd",
+    "created_at": "2026-01-05T20:56:13.552597+00:00",
+    "sent_at": "2026-01-05T20:56:13.864025+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695aba17f5e86f734423fdaa"
+    },
+    "id": "email_20260104190558_BRD-1AA26F3A",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - Test Brand - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-1AA26F3A",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "42983f42-0f05-46ef-b063-271b1d049bd9",
+    "created_at": "2026-01-04T19:05:58.820726+00:00",
+    "sent_at": "2026-01-04T19:05:59.068562+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695aba17f5e86f734423fdab"
+    },
+    "id": "email_20260104190559_BRD-1AA26F3A",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - Test Brand",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-1AA26F3A",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "a7e8c224-cf66-4e30-8331-bada7a4426f5",
+    "created_at": "2026-01-04T19:05:59.079307+00:00",
+    "sent_at": "2026-01-04T19:05:59.252068+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695aba2bf5e86f734423fdae"
+    },
+    "id": "email_20260104190619_ORD-EDD844B4",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Pedidos <pedidos@avenue.com.py>",
+    "subject": "✓ Pedido #ORD-EDD844B4 confirmado - AVENUE",
+    "sender_type": "ecommerce",
+    "entity_type": "order",
+    "entity_id": "ORD-EDD844B4",
+    "status": "failed",
+    "error_message": "Too many requests. You can only make 2 requests per second. See rate limit response headers for more information. Or contact support to increase rate limit.",
+    "message_id": null,
+    "created_at": "2026-01-04T19:06:19.200545+00:00",
+    "sent_at": null
+  },
+  {
+    "_id": {
+      "$oid": "695aba2bf5e86f734423fdaf"
+    },
+    "id": "email_20260104190619_ORD-EDD844B4",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Pedidos <pedidos@avenue.com.py>",
+    "subject": "💰 Nuevo Pedido #ORD-EDD844B4 - ₲ 150.000",
+    "sender_type": "ecommerce",
+    "entity_type": "order",
+    "entity_id": "ORD-EDD844B4",
+    "status": "failed",
+    "error_message": "Too many requests. You can only make 2 requests per second. See rate limit response headers for more information. Or contact support to increase rate limit.",
+    "message_id": null,
+    "created_at": "2026-01-04T19:06:19.377649+00:00",
+    "sent_at": null
+  },
+  {
+    "_id": {
+      "$oid": "695aba2cf5e86f734423fdb2"
+    },
+    "id": "email_20260104190619_BRD-4C6CAFD7",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - Test Brand",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-4C6CAFD7",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "949b9011-f85b-4ba9-8c55-343c448c3868",
+    "created_at": "2026-01-04T19:06:19.860881+00:00",
+    "sent_at": "2026-01-04T19:06:20.047625+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695b1649a14b8756267222ba"
+    },
+    "id": "email_20260105013921_BRD-75EDFC03",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - test",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-75EDFC03",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "1301500d-2273-448d-b188-3b1ba1eb32c6",
+    "created_at": "2026-01-05T01:39:21.331359+00:00",
+    "sent_at": "2026-01-05T01:39:21.498558+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695b182da14b8756267228a1"
+    },
+    "id": "email_20260105014724_BRD-0CD1A265",
+    "to_email": "carlos.melgarejo.miranda@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - papaya - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-0CD1A265",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "873ea145-7fa3-4827-93a2-d9e9d6a402a1",
+    "created_at": "2026-01-05T01:47:24.950455+00:00",
+    "sent_at": "2026-01-05T01:47:25.213346+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695c24535a7d9a47a4c6ade2"
+    },
+    "id": "email_20260105205131_BRD-F1579348",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - Test Brand - PRUEBA",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-F1579348",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "49a7707a-c349-498f-9bbb-cf61f2167a22",
+    "created_at": "2026-01-05T20:51:31.028153+00:00",
+    "sent_at": "2026-01-05T20:51:31.218612+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695c256efeea2686ad2ad7c4"
+    },
+    "id": "email_20260105205614_BRD-B9F70CF1",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - PRUEBA WHATSAPP 2",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-B9F70CF1",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "55747b26-15da-4ad0-bf7b-d52662f771e4",
+    "created_at": "2026-01-05T20:56:14.466239+00:00",
+    "sent_at": "2026-01-05T20:56:14.636885+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6963ea7b6ce2a15d87a68b44"
+    },
+    "id": "email_20260111182251_BRD-E9099F5A",
+    "to_email": "adri.aldana.vaesken@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - aldanastorepy - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-E9099F5A",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "ccf162b3-7ca6-4c42-9509-a4726926cd9e",
+    "created_at": "2026-01-11T18:22:51.103780+00:00",
+    "sent_at": "2026-01-11T18:22:51.422234+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6963ea7c6ce2a15d87a68b45"
+    },
+    "id": "email_20260111182252_BRD-E9099F5A",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - aldanastorepy",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-E9099F5A",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "a62f9d14-1306-4cd1-9adb-9a2cf5fa0730",
+    "created_at": "2026-01-11T18:22:52.036855+00:00",
+    "sent_at": "2026-01-11T18:22:52.217597+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69679df01f4eafe51ba55985"
+    },
+    "id": "email_20260114134519_22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "to_email": "carlos.melgarejo.miranda@gmail.com",
+    "from_email": "AVENUE UGC Marcas <infobrands@avenue.com.py>",
+    "subject": "🎬 ¡Tu campaña 'Vení a AVENUE: viví el showroom y contalo a tu manera' está activa! - AVENUE UGC",
+    "sender_type": "brands",
+    "entity_type": "ugc_campaign",
+    "entity_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "0424eace-ecb7-427d-af51-e99d158346fa",
+    "created_at": "2026-01-14T13:45:19.928766+00:00",
+    "sent_at": "2026-01-14T13:45:20.181184+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697251ea56fcb51d810f157d"
+    },
+    "id": "email_20260122163554_res_e1c075a0a0c0",
+    "to_email": "juanavelasquezmori@gmail.com",
+    "from_email": "AVENUE Studio <reservas@avenue.com.py>",
+    "subject": "📩 Solicitud recibida - 2026-01-24 - AVENUE Studio",
+    "sender_type": "studio",
+    "entity_type": "reservation",
+    "entity_id": "res_e1c075a0a0c0",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "c6867e6c-c425-492b-a51c-bd4afe2a9922",
+    "created_at": "2026-01-22T16:35:54.598077+00:00",
+    "sent_at": "2026-01-22T16:35:54.984917+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697251eb56fcb51d810f157e"
+    },
+    "id": "email_20260122163555_res_e1c075a0a0c0",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE Studio <reservas@avenue.com.py>",
+    "subject": "⏳ Nueva Solicitud - 2026-01-24 13:00",
+    "sender_type": "studio",
+    "entity_type": "reservation",
+    "entity_id": "res_e1c075a0a0c0",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "82feb168-6bb3-4dfb-86cc-46b8a1630c95",
+    "created_at": "2026-01-22T16:35:55.609693+00:00",
+    "sent_at": "2026-01-22T16:35:55.770698+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6977ac8adaa2866882934960"
+    },
+    "id": "email_20260126180354_4b21cba5-e368-4e87-8361-206269a6739f",
+    "to_email": "oscarrenegr2@gmail.com",
+    "from_email": "AVENUE UGC Marcas <infobrands@avenue.com.py>",
+    "subject": "🎬 ¡Tu campaña 'Descubrí OKI: probador & looks en el showroom de AVENUE' está activa! - AVENUE UGC",
+    "sender_type": "brands",
+    "entity_type": "ugc_campaign",
+    "entity_id": "4b21cba5-e368-4e87-8361-206269a6739f",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "3ee6baf0-e008-4382-857c-d83e03b630ca",
+    "created_at": "2026-01-26T18:03:54.267105+00:00",
+    "sent_at": "2026-01-26T18:03:54.517875+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6977e01db82d30a1c7934f80"
+    },
+    "id": "email_20260126214357_e5e1297c-fb1f-47ad-9d71-d1a77154b70f",
+    "to_email": "susana.doldan1@gmail.com",
+    "from_email": "AVENUE UGC Marcas <infobrands@avenue.com.py>",
+    "subject": "🎬 ¡Tu campaña 'Descubrí WUARANI: looks deportivos para gym, tenis y pádel (showroom AVENUE)' está activa! - AVENUE UGC",
+    "sender_type": "brands",
+    "entity_type": "ugc_campaign",
+    "entity_id": "e5e1297c-fb1f-47ad-9d71-d1a77154b70f",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "d9a74a0d-dba8-4a09-8cee-f63500d5d3e0",
+    "created_at": "2026-01-26T21:43:57.510966+00:00",
+    "sent_at": "2026-01-26T21:43:57.838595+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6978dd32828ee6ecf2379b0c"
+    },
+    "id": "email_20260127154346_ea85a9f8-eb58-4d0d-adef-459feedf9017",
+    "to_email": "gabriaguezceleste@gmail.com",
+    "from_email": "AVENUE UGC Marcas <infobrands@avenue.com.py>",
+    "subject": "🎬 ¡Tu campaña 'escubrí SARELLY: semijoyas & accesorios en tendencia (showroom AVENUE)' está activa! - AVENUE UGC",
+    "sender_type": "brands",
+    "entity_type": "ugc_campaign",
+    "entity_id": "ea85a9f8-eb58-4d0d-adef-459feedf9017",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "eed90a0e-f79c-4010-ac1e-4398dfa41934",
+    "created_at": "2026-01-27T15:43:46.254612+00:00",
+    "sent_at": "2026-01-27T15:43:46.561356+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cfca2d4bb064f5969d430"
+    },
+    "id": "email_20260130184657_BRD-03B26348",
+    "to_email": "test@test.com",
+    "from_email": "AVENUE UGC Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - Test - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-03B26348",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "2c6ddb6b-79c6-4b1b-ab11-e78f3f075ee7",
+    "created_at": "2026-01-30T18:46:57.926899+00:00",
+    "sent_at": "2026-01-30T18:46:58.185975+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cfca3d4bb064f5969d431"
+    },
+    "id": "email_20260130184658_BRD-03B26348",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE UGC Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - Test",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-03B26348",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "280db684-6845-43cb-b1de-cac7510c7d29",
+    "created_at": "2026-01-30T18:46:58.814767+00:00",
+    "sent_at": "2026-01-30T18:46:59.156606+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697d0400cce7730178ee9866"
+    },
+    "id": "email_20260130191824_BRD-8E71498D",
+    "to_email": "carlin@gamil.com",
+    "from_email": "AVENUE UGC Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Consulta recibida - el Pezpato de agua dulce - AVENUE",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-8E71498D",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "7e4a48ea-6758-4a06-8f4b-92f505d3a6c8",
+    "created_at": "2026-01-30T19:18:24.294627+00:00",
+    "sent_at": "2026-01-30T19:18:24.628286+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697d0401cce7730178ee9867"
+    },
+    "id": "email_20260130191825_BRD-8E71498D",
+    "to_email": "avenuepy@gmail.com",
+    "from_email": "AVENUE UGC Marcas <infobrands@avenue.com.py>",
+    "subject": "🏢 Nueva Consulta - el Pezpato de agua dulce",
+    "sender_type": "brands",
+    "entity_type": "brand_inquiry",
+    "entity_id": "BRD-8E71498D",
+    "status": "sent",
+    "error_message": null,
+    "message_id": "0fc1d107-334e-4b30-94d9-40e444023a7b",
+    "created_at": "2026-01-30T19:18:25.237908+00:00",
+    "sent_at": "2026-01-30T19:18:25.514733+00:00"
+  }
+]
