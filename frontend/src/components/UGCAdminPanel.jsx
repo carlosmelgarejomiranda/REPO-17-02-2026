@@ -597,7 +597,7 @@ const SystemPanel = ({ getAuthHeaders }) => {
     
     try {
       const headers = getAuthHeaders();
-      const res = await fetch(`${API_URL}/api/admin/trigger-backup`, {
+      const res = await fetch(`${API_URL}/api/admin/backup/run`, {
         method: 'POST',
         headers
       });
@@ -605,7 +605,10 @@ const SystemPanel = ({ getAuthHeaders }) => {
       const data = await res.json();
       
       if (res.ok) {
-        setBackupResult({ success: true, message: data.message });
+        setBackupResult({ 
+          success: true, 
+          message: `Backup completado: ${data.collections} colecciones, ${data.documents?.toLocaleString()} documentos` 
+        });
         setLastBackupTime(new Date().toLocaleString('es-PY'));
       } else {
         setBackupResult({ success: false, message: data.detail || 'Error al crear backup' });
@@ -614,32 +617,6 @@ const SystemPanel = ({ getAuthHeaders }) => {
       setBackupResult({ success: false, message: 'Error de conexión' });
     } finally {
       setBackupLoading(false);
-    }
-  };
-
-  const handleFullBackup = async () => {
-    setFullBackupLoading(true);
-    setBackupResult(null);
-    
-    try {
-      const headers = getAuthHeaders();
-      const res = await fetch(`${API_URL}/api/admin/trigger-full-backup`, {
-        method: 'POST',
-        headers
-      });
-      
-      const data = await res.json();
-      
-      if (res.ok) {
-        setBackupResult({ success: true, message: `Full backup completado: ${data.file}` });
-        setLastBackupTime(new Date().toLocaleString('es-PY'));
-      } else {
-        setBackupResult({ success: false, message: data.detail || 'Error al crear full backup' });
-      }
-    } catch (err) {
-      setBackupResult({ success: false, message: 'Error de conexión' });
-    } finally {
-      setFullBackupLoading(false);
     }
   };
 
