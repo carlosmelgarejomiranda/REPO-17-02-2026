@@ -603,14 +603,14 @@ const SystemPanel = ({ getAuthHeaders }) => {
       
       const data = await res.json();
       
-      if (res.ok) {
+      if (res.ok && data.success) {
         setBackupResult({ 
           success: true, 
-          message: `Backup completado: ${data.collections} colecciones, ${data.documents?.toLocaleString()} documentos` 
+          message: `${data.message} (${data.collections} colecciones, ${data.documents?.toLocaleString()} docs)` 
         });
         setLastBackupTime(new Date().toLocaleString('es-PY'));
       } else {
-        setBackupResult({ success: false, message: data.detail || 'Error al crear backup' });
+        setBackupResult({ success: false, message: data.detail || data.message || 'Error al crear backup' });
       }
     } catch (err) {
       setBackupResult({ success: false, message: 'Error de conexión' });
