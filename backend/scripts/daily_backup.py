@@ -270,6 +270,32 @@ def create_backup():
         
         logger.info(f"Exported {exported_collections} collections, {total_documents} documents total")
         
+        # Generate verification manifest
+        manifest = {
+            'backup_info': {
+                'created_at': datetime.now(timezone.utc).isoformat(),
+                'database': DB_NAME,
+                'backup_name': backup_name,
+                'total_collections': exported_collections,
+                'total_documents': total_documents
+            },
+            'collections': {}
+        }
+        
+        # Read each exported file and add to manifest
+        for json_file in backup_path.glob("*.json"):
+            coll_name = json_file.stem
+            with open(json_file, 'r') as f:
+                data = json.load(f)
+                manifest['collections'][coll_name] = len(data)
+        
+        # Write manifest
+        manifest_file = backup_path / "_MANIFEST.json"
+        with open(manifest_file, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"Generated verification manifest: _MANIFEST.json")
+        
         # Compress the backup
         logger.info("Compressing backup...")
         shutil.make_archive(
