@@ -234,22 +234,18 @@ def create_backup():
         total_documents = 0
         exported_collections = 0
         
-        # Export each collection to JSON
+        # Export each collection to JSON (INCLUDING empty ones)
         for coll_name in collections:
-            # Skip large binary collections
+            # Skip ONLY large binary chunks
             if coll_name in SKIP_COLLECTIONS:
-                logger.info(f"  Skipping {coll_name} (binary/temp data)")
+                logger.info(f"  Skipping {coll_name} (binary chunks)")
                 continue
             
             try:
                 collection = db[coll_name]
                 doc_count = collection.count_documents({})
                 
-                if doc_count == 0:
-                    logger.info(f"  Skipping {coll_name} (empty)")
-                    continue
-                
-                # Export documents
+                # Export documents (even if empty - creates empty array)
                 documents = list(collection.find({}))
                 
                 # Write to JSON file using bson json_util for proper serialization
@@ -259,10 +255,12 @@ def create_backup():
                 
                 total_documents += doc_count
                 exported_collections += 1
-                logger.info(f"  Exported {coll_name}: {doc_count} documents")
+                
+                status = "✅" if doc_count > 0 else "⚪"
+                logger.info(f"  {status} Exported {coll_name}: {doc_count} documents")
                 
             except Exception as e:
-                logger.warning(f"  Failed to export {coll_name}: {e}")
+                logger.warning(f"  ❌ Failed to export {coll_name}: {e}")
                 continue
         
         client.close()
