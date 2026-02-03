@@ -3051,6 +3051,139 @@ async def export_collection_to_excel(request: Request):
         logger.error(f"Excel export error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== BACKUP VERIFICATION ENDPOINTS ====================
+
+@api_router.get("/admin/backup/verify-current")
+async def verify_current_db_state(request: Request):
+    """Get current DB state for backup verification (admin only)"""
+    await require_admin(request)
+    
+    try:
+        collections = await db.list_collection_names()
+        stats = {}
+        total_docs = 0
+        
+        for coll_name in sorted(collections):
+            count = await db[coll_name].count_documents({})
+            stats[coll_name] = count
+            total_docs += count
+        
+        return {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "database": db.name,
+            "total_collections": len(collections),
+            "total_documents": total_docs,
+            "collections": stats
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/backup/verify-file")
+async def verify_backup_file(request: Request):
+    """
+    Verify an uploaded backup file against current DB
+    Expects JSON with backup manifest or collection counts
+    """
+    await require_admin(request)
+    
+    try:
+        body = await request.json()
+        backup_counts = body.get("collections", {})
+        
+        if not backup_counts:
+            raise HTTPException(status_code=400, detail="No collection counts provided")
+        
+        # Get current DB state
+        collections = await db.list_collection_names()
+        current_stats = {}
+        for coll_name in collections:
+            current_stats[coll_name] = await db[coll_name].count_documents({})
+        
+        # Compare
+        all_colls = set(backup_counts.keys()) | set(current_stats.keys())
+        
+        issues = []
+        details = {}
+        
+        for coll_name in sorted(all_colls):
+            backup_count = backup_counts.get(coll_name, 0)
+            db_count = current_stats.get(coll_name, 0)
+            
+            status = "OK"
+            if coll_name not in backup_counts:
+                status = "MISSING_IN_BACKUP"
+                if db_count > 0:
+                    issues.append({
+                        "type": "MISSING_COLLECTION",
+                        "collection": coll_name,
+                        "db_count": db_count,
+                        "severity": "HIGH"
+                    })
+            elif coll_name not in current_stats:
+                status = "EXTRA_IN_BACKUP"
+            elif backup_count != db_count:
+                status = "COUNT_MISMATCH"
+                diff = db_count - backup_count
+                issues.append({
+                    "type": "RECORD_MISMATCH",
+                    "collection": coll_name,
+                    "db_count": db_count,
+                    "backup_count": backup_count,
+                    "difference": diff,
+                    "severity": "MEDIUM" if diff > 0 else "INFO"
+                })
+            
+            details[coll_name] = {
+                "status": status,
+                "db_count": db_count,
+                "backup_count": backup_count
+            }
+        
+        return {
+            "verified_at": datetime.now(timezone.utc).isoformat(),
+            "is_complete": len(issues) == 0,
+            "summary": {
+                "collections_in_db": len(current_stats),
+                "collections_in_backup": len(backup_counts),
+                "missing_in_backup": [c for c in current_stats if c not in backup_counts],
+                "issues_count": len(issues)
+            },
+            "issues": issues,
+            "details": details
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Backup verification error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/backup/create-full")
+async def create_full_backup_endpoint(request: Request):
+    """Create a FULL backup of ALL collections (admin only)"""
+    await require_admin(request)
+    
+    import sys
+    sys.path.insert(0, '/app/backend/scripts')
+    from backup_manager import BackupManager
+    
+    try:
+        manager = BackupManager()
+        result = manager.create_full_backup(output_dir="/tmp")
+        
+        if result['success']:
+            # Return the file for download
+            from fastapi.responses import FileResponse
+            return FileResponse(
+                path=result['archive_path'],
+                filename=os.path.basename(result['archive_path']),
+                media_type='application/gzip'
+            )
+        else:
+            raise HTTPException(status_code=500, detail="Backup creation failed")
+    except Exception as e:
+        logger.error(f"Full backup error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app (moved here to include backup endpoint)
 app.include_router(api_router)
 
