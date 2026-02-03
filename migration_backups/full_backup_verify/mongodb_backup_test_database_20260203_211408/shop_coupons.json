@@ -1,0 +1,3587 @@
+[
+  {
+    "_id": {
+      "$oid": "6959b52361734d70774b1970"
+    },
+    "id": "daf47f03-7eb3-4d6f-83f1-d4130fbde122",
+    "code": "TEST10",
+    "discount_type": "percentage",
+    "discount_value": 10.0,
+    "min_purchase": 0.0,
+    "max_uses": 100,
+    "current_uses": 0,
+    "expires_at": null,
+    "is_active": true,
+    "description": "Test coupon 10% off",
+    "created_at": "2026-01-04T00:32:35.781046+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6959b62c61734d70774b1f56"
+    },
+    "id": "b0180706-e1b7-4426-a48a-4fa5f9562c0f",
+    "code": "VERIFY20",
+    "discount_type": "percentage",
+    "discount_value": 20.0,
+    "min_purchase": null,
+    "max_uses": 50,
+    "current_uses": 0,
+    "expires_at": null,
+    "is_active": true,
+    "description": "Test verification coupon 20% discount",
+    "created_at": "2026-01-04T00:37:00.951831+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6970053b100b93468ab0638a"
+    },
+    "id": "5afce537-3f0b-4044-9ae9-88ce681d7e66",
+    "code": "BIENVENIDOE2AECC",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-19T22:44:11.140834+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para enzopietrafesaovelar@gmail.com",
+    "user_id": "user_46ddd07cb8d3",
+    "created_at": "2026-01-20T22:44:11.140889+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6970dee8633b92cef0c3c4b1"
+    },
+    "id": "90234608-a794-4cbe-973c-05a7ea184338",
+    "code": "BIENVENIDO2EE8DB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-20T14:12:56.972054+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para aracelitorales.at@gmail.com",
+    "user_id": "user_78c2aa884ad6",
+    "created_at": "2026-01-21T14:12:56.972076+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6970eaee47efa1d9bebfc157"
+    },
+    "id": "f5f26870-5929-4e27-b0ed-e424f99570d6",
+    "code": "BIENVENIDO01214A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-20T15:04:14.138413+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para agsnascimento@hotmail.com",
+    "user_id": "user_36c7f27eeb32",
+    "created_at": "2026-01-21T15:04:14.138447+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6970eebc76f96ae5a1389975"
+    },
+    "id": "c6970ce4-c9a5-4bea-8939-012275fcdc99",
+    "code": "BIENVENIDO9983E4",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-20T15:20:28.349350+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para luanaasaite@gmail.com",
+    "user_id": "user_ae46706e32c3",
+    "created_at": "2026-01-21T15:20:28.349452+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6970efb876f96ae5a1389978"
+    },
+    "id": "1df77b65-2861-400b-bf1d-845f02efa3ae",
+    "code": "BIENVENIDOAC1BDB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-20T15:24:40.649486+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para eliaspinho07@gmail.com",
+    "user_id": "user_94e19b7d44a8",
+    "created_at": "2026-01-21T15:24:40.649511+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6971018f76f96ae5a138d026"
+    },
+    "id": "eb6b8f12-b750-44ba-877b-097499e4eddb",
+    "code": "BIENVENIDOC7ACB2",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-20T16:40:47.388275+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para chriszv15py@gmail.com",
+    "user_id": "user_1fc97843624d",
+    "created_at": "2026-01-21T16:40:47.388337+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69712a1e82bbf3b2fa7b1421"
+    },
+    "id": "4e0edefb-e76e-47f3-b651-ab439d8d8aa0",
+    "code": "BIENVENIDO91C38A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-20T19:33:50.472503+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para oscarsoliscabello@gmail.com",
+    "user_id": "user_eea5fb17db03",
+    "created_at": "2026-01-21T19:33:50.472546+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697159a614cca3888b5f2190"
+    },
+    "id": "df85fceb-c7da-4f47-8f5b-9331f73e0cab",
+    "code": "BIENVENIDO432114",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-20T22:56:38.456696+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para anapaulamateos05@gmail.com",
+    "user_id": "user_dee32a0dbf4d",
+    "created_at": "2026-01-21T22:56:38.456715+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6971812414cca3888b5f9b10"
+    },
+    "id": "4ecc8dac-bfbf-4f1e-9157-cf2f8edd3682",
+    "code": "BIENVENIDO960131",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T01:45:08.553077+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para sanchezmauraaramy@gmail.com",
+    "user_id": "user_6cdc01a71451",
+    "created_at": "2026-01-22T01:45:08.553093+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69720b5579155ff36b53d3f1"
+    },
+    "id": "044d19b7-d90e-4026-a34e-7b95fe8aec9d",
+    "code": "BIENVENIDOE9FFB0",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T11:34:45.834403+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para sharafinraciel@gmail.com",
+    "user_id": "user_6f1d18abf0ef",
+    "created_at": "2026-01-22T11:34:45.834432+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69720bec79155ff36b53da06"
+    },
+    "id": "0490a54c-72b1-458d-895a-631002cbcbf9",
+    "code": "BIENVENIDO0825CB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T11:37:16.289314+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para camigrassigallo@gmail.com",
+    "user_id": "user_95354e190072",
+    "created_at": "2026-01-22T11:37:16.289339+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6972543f56fcb51d810f21b5"
+    },
+    "id": "0d54f1b1-d5a6-41c3-9eb9-56abd2d5ddc9",
+    "code": "BIENVENIDO6F408A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T16:45:51.137244+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para joseguillenmachain@gmail.com",
+    "user_id": "user_3fde3c0e20b2",
+    "created_at": "2026-01-22T16:45:51.137280+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6972548456fcb51d810f21b8"
+    },
+    "id": "aef1c2b7-e594-4899-a357-5e2bdad6751b",
+    "code": "BIENVENIDO84BB87",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T16:47:00.337809+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para avalosbelen97@gmail.com",
+    "user_id": "user_8dcff75f743f",
+    "created_at": "2026-01-22T16:47:00.337838+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6972588256fcb51d810f2df1"
+    },
+    "id": "6a040077-a408-4745-93e3-adb6d0dd789f",
+    "code": "BIENVENIDO7BEC0D",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T17:04:02.547340+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para tacmiliara@gmail.com",
+    "user_id": "user_9285cea76512",
+    "created_at": "2026-01-22T17:04:02.547433+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697258ff56fcb51d810f2df3"
+    },
+    "id": "0c5bdc06-3484-4f59-ae4f-9e4ac8b4c934",
+    "code": "BIENVENIDOBBDDDA",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T17:06:07.042461+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para kathyellesiqueira23@gmail.com",
+    "user_id": "user_ac87f5899177",
+    "created_at": "2026-01-22T17:06:07.042485+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69725a91396bf5215d9fc56b"
+    },
+    "id": "3dab8687-8cd9-484a-8bc8-177cb7f0b0ae",
+    "code": "BIENVENIDOEB626E",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T17:12:49.712466+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para geralezcanooo30@gmail.com",
+    "user_id": "user_5eff434f0a12",
+    "created_at": "2026-01-22T17:12:49.712478+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69727697be7fe3e39e16363c"
+    },
+    "id": "c0fe1d2f-1f61-4dd3-96d7-dc203c1f519e",
+    "code": "BIENVENIDOF01D22",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T19:12:23.378630+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para tonyparedes833@gmail.com",
+    "user_id": "user_652ea8497bbb",
+    "created_at": "2026-01-22T19:12:23.378654+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6972b4ac80a99eebe09ab82e"
+    },
+    "id": "fadf21f9-fde1-477f-b86e-8ce385c8bb92",
+    "code": "BIENVENIDOA036E1",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-21T23:37:16.779981+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para noeeliza.creador@gmail.com",
+    "user_id": "user_a2b7d29260a5",
+    "created_at": "2026-01-22T23:37:16.780006+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973a2ff4a9d0e8d67c86d1b"
+    },
+    "id": "4aab936b-b2c5-4b28-9b26-4757157537b6",
+    "code": "BIENVENIDOF8896A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-22T16:34:07.137464+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para chung.ivonne06@gmail.com",
+    "user_id": "user_da21dbb8d793",
+    "created_at": "2026-01-23T16:34:07.137494+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6973e8421a2b13a4ab89e979"
+    },
+    "id": "f897060b-ff1c-4414-a87b-a2811f4e635a",
+    "code": "BIENVENIDOBE3772",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-22T21:29:38.192499+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para araceliarce124@icloud.com",
+    "user_id": "user_9419864a94b5",
+    "created_at": "2026-01-23T21:29:38.192524+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6978ea33ab697a220067a4db"
+    },
+    "id": "7bd75536-6083-40c1-b6b2-a98c08cc7656",
+    "code": "BIENVENIDODA176D",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-26T16:39:15.917885+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para pleyisael@gmail.com",
+    "user_id": "user_1b432192066d",
+    "created_at": "2026-01-27T16:39:15.917913+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697942522a49ad1cdcc5e16a"
+    },
+    "id": "4ffdf51a-441c-4a32-ad79-a0ae0488b64d",
+    "code": "BIENVENIDO3099A7",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-26T22:55:14.142962+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para lenasop99@gmail.com",
+    "user_id": "user_f97b68ae0b66",
+    "created_at": "2026-01-27T22:55:14.142996+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69794f532a49ad1cdcc6069a"
+    },
+    "id": "84c9032c-70eb-4fb4-8775-9abfdc6aca58",
+    "code": "BIENVENIDOF719BD",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-26T23:50:43.654288+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para luzpalomav@gmail.com",
+    "user_id": "user_fe1e28013228",
+    "created_at": "2026-01-27T23:50:43.654313+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69796097c85bd55e9a422112"
+    },
+    "id": "e6536ef7-28d7-4605-a2bb-dec19543a500",
+    "code": "BIENVENIDO356371",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T01:04:23.839631+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para cassajazmin30@gmail.com",
+    "user_id": "user_fe2a2ee19873",
+    "created_at": "2026-01-28T01:04:23.839645+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697963c3c85bd55e9a422d7b"
+    },
+    "id": "5f2b686e-aab6-4ef5-b8b8-0eda75bb4f5c",
+    "code": "BIENVENIDOC0240F",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T01:17:55.899728+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para go24willian@gmail.com",
+    "user_id": "user_2e0346a2917e",
+    "created_at": "2026-01-28T01:17:55.899745+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697965edc85bd55e9a4233b4"
+    },
+    "id": "2da23f11-fd24-40d3-bc15-6969c3e12d6c",
+    "code": "BIENVENIDOAE2867",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T01:27:09.600874+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para sebastiangaleano2005@icloud.com",
+    "user_id": "user_eeb02fa9e1ad",
+    "created_at": "2026-01-28T01:27:09.600892+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69796bf1c85bd55e9a424651"
+    },
+    "id": "1477aa67-4d3f-4884-9586-1cf6a905cbdc",
+    "code": "BIENVENIDOD260B8",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T01:52:49.468534+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para williangonzalez13@icloud.com",
+    "user_id": "user_f6822447e7db",
+    "created_at": "2026-01-28T01:52:49.468550+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69796de098bc6ee97544c1b9"
+    },
+    "id": "0bab4c51-e0a5-472f-84ca-8bef76de86ce",
+    "code": "BIENVENIDODA20F9",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T02:01:04.439359+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para isaiasortcez@gmail.com",
+    "user_id": "user_71f038406329",
+    "created_at": "2026-01-28T02:01:04.439443+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979847598bc6ee975450c1f"
+    },
+    "id": "b90f9f8e-8e02-4765-950c-6d153565d85f",
+    "code": "BIENVENIDOAD9D94",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T03:37:25.569831+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para fofofrancodi@gmail.com",
+    "user_id": "user_4c80f8985730",
+    "created_at": "2026-01-28T03:37:25.569852+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697985d1c85bd55e9a4296f9"
+    },
+    "id": "a7f67f9f-61f3-42cc-917e-2203975417e7",
+    "code": "BIENVENIDO4E1F72",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T03:43:13.499085+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para pazestigarribia@icloud.com",
+    "user_id": "user_9370be1550d9",
+    "created_at": "2026-01-28T03:43:13.499172+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979893d98bc6ee975451890"
+    },
+    "id": "498abeb1-95e8-473d-a925-3ba77f2c3e45",
+    "code": "BIENVENIDOEC6177",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T03:57:49.361179+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para redesnath66@gmail.com",
+    "user_id": "user_d00e2a87bfb0",
+    "created_at": "2026-01-28T03:57:49.361200+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69798ec4c85bd55e9a42afd6"
+    },
+    "id": "fec1e0d6-9118-4269-b0ed-db6344d4c843",
+    "code": "BIENVENIDOF3FF5A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T04:21:24.046727+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para estechellucas@gmail.com",
+    "user_id": "user_4c061e8d398d",
+    "created_at": "2026-01-28T04:21:24.046741+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979917698bc6ee97545316a"
+    },
+    "id": "56bacbff-3864-4b04-a83a-d53202b6de59",
+    "code": "BIENVENIDOA2E5A9",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T04:32:54.664466+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para nflopy179@gmail.com",
+    "user_id": "user_69a966e9884c",
+    "created_at": "2026-01-28T04:32:54.664496+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979924098bc6ee97545316e"
+    },
+    "id": "a38211a0-46c2-44d7-905d-f8686372e10e",
+    "code": "BIENVENIDO82B515",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T04:36:16.960155+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para seuxmarilyn@gmail.com",
+    "user_id": "user_2e3de75b0d1d",
+    "created_at": "2026-01-28T04:36:16.960175+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697995ea98bc6ee975453ddc"
+    },
+    "id": "154ab4a1-eff8-4476-95cb-bdecc73030d9",
+    "code": "BIENVENIDO1B15C5",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T04:51:54.664761+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para contactocomsheyla@gmail.com",
+    "user_id": "user_03f4b4a3275e",
+    "created_at": "2026-01-28T04:51:54.664790+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697996ec98bc6ee975454412"
+    },
+    "id": "dac5b098-393f-43fa-ac92-d85e711ff62f",
+    "code": "BIENVENIDO5284D2",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T04:56:12.175703+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para nahir7992@gmail.com",
+    "user_id": "user_10e3f053168b",
+    "created_at": "2026-01-28T04:56:12.175721+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697999c998bc6ee975454a4b"
+    },
+    "id": "631783ce-8b23-4074-9922-6d6355837084",
+    "code": "BIENVENIDO2656DD",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T05:08:25.464423+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para correafiorella066@gmail.con",
+    "user_id": "user_21318411abf9",
+    "created_at": "2026-01-28T05:08:25.464458+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69799c36c85bd55e9a42db59"
+    },
+    "id": "bd1b6a5b-3915-445d-8c78-0f7ba357eab0",
+    "code": "BIENVENIDO6FAF5D",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T05:18:46.821011+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para contrerafiorella066@gmail.com",
+    "user_id": "user_79ee218fbaad",
+    "created_at": "2026-01-28T05:18:46.821100+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979de54c85bd55e9a43ae04"
+    },
+    "id": "3cfc33c8-97a6-49ce-a63e-3c5f7b11b5fc",
+    "code": "BIENVENIDOBBB554",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T10:00:52.603244+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para milkilop77@icloud.com",
+    "user_id": "user_15297ba6aebe",
+    "created_at": "2026-01-28T10:00:52.603270+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979e55298bc6ee975463bf0"
+    },
+    "id": "a935f195-cc60-470c-a468-144577b8fd56",
+    "code": "BIENVENIDOBAD923",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T10:30:42.064717+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para jime.ramirez93@gmail.com",
+    "user_id": "user_3db133f4b26c",
+    "created_at": "2026-01-28T10:30:42.064741+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979e7b0c85bd55e9a43cd03"
+    },
+    "id": "2cd2f436-cb70-436c-aa51-c4a9b71d8315",
+    "code": "BIENVENIDO2353A0",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T10:40:48.945618+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para aramicespedes1704@gmail.com",
+    "user_id": "user_3f7c221f8578",
+    "created_at": "2026-01-28T10:40:48.945649+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979eca598bc6ee9754654be"
+    },
+    "id": "70434cc5-cfad-4dbe-854e-154204b4a57e",
+    "code": "BIENVENIDO1F989C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T11:01:57.862472+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para araujokevinxd@gmail.com",
+    "user_id": "user_930d66c8b76b",
+    "created_at": "2026-01-28T11:01:57.862498+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979eee098bc6ee975465af7"
+    },
+    "id": "67c5d705-349b-45b7-a792-2dd9a5d5710b",
+    "code": "BIENVENIDOE1129A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T11:11:28.562712+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para shyrangeles42@gmail.com",
+    "user_id": "user_df0b910bc86f",
+    "created_at": "2026-01-28T11:11:28.562729+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979f267c85bd55e9a43ec28"
+    },
+    "id": "bd132aa5-e56b-4b24-a5cd-20d0e28b44e3",
+    "code": "BIENVENIDOBD6076",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T11:26:31.500575+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para giselajtlesme@gmail.com",
+    "user_id": "user_4a1288630382",
+    "created_at": "2026-01-28T11:26:31.500600+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979f4cac85bd55e9a43f261"
+    },
+    "id": "ee19d595-6b3d-493d-9266-c689097526ca",
+    "code": "BIENVENIDO21C239",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T11:36:42.694231+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para ximenaplanas01@gmail.com",
+    "user_id": "user_79cb32972db2",
+    "created_at": "2026-01-28T11:36:42.694248+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979f7bcc85bd55e9a43fecd"
+    },
+    "id": "43bf2f7c-2d60-42cd-8da4-498566566c0e",
+    "code": "BIENVENIDO0B10FC",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T11:49:16.841564+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para xixiplanas01@hotmail.com",
+    "user_id": "user_fddb8ba4f51f",
+    "created_at": "2026-01-28T11:49:16.841584+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6979fd3f98bc6ee975468662"
+    },
+    "id": "5428aaf6-a9a9-4182-aa66-132dd956cf04",
+    "code": "BIENVENIDO3E9356",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T12:12:47.425713+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para ahilenfleita@gmail.com",
+    "user_id": "user_d7f65e88ca94",
+    "created_at": "2026-01-28T12:12:47.425743+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a00d6c85bd55e9a441dd9"
+    },
+    "id": "6d7337e4-6a23-4986-9af7-057aaea87de1",
+    "code": "BIENVENIDO03C079",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T12:28:06.047854+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para miguelangelarevalo677@gmail.com",
+    "user_id": "user_744f1c12a457",
+    "created_at": "2026-01-28T12:28:06.047874+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a033a98bc6ee975469900"
+    },
+    "id": "60b8114f-0a7c-40c9-8259-0c03fdb7608d",
+    "code": "BIENVENIDO24F22A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T12:38:18.345502+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para leonardad099@gmail.com",
+    "user_id": "user_0ce8fb04f912",
+    "created_at": "2026-01-28T12:38:18.345523+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a054b98bc6ee975469f38"
+    },
+    "id": "9984465a-488a-4a49-9d17-9247bd1c9ebb",
+    "code": "BIENVENIDO72A367",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T12:47:07.436723+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para virginiacristaldolencina@gmail.com",
+    "user_id": "user_59d34fda2d90",
+    "created_at": "2026-01-28T12:47:07.436739+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a055498bc6ee975469f3c"
+    },
+    "id": "4431f2be-43fa-45c0-a4e8-c76c8f8f87ff",
+    "code": "BIENVENIDO997B3E",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T12:47:16.050456+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para palorioslopez@gmail.com",
+    "user_id": "user_68e443f712ec",
+    "created_at": "2026-01-28T12:47:16.050472+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a07f598bc6ee97546aba5"
+    },
+    "id": "61e24348-4fee-49ac-81fa-c8b7c42b4c72",
+    "code": "BIENVENIDO5D22D1",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T12:58:29.689771+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para marialromero998@gmail.com",
+    "user_id": "user_f9f729955b67",
+    "created_at": "2026-01-28T12:58:29.689798+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a0a7ac85bd55e9a443cf5"
+    },
+    "id": "732480be-d887-496c-967d-877ac767d49f",
+    "code": "BIENVENIDO05CA06",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T13:09:14.249364+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para estefaniaacevedo97@gmail.com",
+    "user_id": "user_b765e6b78b76",
+    "created_at": "2026-01-28T13:09:14.249394+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a0b53c85bd55e9a443cfa"
+    },
+    "id": "159b9851-02b8-45e3-8358-8819ea7f1024",
+    "code": "BIENVENIDOA9D294",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T13:12:51.840559+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para hugonoguera74@gmail.com",
+    "user_id": "user_f2d12b7d8392",
+    "created_at": "2026-01-28T13:12:51.840590+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a0d00c85bd55e9a444333"
+    },
+    "id": "fa4a8524-c71e-47d2-96fb-6329f55ae444",
+    "code": "BIENVENIDO792162",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T13:20:00.948481+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para josiasdiaz053@gmail.con",
+    "user_id": "user_9ae0b257550c",
+    "created_at": "2026-01-28T13:20:00.948508+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a0dbd98bc6ee97546b80f"
+    },
+    "id": "68ddfbed-a607-4def-8730-4d84e645ac21",
+    "code": "BIENVENIDO77112D",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T13:23:09.669035+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para anidani1997@gmail.com",
+    "user_id": "user_81eb3c5e4bf6",
+    "created_at": "2026-01-28T13:23:09.669064+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a12ebc85bd55e9a444fb1"
+    },
+    "id": "772c8896-4bd9-4ec9-a8a6-2138b65ea57a",
+    "code": "BIENVENIDOD7564A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T13:45:15.745051+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para recanterol@gmail.com",
+    "user_id": "user_3b0851ddc43d",
+    "created_at": "2026-01-28T13:45:15.745072+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a1646c85bd55e9a445c3c"
+    },
+    "id": "03a75505-09a5-4829-a8dc-33442b9123f3",
+    "code": "BIENVENIDO9476FD",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T13:59:34.042944+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para f4rommick@gmail.com",
+    "user_id": "user_6872472d5978",
+    "created_at": "2026-01-28T13:59:34.042967+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a1a9d63b41f8b6813b1dd"
+    },
+    "id": "f5d2dc32-f22c-4350-8a60-5547ba6f7fcd",
+    "code": "BIENVENIDODBB60B",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T14:18:05.018057+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para mariapazzarate091@gmail.com",
+    "user_id": "user_6aa0aa17197f",
+    "created_at": "2026-01-28T14:18:05.018075+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a2023f150c10d31a56818"
+    },
+    "id": "32794fc9-a751-4ce7-895a-0ebb1ff310db",
+    "code": "BIENVENIDO55D3B3",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T14:41:39.882262+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para palomave13@gmail.com",
+    "user_id": "user_eea3582dbb94",
+    "created_at": "2026-01-28T14:41:39.882365+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a23c4f150c10d31a5749e"
+    },
+    "id": "0f3b34e2-0842-4422-983d-b0bec61031b5",
+    "code": "BIENVENIDOF18CF5",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T14:57:08.882964+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para isabelaquino555vida@gmail.com",
+    "user_id": "user_943bcc385988",
+    "created_at": "2026-01-28T14:57:08.882992+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a23d863b41f8b6813cacf"
+    },
+    "id": "79b67c69-ac6f-43d5-ae56-0b1e0a8134de",
+    "code": "BIENVENIDO0639E5",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T14:57:28.725662+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para marielcardozo912@gmail.com",
+    "user_id": "user_3eaf20e44f42",
+    "created_at": "2026-01-28T14:57:28.725682+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a247863b41f8b6813d10e"
+    },
+    "id": "12368178-7f75-4c7c-8820-7a14fe135cff",
+    "code": "BIENVENIDO87F993",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T15:00:08.924520+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para lezcanoceciliameza@gmail.com",
+    "user_id": "user_fedeeb2a2e30",
+    "created_at": "2026-01-28T15:00:08.924543+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a2499f150c10d31a57ad3"
+    },
+    "id": "a7b19913-1b98-42da-a0d6-02f597f0d2e6",
+    "code": "BIENVENIDOEB4497",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T15:00:41.579366+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para marembordonfarina@gmail.com",
+    "user_id": "user_80d5a5174583",
+    "created_at": "2026-01-28T15:00:41.579388+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a2595f150c10d31a57ad8"
+    },
+    "id": "b07f29d6-5043-409c-92cb-be5b98481264",
+    "code": "BIENVENIDO83A4C9",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T15:04:53.624083+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para natashagallardoyanuz@hotmail.com",
+    "user_id": "user_fb6c6a752770",
+    "created_at": "2026-01-28T15:04:53.624103+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a25c1f150c10d31a57adc"
+    },
+    "id": "0b2e60f6-b069-4db9-b130-e8d9390dbe13",
+    "code": "BIENVENIDO2235B4",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T15:05:37.417962+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para arevaloluana870@gmail.com",
+    "user_id": "user_c7aad99500d1",
+    "created_at": "2026-01-28T15:05:37.417979+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a2655f150c10d31a57ae0"
+    },
+    "id": "a44f4136-c374-42a5-b06b-0a2516dc8444",
+    "code": "BIENVENIDO230E3B",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T15:08:05.273371+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para paulamilenna22@gmail.com",
+    "user_id": "user_6d82c4e09616",
+    "created_at": "2026-01-28T15:08:05.273390+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a275263b41f8b6813d75e"
+    },
+    "id": "62447538-4d0d-4851-b487-b6f2999a41c0",
+    "code": "BIENVENIDO7F3EA8",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T15:12:18.354427+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para julietaclm7@gmail.com",
+    "user_id": "user_64194f92abc7",
+    "created_at": "2026-01-28T15:12:18.354450+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a2aea63b41f8b6813e3dd"
+    },
+    "id": "084dbed2-085e-4dff-bc60-24b9e3dad994",
+    "code": "BIENVENIDO84065C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T15:27:38.875130+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para marcelocascotc@gmail.com",
+    "user_id": "user_843803609411",
+    "created_at": "2026-01-28T15:27:38.875150+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a2eb67e3e45e5ae1635f6"
+    },
+    "id": "55e69f71-110c-440f-a4f0-35454a4fdc9a",
+    "code": "BIENVENIDO9F52EB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T15:43:50.790172+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para alanysguzmann@gmail.com",
+    "user_id": "user_a7f1aaa66419",
+    "created_at": "2026-01-28T15:43:50.790188+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a39a17e3e45e5ae1654fa"
+    },
+    "id": "7631d463-0ec9-4e1b-8884-32feb601e7b2",
+    "code": "BIENVENIDO030746",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T16:30:25.978997+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para ga5444982@gmail.com",
+    "user_id": "user_a6384e134397",
+    "created_at": "2026-01-28T16:30:25.979010+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a3c347e3e45e5ae166175"
+    },
+    "id": "84b33bc6-8b55-4400-9132-8d7f09a4289e",
+    "code": "BIENVENIDO942F22",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T16:41:24.478568+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para guadarodba4@gmail.com",
+    "user_id": "user_cec72f76a294",
+    "created_at": "2026-01-28T16:41:24.478588+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a3eba1ae987a6610e452d"
+    },
+    "id": "46512fc4-05de-4a98-94a0-47516a959d08",
+    "code": "BIENVENIDO448290",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T16:52:10.616267+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para sofiakpote@gmail.com",
+    "user_id": "user_7253e2c850d7",
+    "created_at": "2026-01-28T16:52:10.616294+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a41451ae987a6610e4b66"
+    },
+    "id": "bdd5aea6-e84b-457d-81d1-fb30b59288ce",
+    "code": "BIENVENIDOA1131E",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:03:01.618563+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para cliz11812@gmail.com",
+    "user_id": "user_99ea7be9a86b",
+    "created_at": "2026-01-28T17:03:01.618593+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a47177e3e45e5ae168086"
+    },
+    "id": "b9157dd5-24e1-4a4f-8b0d-71d5250ebc4b",
+    "code": "BIENVENIDODDA748",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:27:51.722228+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para navarrocristopher339@gmail.com",
+    "user_id": "user_688004be972e",
+    "created_at": "2026-01-28T17:27:51.722242+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a49137e3e45e5ae1686bb"
+    },
+    "id": "7a712e03-4562-43b2-a248-00d9e36051c3",
+    "code": "BIENVENIDO915633",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:36:19.765583+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para kiharabenitez@gmail.com",
+    "user_id": "user_fe1b585c2f79",
+    "created_at": "2026-01-28T17:36:19.765601+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a49657e3e45e5ae1686bf"
+    },
+    "id": "4a9b5741-38cb-44af-9a05-6a016fd9fb78",
+    "code": "BIENVENIDO05233A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:37:41.078754+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para cecisalinasgl@gmail.com",
+    "user_id": "user_ea6cabcf510e",
+    "created_at": "2026-01-28T17:37:41.078770+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a49aa7e3e45e5ae1686c4"
+    },
+    "id": "d9f6254a-a381-41d0-90a1-bccea5f1455c",
+    "code": "BIENVENIDOA343DA",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:38:50.125619+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para maia.aarevalo@icloud.com",
+    "user_id": "user_0f12a9f7e1c5",
+    "created_at": "2026-01-28T17:38:50.125643+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a4b431ae987a6610e6a5d"
+    },
+    "id": "de4e6100-de02-4a3b-afb8-0371141c2bd9",
+    "code": "BIENVENIDOD8A613",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:45:39.436273+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para araatriniid@gmail.com",
+    "user_id": "user_86cfa67f674a",
+    "created_at": "2026-01-28T17:45:39.436305+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a4b701ae987a6610e6a61"
+    },
+    "id": "d78a0bd4-e2a7-4c3d-bf81-94656d15f55e",
+    "code": "BIENVENIDOFE50DD",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:46:24.841481+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para bg86893@gmail.com",
+    "user_id": "user_0ed4de38ccf5",
+    "created_at": "2026-01-28T17:46:24.841516+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a4c2f7e3e45e5ae169327"
+    },
+    "id": "b1a03174-6e1a-4db4-8015-739141920192",
+    "code": "BIENVENIDO38DB27",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:49:35.737273+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para gimenezdragottoanapaula@gmail.coms",
+    "user_id": "user_1ebea55a8a61",
+    "created_at": "2026-01-28T17:49:35.737286+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a4c531ae987a6610e6a65"
+    },
+    "id": "3de21a91-c97c-49e5-8111-6268ec438791",
+    "code": "BIENVENIDOFC2BA8",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:50:11.921627+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para ivan.nahuel.caceres@gmail.com",
+    "user_id": "user_23d0afda2f73",
+    "created_at": "2026-01-28T17:50:11.921661+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a4dcf7e3e45e5ae169973"
+    },
+    "id": "61aae0f8-89e8-4a50-80d4-21bc707c6967",
+    "code": "BIENVENIDOAEB20A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T17:56:31.976087+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para schmidtkelorena@gmail.com",
+    "user_id": "user_6c723cf1437e",
+    "created_at": "2026-01-28T17:56:31.976105+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a4fcf7e3e45e5ae169fb1"
+    },
+    "id": "7c638e2e-c05d-474e-8b2b-2cc2d141157d",
+    "code": "BIENVENIDOA00193",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T18:05:03.481457+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para lissiramos04@gmail.com",
+    "user_id": "user_3268d25e1ef8",
+    "created_at": "2026-01-28T18:05:03.481472+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a50037e3e45e5ae169fb6"
+    },
+    "id": "4c912e6b-193f-499e-bd48-46580f6ac6ed",
+    "code": "BIENVENIDO190A3F",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T18:05:55.822132+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para astridcarolinaolivoleon13@gmail.com",
+    "user_id": "user_06fb63698522",
+    "created_at": "2026-01-28T18:05:55.822165+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a56f51a609781c5f3d748"
+    },
+    "id": "5bbd840f-28bc-4098-b488-d810506f33df",
+    "code": "BIENVENIDOB4363F",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T18:35:33.944152+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para mauricioarce610@gmail.com",
+    "user_id": "user_859bee1519d0",
+    "created_at": "2026-01-28T18:35:33.944188+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a57c38b4cdcb7dbafc6db"
+    },
+    "id": "898ecf2d-a115-4d6b-b92e-8872c0a596ed",
+    "code": "BIENVENIDOE548AF",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T18:38:59.706547+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para parodikike03@gmail.com",
+    "user_id": "user_973c29848306",
+    "created_at": "2026-01-28T18:38:59.706570+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a59038b4cdcb7dbafc6e0"
+    },
+    "id": "3885bcb9-ab8c-4b51-a1b2-320e9ff03689",
+    "code": "BIENVENIDOF30502",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T18:44:19.196046+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para fiovelosoxd@gmail.com",
+    "user_id": "user_bc745531a60d",
+    "created_at": "2026-01-28T18:44:19.196071+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a5ba28b4cdcb7dbafd34d"
+    },
+    "id": "0de8b1a5-689d-42ed-974e-cad0e37eeaa3",
+    "code": "BIENVENIDOD204B5",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T18:55:30.304772+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para florenciafabianabilinskimartin@gmail.com",
+    "user_id": "user_cdf54e42cd2b",
+    "created_at": "2026-01-28T18:55:30.304851+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a5fd98b4cdcb7dbafdfb3"
+    },
+    "id": "e950545b-9d66-4f73-9735-872e9b3f823f",
+    "code": "BIENVENIDOAAC5D3",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T19:13:29.917411+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para gaby444miranda@gmail.com",
+    "user_id": "user_dfa0470b79c6",
+    "created_at": "2026-01-28T19:13:29.917429+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a66878b4cdcb7dbaff256"
+    },
+    "id": "52e6f10c-e1f2-4fdd-b519-1fae3ae79267",
+    "code": "BIENVENIDOFF88D8",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T19:41:59.211686+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para deysicarolinafc@gmail.com",
+    "user_id": "user_148fd21161e9",
+    "created_at": "2026-01-28T19:41:59.211717+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a6999edbfb11f16591c34"
+    },
+    "id": "9d638105-26c6-454c-a582-cacc409f3c5e",
+    "code": "BIENVENIDO8F3B65",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T19:55:05.235069+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para jossycaceres00@gmail.com",
+    "user_id": "user_496e4ce02e71",
+    "created_at": "2026-01-28T19:55:05.235091+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a7540edbfb11f16593b81"
+    },
+    "id": "92e05b75-e087-414d-93bb-d4424ad3fffe",
+    "code": "BIENVENIDOAE3AAB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T20:44:48.412214+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para valentinbiglione95@gmail.com",
+    "user_id": "user_cb5c1a9c3ea9",
+    "created_at": "2026-01-28T20:44:48.412277+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a7b2d4ad772d01c57a799"
+    },
+    "id": "95d172e4-88ea-4d9c-badc-2e47b7b1e827",
+    "code": "BIENVENIDOB83A3A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T21:10:05.276033+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para lukapyoficial@gmail.com",
+    "user_id": "user_704c01368db1",
+    "created_at": "2026-01-28T21:10:05.276052+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a7d0bedbfb11f16594e3c"
+    },
+    "id": "846e4fa4-c48f-47ac-83d1-26fc0608dd27",
+    "code": "BIENVENIDOD7430B",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T21:18:03.294912+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para cesaremmanuelsoto@gmail.com",
+    "user_id": "user_c72d71f8190f",
+    "created_at": "2026-01-28T21:18:03.294940+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a7e54edbfb11f16595479"
+    },
+    "id": "cb9cb102-aad8-45f0-a8b4-b5da023bb961",
+    "code": "BIENVENIDODFF953",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T21:23:32.488807+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para nuneztomasa397@gmail.com",
+    "user_id": "user_b9fecbeffa38",
+    "created_at": "2026-01-28T21:23:32.488840+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a7f20edbfb11f1659547f"
+    },
+    "id": "07da4661-7148-45a5-aaf9-8e6a52b28171",
+    "code": "BIENVENIDOB42D70",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T21:26:56.896698+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para angelicaludmila2001@gmail.com",
+    "user_id": "user_2fe6767dea1e",
+    "created_at": "2026-01-28T21:26:56.896731+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a8324edbfb11f16596121"
+    },
+    "id": "df02c9ec-7d99-426d-a7a2-23153cc65dfb",
+    "code": "BIENVENIDOEAC65F",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T21:44:04.788657+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para garciaromina405@gmail.com",
+    "user_id": "user_253459ba5855",
+    "created_at": "2026-01-28T21:44:04.788685+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a8984fec45c9ac0907ff3"
+    },
+    "id": "34fac124-ba63-426a-bb68-2c339a125ce8",
+    "code": "BIENVENIDO3FCA10",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T22:11:16.335405+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para yeremialva15@gmail.com",
+    "user_id": "user_45da7698243c",
+    "created_at": "2026-01-28T22:11:16.335422+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a93d3e18ec32ce69a1ab4"
+    },
+    "id": "460059ac-86f4-45bf-843c-121e59dfe5b7",
+    "code": "BIENVENIDOEE5DC9",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T22:55:15.800328+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para tirsacanteror@gmail.com",
+    "user_id": "user_6b4238845271",
+    "created_at": "2026-01-28T22:55:15.800358+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a9710fec45c9ac090a554"
+    },
+    "id": "4f95fabf-ff5c-4808-b812-41e22192d591",
+    "code": "BIENVENIDO3E66D7",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T23:09:04.234644+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para nataliagautowork@gmail.com",
+    "user_id": "user_8a446f070d4b",
+    "created_at": "2026-01-28T23:09:04.234664+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a9e5e01270ca75769a375"
+    },
+    "id": "85d18928-0602-4a5f-a6e5-e535cec535db",
+    "code": "BIENVENIDO0EAD24",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T23:40:14.919857+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para johagarcia099@gmail.com",
+    "user_id": "user_545ebbb00b7c",
+    "created_at": "2026-01-28T23:40:14.919873+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a9fbbd5555e1fd7f765ce"
+    },
+    "id": "4ecea9f6-8ffc-4ac5-8f89-0c7174762495",
+    "code": "BIENVENIDO2E9BC1",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T23:46:03.968413+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para gabydiaz86158@gmail.com",
+    "user_id": "user_c7463a53ba9e",
+    "created_at": "2026-01-28T23:46:03.968450+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aa23f01270ca75769afe9"
+    },
+    "id": "034afa75-abd8-4a53-9bcc-b2fe059caaae",
+    "code": "BIENVENIDOB397A5",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-27T23:56:47.334409+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para valeria.duarte2005@gmail.com",
+    "user_id": "user_0d992fb15be9",
+    "created_at": "2026-01-28T23:56:47.334427+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aa813d5555e1fd7f77eb6"
+    },
+    "id": "909fc449-91ab-4262-a1ee-d5cdeb13f999",
+    "code": "BIENVENIDOA69D91",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T00:21:39.130434+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para oficialferuwu@gmail.com",
+    "user_id": "user_2afd5f8d5e38",
+    "created_at": "2026-01-29T00:21:39.130447+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aaa1701270ca75769c2c9"
+    },
+    "id": "aaa7ef69-c54a-4c88-809e-14be88f3e13a",
+    "code": "BIENVENIDOA62866",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T00:30:15.994999+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para laddyvalenzuela19@gmail.com",
+    "user_id": "user_8ce618e57f79",
+    "created_at": "2026-01-29T00:30:15.995015+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aaa7fd5555e1fd7f784f3"
+    },
+    "id": "0b6949d7-98b8-4456-82a5-aabb32b89397",
+    "code": "BIENVENIDO608928",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T00:31:59.924764+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para andreacamiila1304@gmail.com",
+    "user_id": "user_e9d92a6553f3",
+    "created_at": "2026-01-29T00:31:59.924785+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aaae4d5555e1fd7f784f7"
+    },
+    "id": "10984882-53f1-4d40-b6f1-0341745e7ca6",
+    "code": "BIENVENIDO285C20",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T00:33:40.325998+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para natashadge22@gmail.com",
+    "user_id": "user_3ee75485615d",
+    "created_at": "2026-01-29T00:33:40.326018+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aac0601270ca75769c90e"
+    },
+    "id": "f1c38456-eb5f-4ec3-9bbb-fdb76a772b6f",
+    "code": "BIENVENIDO0452FD",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T00:38:30.917522+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para shirly1062@gmail.com",
+    "user_id": "user_1b840e5777f9",
+    "created_at": "2026-01-29T00:38:30.917536+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aad9801270ca75769cf4f"
+    },
+    "id": "ed165bce-b42e-4ad2-a573-33ef25a2dd3a",
+    "code": "BIENVENIDO26A554",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T00:45:12.221185+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para vonlepelsofia22@gmail.com",
+    "user_id": "user_8ed598622672",
+    "created_at": "2026-01-29T00:45:12.221200+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ab00aec407e3a0016183e"
+    },
+    "id": "fc200c39-ab7f-45e7-87a1-88483c6b9bc4",
+    "code": "BIENVENIDO49B7DB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T00:55:38.572128+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para katerinnezg@gmail.com",
+    "user_id": "user_9382bd198375",
+    "created_at": "2026-01-29T00:55:38.572160+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ab4ac2cfc94fc759a2f85"
+    },
+    "id": "5fd0aa18-379c-45c0-8ea2-a6da17fe1d7a",
+    "code": "BIENVENIDOF9A866",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T01:15:24.799093+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para mariel.rossloz@gmail.com",
+    "user_id": "user_7b85f3328a3e",
+    "created_at": "2026-01-29T01:15:24.799111+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ab7adec407e3a00162b01"
+    },
+    "id": "2f41ec95-8d69-4ba3-a8b5-d7492c99e283",
+    "code": "BIENVENIDO28B9A1",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T01:28:13.011947+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para fioremafeer@gmail.com",
+    "user_id": "user_46a3428a3028",
+    "created_at": "2026-01-29T01:28:13.011977+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ab961ec407e3a0016313d"
+    },
+    "id": "9b31ea14-29b0-4a64-aead-e62c6ab574a1",
+    "code": "BIENVENIDOA86C42",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T01:35:29.682954+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para dulceflor555@gmail.com",
+    "user_id": "user_cfdc6108a734",
+    "created_at": "2026-01-29T01:35:29.682979+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aba8d2cfc94fc759a4260"
+    },
+    "id": "21b22a24-492b-4ab7-98eb-644247a8b07b",
+    "code": "BIENVENIDO51B97A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T01:40:29.486875+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para miligonzalezb08@gmail.com",
+    "user_id": "user_e094a8e396e5",
+    "created_at": "2026-01-29T01:40:29.486888+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697abf332cfc94fc759a4ed5"
+    },
+    "id": "000a78ef-e91c-4b28-a92f-b5437c6bd69e",
+    "code": "BIENVENIDOE1F0EB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T02:00:19.933819+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para nicole.chaparro.acosta@gmail.com",
+    "user_id": "user_b7b64633564b",
+    "created_at": "2026-01-29T02:00:19.933833+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ac0412cfc94fc759a4edc"
+    },
+    "id": "8193c386-9e04-40ab-a07c-e889125540ff",
+    "code": "BIENVENIDOC9A801",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T02:04:49.495282+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para ruthmartiner02@gmail.com",
+    "user_id": "user_eeb0dff53da3",
+    "created_at": "2026-01-29T02:04:49.495304+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ac6b62cfc94fc759a6190"
+    },
+    "id": "e2faf404-7b87-47b1-af3a-96ff5e3bfbf8",
+    "code": "BIENVENIDOFD07E7",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T02:32:22.198608+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para mayrafernandez1008@gmail.com",
+    "user_id": "user_b481806821ac",
+    "created_at": "2026-01-29T02:32:22.198636+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ac977ec407e3a0016632c"
+    },
+    "id": "3c33881a-f599-41c8-852c-7aa49a7741fe",
+    "code": "BIENVENIDO17E41C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T02:44:07.837096+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para joshuayegross@gmail.com",
+    "user_id": "user_fbb6f946d027",
+    "created_at": "2026-01-29T02:44:07.837122+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ad1f72cfc94fc759a8712"
+    },
+    "id": "40079620-e197-4b56-980b-e59231e9e4af",
+    "code": "BIENVENIDO50D4CB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T03:20:23.389826+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para claudiialeoon@icloud.com",
+    "user_id": "user_c5cbee0a4287",
+    "created_at": "2026-01-29T03:20:23.389850+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ad506ec407e3a00168889"
+    },
+    "id": "4be2e4d5-2e28-4743-9960-2b0e98dde76b",
+    "code": "BIENVENIDO680ABC",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T03:33:26.793202+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para barbaracolmaan5@gmail.com",
+    "user_id": "user_5ae2a52229b5",
+    "created_at": "2026-01-29T03:33:26.793231+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ade44e78bdbca39737220"
+    },
+    "id": "5efe31db-70c8-4428-a9ba-edc95c7327cb",
+    "code": "BIENVENIDOB1E802",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T04:12:52.062910+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para fiorellapavon716@gmail.com",
+    "user_id": "user_d233ec142f0b",
+    "created_at": "2026-01-29T04:12:52.062936+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ae3e4a05d274336367b3f"
+    },
+    "id": "c257a921-e55f-4ec8-883d-8bddc0b84fe0",
+    "code": "BIENVENIDO2E566C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T04:36:52.023130+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para alexanderduarte855@gmail.com",
+    "user_id": "user_c882a750452f",
+    "created_at": "2026-01-29T04:36:52.023172+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ae51ca05d27433636817b"
+    },
+    "id": "223fe5c8-cf52-45ed-8aab-3bf2ceea59c8",
+    "code": "BIENVENIDOD7B089",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T04:42:04.845772+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para cscavoneg@gmail.com",
+    "user_id": "user_31a2628519aa",
+    "created_at": "2026-01-29T04:42:04.845797+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697aebc9a983f2777379bcb8"
+    },
+    "id": "4e7ee05e-4fdc-455e-9d0b-8e15ad29fc5d",
+    "code": "BIENVENIDO4B57B2",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T05:10:33.977767+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para kevin2021kevin1@gmail.com",
+    "user_id": "user_6a8066745ea9",
+    "created_at": "2026-01-29T05:10:33.977822+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697af61ea983f2777379dbd4"
+    },
+    "id": "bd3a9ce5-4542-4f52-a655-1388033d3a86",
+    "code": "BIENVENIDOFB2592",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T05:54:38.886700+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para ianelizeche@gmail.com",
+    "user_id": "user_ad1db94b5f92",
+    "created_at": "2026-01-29T05:54:38.886726+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b44568f389b48fb774c91"
+    },
+    "id": "fb832959-d021-4f5c-833d-b32e0392c5db",
+    "code": "BIENVENIDO0A5C18",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T11:28:22.160215+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para engelwartnahiara@gmail.com",
+    "user_id": "user_2594bde2aeac",
+    "created_at": "2026-01-29T11:28:22.160303+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b4871a27dcb44a70ac32a"
+    },
+    "id": "01fae5d0-ba12-4cdf-9d14-73abe247672f",
+    "code": "BIENVENIDO6BB840",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T11:45:53.321122+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para patyruso@hotmail.com",
+    "user_id": "user_ccc84971b5cb",
+    "created_at": "2026-01-29T11:45:53.321142+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b4fd9a27dcb44a70adc12"
+    },
+    "id": "6d3ed1fb-6ddb-4d6e-9f5c-f3ce2d76e9eb",
+    "code": "BIENVENIDOE76322",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T12:17:29.650093+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para sarabenitez0311@gmail.com",
+    "user_id": "user_ea5d0e4b321a",
+    "created_at": "2026-01-29T12:17:29.650108+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b55b28f389b48fb777e6c"
+    },
+    "id": "6a5c08a4-59e4-480c-9676-c21a7e96f630",
+    "code": "BIENVENIDO6BE6D9",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T12:42:26.837825+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para facundoalmeida123@gmail.com",
+    "user_id": "user_8e92b3316fd3",
+    "created_at": "2026-01-29T12:42:26.837849+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b56fb8f389b48fb7784aa"
+    },
+    "id": "98043d46-3cc7-4eb8-bbdb-0f0fbc32b22d",
+    "code": "BIENVENIDO3ABF46",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T12:47:55.350352+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para milenabritez333@gmail.com",
+    "user_id": "user_1193e71d6478",
+    "created_at": "2026-01-29T12:47:55.350396+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b659fa27dcb44a70b20aa"
+    },
+    "id": "c5db0709-bef1-4dee-9d12-df9ec21e3602",
+    "code": "BIENVENIDOA70F1E",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T13:50:23.706511+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para celinavillalbav19@gmail.com",
+    "user_id": "user_b200f6413d2c",
+    "created_at": "2026-01-29T13:50:23.706531+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b65c88f389b48fb77b66b"
+    },
+    "id": "992ee1e7-6d6a-444a-a6fb-3c05d22a35d9",
+    "code": "BIENVENIDO4E8046",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T13:51:04.136876+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para martitini100@gmail.com",
+    "user_id": "user_66201aae8409",
+    "created_at": "2026-01-29T13:51:04.136903+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b679c8f389b48fb77bcb3"
+    },
+    "id": "9a56653a-3efc-45b0-beb1-e6bb4cde06d7",
+    "code": "BIENVENIDO7D0B2B",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T13:58:52.866250+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para vecca.ivana@icloud.com",
+    "user_id": "user_f65eb8283b7a",
+    "created_at": "2026-01-29T13:58:52.866299+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b765980beef5f2f8468dc"
+    },
+    "id": "f05fca9c-f3f2-418b-8622-03c238e1f6fc",
+    "code": "BIENVENIDOA3BC5A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T15:01:45.058463+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para mayrafretes006@gmail.com",
+    "user_id": "user_fae67549c0a1",
+    "created_at": "2026-01-29T15:01:45.058513+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b7d2180beef5f2f847bab"
+    },
+    "id": "787016fe-5a45-4363-9d5e-67527869628f",
+    "code": "BIENVENIDO2788F6",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T15:30:41.706218+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para mirandaainhoa718@gmail.com",
+    "user_id": "user_85a88f233e59",
+    "created_at": "2026-01-29T15:30:41.706243+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b809280beef5f2f848832"
+    },
+    "id": "4642624a-a021-4eb1-8863-2c7f267c40b0",
+    "code": "BIENVENIDOF9E1FE",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T15:45:22.456662+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para avigomez05@gmail.com",
+    "user_id": "user_f01e3fdef24d",
+    "created_at": "2026-01-29T15:45:22.456686+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b819a80beef5f2f848e77"
+    },
+    "id": "7c0bc5fa-0f2b-4592-8ade-f60fce27d91d",
+    "code": "BIENVENIDO0E0498",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T15:49:46.052383+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para medaraujo15@gmail.com",
+    "user_id": "user_d40382697e4e",
+    "created_at": "2026-01-29T15:49:46.052405+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b863975712e1b0bded660"
+    },
+    "id": "177ab7fd-0287-4796-8b7b-05d73e079409",
+    "code": "BIENVENIDO742B70",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:09:29.709338+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para duarterika28@gmail.com",
+    "user_id": "user_94738023a559",
+    "created_at": "2026-01-29T16:09:29.709359+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b869980beef5f2f849b16"
+    },
+    "id": "212242b2-edc3-4c23-95b5-31cbc01d5094",
+    "code": "BIENVENIDO9E244C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:11:05.253747+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para alicia_carreras@hotmail.com",
+    "user_id": "user_1c3b042a0bf9",
+    "created_at": "2026-01-29T16:11:05.253768+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b879680beef5f2f84a165"
+    },
+    "id": "be19f638-db7b-4161-bd22-296ff41d6410",
+    "code": "BIENVENIDO0F07CA",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:15:18.457517+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para erikalopez17una@gmail.com",
+    "user_id": "user_6011eaeb2674",
+    "created_at": "2026-01-29T16:15:18.457542+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b8b0e80beef5f2f84ae16"
+    },
+    "id": "080aee59-da95-44f0-aa56-f060ebaaa5d4",
+    "code": "BIENVENIDO87669A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:30:06.645724+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para cielorecaldee@gmail.com",
+    "user_id": "user_4b258450b750",
+    "created_at": "2026-01-29T16:30:06.645791+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b8b1980beef5f2f84ae1a"
+    },
+    "id": "1aa54e22-6828-4f5b-a133-2915deee5e39",
+    "code": "BIENVENIDO8B9902",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:30:17.031053+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para biancalheli2007@gmail.com",
+    "user_id": "user_aae4aae485ed",
+    "created_at": "2026-01-29T16:30:17.031085+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b8b4b75712e1b0bdee30e"
+    },
+    "id": "772441b3-c62a-4819-b2a6-22d3cf1af169",
+    "code": "BIENVENIDO13C35D",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:31:07.235059+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para martin202509@gmail.com",
+    "user_id": "user_76c3ebff98c7",
+    "created_at": "2026-01-29T16:31:07.235089+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b8bfa80beef5f2f84ae35"
+    },
+    "id": "ee476444-2f5b-49ae-8926-18e70cf4e97b",
+    "code": "BIENVENIDO47D64F",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:34:02.338637+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para harguello444@gmail.com",
+    "user_id": "user_a2914e4afdac",
+    "created_at": "2026-01-29T16:34:02.338655+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b8d6680beef5f2f84b486"
+    },
+    "id": "8a22b04b-8852-49c0-9a0d-aa77fe6596c3",
+    "code": "BIENVENIDO67F841",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:40:06.627627+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para miaagostinagm@gmail.com",
+    "user_id": "user_efe7d39c3aa6",
+    "created_at": "2026-01-29T16:40:06.627649+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b91a480beef5f2f84c14e"
+    },
+    "id": "a7be9b52-6aa5-4a20-99cf-3f836715f215",
+    "code": "BIENVENIDO640B1C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T16:58:12.144121+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para milagrosencinag@gmail.com",
+    "user_id": "user_90eeb1001d15",
+    "created_at": "2026-01-29T16:58:12.144141+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b92ba75712e1b0bdefc3b"
+    },
+    "id": "303e8e6d-0667-4b7d-9c32-45c84c804bd9",
+    "code": "BIENVENIDO968460",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T17:02:50.586040+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para solissmayra498@gmail.com",
+    "user_id": "user_ad183fec3bcf",
+    "created_at": "2026-01-29T17:02:50.586051+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b944475712e1b0bdf028d"
+    },
+    "id": "489d89a7-22af-46ee-b2c7-19ce09ee02f3",
+    "code": "BIENVENIDO80451D",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T17:09:24.807369+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para tania.belen.tbac@gmail.com",
+    "user_id": "user_5cc66c0ccc00",
+    "created_at": "2026-01-29T17:09:24.807393+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b945c80beef5f2f84c7a2"
+    },
+    "id": "07ce8089-5074-43ba-9f24-b9fcac501a69",
+    "code": "BIENVENIDO0E03CB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T17:09:48.043135+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para antizmiranda@gmail.com",
+    "user_id": "user_47290f890389",
+    "created_at": "2026-01-29T17:09:48.043150+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b95dc80beef5f2f84cdfc"
+    },
+    "id": "a0d59b35-15eb-4551-957b-6dc95f460c7b",
+    "code": "BIENVENIDO8B5E41",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T17:16:12.152391+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para axelmontania@icloud.com",
+    "user_id": "user_b7c5b727bc5b",
+    "created_at": "2026-01-29T17:16:12.152411+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b95ea75712e1b0bdf08db"
+    },
+    "id": "d439473b-2345-41d8-8e46-21b16316fe71",
+    "code": "BIENVENIDO73AB0F",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T17:16:26.493899+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para daphgaleano@hotmail.com",
+    "user_id": "user_fae452203e89",
+    "created_at": "2026-01-29T17:16:26.493938+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b9a6880beef5f2f84e0a8"
+    },
+    "id": "52e0e6a3-7bc0-47ec-8f86-ee82f79073af",
+    "code": "BIENVENIDO1324D4",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T17:35:36.145192+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para toto_1605@hotmail.com",
+    "user_id": "user_d4154e8d894a",
+    "created_at": "2026-01-29T17:35:36.145214+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b9b3275712e1b0bdf1550"
+    },
+    "id": "5c67532c-3e19-4114-b796-983857bca2e9",
+    "code": "BIENVENIDO94A180",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T17:38:58.227806+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para lopezgonzalezz0091@gmail.com",
+    "user_id": "user_37f1432cdada",
+    "created_at": "2026-01-29T17:38:58.227823+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ba05875712e1b0bdf2803"
+    },
+    "id": "65c5987b-a641-411a-ab8f-9018720a4dd4",
+    "code": "BIENVENIDO9C8C6D",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T18:00:56.110892+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para marielbenitezruiz03@gmail.com",
+    "user_id": "user_33e2eabe8938",
+    "created_at": "2026-01-29T18:00:56.110915+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ba3c080beef5f2f84f97d"
+    },
+    "id": "464fa43e-40d3-4e72-a56a-373b3424b413",
+    "code": "BIENVENIDO444E82",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T18:15:28.931233+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para litsophi049@gmail.com",
+    "user_id": "user_ffca96d0aac5",
+    "created_at": "2026-01-29T18:15:28.931257+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ba44a80beef5f2f84ffb5"
+    },
+    "id": "68474e69-d226-4804-a44f-3a334ec6e410",
+    "code": "BIENVENIDO6364F0",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T18:17:46.355656+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para celemica01@gmail.com",
+    "user_id": "user_4f26bfe1b693",
+    "created_at": "2026-01-29T18:17:46.355676+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ba8eb75712e1b0bdf4712"
+    },
+    "id": "487aebd3-62df-40d8-a311-29fd11873c0d",
+    "code": "BIENVENIDO4D1A34",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T18:37:31.011352+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para fatechamia@gmail.com",
+    "user_id": "user_6208c7c4ad71",
+    "created_at": "2026-01-29T18:37:31.011364+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bac0275712e1b0bdf4d5c"
+    },
+    "id": "ef30ae2a-42ad-464d-b1c8-c1277a961b2c",
+    "code": "BIENVENIDO3EE670",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T18:50:42.685498+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para bjazminvera21@gmail.com",
+    "user_id": "user_b1cacbdd392f",
+    "created_at": "2026-01-29T18:50:42.685515+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bae4880beef5f2f851ec7"
+    },
+    "id": "1ab544b3-9994-44f1-93c7-0467d238ec24",
+    "code": "BIENVENIDOEA7E05",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T19:00:24.046151+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para jademartinez.py@gmail.com",
+    "user_id": "user_af1d82240ab8",
+    "created_at": "2026-01-29T19:00:24.046170+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bb02d75712e1b0bdf6002"
+    },
+    "id": "860dd9c1-2756-4793-add6-cfa8d6b0bb5a",
+    "code": "BIENVENIDOEBA3D1",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T19:08:29.679819+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para especarduz04@gmail.com",
+    "user_id": "user_ca1ccf5e2276",
+    "created_at": "2026-01-29T19:08:29.679840+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bb1d480beef5f2f852b38"
+    },
+    "id": "51aafadc-19ae-4889-abb4-7519e0993d3c",
+    "code": "BIENVENIDOAE3D6C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T19:15:32.146071+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para leidycabral48@gmail.com",
+    "user_id": "user_e185dd087f2a",
+    "created_at": "2026-01-29T19:15:32.146094+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bb1ee80beef5f2f852b3c"
+    },
+    "id": "f73f9975-5500-43b4-8daf-b3fe481c09a2",
+    "code": "BIENVENIDO62FE2C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T19:15:58.258444+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para zeedceox@gmail.com",
+    "user_id": "user_4629651b87a1",
+    "created_at": "2026-01-29T19:15:58.258467+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bb34c75712e1b0bdf6642"
+    },
+    "id": "7d827899-cc10-400a-a9bc-d6e1abf0df88",
+    "code": "BIENVENIDO99BB8D",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T19:21:48.198288+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para kellysants1@icloud.com",
+    "user_id": "user_0089e62b3298",
+    "created_at": "2026-01-29T19:21:48.198312+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bb5f280beef5f2f8537aa"
+    },
+    "id": "784a245c-d1d4-4041-b8ac-3449ea737d9b",
+    "code": "BIENVENIDO0CB552",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T19:33:06.535582+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para violetabutler501@gmail.com",
+    "user_id": "user_299e694796df",
+    "created_at": "2026-01-29T19:33:06.535598+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bb76d80beef5f2f853df7"
+    },
+    "id": "c94666b1-ed15-4fca-993e-70c54f01ef22",
+    "code": "BIENVENIDO7DAB2A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T19:39:25.011726+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para cris123rodri567@gmail.com",
+    "user_id": "user_6129f23b9288",
+    "created_at": "2026-01-29T19:39:25.011783+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bb8a375712e1b0bdf78f6"
+    },
+    "id": "520ee5eb-7833-46a9-8855-a44f8a15e5f3",
+    "code": "BIENVENIDO26B5D0",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T19:44:35.406384+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para lauranoguera636@gmail.com",
+    "user_id": "user_019b5419b6c9",
+    "created_at": "2026-01-29T19:44:35.406402+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bbe5875712e1b0bdf8ba0"
+    },
+    "id": "e49ff90a-a49a-443a-85e7-1d90a9ddc77c",
+    "code": "BIENVENIDO0912DE",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:08:56.715056+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para abigailminarro68@gmail.com",
+    "user_id": "user_6230fc793969",
+    "created_at": "2026-01-29T20:08:56.715079+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bbe9280beef5f2f8556d0"
+    },
+    "id": "fc674815-7a3a-4c1f-a48a-71902485312f",
+    "code": "BIENVENIDO36A9D0",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:09:54.059409+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para floppy270803@gmail.com",
+    "user_id": "user_d19eebcb472b",
+    "created_at": "2026-01-29T20:09:54.059429+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bbec080beef5f2f8556d4"
+    },
+    "id": "7434b05c-faed-4e55-9c42-17c6790ed909",
+    "code": "BIENVENIDO491BFE",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:10:40.334578+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para milyarce2021@gmail.com",
+    "user_id": "user_012ba7cbf5d1",
+    "created_at": "2026-01-29T20:10:40.334606+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bbed180beef5f2f8556d8"
+    },
+    "id": "881e45f4-0db7-417b-8d93-3f894bdb185b",
+    "code": "BIENVENIDO29B260",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:10:57.037104+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para majotorres455@icloud.com",
+    "user_id": "user_4ed4ce728a1d",
+    "created_at": "2026-01-29T20:10:57.037124+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc0a175712e1b0bdf91f1"
+    },
+    "id": "c5bbf120-f37e-4a26-a22f-7a83dfff17c4",
+    "code": "BIENVENIDO99A73B",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:18:41.737749+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para barriosm1909@gmail.com",
+    "user_id": "user_82bbd135a054",
+    "created_at": "2026-01-29T20:18:41.737772+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc14880beef5f2f855d13"
+    },
+    "id": "b3604b1e-6f76-40e4-abff-0aff94872161",
+    "code": "BIENVENIDO13F746",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:21:28.756547+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para rommylui@gmail.com",
+    "user_id": "user_3102c5b87b36",
+    "created_at": "2026-01-29T20:21:28.756564+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc1be80beef5f2f855d17"
+    },
+    "id": "a147bb69-e894-4417-aadc-3da8aa546f5d",
+    "code": "BIENVENIDOF77B52",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:23:26.822766+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para brunougarthe18@gmail.com",
+    "user_id": "user_5f58cd1bc3b0",
+    "created_at": "2026-01-29T20:23:26.822787+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc6fd75712e1b0bdf9e67"
+    },
+    "id": "79763c2a-c7c3-42d1-82fa-839d22f1cf51",
+    "code": "BIENVENIDO9FB8DB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:45:49.307527+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para viviiianagonzalez@gmail.com",
+    "user_id": "user_2cfde9210478",
+    "created_at": "2026-01-29T20:45:49.307559+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc73180beef5f2f856fde"
+    },
+    "id": "6a1fee5c-2a47-46d5-9a16-68e7882316f2",
+    "code": "BIENVENIDO38314A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:46:41.152918+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para gabriel.lopezadrian4@gmail.com",
+    "user_id": "user_dc3c413282cb",
+    "created_at": "2026-01-29T20:46:41.152934+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bc85580beef5f2f857625"
+    },
+    "id": "e0398c44-618a-410a-83e5-b9167eaf3a77",
+    "code": "BIENVENIDO0114E9",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T20:51:33.956572+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para monicaracelly@hotmail.com",
+    "user_id": "user_8b9034eda0c1",
+    "created_at": "2026-01-29T20:51:33.956587+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bcfe275712e1b0bdfbd73"
+    },
+    "id": "aa4422f8-9fdf-4874-ae95-0ca48fc74ed6",
+    "code": "BIENVENIDO9CE2A1",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T21:23:46.708103+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para larigodoy04@gmail.com",
+    "user_id": "user_909eefbd9ed2",
+    "created_at": "2026-01-29T21:23:46.708127+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bd83980beef5f2f85a1d2"
+    },
+    "id": "d171d41d-8411-41c1-9a58-a982300f5ea1",
+    "code": "BIENVENIDODAEDDB",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T21:59:21.845649+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para alyxarami47@gmail.com",
+    "user_id": "user_edb3fa053bc2",
+    "created_at": "2026-01-29T21:59:21.845667+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bd97575712e1b0bdfd669"
+    },
+    "id": "a9349037-1735-41c4-8e87-31340580c107",
+    "code": "BIENVENIDO8328B3",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T22:04:37.008189+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para biankavazquez2207@icloud.com",
+    "user_id": "user_11b05b02493f",
+    "created_at": "2026-01-29T22:04:37.008203+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bd97b75712e1b0bdfd66d"
+    },
+    "id": "c46a1e2c-7fd9-459d-823d-8386651191fe",
+    "code": "BIENVENIDO718BEA",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T22:04:43.496157+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para valeriagonzalez0110@gmail.com",
+    "user_id": "user_19b5509bef53",
+    "created_at": "2026-01-29T22:04:43.496170+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bdc4f80beef5f2f85ae61"
+    },
+    "id": "0121f1d1-dbed-4bd6-964c-c70137bbcf6a",
+    "code": "BIENVENIDO65932E",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T22:16:47.160047+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para betamc011@gmail.com",
+    "user_id": "user_3a090fbde1eb",
+    "created_at": "2026-01-29T22:16:47.160063+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697be02b75712e1b0bdfe923"
+    },
+    "id": "1cb10570-2f1f-493f-a5eb-ed02e06aab1e",
+    "code": "BIENVENIDO04685A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T22:33:15.636581+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para cabjade220@gmail.com",
+    "user_id": "user_586f7c4b1144",
+    "created_at": "2026-01-29T22:33:15.636594+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697be94175712e1b0be00835"
+    },
+    "id": "775cafec-bd69-40b9-b703-e2bc2eea313d",
+    "code": "BIENVENIDO780712",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-02-28T23:12:01.790691+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para yanainalopez98@gmail.com",
+    "user_id": "user_90e00570ea9f",
+    "created_at": "2026-01-29T23:12:01.790710+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bf63975712e1b0be02d8a"
+    },
+    "id": "8ef17a9d-43fc-40c2-8cc6-5135068f5401",
+    "code": "BIENVENIDOD2260C",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T00:07:21.303966+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para alicestyles014@gmail.com",
+    "user_id": "user_756b07463fe4",
+    "created_at": "2026-01-30T00:07:21.304025+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bf7ca80beef5f2f85ff27"
+    },
+    "id": "4eae7398-6294-4c64-8fe5-7d691ae7ee8b",
+    "code": "BIENVENIDOB9BCF2",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T00:14:02.053440+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para aylensan.13@gmail.com",
+    "user_id": "user_852cdd99dc1d",
+    "created_at": "2026-01-30T00:14:02.053458+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697bfa2080beef5f2f86055f"
+    },
+    "id": "02b7c8dd-6741-40e5-9a83-a17545ef209f",
+    "code": "BIENVENIDO5E5571",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T00:24:00.755821+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para dayuuuu17@icloud.com",
+    "user_id": "user_51cdd40ce1f8",
+    "created_at": "2026-01-30T00:24:00.755852+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697c032075712e1b0be052d0"
+    },
+    "id": "0d94141e-3236-43e9-9242-1604a27fab98",
+    "code": "BIENVENIDOEEDC34",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T01:02:24.810811+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para anacespedes7108@gmail.com",
+    "user_id": "user_c34cee8278ae",
+    "created_at": "2026-01-30T01:02:24.810840+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697c042b75712e1b0be052d4"
+    },
+    "id": "48f55f95-eb97-4639-b8e0-0a57ef046882",
+    "code": "BIENVENIDO652A53",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T01:06:51.907357+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para micagarcette@gmail.com",
+    "user_id": "user_93e5d4e51d8f",
+    "created_at": "2026-01-30T01:06:51.907379+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697c1c4a9cf55abe71427e49"
+    },
+    "id": "651939c2-d9d9-407e-9664-90f1d7f6220f",
+    "code": "BIENVENIDO19EB17",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T02:49:46.487774+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para medinaaracely664@gmail.com",
+    "user_id": "user_ca3a679ae5e4",
+    "created_at": "2026-01-30T02:49:46.487800+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697c27f89cf55abe71429d51"
+    },
+    "id": "0fb3f734-531e-46d8-a59f-a307f62e58e8",
+    "code": "BIENVENIDOEC7803",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T03:39:36.635026+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para camilaperalta079@gmail.com",
+    "user_id": "user_49ea154c8eca",
+    "created_at": "2026-01-30T03:39:36.635049+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697c29059cf55abe7142a38a"
+    },
+    "id": "5622195b-d667-403f-9939-ae1c579ee34f",
+    "code": "BIENVENIDOD69A0A",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T03:44:05.481817+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para nicole.anahi.ferreira@gmail.com",
+    "user_id": "user_be813eef078b",
+    "created_at": "2026-01-30T03:44:05.481840+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697c9799a96efa6d64168de9"
+    },
+    "id": "48b62ab3-f84f-4fc0-bd33-6b9f34a6157b",
+    "code": "BIENVENIDO650422",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T11:35:53.778491+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para meivintagepy@gmail.com",
+    "user_id": "user_f6631aee8deb",
+    "created_at": "2026-01-30T11:35:53.778520+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697c97da7993c368f7f9c9cc"
+    },
+    "id": "2bc307e1-f2dd-4741-b6c4-a1b74346c769",
+    "code": "BIENVENIDOD1A6A8",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T11:36:58.725522+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para tita.03briz@iclud.com",
+    "user_id": "user_f1d0b0d4edfb",
+    "created_at": "2026-01-30T11:36:58.725558+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697ca863a96efa6d6416c5db"
+    },
+    "id": "eb1319bb-1fe2-47a6-97e5-7fbcf441b60c",
+    "code": "BIENVENIDO090853",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T12:47:31.394788+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para lizmaribelbusiness@gmail.com",
+    "user_id": "user_9b8f0f989669",
+    "created_at": "2026-01-30T12:47:31.394813+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cad0ea96efa6d6416d255"
+    },
+    "id": "d3b31512-bb3c-4e71-a330-33560421c211",
+    "code": "BIENVENIDO5EAC18",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T13:07:26.967757+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para vcouchonnal@gmail.com",
+    "user_id": "user_9b1544ac938b",
+    "created_at": "2026-01-30T13:07:26.967784+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cae8ea96efa6d6416d88d"
+    },
+    "id": "4383fc97-9bc8-49aa-acc4-c40806eedc40",
+    "code": "BIENVENIDO809836",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T13:13:50.280752+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para nayelisegovia02@gmail.com",
+    "user_id": "user_64acfcb8ba15",
+    "created_at": "2026-01-30T13:13:50.280786+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cb35a7993c368f7fa20b5"
+    },
+    "id": "a84fc7e1-b5fa-432f-a3a1-d107764dfba8",
+    "code": "BIENVENIDOB663BA",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T13:34:18.742861+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para qjimena722@gmail.com",
+    "user_id": "user_c031ec75b712",
+    "created_at": "2026-01-30T13:34:18.742896+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cb97ba96efa6d6416fdcf"
+    },
+    "id": "e781527b-1405-4640-a7e9-3130d5991725",
+    "code": "BIENVENIDO468E51",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T14:00:27.773500+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para solaileenrattig@gmail.com",
+    "user_id": "user_5e181944b362",
+    "created_at": "2026-01-30T14:00:27.773528+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cbf127993c368f7fa45f7"
+    },
+    "id": "b201c889-ca58-4c6a-89ac-997d01c188a4",
+    "code": "BIENVENIDO18730B",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T14:24:18.962777+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para krebsnicoleb@icloud.com",
+    "user_id": "user_698652bf990b",
+    "created_at": "2026-01-30T14:24:18.962857+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cd0a8a96efa6d6417421f"
+    },
+    "id": "97ef8341-d1e9-4d3a-b550-fbbe9dad6f47",
+    "code": "BIENVENIDO4CE850",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T15:39:20.820402+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para frllzcno@gmail.com",
+    "user_id": "user_5ac75c3bcf32",
+    "created_at": "2026-01-30T15:39:20.820441+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697cf71e4a121b25d3ee9ff3"
+    },
+    "id": "8f5ddabc-1ed0-47bd-8a86-4cb552a72cc0",
+    "code": "BIENVENIDO03B21F",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T18:23:26.732079+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para gianellaflecha@gmail.com",
+    "user_id": "user_0afe1c01bb79",
+    "created_at": "2026-01-30T18:23:26.732238+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697d34e0bf0252ac61488ec5"
+    },
+    "id": "d55bb499-6a28-46fe-8d77-2204a54f2288",
+    "code": "BIENVENIDOA42072",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-01T22:46:56.771991+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para araacos888@gmail.com",
+    "user_id": "user_db0ff26cf659",
+    "created_at": "2026-01-30T22:46:56.772014+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697d4731bf0252ac6148c601"
+    },
+    "id": "06bb7537-8af4-44ce-959a-31237afa9de3",
+    "code": "BIENVENIDOA54E13",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-02T00:05:05.568113+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para giovannaotazu85@gmail.com",
+    "user_id": "user_6710db4dbfe7",
+    "created_at": "2026-01-31T00:05:05.568137+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697d54a7bf0252ac6148ead8"
+    },
+    "id": "91d6de6c-3bdb-4204-ae07-e388b5eb5ea5",
+    "code": "BIENVENIDOC041CD",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-02T01:02:31.855289+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para lenguazasofia021@gmail.com",
+    "user_id": "user_74739131c8a2",
+    "created_at": "2026-01-31T01:02:31.855304+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697dbb3eeb3148eacf705143"
+    },
+    "id": "944dcb3c-3f51-4317-856d-c71629118c9c",
+    "code": "BIENVENIDO67A44E",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-02T08:20:14.435014+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para flornunezzf@gmail.com",
+    "user_id": "user_044510158ab6",
+    "created_at": "2026-01-31T08:20:14.435038+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697e1073eb3148eacf714ca0"
+    },
+    "id": "8857d0b9-7a6a-4257-b593-cf7442954aa5",
+    "code": "BIENVENIDOF41401",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-02T14:23:47.105777+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para ip15vmf@gmail.com",
+    "user_id": "user_f9e1b6fd73c4",
+    "created_at": "2026-01-31T14:23:47.105801+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697e246618df2ee8e9f26c58"
+    },
+    "id": "ca5ad0c2-8fd5-4012-b435-498b739bfa0f",
+    "code": "BIENVENIDO855BB1",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-02T15:48:54.196604+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para nahomylujanarriolabareiro@gmail.com",
+    "user_id": "user_b8457a02034d",
+    "created_at": "2026-01-31T15:48:54.196629+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697e78d7bc3494b4b3688c1f"
+    },
+    "id": "ba7c8587-dd3f-4d69-af08-0e8af4b4fda5",
+    "code": "BIENVENIDO672CC9",
+    "discount_type": "percentage",
+    "discount_value": 10,
+    "min_purchase": null,
+    "max_uses": 1,
+    "current_uses": 0,
+    "expires_at": "2026-03-02T21:49:11.155551+00:00",
+    "is_active": true,
+    "description": "Cupón de bienvenida para guadalupemorinigo02@gmail.com",
+    "user_id": "user_0ff4207f8ffa",
+    "created_at": "2026-01-31T21:49:11.155573+00:00"
+  }
+]

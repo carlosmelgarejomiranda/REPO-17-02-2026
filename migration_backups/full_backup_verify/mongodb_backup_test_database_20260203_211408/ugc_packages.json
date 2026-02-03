@@ -1,0 +1,22 @@
+[
+  {
+    "_id": {
+      "$oid": "69729fb0ae7cb20d0b132958"
+    },
+    "id": "ed5d80d1-961e-4b3d-8413-5f23f8816120",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "type": "standard",
+    "deliveries_total": 8,
+    "deliveries_used": 0,
+    "deliveries_remaining": 8,
+    "price_paid": 1490000,
+    "is_promo": true,
+    "duration_months": null,
+    "deliveries_per_month": null,
+    "monthly_payment": null,
+    "status": "pending_payment",
+    "purchased_at": null,
+    "expires_at": null,
+    "created_at": "2026-01-22T22:07:44.527276+00:00"
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "_id": "global",
+    "payment_gateway_enabled": false,
+    "show_only_products_with_images": true,
+    "whatsapp_commercial": "+595973666000",
+    "whatsapp_marcas": "+595976691520"
+  }
+]

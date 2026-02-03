@@ -1,0 +1,688 @@
+[
+  {
+    "_id": {
+      "$oid": "6954853352dc97a39d8b7783"
+    },
+    "order_id": "ORD-48197618",
+    "items": [
+      {
+        "product_id": "test1",
+        "quantity": 1,
+        "name": "Test Product",
+        "price": 150000.0,
+        "image": null,
+        "size": "M",
+        "sku": null
+      }
+    ],
+    "customer_name": "Carlos Melgarejo",
+    "customer_email": "test@example.com",
+    "customer_phone": "+595983110913",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "stripe",
+    "payment_status": "pending",
+    "order_status": "pending",
+    "notes": "Test order for checkout system",
+    "created_at": "2025-12-31T02:06:43.300825+00:00",
+    "stripe_session_id": "cs_test_a1ghgkHSmaqcWcCoSCu3QpumMebhzxQnUQIPYgTBtmUKwAxa2Za8nu3Zhu"
+  },
+  {
+    "_id": {
+      "$oid": "69551ca54b303d4b1330ef20"
+    },
+    "order_id": "ORD-A0A2A89F",
+    "items": [
+      {
+        "product_id": "2GzAV",
+        "quantity": 1,
+        "name": "100100-Calza Metalizada-Gris",
+        "price": 200000.0,
+        "image": "",
+        "size": "M",
+        "sku": "100100-GM"
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 200000.0,
+    "total": 200000.0,
+    "payment_method": "stripe",
+    "payment_status": "pending",
+    "order_status": "pending",
+    "notes": "",
+    "created_at": "2025-12-31T12:52:53.417509+00:00",
+    "stripe_session_id": "cs_test_a1jTFGKqGzQPFIjht6fX9SD0jAo0B8LemmuHWiZrE0GPQyRLZHHIYF96bF"
+  },
+  {
+    "_id": {
+      "$oid": "69556347163897078d2b1642"
+    },
+    "order_id": "ORD-7091832E",
+    "items": [
+      {
+        "product_id": "VkGAb",
+        "quantity": 1,
+        "name": "100065-N-Pollera volado simple-Negro",
+        "price": 150000.0,
+        "image": "/api/shop/images/grp_1019.jpg",
+        "size": "G",
+        "sku": "100065-NG"
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "stripe",
+    "payment_status": "pending",
+    "order_status": "pending",
+    "notes": "",
+    "created_at": "2025-12-31T17:54:15.825966+00:00",
+    "stripe_session_id": "cs_test_a18oLg2ygQMCqflvsNyLaDUh3HzVNLoB9Mw0ApJRFTugNNk04kQc9ZpvR7"
+  },
+  {
+    "_id": {
+      "$oid": "6955b02aefd4b3735dfdab97"
+    },
+    "order_id": "ORD-41137B9B",
+    "items": [
+      {
+        "product_id": "VkGAb",
+        "quantity": 1,
+        "name": "100065-N-Pollera volado simple-Negro",
+        "price": 150000.0,
+        "image": "/api/shop/images/grp_1019.jpg",
+        "size": "G",
+        "sku": "100065-NG"
+      },
+      {
+        "product_id": "6MBGe",
+        "quantity": 1,
+        "name": "100100-N-Calza Metalizada-Negro",
+        "price": 200000.0,
+        "image": "",
+        "size": "P",
+        "sku": "100100-NP"
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 350000.0,
+    "total": 350000.0,
+    "payment_method": "stripe",
+    "payment_status": "pending",
+    "order_status": "confirmed",
+    "notes": "",
+    "created_at": "2025-12-31T23:22:18.468653+00:00",
+    "stripe_session_id": "cs_test_a1d6hlwbhRM8Lr10tbgToMtjerThS8p3egMNyJHraxaCLa8OUNFmiMqWpG",
+    "status_updated_at": "2026-01-02T11:43:32.205333+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6957af641a803e0296230a91"
+    },
+    "order_id": "ORD-55F18C24",
+    "items": [
+      {
+        "product_id": "test1",
+        "quantity": 1,
+        "name": "Test Product",
+        "price": 150000.0,
+        "image": null,
+        "size": "M",
+        "sku": null
+      }
+    ],
+    "customer_name": "Carlos Melgarejo",
+    "customer_email": "test@example.com",
+    "customer_phone": "+595983110913",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "stripe",
+    "payment_status": "pending",
+    "order_status": "confirmed",
+    "notes": "Test order for checkout system",
+    "created_at": "2026-01-02T11:43:32.643216+00:00",
+    "stripe_session_id": "cs_test_a1WWtirLSkwpjTqYOiFhUD7wGXVRPi9aOV3E0rT7ITIlLkOEVtctRw4ost",
+    "status_updated_at": "2026-01-02T13:29:34.033332+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6957dc29e833a77733f4547c"
+    },
+    "order_id": "ORD-377F7817",
+    "items": [
+      {
+        "product_id": "DLZE6",
+        "quantity": 1,
+        "name": "CAMPERA DE JEANS CON DETALLES RASGADOS/CORTES-FRAME-MASCULINO-AZUL LAVADO",
+        "price": 590000.0,
+        "image": "",
+        "size": "M",
+        "sku": ""
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 590000.0,
+    "total": 590000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "solicitud",
+    "notes": "",
+    "created_at": "2026-01-02T14:54:33.716270+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695807b257790e2981c418f1"
+    },
+    "order_id": "ORD-8797BE1C",
+    "items": [
+      {
+        "product_id": "test-product-1",
+        "quantity": 1,
+        "name": "Test Product",
+        "price": 150000.0,
+        "image": null,
+        "size": "M",
+        "sku": "TEST-SKU-001"
+      }
+    ],
+    "customer_name": "Juan Perez",
+    "customer_email": "juan.perez@test.com",
+    "customer_phone": "+595971234567",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "confirmed",
+    "notes": "Test order for checkout system",
+    "created_at": "2026-01-02T18:00:18.656674+00:00",
+    "status_updated_at": "2026-01-02T18:00:20.864031+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69580f289bfa6b036861ef75"
+    },
+    "order_id": "ORD-0F01F1CD",
+    "items": [
+      {
+        "product_id": "grp_96",
+        "quantity": 1,
+        "name": "IMMORTAL NYC ORIGINAL 31. RESERVE EAU DE PERFUME 50ML",
+        "price": 250000.0,
+        "image": "/api/shop/images/grp_403_0.jpg",
+        "size": null,
+        "sku": ""
+      }
+    ],
+    "customer_name": "carlos melgarejo",
+    "customer_email": "carlos.melgarejo.miranda@gmail.com",
+    "customer_phone": "+595983110913",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 250000.0,
+    "total": 250000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "solicitud",
+    "notes": "PRUEBA 1",
+    "created_at": "2026-01-02T18:32:08.245309+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695812ea9bfa6b036861fb4c"
+    },
+    "order_id": "ORD-BFE55BDB",
+    "items": [
+      {
+        "product_id": "grp_747",
+        "quantity": 1,
+        "name": "IMMORTAL NYC ORIGINAL 31. RESERVE EAU DE PERFUME 50ML",
+        "price": 250000.0,
+        "image": "/api/shop/images/grp_403_0.jpg",
+        "size": null,
+        "sku": ""
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 250000.0,
+    "total": 250000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "confirmed",
+    "notes": "",
+    "created_at": "2026-01-02T18:48:10.590266+00:00",
+    "status_updated_at": "2026-01-02T20:44:35.173775+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6958333a67eba2c489a8aa15"
+    },
+    "order_id": "ORD-4E29B868",
+    "items": [
+      {
+        "product_id": "VkGAb",
+        "quantity": 1,
+        "name": "100065-N-Pollera volado simple-Negro",
+        "price": 150000.0,
+        "image": "",
+        "size": "G",
+        "sku": "100065-NG"
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "solicitud",
+    "notes": "",
+    "created_at": "2026-01-02T21:06:02.517496+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69587e73e8a5900a62ec43d5"
+    },
+    "order_id": "ORD-4403101B",
+    "items": [
+      {
+        "product_id": "grp_96",
+        "quantity": 1,
+        "name": "Test Product",
+        "price": 250000.0,
+        "image": null,
+        "size": null,
+        "sku": ""
+      }
+    ],
+    "customer_name": "Test User",
+    "customer_email": "test@example.com",
+    "customer_phone": "+595971234567",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 250000.0,
+    "total": 250000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "confirmed",
+    "notes": "Test order",
+    "created_at": "2026-01-03T02:26:59.293754+00:00",
+    "status_updated_at": "2026-01-03T02:27:01.514422+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6959a734a57e54789b168259"
+    },
+    "order_id": "ORD-A0A5982D",
+    "items": [
+      {
+        "product_id": "grp_1021",
+        "quantity": 1,
+        "name": "IMMORTAL NYC ORIGINAL 31. RESERVE EAU DE PERFUME 50ML",
+        "price": 250000.0,
+        "image": "/api/shop/images/grp_403_0.jpg",
+        "size": null,
+        "sku": ""
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 250000.0,
+    "total": 250000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "solicitud",
+    "notes": "",
+    "created_at": "2026-01-03T23:33:08.156007+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695aba2af5e86f734423fdad"
+    },
+    "order_id": "ORD-EDD844B4",
+    "items": [
+      {
+        "product_id": "TEST001",
+        "quantity": 1,
+        "name": "Producto Test",
+        "price": 150000.0,
+        "image": null,
+        "size": null,
+        "sku": "TEST001"
+      }
+    ],
+    "customer_name": "Test Cliente",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595981123456",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "confirmed",
+    "notes": null,
+    "created_at": "2026-01-04T19:06:18.567926+00:00",
+    "status_updated_at": "2026-01-06T00:34:41.322841+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69547cf8e3ba0b99b4f12345"
+    },
+    "order_id": "ORD-AE078DB7",
+    "items": [
+      {
+        "product_id": "VkGAb",
+        "quantity": 1,
+        "name": "100065-N-Pollera volado simple-Negro",
+        "price": 150000.0,
+        "image": ""
+      }
+    ],
+    "customer_name": "CARLOS",
+    "customer_email": "carlos.melgarejo.miranda@gmail.com",
+    "customer_phone": "+595983110913",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "stripe",
+    "payment_status": "failed",
+    "order_status": "confirmed",
+    "notes": "",
+    "created_at": "2025-12-31T01:31:36.614204+00:00",
+    "error": "You did not provide an API key. You need to provide your API key in the Authorization header, using Bearer auth (e.g. 'Authorization: Bearer YOUR_SECRET_KEY'). See https://stripe.com/docs/api#authentication for details, or we can help at https://support.stripe.com/.",
+    "status_updated_at": "2025-12-31T01:46:09.659334+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6954836c3139f72125304e5f"
+    },
+    "order_id": "ORD-4F41E4A9",
+    "items": [
+      {
+        "product_id": "test123",
+        "quantity": 1,
+        "name": "100065-N-Pollera volado simple-Negro",
+        "price": 150000.0,
+        "image": null,
+        "size": "M",
+        "sku": null
+      }
+    ],
+    "customer_name": "Test User",
+    "customer_email": "test@example.com",
+    "customer_phone": "+595983110913",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "stripe",
+    "payment_status": "failed",
+    "order_status": "pending",
+    "notes": null,
+    "created_at": "2025-12-31T01:59:08.187983+00:00",
+    "error": "You did not provide an API key. You need to provide your API key in the Authorization header, using Bearer auth (e.g. 'Authorization: Bearer YOUR_SECRET_KEY'). See https://stripe.com/docs/api#authentication for details, or we can help at https://support.stripe.com/."
+  },
+  {
+    "_id": {
+      "$oid": "6954845752dc97a39d8b71a3"
+    },
+    "order_id": "ORD-D248BF65",
+    "items": [
+      {
+        "product_id": "test123",
+        "quantity": 1,
+        "name": "100065-N-Pollera volado simple-Negro",
+        "price": 150000.0,
+        "image": null,
+        "size": "M",
+        "sku": null
+      }
+    ],
+    "customer_name": "Test User",
+    "customer_email": "test@example.com",
+    "customer_phone": "+595983110913",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "stripe",
+    "payment_status": "pending",
+    "order_status": "confirmed",
+    "notes": null,
+    "created_at": "2025-12-31T02:03:03.840116+00:00",
+    "stripe_session_id": "cs_test_a1PaMz7h5OUe2tm4KHgjnOVmaZC2G0oGQMYOTS0nkeHs9efbBJ8HIgIZVg",
+    "status_updated_at": "2025-12-31T02:06:42.813770+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695485c252dc97a39d8b7785"
+    },
+    "order_id": "ORD-AC1483C2",
+    "items": [
+      {
+        "product_id": "VkGAb",
+        "quantity": 1,
+        "name": "100065-N-Pollera volado simple-Negro",
+        "price": 150000.0,
+        "image": "",
+        "size": "G",
+        "sku": "100065-NG"
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "stripe",
+    "payment_status": "pending",
+    "order_status": "pending",
+    "notes": "",
+    "created_at": "2025-12-31T02:09:06.036585+00:00",
+    "stripe_session_id": "cs_test_a1GvFgk5NbFeuEl01p73gWX8irTVcNKNyidYS2IuNKT1gQSV0h2JzcZ1ea"
+  },
+  {
+    "_id": {
+      "$oid": "6954864b52dc97a39d8b7d65"
+    },
+    "order_id": "ORD-D890E840",
+    "items": [
+      {
+        "product_id": "RWAwY",
+        "quantity": 1,
+        "name": "100065-N-Pollera volado simple-Negro",
+        "price": 150000.0,
+        "image": "",
+        "size": "M",
+        "sku": "100065-NM"
+      }
+    ],
+    "customer_name": "Avenue Admin",
+    "customer_email": "avenuepy@gmail.com",
+    "customer_phone": "+595976691520",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "stripe",
+    "payment_status": "pending",
+    "order_status": "pending",
+    "notes": "",
+    "created_at": "2025-12-31T02:11:23.424526+00:00",
+    "stripe_session_id": "cs_test_a1Fi1ZJdqQy345HDd4yL1aDyEQMgFGSQLiXKRiqnkokXDhdLUmE9SZ8Fjg"
+  },
+  {
+    "_id": {
+      "$oid": "6957c8b3aec6dbb8f4e75b11"
+    },
+    "order_id": "ORD-1BDBD4D8",
+    "items": [
+      {
+        "product_id": "test",
+        "quantity": 1,
+        "name": "Test Product",
+        "price": 50000.0,
+        "image": null,
+        "size": null,
+        "sku": null
+      }
+    ],
+    "customer_name": "Test User",
+    "customer_email": "test@test.com",
+    "customer_phone": "+595991234567",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 50000.0,
+    "total": 50000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "facturado",
+    "notes": null,
+    "created_at": "2026-01-02T13:31:31.136317+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6958304967eba2c489a89e3a"
+    },
+    "order_id": "ORD-88E553CB",
+    "items": [
+      {
+        "product_id": "test-product-1",
+        "quantity": 1,
+        "name": "Test Product",
+        "price": 150000.0,
+        "image": null,
+        "size": "M",
+        "sku": "TEST-SKU-001"
+      }
+    ],
+    "customer_name": "Juan Perez",
+    "customer_email": "juan.perez@test.com",
+    "customer_phone": "+595971234567",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "facturado",
+    "notes": "Test order for checkout system",
+    "created_at": "2026-01-02T20:53:29.092024+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6958304a67eba2c489a89e3b"
+    },
+    "order_id": "ORD-93109CD2",
+    "items": [
+      {
+        "product_id": "grp_96",
+        "quantity": 1,
+        "name": "Test Product",
+        "price": 250000.0,
+        "image": null,
+        "size": null,
+        "sku": ""
+      }
+    ],
+    "customer_name": "Test User",
+    "customer_email": "test@example.com",
+    "customer_phone": "+595971234567",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 250000.0,
+    "total": 250000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "confirmed",
+    "notes": "Test order",
+    "created_at": "2026-01-02T20:53:30.014016+00:00",
+    "status_updated_at": "2026-01-02T20:53:31.995069+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69587e72e8a5900a62ec43d4"
+    },
+    "order_id": "ORD-B5E6139F",
+    "items": [
+      {
+        "product_id": "test-product-1",
+        "quantity": 1,
+        "name": "Test Product",
+        "price": 150000.0,
+        "image": null,
+        "size": "M",
+        "sku": "TEST-SKU-001"
+      }
+    ],
+    "customer_name": "Juan Perez",
+    "customer_email": "juan.perez@test.com",
+    "customer_phone": "+595971234567",
+    "delivery_type": "pickup",
+    "delivery_address": null,
+    "delivery_cost": 0,
+    "subtotal": 150000.0,
+    "total": 150000.0,
+    "payment_method": "bancard",
+    "payment_status": "pending",
+    "order_status": "facturado",
+    "notes": "Test order for checkout system",
+    "created_at": "2026-01-03T02:26:58.267028+00:00"
+  }
+]

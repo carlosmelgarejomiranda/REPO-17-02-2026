@@ -1,0 +1,57 @@
+[
+  {
+    "_id": {
+      "$oid": "697e6cde2e269cd49380c535"
+    },
+    "created_at": "2026-01-31T20:58:06.034842+00:00",
+    "type": "product_images_backup",
+    "count": 9,
+    "products": [
+      {
+        "name": "IMMORTAL NYC ORIGINAL 31. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_287",
+        "custom_image": "/api/shop/images/grp_403_0.jpg"
+      },
+      {
+        "name": "IMMORTAL NYC ORIGINAL 40. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_462",
+        "custom_image": "/api/shop/images/grp_1417_0.jpg"
+      },
+      {
+        "name": "IMMORTAL NYC ORIGINAL 36. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_512",
+        "custom_image": "/api/shop/images/grp_556_0.jpg"
+      },
+      {
+        "name": "IMMORTAL NYC ORIGINAL 33. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_581",
+        "custom_image": "/api/shop/images/grp_834_0.jpg"
+      },
+      {
+        "name": "IMMORTAL NYC ORIGINAL 37. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_622",
+        "custom_image": "/api/shop/images/grp_635_0.jpg"
+      },
+      {
+        "name": "IMMORTAL NYC ORIGINAL 34. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_954",
+        "custom_image": "/api/shop/images/grp_401_0.jpg"
+      },
+      {
+        "name": "IMMORTAL NYC ORIGINAL 38. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_1015",
+        "custom_image": "/api/shop/images/grp_1498_0.jpg"
+      },
+      {
+        "name": "IMMORTAL NYC ORIGINAL 35. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_1280",
+        "custom_image": "/api/shop/images/grp_1275_0.jpg"
+      },
+      {
+        "name": "IMMORTAL NYC ORIGINAL 32. RESERVE EAU DE PERFUME 50ML",
+        "grouped_id": "grp_1289",
+        "custom_image": "/api/shop/images/grp_1360_0.jpg"
+      }
+    ]
+  }
+]

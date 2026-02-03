@@ -1,0 +1,16 @@
+[
+  {
+    "_id": {
+      "$oid": "697032d6344af6fc35e95491"
+    },
+    "image_id": "b6171069",
+    "batch_id": "batch_d3af2d86b47e",
+    "filename": "test.png",
+    "temp_filename": "b6171069.png",
+    "extension": "png",
+    "content_type": "image/png",
+    "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+    "size": 70,
+    "created_at": "2026-01-21T01:58:46.800893+00:00"
+  }
+]

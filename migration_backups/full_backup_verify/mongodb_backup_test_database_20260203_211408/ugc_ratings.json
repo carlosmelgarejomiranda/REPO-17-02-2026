@@ -1,0 +1,30 @@
+[
+  {
+    "_id": {
+      "$oid": "695d6655111e4cf6f25c90cc"
+    },
+    "id": "fb8ffbaa-f288-4736-aa45-397aa0d14a01",
+    "deliverable_id": "2d9fa1fb-c9e5-4c94-9b46-c6f607bfd50e",
+    "campaign_id": "e31c0c3b-59ca-46f7-9fd8-270301b3ba4e",
+    "creator_id": "5faae511-ce7e-4f83-8e5c-a38f13135a8d",
+    "brand_id": "4e45c76f-2186-4b17-9e23-7787343784d3",
+    "brand_name": "AVENUE MALL EAS",
+    "rating": 5,
+    "comment": "Muy profesional y creativo. Definitivamente volveremos a trabajar juntos.",
+    "created_at": "2026-01-04T19:45:25.692729+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "695d6655111e4cf6f25c90cd"
+    },
+    "id": "41d17907-20fb-4a80-a6f0-f6b33b95fcbc",
+    "deliverable_id": "7d264c52-6111-4fcd-981a-8626b4ecb053",
+    "campaign_id": "e31c0c3b-59ca-46f7-9fd8-270301b3ba4e",
+    "creator_id": "5faae511-ce7e-4f83-8e5c-a38f13135a8d",
+    "brand_id": "4e45c76f-2186-4b17-9e23-7787343784d3",
+    "brand_name": "AVENUE MALL EAS",
+    "rating": 5,
+    "comment": "Muy profesional y creativo. Definitivamente volveremos a trabajar juntos.",
+    "created_at": "2026-01-01T19:45:25.692729+00:00"
+  }
+]

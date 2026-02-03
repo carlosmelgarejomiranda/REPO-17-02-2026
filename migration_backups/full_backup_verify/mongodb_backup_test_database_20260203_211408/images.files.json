@@ -1,0 +1,63 @@
+[
+  {
+    "_id": {
+      "$oid": "69730651b0911139796d454f"
+    },
+    "filename": "3c599a99_20260123052537.png",
+    "metadata": {
+      "original_filename": "adab4fb96ea7_3c599a99.png",
+      "content_type": "image/png",
+      "uploaded_at": "2026-01-23T05:25:37.892761+00:00",
+      "size_bytes": 67,
+      "hash": "3c599a99",
+      "migrated_from": "/app/backend/uploads/adab4fb96ea7_3c599a99.png",
+      "migration_date": "2026-01-23T05:25:37.892717+00:00",
+      "original_directory": "/app/backend/uploads"
+    },
+    "chunkSize": 261120,
+    "length": 67,
+    "uploadDate": {
+      "$date": "2026-01-23T05:25:37.921Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "69730651b0911139796d4551"
+    },
+    "filename": "3c599a99_20260123052537.png",
+    "metadata": {
+      "original_filename": "cf7f64da8437_3c599a99.png",
+      "content_type": "image/png",
+      "uploaded_at": "2026-01-23T05:25:37.922758+00:00",
+      "size_bytes": 67,
+      "hash": "3c599a99",
+      "migrated_from": "/app/backend/uploads/cf7f64da8437_3c599a99.png",
+      "migration_date": "2026-01-23T05:25:37.922724+00:00",
+      "original_directory": "/app/backend/uploads"
+    },
+    "chunkSize": 261120,
+    "length": 67,
+    "uploadDate": {
+      "$date": "2026-01-23T05:25:37.923Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6973066a0b61fbb1e39f1e9b"
+    },
+    "filename": "54e245d8_20260123052602.jpg",
+    "metadata": {
+      "original_filename": "test_upload.jpg",
+      "content_type": "image/jpeg",
+      "uploaded_at": "2026-01-23T05:26:02.373347+00:00",
+      "size_bytes": 825,
+      "hash": "54e245d8",
+      "uploaded_by": "user_595c96f7c631"
+    },
+    "chunkSize": 261120,
+    "length": 825,
+    "uploadDate": {
+      "$date": "2026-01-23T05:26:02.374Z"
+    }
+  }
+]

@@ -1,0 +1,61 @@
+[
+  {
+    "_id": {
+      "$oid": "697eebe0b758685bdd831bd7"
+    },
+    "id": "a93f847e-c1eb-4844-bfbf-aa909d544a22",
+    "type": "backup_failed",
+    "title": "🚨 Backup Fallido",
+    "message": "Error: No se pudo crear el dump de MongoDB. Acción requerida.",
+    "severity": "critical",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0,
+      "total_backups": 0,
+      "error": "No se pudo crear el dump de MongoDB"
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-01T06:00:00.505829+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697eebe0ff9711064ddf71c7"
+    },
+    "id": "40c7dd5f-84c8-49ae-9ee9-a9bc1bdfac62",
+    "type": "backup_failed",
+    "title": "🚨 Backup Fallido",
+    "message": "Error: No se pudo crear el dump de MongoDB. Acción requerida.",
+    "severity": "critical",
+    "metadata": {
+      "db_name": "avenue-secure-shop-test_database",
+      "size_mb": 0,
+      "total_backups": 0,
+      "error": "No se pudo crear el dump de MongoDB"
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-01T06:00:00.496351+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "69803d6230413cd4fc549955"
+    },
+    "id": "da472941-3379-4e70-bab4-649ae6104ec9",
+    "type": "backup_success",
+    "title": "✅ Backup Completado",
+    "message": "Backup de 0.73 MB (26 colecciones, 7345 docs) subido a Cloudinary.",
+    "severity": "info",
+    "metadata": {
+      "db_name": "test_database",
+      "size_mb": 0.73,
+      "collections_count": 26,
+      "total_documents": 7345,
+      "total_backups": 7,
+      "error": null
+    },
+    "is_read": false,
+    "read_by": [],
+    "created_at": "2026-02-02T06:00:02.036413+00:00"
+  }
+]

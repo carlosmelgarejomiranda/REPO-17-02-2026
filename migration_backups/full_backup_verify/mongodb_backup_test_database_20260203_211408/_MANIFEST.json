@@ -1,0 +1,42 @@
+{
+  "backup_info": {
+    "created_at": "2026-02-03T21:14:08.591733+00:00",
+    "database": "test_database",
+    "backup_name": "mongodb_backup_test_database_20260203_211408",
+    "total_collections": 31,
+    "total_documents": 7478
+  },
+  "collections": {
+    "ugc_applications": 351,
+    "migration_logs": 3,
+    "ugc_deliverables": 43,
+    "product_images.files": 17,
+    "product_images_data": 10,
+    "temp_images": 1,
+    "email_logs": 26,
+    "audit_logs": 600,
+    "system_notifications": 3,
+    "ugc_metrics": 14,
+    "ugc_notifications": 10,
+    "terms_acceptances": 617,
+    "temp_image_batches": 7,
+    "reservations": 1,
+    "ugc_ratings": 2,
+    "images.files": 3,
+    "orders": 22,
+    "payment_transactions": 8,
+    "users": 372,
+    "shop_products_grouped": 1569,
+    "admin_settings": 1,
+    "brand_inquiries": 1,
+    "page_content": 0,
+    "shop_products": 3302,
+    "ugc_brands": 12,
+    "ugc_packages": 1,
+    "shop_coupons": 211,
+    "ugc_creators": 264,
+    "migration_backups": 1,
+    "page_modifications": 2,
+    "ugc_campaigns": 4
+  }
+}

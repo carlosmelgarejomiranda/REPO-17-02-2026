@@ -1,0 +1,316 @@
+[
+  {
+    "_id": {
+      "$oid": "69679def1f4eafe51ba55984"
+    },
+    "id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "brand_id": "b409f833-bfd8-4b50-ba95-d48b01ac866a",
+    "package_id": null,
+    "name": "Vení a AVENUE: viví el showroom y contalo a tu manera",
+    "description": "Vení a AVENUE, explorá el showroom, probáte outfits y contá tu experiencia en primera persona, con tu estilo y tu creatividad. La idea es que se sienta real: lo que viste, lo que te gustó, lo que te probaste y cómo lo viviste.\n\n📌 No hay guión fijo y tenés libertad creativa. Podés hacerlo como:\n\n• vlog / “day in my life”\n• GRWM + probador\n• transición de outfits\n• mini storytime\n• review rápido de hallazgos\n• “3 looks para X ocasión”\n\n📌 Lo único que tiene que pasar\n\n• Mostrar AVENUE / el showroom\n• Incluir outfit try-on (probador/espejo o donde te quede mejor)\n• Contarlo en primera persona (UGC real, natural)\n\n📌 Entregable\n\n• 1 video vertical (Reel/TikTok)",
+    "category": "fashion",
+    "city": "Asunción",
+    "available_slots": 30,
+    "total_slots_loaded": 30,
+    "slots_filled": 25,
+    "slots": 30,
+    "contract": {
+      "monthly_deliverables": 30,
+      "duration_months": 6,
+      "start_date": "2026-01-14T00:00:00+00:00",
+      "end_date": "2026-07-14T00:00:00+00:00",
+      "next_reload_date": "2026-02-14T00:00:00+00:00",
+      "total_slots_loaded": 30,
+      "is_active": true,
+      "renewed_at": null,
+      "renewal_count": 0
+    },
+    "requirements": {
+      "min_followers": null,
+      "min_age": 18,
+      "gender": "all",
+      "country": "Paraguay",
+      "residence": "Asunción y Gran Asunción",
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "mandatory_tag": null,
+      "mandatory_mention": null,
+      "additional_rules": [
+        "Perfil público de Instagram y/o TikTok"
+      ]
+    },
+    "canje": {
+      "type": "product",
+      "description": "1 prenda a elección del Outlet de AVENUE o de Santal, hasta Gs. 500.000. ",
+      "value": 500000,
+      "delivery_method": "pickup",
+      "pickup_address": "Av. San Martin, Entre Sucre y Moises Bertoni, AVENUE, Paseo Los Arboles",
+      "pickup_maps_url": "https://maps.app.goo.gl/Ebztk9yznXioighi6",
+      "pickup_hours": "Lunes a Sabados 9:00 - 21:00",
+      "brand_contact_name": "Comercial Avenue",
+      "brand_contact_phone": "+59573666000",
+      "requires_shipping": false,
+      "requires_scheduling": false
+    },
+    "timeline": {
+      "applications_deadline": "2026-06-30T00:00:00.000Z",
+      "publish_start": "2026-01-14T00:00:00.000Z",
+      "publish_end": "2026-07-31T00:00:00.000Z",
+      "delivery_sla_hours": 48
+    },
+    "assets": {
+      "cover_image": "https://avenue-secure-shop.emergent.host/api/images/69731c97aa3f37f07744e0f4",
+      "brand_name": "AVENUE"
+    },
+    "status": "live",
+    "visible_to_creators": true,
+    "created_at": "2026-01-14T13:45:19.564107+00:00",
+    "updated_at": "2026-01-31T14:36:52.232601+00:00",
+    "published_at": "2026-01-14T13:45:19.564107+00:00",
+    "completed_at": null,
+    "admin_notes": "",
+    "created_by_admin": "user_595c96f7c631",
+    "metrics_delivery_days": 14,
+    "url_delivery_days": 10
+  },
+  {
+    "_id": {
+      "$oid": "6977ac8adaa286688293495f"
+    },
+    "id": "4b21cba5-e368-4e87-8361-206269a6739f",
+    "brand_id": "1434d362-56bf-45ea-bda1-e62f24caf439",
+    "package_id": null,
+    "name": "Descubrí OKI: probador & looks en el showroom de AVENUE",
+    "description": "OKI es una marca de esenciales de algodón, pensados para el día a día: prendas cómodas, versátiles y fáciles de combinar para mujer, hombre y niños.\n\nEn esta campaña, vení a descubrir OKI en el showroom de AVENUE, elegí tus favoritos, probáte outfits y contá tu experiencia en primera persona con tu estilo y tu creatividad. Queremos que se sienta real: lo que viste, lo que te gustó, lo que te probaste y cómo lo usarías.\n\n📌 Libertad creativa (sin guión fijo). Podés hacerlo como:\n\nvlog / “day in my life”\n\nGRWM + probador\n\ntransición de outfits\n\nmini storytime\n\nreview rápido de hallazgos\n\n“3 looks OKI para X ocasión”\n\n📌 Lo único que tiene que pasar\n\nDecir o dejar claro: “Descubrí OKI en el showroom de AVENUE”\n\nMostrar prendas OKI (selección + detalles)\n\nIncluir outfit try-on (probador/espejo o donde te quede mejor)\n\nContarlo en primera persona (UGC natural)\n\n📌 Entregable\n\n1 video vertical (Reel/TikTok)**\n\nChatGPT puede c",
+    "category": "fashion",
+    "city": "Asunción",
+    "available_slots": 6,
+    "total_slots_loaded": 6,
+    "slots_filled": 0,
+    "slots": 6,
+    "contract": {
+      "monthly_deliverables": 6,
+      "duration_months": 3,
+      "start_date": "2026-01-26T00:00:00+00:00",
+      "end_date": "2026-04-26T00:00:00+00:00",
+      "next_reload_date": "2026-02-26T00:00:00+00:00",
+      "total_slots_loaded": 6,
+      "is_active": true,
+      "renewed_at": null,
+      "renewal_count": 0
+    },
+    "requirements": {
+      "min_followers": null,
+      "min_avg_views": null,
+      "min_age": 18,
+      "gender": "all",
+      "country": "Paraguay",
+      "residence": "Asunción y Gran Asunción",
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "mandatory_tag": null,
+      "mandatory_mention": null,
+      "mandatory_cta": null,
+      "content_format": null,
+      "min_duration_seconds": null,
+      "max_duration_seconds": null,
+      "additional_rules": [
+        "Perfil público de Instagram y/o TikTok"
+      ]
+    },
+    "canje": {
+      "type": "product",
+      "description": "🎁 Canje: 1 prenda OKI a elección.",
+      "value": 130000,
+      "delivery_method": "pickup",
+      "pickup_address": "Ave. San Martin entre Sucre y Moises Bertoni, Avenue, Paseo Los Arboles",
+      "pickup_maps_url": "https://maps.app.goo.gl/vaDjFD1YSoKFuxUv6",
+      "pickup_hours": "9:00-21:00",
+      "brand_contact_name": "COMERCIAL DE AVENUE",
+      "brand_contact_phone": "+595973666000",
+      "requires_shipping": false,
+      "shipping_notes": null,
+      "requires_scheduling": false,
+      "location": null,
+      "scheduling_notes": null
+    },
+    "timeline": {
+      "applications_deadline": "2026-03-30T00:00:00.000Z",
+      "publish_start": "2026-01-26T00:00:00.000Z",
+      "publish_end": "2026-04-30T00:00:00.000Z",
+      "delivery_sla_hours": 48
+    },
+    "assets": {
+      "cover_image": "",
+      "brand_name": "OKI"
+    },
+    "status": "live",
+    "visible_to_creators": true,
+    "created_at": "2026-01-26T18:03:54.203774+00:00",
+    "updated_at": "2026-01-26T18:03:54.203774+00:00",
+    "published_at": "2026-01-26T18:03:54.203774+00:00",
+    "completed_at": null,
+    "admin_notes": "",
+    "created_by_admin": "user_595c96f7c631"
+  },
+  {
+    "_id": {
+      "$oid": "6977e01db82d30a1c7934f7f"
+    },
+    "id": "e5e1297c-fb1f-47ad-9d71-d1a77154b70f",
+    "brand_id": "e646a231-3733-41b7-ac90-77646cd71dbe",
+    "package_id": null,
+    "name": "Descubrí WUARANI: looks deportivos para gym, tenis y pádel (showroom AVENUE)",
+    "description": "WUARANI es una marca de prendas deportivas diseñada para moverte con comodidad y estilo, especializada en outfits para gym, tenis y pádel.\n\nEn esta campaña, vení a descubrir WUARANI en el showroom de AVENUE, probáte looks y contá tu experiencia en primera persona con tu estilo y tu creatividad. Queremos que se sienta real: qué te llamó la atención, qué te probaste, cómo te calzó y para qué lo usarías (entreno, partido, rutina).\n\n📌 Libertad creativa (sin guión fijo). Podés hacerlo como:\n\nvlog / “day in my life”\n\nGRWM deportivo + probador\n\ntransición de outfits (gym/tenis/pádel)\n\nmini storytime “me armé el look para entrenar/jugar”\n\nreview rápido (fit, tela, comodidad)\n\n“3 looks WUARANI para X” (piernas, upper, partido, etc.)\n\n📌 Lo único que tiene que pasar\n\nDecir o dejar claro: “Descubrí WUARANI en el showroom de AVENUE”\n\nMostrar prendas WUARANI (selección + detalles)\n\nIncluir outfit try-on (probador/espejo o donde te quede mejor)\n\nContarlo en primera persona (UGC natural)\n\n📌 Entregable\n\n1 video vertical (Reel/TikTok)",
+    "category": "fashion",
+    "city": "Asunción",
+    "available_slots": 6,
+    "total_slots_loaded": 6,
+    "slots_filled": 0,
+    "slots": 6,
+    "contract": {
+      "monthly_deliverables": 6,
+      "duration_months": 3,
+      "start_date": "2026-01-26T00:00:00+00:00",
+      "end_date": "2026-04-26T00:00:00+00:00",
+      "next_reload_date": "2026-02-26T00:00:00+00:00",
+      "total_slots_loaded": 6,
+      "is_active": true,
+      "renewed_at": null,
+      "renewal_count": 0
+    },
+    "requirements": {
+      "min_followers": null,
+      "min_avg_views": null,
+      "min_age": 18,
+      "gender": "female",
+      "country": "Paraguay",
+      "residence": "Asunción y Gran Asunción",
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "mandatory_tag": null,
+      "mandatory_mention": null,
+      "mandatory_cta": null,
+      "content_format": null,
+      "min_duration_seconds": null,
+      "max_duration_seconds": null,
+      "additional_rules": [
+        "Perfil público de Instagram y/o TikTok"
+      ]
+    },
+    "canje": {
+      "type": "product",
+      "description": "🎁 Canje: 1 prenda WUARANI a elección.",
+      "value": 300000,
+      "delivery_method": "pickup",
+      "pickup_address": "AVE. SAN MARTIN, ENTRE SUCRE Y MOISES BERTONI, AVENUE , PASEO LOS ARBOLES",
+      "pickup_maps_url": "https://maps.app.goo.gl/vaDjFD1YSoKFuxUv6",
+      "pickup_hours": "Lunes a Sabados 9:00 - 21:00",
+      "brand_contact_name": "COMERCIAL DE AVENUE",
+      "brand_contact_phone": "+595973666000",
+      "requires_shipping": false,
+      "shipping_notes": null,
+      "requires_scheduling": false,
+      "location": null,
+      "scheduling_notes": null
+    },
+    "timeline": {
+      "applications_deadline": "2026-03-31T00:00:00.000Z",
+      "publish_start": "2026-01-26T00:00:00.000Z",
+      "publish_end": "2026-04-30T00:00:00.000Z",
+      "delivery_sla_hours": 48
+    },
+    "assets": {
+      "cover_image": "",
+      "brand_name": "WUARANI"
+    },
+    "status": "live",
+    "visible_to_creators": true,
+    "created_at": "2026-01-26T21:43:57.486435+00:00",
+    "updated_at": "2026-01-26T21:43:57.486435+00:00",
+    "published_at": "2026-01-26T21:43:57.486435+00:00",
+    "completed_at": null,
+    "admin_notes": "",
+    "created_by_admin": "user_595c96f7c631"
+  },
+  {
+    "_id": {
+      "$oid": "6978dd32828ee6ecf2379b0b"
+    },
+    "id": "ea85a9f8-eb58-4d0d-adef-459feedf9017",
+    "brand_id": "9993e17e-ee70-4f80-ab3e-6b54cbc3f40d",
+    "package_id": null,
+    "name": "Descubrí SARELLY: semijoyas & accesorios en tendencia (showroom AVENUE)",
+    "description": "SARELLY es una marca de semijoyas y accesorios de calidad: piezas resistentes, pensadas para el uso diario y siempre en tendencia.\n\nEn esta campaña, vení a descubrir SARELLY en el showroom de AVENUE, elegí tus favoritos y contá tu experiencia en primera persona, con tu estilo y tu creatividad. Queremos que se sienta real: qué te llamó la atención, qué elegiste, cómo lo combinarías y por qué.\n\n\n\n📌 Libertad creativa (sin guión fijo). Podés hacerlo como:\n\nvlog / “day in my life”\n\nGRWM + accesorios (cómo lo elevan)\n\ntransición de looks “sin accesorios vs con SARELLY”\n\nmini storytime “mi hallazgo del día”\n\nreview rápido (detalle, terminación, cómo queda)\n\n“3 combinaciones para X ocasión” (work, cita, noche, diario)\n\n📌 Lo único que tiene que pasar\n\nDecir o dejar claro: “Descubrí SARELLY en el showroom de AVENUE”\n\nMostrar piezas SARELLY (selección + detalles/close-ups)\n\nMostrar cómo quedan puestos (en vos / en el look / mirror try-on)\n\nContarlo en primera persona (UGC natural)\n\n📌 Entregable\n\n1 video vertical (Reel/TikTok)",
+    "category": "fashion",
+    "city": "Asunción",
+    "available_slots": 4,
+    "total_slots_loaded": 4,
+    "slots_filled": 0,
+    "slots": 4,
+    "contract": {
+      "monthly_deliverables": 4,
+      "duration_months": 3,
+      "start_date": "2026-01-27T00:00:00+00:00",
+      "end_date": "2026-04-27T00:00:00+00:00",
+      "next_reload_date": "2026-02-27T00:00:00+00:00",
+      "total_slots_loaded": 4,
+      "is_active": true,
+      "renewed_at": null,
+      "renewal_count": 0
+    },
+    "requirements": {
+      "min_followers": null,
+      "min_age": 18,
+      "gender": "female",
+      "country": "Paraguay",
+      "residence": "Asunción y Gran Asunción",
+      "platforms": [
+        "instagram",
+        "tiktok"
+      ],
+      "mandatory_tag": null,
+      "mandatory_mention": null,
+      "additional_rules": [
+        "Perfil público de Instagram y/o TikTok"
+      ]
+    },
+    "canje": {
+      "type": "product",
+      "description": "🎁 Canje: 1 accesorio / pieza SARELLY a elección.",
+      "value": 130000,
+      "delivery_method": "pickup",
+      "pickup_address": "Ave. San Martin entre Sucre y Moises Bertoni, Avenue, Paseo Los Arboles",
+      "pickup_maps_url": "https://maps.app.goo.gl/vaDjFD1YSoKFuxUv6",
+      "pickup_hours": "Lunes a Sabado 9:00-21:00",
+      "brand_contact_name": "COMERCIAL DE AVENUE",
+      "brand_contact_phone": "+595973666000",
+      "requires_shipping": false,
+      "requires_scheduling": false
+    },
+    "timeline": {
+      "applications_deadline": "2026-03-31T00:00:00.000Z",
+      "publish_start": "2026-01-27T00:00:00.000Z",
+      "publish_end": "2026-04-30T00:00:00.000Z",
+      "delivery_sla_hours": 48
+    },
+    "assets": {
+      "cover_image": "",
+      "brand_name": "SARELLY"
+    },
+    "status": "live",
+    "visible_to_creators": true,
+    "created_at": "2026-01-27T15:43:46.118857+00:00",
+    "updated_at": "2026-01-27T15:43:58.964587+00:00",
+    "published_at": "2026-01-27T15:43:46.118857+00:00",
+    "completed_at": null,
+    "admin_notes": "",
+    "created_by_admin": "user_595c96f7c631"
+  }
+]

@@ -1,0 +1,19 @@
+[
+  {
+    "_id": {
+      "$oid": "6963ea796ce2a15d87a68b43"
+    },
+    "inquiry_id": "BRD-E9099F5A",
+    "brand_name": "aldanastorepy",
+    "contact_name": "Adriana",
+    "email": "adri.aldana.vaesken@gmail.com",
+    "phone": "595992707000",
+    "interest": "todo",
+    "interest_label": "Todo lo anterior",
+    "message": "",
+    "status": "contactado",
+    "created_at": "2026-01-11T18:22:49.479248+00:00",
+    "notes": "",
+    "updated_at": "2026-01-31T14:30:16.716097+00:00"
+  }
+]

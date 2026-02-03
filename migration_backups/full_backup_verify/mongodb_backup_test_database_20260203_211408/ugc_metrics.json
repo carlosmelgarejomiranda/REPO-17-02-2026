@@ -1,0 +1,4068 @@
+[
+  {
+    "_id": {
+      "$oid": "69759d3ce89fce958926d88d"
+    },
+    "id": "005dba87-0d88-4378-a808-166e40ed999e",
+    "deliverable_id": "6c5f3afa-b28d-45f8-b0fa-0a820161ca43",
+    "creator_id": "f9774404-109f-4d7b-8d95-905ee7b4f67f",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "instagram",
+    "views": 10225,
+    "reach": 6505,
+    "likes": 125,
+    "comments": 4,
+    "shares": 4,
+    "saves": 17,
+    "watch_time_seconds": null,
+    "video_length_seconds": 24,
+    "retention_rate": null,
+    "total_interactions": 150,
+    "engagement_rate": 1.47,
+    "demographics": {
+      "gender": {
+        "male": null,
+        "female": null
+      },
+      "countries": [],
+      "cities": [],
+      "age_ranges": []
+    },
+    "screenshots_count": {
+      "instagram": 2,
+      "tiktok": 0
+    },
+    "screenshot_day": 0,
+    "ai_extracted": true,
+    "ai_confidence": 0.9875,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 10225,
+            "reach": null,
+            "likes": 125,
+            "comments": 4,
+            "shares": 4,
+            "saves": 17,
+            "watch_time_seconds": null,
+            "video_length_seconds": 24,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 10225,
+            "reach": 6505,
+            "likes": 125,
+            "comments": 4,
+            "shares": 4,
+            "saves": 17,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 1
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 10225,
+          "reach": 6505,
+          "likes": 125,
+          "comments": 4,
+          "shares": 4,
+          "saves": 17,
+          "watch_time_seconds": null,
+          "video_length_seconds": 24,
+          "retention_rate": null
+        },
+        "demographics": {
+          "gender": {
+            "male": null,
+            "female": null
+          },
+          "countries": [],
+          "cities": [],
+          "age_ranges": []
+        },
+        "overall_confidence": 0.9875
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-25T04:33:49.571476+00:00",
+    "created_at": "2026-01-25T04:33:49.571476+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6976ce2bdda5195275c5688d"
+    },
+    "id": "fe034a8a-1d92-4d8c-8bc6-d8ffb90d0e4a",
+    "deliverable_id": "7e66dce5-596a-4bdc-ac23-9f4465f9f615",
+    "creator_id": "a5b8854b-0623-4397-8668-a4d487295a91",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "instagram",
+    "views": 2066,
+    "reach": 1269,
+    "likes": 51,
+    "comments": 3,
+    "shares": 3,
+    "saves": 6,
+    "watch_time_seconds": 7605,
+    "video_length_seconds": 25,
+    "retention_rate": 30420.0,
+    "total_interactions": 63,
+    "engagement_rate": 3.05,
+    "demographics": {
+      "gender": {
+        "male": 0.21,
+        "female": 0.79
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 92.2
+        },
+        {
+          "country": "Argentina",
+          "percentage": 1.1
+        },
+        {
+          "country": "Spain",
+          "percentage": 1.0
+        },
+        {
+          "country": "United States",
+          "percentage": 0.8
+        },
+        {
+          "country": "Brazil",
+          "percentage": 0.7
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 22.9
+        },
+        {
+          "range": "25-34",
+          "percentage": 56.3
+        },
+        {
+          "range": "35-44",
+          "percentage": 12.5
+        },
+        {
+          "range": "13-17",
+          "percentage": 0.9
+        },
+        {
+          "range": "45-54",
+          "percentage": 4.6
+        },
+        {
+          "range": "55-64",
+          "percentage": 2.2
+        },
+        {
+          "range": "65+",
+          "percentage": 0.6
+        }
+      ]
+    },
+    "screenshots_count": 7,
+    "screenshot_day": 0,
+    "ai_extracted": true,
+    "ai_confidence": 0.915,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 2066,
+            "reach": null,
+            "likes": 51,
+            "comments": 3,
+            "shares": 15,
+            "saves": 6,
+            "watch_time_seconds": 7605,
+            "video_length_seconds": 25,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 2066,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": 1269,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": 7605,
+            "video_length_seconds": null,
+            "retention_rate": 0.379
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": 24,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.8,
+          "platform": "instagram",
+          "image_index": 3
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 51,
+            "comments": 3,
+            "shares": 15,
+            "saves": 6,
+            "watch_time_seconds": null,
+            "video_length_seconds": 24,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 0.21,
+              "female": 0.79
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 4
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": 3,
+            "shares": 3,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 92.2
+              },
+              {
+                "country": "Argentina",
+                "percentage": 1.1
+              },
+              {
+                "country": "Spain",
+                "percentage": 1.0
+              },
+              {
+                "country": "United States",
+                "percentage": 0.8
+              },
+              {
+                "country": "Brazil",
+                "percentage": 0.7
+              }
+            ],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 5
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": 3,
+            "shares": 3,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 22.9
+              },
+              {
+                "range": "25-34",
+                "percentage": 56.3
+              },
+              {
+                "range": "35-44",
+                "percentage": 12.5
+              },
+              {
+                "range": "13-17",
+                "percentage": 0.9
+              },
+              {
+                "range": "45-54",
+                "percentage": 4.6
+              },
+              {
+                "range": "55-64",
+                "percentage": 2.2
+              },
+              {
+                "range": "65+",
+                "percentage": 0.6
+              }
+            ]
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.95,
+          "platform": "instagram",
+          "image_index": 6
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 2066,
+          "reach": 1269,
+          "likes": 51,
+          "comments": 3,
+          "shares": 3,
+          "saves": 6,
+          "watch_time_seconds": 7605,
+          "video_length_seconds": 25,
+          "retention_rate": 0.379
+        },
+        "demographics": {
+          "gender": {
+            "male": 0.21,
+            "female": 0.79
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 92.2
+            },
+            {
+              "country": "Argentina",
+              "percentage": 1.1
+            },
+            {
+              "country": "Spain",
+              "percentage": 1.0
+            },
+            {
+              "country": "United States",
+              "percentage": 0.8
+            },
+            {
+              "country": "Brazil",
+              "percentage": 0.7
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 22.9
+            },
+            {
+              "range": "25-34",
+              "percentage": 56.3
+            },
+            {
+              "range": "35-44",
+              "percentage": 12.5
+            },
+            {
+              "range": "13-17",
+              "percentage": 0.9
+            },
+            {
+              "range": "45-54",
+              "percentage": 4.6
+            },
+            {
+              "range": "55-64",
+              "percentage": 2.2
+            },
+            {
+              "range": "65+",
+              "percentage": 0.6
+            }
+          ]
+        },
+        "overall_confidence": 0.915
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-26T02:13:55.963593+00:00",
+    "created_at": "2026-01-26T02:13:55.963593+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "6976ce2bdda5195275c5688e"
+    },
+    "id": "b4e61b19-a898-4d13-b946-8660bb891540",
+    "deliverable_id": "7e66dce5-596a-4bdc-ac23-9f4465f9f615",
+    "creator_id": "a5b8854b-0623-4397-8668-a4d487295a91",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "tiktok",
+    "views": 5869,
+    "reach": null,
+    "likes": 376,
+    "comments": 6,
+    "shares": 0,
+    "saves": 7,
+    "watch_time_seconds": 12317,
+    "video_length_seconds": 41,
+    "retention_rate": 30041.46,
+    "total_interactions": 389,
+    "engagement_rate": 6.63,
+    "demographics": {
+      "gender": {
+        "male": 77.0,
+        "female": 23.0
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 70.5
+        },
+        {
+          "country": "Argentina",
+          "percentage": 17.7
+        },
+        {
+          "country": "Brasil",
+          "percentage": 4.5
+        },
+        {
+          "country": "México",
+          "percentage": 2.2
+        },
+        {
+          "country": "Estados Unidos",
+          "percentage": 2.1
+        },
+        {
+          "country": "Reino Unido",
+          "percentage": 1.1
+        },
+        {
+          "country": "Chile",
+          "percentage": 0.8
+        },
+        {
+          "country": "Colombia",
+          "percentage": 0.4
+        },
+        {
+          "country": "España",
+          "percentage": 0.4
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 24.0
+        },
+        {
+          "range": "25-34",
+          "percentage": 40.0
+        },
+        {
+          "range": "35-44",
+          "percentage": 23.0
+        },
+        {
+          "range": "45-54",
+          "percentage": 8.0
+        },
+        {
+          "range": "55+",
+          "percentage": 5.0
+        }
+      ]
+    },
+    "screenshots_count": 6,
+    "screenshot_day": 0,
+    "ai_extracted": true,
+    "ai_confidence": 0.9666666666666666,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 5869,
+            "reach": null,
+            "likes": 376,
+            "comments": 6,
+            "shares": 0,
+            "saves": 7,
+            "watch_time_seconds": 12317,
+            "video_length_seconds": 41.27,
+            "retention_rate": 0.19
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.95,
+          "platform": "tiktok",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 5869,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": 12317,
+            "video_length_seconds": null,
+            "retention_rate": 5.0
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.8,
+          "platform": "tiktok",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": 41,
+            "retention_rate": 5.0
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": null,
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 3
+        },
+        {
+          "metrics": {
+            "views": 5200,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 77.0,
+              "female": 23.0
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 24.0
+              },
+              {
+                "range": "25-34",
+                "percentage": 40.0
+              }
+            ]
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "tiktok",
+          "image_index": 4
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 70.5
+              },
+              {
+                "country": "Argentina",
+                "percentage": 17.7
+              },
+              {
+                "country": "Brasil",
+                "percentage": 4.5
+              },
+              {
+                "country": "México",
+                "percentage": 2.2
+              },
+              {
+                "country": "Estados Unidos",
+                "percentage": 2.1
+              },
+              {
+                "country": "Reino Unido",
+                "percentage": 1.1
+              },
+              {
+                "country": "Chile",
+                "percentage": 0.8
+              },
+              {
+                "country": "Colombia",
+                "percentage": 0.4
+              },
+              {
+                "country": "España",
+                "percentage": 0.4
+              }
+            ],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 24.0
+              },
+              {
+                "range": "25-34",
+                "percentage": 40.0
+              },
+              {
+                "range": "35-44",
+                "percentage": 23.0
+              },
+              {
+                "range": "45-54",
+                "percentage": 8.0
+              },
+              {
+                "range": "55+",
+                "percentage": 5.0
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 5
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 5869,
+          "reach": null,
+          "likes": 376,
+          "comments": 6,
+          "shares": 0,
+          "saves": 7,
+          "watch_time_seconds": 12317,
+          "video_length_seconds": 41,
+          "retention_rate": 5.0
+        },
+        "demographics": {
+          "gender": {
+            "male": 77.0,
+            "female": 23.0
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 70.5
+            },
+            {
+              "country": "Argentina",
+              "percentage": 17.7
+            },
+            {
+              "country": "Brasil",
+              "percentage": 4.5
+            },
+            {
+              "country": "México",
+              "percentage": 2.2
+            },
+            {
+              "country": "Estados Unidos",
+              "percentage": 2.1
+            },
+            {
+              "country": "Reino Unido",
+              "percentage": 1.1
+            },
+            {
+              "country": "Chile",
+              "percentage": 0.8
+            },
+            {
+              "country": "Colombia",
+              "percentage": 0.4
+            },
+            {
+              "country": "España",
+              "percentage": 0.4
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 24.0
+            },
+            {
+              "range": "25-34",
+              "percentage": 40.0
+            },
+            {
+              "range": "35-44",
+              "percentage": 23.0
+            },
+            {
+              "range": "45-54",
+              "percentage": 8.0
+            },
+            {
+              "range": "55+",
+              "percentage": 5.0
+            }
+          ]
+        },
+        "overall_confidence": 0.9666666666666666
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-26T02:13:55.963593+00:00",
+    "created_at": "2026-01-26T02:13:55.963593+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a7c35edbfb11f16594e33"
+    },
+    "id": "903a898b-e79b-4c0c-bf13-056607c2c904",
+    "deliverable_id": "56081497-2f89-495a-9cb6-80ab4a0e8577",
+    "creator_id": "f6d3e469-c071-4487-8f52-9b5e15dc63d7",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "instagram",
+    "views": 3922,
+    "reach": 2421,
+    "likes": 87,
+    "comments": 42,
+    "shares": 8,
+    "saves": 6,
+    "watch_time_seconds": 21647,
+    "video_length_seconds": 42,
+    "retention_rate": 51540.48,
+    "total_interactions": 143,
+    "engagement_rate": 3.65,
+    "demographics": {
+      "gender": {
+        "male": 56.0,
+        "female": 44.0
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 90.3
+        },
+        {
+          "country": "Spain",
+          "percentage": 2.2
+        },
+        {
+          "country": "United States",
+          "percentage": 1.8
+        },
+        {
+          "country": "Argentina",
+          "percentage": 1.2
+        },
+        {
+          "country": "Mexico",
+          "percentage": 1.0
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 48.1
+        },
+        {
+          "range": "25-34",
+          "percentage": 40.5
+        }
+      ]
+    },
+    "screenshots_count": 9,
+    "screenshot_day": 0,
+    "ai_extracted": true,
+    "ai_confidence": 0.9833333333333335,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 87,
+            "comments": 42,
+            "shares": 8,
+            "saves": 6,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 90.3
+              },
+              {
+                "country": "Spain",
+                "percentage": 2.2
+              },
+              {
+                "country": "United States",
+                "percentage": 1.8
+              },
+              {
+                "country": "Argentina",
+                "percentage": 1.2
+              },
+              {
+                "country": "Mexico",
+                "percentage": 1.0
+              }
+            ],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.95,
+          "platform": "instagram",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 3922,
+            "reach": null,
+            "likes": 87,
+            "comments": 42,
+            "shares": 8,
+            "saves": 6,
+            "watch_time_seconds": 21647,
+            "video_length_seconds": 42,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.95,
+          "platform": "instagram",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": 3922,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": 4300,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.8,
+          "platform": "instagram",
+          "image_index": 3
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": 2421,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": 21647,
+            "video_length_seconds": 41,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 4
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": 21647,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 5
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 87,
+            "comments": 42,
+            "shares": 8,
+            "saves": 6,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 56.0,
+              "female": 44.0
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 6
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 87,
+            "comments": 42,
+            "shares": 8,
+            "saves": 6,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 90.3
+              },
+              {
+                "country": "Spain",
+                "percentage": 2.2
+              },
+              {
+                "country": "United States",
+                "percentage": 1.8
+              }
+            ],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 7
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 87,
+            "comments": 42,
+            "shares": 8,
+            "saves": 6,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 48.1
+              },
+              {
+                "range": "25-34",
+                "percentage": 40.5
+              }
+            ]
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 8
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 3922,
+          "reach": 2421,
+          "likes": 87,
+          "comments": 42,
+          "shares": 8,
+          "saves": 6,
+          "watch_time_seconds": 21647,
+          "video_length_seconds": 42,
+          "retention_rate": null
+        },
+        "demographics": {
+          "gender": {
+            "male": 56.0,
+            "female": 44.0
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 90.3
+            },
+            {
+              "country": "Spain",
+              "percentage": 2.2
+            },
+            {
+              "country": "United States",
+              "percentage": 1.8
+            },
+            {
+              "country": "Argentina",
+              "percentage": 1.2
+            },
+            {
+              "country": "Mexico",
+              "percentage": 1.0
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 48.1
+            },
+            {
+              "range": "25-34",
+              "percentage": 40.5
+            }
+          ]
+        },
+        "overall_confidence": 0.9833333333333335
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-28T21:13:11.296194+00:00",
+    "created_at": "2026-01-28T21:13:11.296194+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697a7c35edbfb11f16594e34"
+    },
+    "id": "e2ca5f89-2094-472c-8efd-0e45c7319bad",
+    "deliverable_id": "56081497-2f89-495a-9cb6-80ab4a0e8577",
+    "creator_id": "f6d3e469-c071-4487-8f52-9b5e15dc63d7",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "tiktok",
+    "views": 789,
+    "reach": null,
+    "likes": 66,
+    "comments": 0,
+    "shares": 2,
+    "saves": 1,
+    "watch_time_seconds": 3156,
+    "video_length_seconds": 12.43,
+    "retention_rate": 25390.19,
+    "total_interactions": 69,
+    "engagement_rate": 8.75,
+    "demographics": {
+      "gender": {
+        "male": null,
+        "female": null
+      },
+      "countries": [],
+      "cities": [],
+      "age_ranges": []
+    },
+    "screenshots_count": 4,
+    "screenshot_day": 0,
+    "ai_extracted": true,
+    "ai_confidence": 1.0,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 789,
+            "reach": null,
+            "likes": 66,
+            "comments": 0,
+            "shares": 2,
+            "saves": 1,
+            "watch_time_seconds": 3156,
+            "video_length_seconds": 12.43,
+            "retention_rate": 5.4
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": 32.0
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.7,
+          "platform": "tiktok",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": 12,
+            "retention_rate": 25.0
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.8,
+          "platform": "tiktok",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.0,
+          "platform": "tiktok",
+          "image_index": 3
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 789,
+          "reach": null,
+          "likes": 66,
+          "comments": 0,
+          "shares": 2,
+          "saves": 1,
+          "watch_time_seconds": 3156,
+          "video_length_seconds": 12.43,
+          "retention_rate": 5.4
+        },
+        "demographics": {
+          "gender": {
+            "male": null,
+            "female": null
+          },
+          "countries": [],
+          "cities": [],
+          "age_ranges": []
+        },
+        "overall_confidence": 1.0
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-28T21:13:11.296194+00:00",
+    "created_at": "2026-01-28T21:13:11.296194+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b50ac8f389b48fb7771f5"
+    },
+    "id": "08843a75-4fe0-49cc-8cd5-c70d0116c6d7",
+    "deliverable_id": "615da7b7-67cf-4ba4-a920-2098604ecfb2",
+    "creator_id": "29571ef6-7915-40a7-b8aa-0db6eaae6b8b",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "instagram",
+    "views": 9085,
+    "reach": 6105,
+    "likes": 226,
+    "comments": 1,
+    "shares": 4,
+    "saves": 15,
+    "watch_time_seconds": null,
+    "video_length_seconds": 14,
+    "retention_rate": null,
+    "total_interactions": 246,
+    "engagement_rate": 2.71,
+    "demographics": {
+      "gender": {
+        "male": null,
+        "female": null
+      },
+      "countries": [],
+      "cities": [],
+      "age_ranges": []
+    },
+    "screenshots_count": 2,
+    "screenshot_day": 5,
+    "ai_extracted": true,
+    "ai_confidence": 1.0,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 9085,
+            "reach": null,
+            "likes": 226,
+            "comments": 1,
+            "shares": 4,
+            "saves": 15,
+            "watch_time_seconds": null,
+            "video_length_seconds": 14,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 9085,
+            "reach": 6105,
+            "likes": 226,
+            "comments": 1,
+            "shares": 4,
+            "saves": 15,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 1
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 9085,
+          "reach": 6105,
+          "likes": 226,
+          "comments": 1,
+          "shares": 4,
+          "saves": 15,
+          "watch_time_seconds": null,
+          "video_length_seconds": 14,
+          "retention_rate": null
+        },
+        "demographics": {
+          "gender": {
+            "male": null,
+            "female": null
+          },
+          "countries": [],
+          "cities": [],
+          "age_ranges": []
+        },
+        "overall_confidence": 1.0
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-29T12:20:25.336292+00:00",
+    "created_at": "2026-01-29T12:20:25.336292+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b50ac8f389b48fb7771f6"
+    },
+    "id": "d2dc9b80-83f5-462c-8827-0e831fe81070",
+    "deliverable_id": "615da7b7-67cf-4ba4-a920-2098604ecfb2",
+    "creator_id": "29571ef6-7915-40a7-b8aa-0db6eaae6b8b",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "tiktok",
+    "views": 24379,
+    "reach": null,
+    "likes": 1227,
+    "comments": 5,
+    "shares": 90,
+    "saves": 65,
+    "watch_time_seconds": 18,
+    "video_length_seconds": 13,
+    "retention_rate": 138.46,
+    "total_interactions": 1387,
+    "engagement_rate": 5.69,
+    "demographics": {
+      "gender": {
+        "male": 0.0,
+        "female": 100.0
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 99.4
+        },
+        {
+          "country": "Argentina",
+          "percentage": 0.3
+        },
+        {
+          "country": "Brasil",
+          "percentage": 0.3
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 0.0
+        },
+        {
+          "range": "25-34",
+          "percentage": 0.0
+        },
+        {
+          "range": "35-44",
+          "percentage": 100.0
+        }
+      ]
+    },
+    "screenshots_count": 4,
+    "screenshot_day": 5,
+    "ai_extracted": true,
+    "ai_confidence": 1.0,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 24379,
+            "reach": null,
+            "likes": 1227,
+            "comments": 5,
+            "shares": 90,
+            "saves": 65,
+            "watch_time_seconds": 18,
+            "video_length_seconds": 13,
+            "retention_rate": 2100.0
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": 13,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 0.0,
+              "female": 100.0
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 0.0
+              },
+              {
+                "range": "25-34",
+                "percentage": 0.0
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 0.0,
+              "female": 100.0
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 99.4
+              },
+              {
+                "country": "Argentina",
+                "percentage": 0.3
+              },
+              {
+                "country": "Brasil",
+                "percentage": 0.3
+              }
+            ],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 0.0
+              },
+              {
+                "range": "25-34",
+                "percentage": 0.0
+              },
+              {
+                "range": "35-44",
+                "percentage": 100.0
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 3
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 24379,
+          "reach": null,
+          "likes": 1227,
+          "comments": 5,
+          "shares": 90,
+          "saves": 65,
+          "watch_time_seconds": 18,
+          "video_length_seconds": 13,
+          "retention_rate": 2100.0
+        },
+        "demographics": {
+          "gender": {
+            "male": 0.0,
+            "female": 100.0
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 99.4
+            },
+            {
+              "country": "Argentina",
+              "percentage": 0.3
+            },
+            {
+              "country": "Brasil",
+              "percentage": 0.3
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 0.0
+            },
+            {
+              "range": "25-34",
+              "percentage": 0.0
+            },
+            {
+              "range": "35-44",
+              "percentage": 100.0
+            }
+          ]
+        },
+        "overall_confidence": 1.0
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-29T12:20:25.336292+00:00",
+    "created_at": "2026-01-29T12:20:25.336292+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b721e8f389b48fb77d5a4"
+    },
+    "id": "3eefc5d5-4fb6-4421-acf2-991c2d2ddbdc",
+    "deliverable_id": "0b2ecc4e-dd0e-4731-8ffe-663bb71767bc",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "instagram",
+    "views": 4546,
+    "reach": 2457,
+    "likes": 64,
+    "comments": 4,
+    "shares": 11,
+    "saves": 7,
+    "watch_time_seconds": 22412,
+    "video_length_seconds": 36,
+    "retention_rate": 62255.56,
+    "total_interactions": 86,
+    "engagement_rate": 1.89,
+    "demographics": {
+      "gender": {
+        "male": 33.4,
+        "female": 66.6
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 94.4
+        },
+        {
+          "country": "Brasil",
+          "percentage": 1.5
+        },
+        {
+          "country": "España",
+          "percentage": 0.9
+        },
+        {
+          "country": "Estados Unidos",
+          "percentage": 0.7
+        },
+        {
+          "country": "Alemania",
+          "percentage": 0.6
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "13-17",
+          "percentage": 1.9
+        },
+        {
+          "range": "18-24",
+          "percentage": 20.1
+        },
+        {
+          "range": "25-34",
+          "percentage": 53.5
+        },
+        {
+          "range": "35-44",
+          "percentage": 15.0
+        },
+        {
+          "range": "45-54",
+          "percentage": 5.5
+        },
+        {
+          "range": "55-64",
+          "percentage": 2.6
+        },
+        {
+          "range": "65+",
+          "percentage": 1.3
+        }
+      ]
+    },
+    "screenshots_count": 9,
+    "screenshot_day": 2,
+    "ai_extracted": true,
+    "ai_confidence": 0.9800000000000001,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 4546,
+            "reach": null,
+            "likes": 64,
+            "comments": 4,
+            "shares": 11,
+            "saves": 7,
+            "watch_time_seconds": 22412,
+            "video_length_seconds": 36,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 4546,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": 2457,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": 35,
+            "retention_rate": 12.0
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 3
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": 22412,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 4
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 63,
+            "comments": null,
+            "shares": 11,
+            "saves": 7,
+            "watch_time_seconds": null,
+            "video_length_seconds": 35,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 5
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": 4,
+            "shares": 3,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 33.4,
+              "female": 66.6
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 6
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 94.4
+              },
+              {
+                "country": "Brasil",
+                "percentage": 1.5
+              },
+              {
+                "country": "España",
+                "percentage": 0.9
+              },
+              {
+                "country": "Estados Unidos",
+                "percentage": 0.7
+              },
+              {
+                "country": "Alemania",
+                "percentage": 0.6
+              }
+            ],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": null
+              },
+              {
+                "range": "25-34",
+                "percentage": null
+              },
+              {
+                "range": "35-44",
+                "percentage": null
+              }
+            ]
+          },
+          "screenshot_type": "mixed",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 7
+        },
+        {
+          "metrics": {
+            "views": 66,
+            "reach": null,
+            "likes": 1,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "13-17",
+                "percentage": 1.9
+              },
+              {
+                "range": "18-24",
+                "percentage": 20.1
+              },
+              {
+                "range": "25-34",
+                "percentage": 53.5
+              },
+              {
+                "range": "35-44",
+                "percentage": 15.0
+              },
+              {
+                "range": "45-54",
+                "percentage": 5.5
+              },
+              {
+                "range": "55-64",
+                "percentage": 2.6
+              },
+              {
+                "range": "65+",
+                "percentage": 1.3
+              }
+            ]
+          },
+          "screenshot_type": "mixed",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 8
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 4546,
+          "reach": 2457,
+          "likes": 64,
+          "comments": 4,
+          "shares": 11,
+          "saves": 7,
+          "watch_time_seconds": 22412,
+          "video_length_seconds": 36,
+          "retention_rate": 12.0
+        },
+        "demographics": {
+          "gender": {
+            "male": 33.4,
+            "female": 66.6
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 94.4
+            },
+            {
+              "country": "Brasil",
+              "percentage": 1.5
+            },
+            {
+              "country": "España",
+              "percentage": 0.9
+            },
+            {
+              "country": "Estados Unidos",
+              "percentage": 0.7
+            },
+            {
+              "country": "Alemania",
+              "percentage": 0.6
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "13-17",
+              "percentage": 1.9
+            },
+            {
+              "range": "18-24",
+              "percentage": 20.1
+            },
+            {
+              "range": "25-34",
+              "percentage": 53.5
+            },
+            {
+              "range": "35-44",
+              "percentage": 15.0
+            },
+            {
+              "range": "45-54",
+              "percentage": 5.5
+            },
+            {
+              "range": "55-64",
+              "percentage": 2.6
+            },
+            {
+              "range": "65+",
+              "percentage": 1.3
+            }
+          ]
+        },
+        "overall_confidence": 0.9800000000000001
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-29T14:42:18.242627+00:00",
+    "created_at": "2026-01-29T14:42:18.242627+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697b721e8f389b48fb77d5a5"
+    },
+    "id": "ef9dff79-881c-4733-b007-1860c7d05d56",
+    "deliverable_id": "0b2ecc4e-dd0e-4731-8ffe-663bb71767bc",
+    "creator_id": "41035c1c-1e12-4c66-bdc3-08c3c7baa994",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "tiktok",
+    "views": 568,
+    "reach": 467,
+    "likes": 7,
+    "comments": 1,
+    "shares": 1,
+    "saves": 1,
+    "watch_time_seconds": 811,
+    "video_length_seconds": 36,
+    "retention_rate": 2252.78,
+    "total_interactions": 10,
+    "engagement_rate": 1.76,
+    "demographics": {
+      "gender": {
+        "male": 40.0,
+        "female": 59.0
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 96.3
+        },
+        {
+          "country": "Argentina",
+          "percentage": 0.9
+        },
+        {
+          "country": "Brasil",
+          "percentage": 0.7
+        },
+        {
+          "country": "Armenia",
+          "percentage": 0.2
+        },
+        {
+          "country": "República Dominicana",
+          "percentage": 0.2
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 51.0
+        },
+        {
+          "range": "25-34",
+          "percentage": 36.0
+        },
+        {
+          "range": "35-44",
+          "percentage": 9.0
+        },
+        {
+          "range": "45-54",
+          "percentage": 3.0
+        },
+        {
+          "range": "55+",
+          "percentage": 1.0
+        }
+      ]
+    },
+    "screenshots_count": 6,
+    "screenshot_day": 2,
+    "ai_extracted": true,
+    "ai_confidence": 0.97,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 568,
+            "reach": null,
+            "likes": 7,
+            "comments": 1,
+            "shares": 1,
+            "saves": 1,
+            "watch_time_seconds": 811,
+            "video_length_seconds": null,
+            "retention_rate": 0.84
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": 7.0
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": 36,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": 467,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "demographics",
+          "confidence": 0.7,
+          "platform": "tiktok",
+          "image_index": 3
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 40.0,
+              "female": 59.0
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 51.0
+              },
+              {
+                "range": "25-34",
+                "percentage": 36.0
+              },
+              {
+                "range": "35-44",
+                "percentage": 9.0
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 4
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 96.3
+              },
+              {
+                "country": "Argentina",
+                "percentage": 0.9
+              },
+              {
+                "country": "Brasil",
+                "percentage": 0.7
+              },
+              {
+                "country": "Armenia",
+                "percentage": 0.2
+              },
+              {
+                "country": "República Dominicana",
+                "percentage": 0.2
+              }
+            ],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 51.0
+              },
+              {
+                "range": "25-34",
+                "percentage": 36.0
+              },
+              {
+                "range": "35-44",
+                "percentage": 9.0
+              },
+              {
+                "range": "45-54",
+                "percentage": 3.0
+              },
+              {
+                "range": "55+",
+                "percentage": 1.0
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 5
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 568,
+          "reach": 467,
+          "likes": 7,
+          "comments": 1,
+          "shares": 1,
+          "saves": 1,
+          "watch_time_seconds": 811,
+          "video_length_seconds": 36,
+          "retention_rate": 0.84
+        },
+        "demographics": {
+          "gender": {
+            "male": 40.0,
+            "female": 59.0
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 96.3
+            },
+            {
+              "country": "Argentina",
+              "percentage": 0.9
+            },
+            {
+              "country": "Brasil",
+              "percentage": 0.7
+            },
+            {
+              "country": "Armenia",
+              "percentage": 0.2
+            },
+            {
+              "country": "República Dominicana",
+              "percentage": 0.2
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 51.0
+            },
+            {
+              "range": "25-34",
+              "percentage": 36.0
+            },
+            {
+              "range": "35-44",
+              "percentage": 9.0
+            },
+            {
+              "range": "45-54",
+              "percentage": 3.0
+            },
+            {
+              "range": "55+",
+              "percentage": 1.0
+            }
+          ]
+        },
+        "overall_confidence": 0.97
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-29T14:42:18.242627+00:00",
+    "created_at": "2026-01-29T14:42:18.242627+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697d3ac5eb3148eacf6ec8aa"
+    },
+    "id": "951c5e0e-eab5-404f-bb9d-a845e4d4ac89",
+    "deliverable_id": "4ba33fe8-c4d9-46f1-ad47-a5b18297fd5c",
+    "creator_id": "f6d3e469-c071-4487-8f52-9b5e15dc63d7",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "instagram",
+    "views": 5179,
+    "reach": 3450,
+    "likes": 94,
+    "comments": 44,
+    "shares": 9,
+    "saves": 7,
+    "watch_time_seconds": 30166,
+    "video_length_seconds": 42,
+    "retention_rate": 71823.81,
+    "total_interactions": 154,
+    "engagement_rate": 2.97,
+    "demographics": {
+      "gender": {
+        "male": 0.526,
+        "female": 0.474
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 92.0
+        },
+        {
+          "country": "Spain",
+          "percentage": 1.8
+        },
+        {
+          "country": "United States",
+          "percentage": 1.4
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 48.1
+        },
+        {
+          "range": "25-34",
+          "percentage": 40.3
+        }
+      ]
+    },
+    "screenshots_count": 7,
+    "screenshot_day": 0,
+    "ai_extracted": true,
+    "ai_confidence": 1.0,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 5179,
+            "reach": 3450,
+            "likes": 94,
+            "comments": 44,
+            "shares": 9,
+            "saves": 7,
+            "watch_time_seconds": 30166,
+            "video_length_seconds": 42,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 5179,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.95,
+          "platform": "instagram",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": 3450,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": 30166,
+            "video_length_seconds": 41,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 3
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 94,
+            "comments": 44,
+            "shares": 9,
+            "saves": 7,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 0.526,
+              "female": 0.474
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 4
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 94,
+            "comments": 44,
+            "shares": 9,
+            "saves": 7,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 48.1
+              },
+              {
+                "range": "25-34",
+                "percentage": 40.3
+              }
+            ]
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 5
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 94,
+            "comments": 44,
+            "shares": 9,
+            "saves": 7,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 92.0
+              },
+              {
+                "country": "Spain",
+                "percentage": 1.8
+              },
+              {
+                "country": "United States",
+                "percentage": 1.4
+              }
+            ],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 6
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 5179,
+          "reach": 3450,
+          "likes": 94,
+          "comments": 44,
+          "shares": 9,
+          "saves": 7,
+          "watch_time_seconds": 30166,
+          "video_length_seconds": 42,
+          "retention_rate": null
+        },
+        "demographics": {
+          "gender": {
+            "male": 0.526,
+            "female": 0.474
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 92.0
+            },
+            {
+              "country": "Spain",
+              "percentage": 1.8
+            },
+            {
+              "country": "United States",
+              "percentage": 1.4
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 48.1
+            },
+            {
+              "range": "25-34",
+              "percentage": 40.3
+            }
+          ]
+        },
+        "overall_confidence": 1.0
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-30T23:11:08.151650+00:00",
+    "created_at": "2026-01-30T23:11:08.151650+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697e5f77b5c3bde4536469ef"
+    },
+    "id": "700e2e40-0d97-4e5e-95c3-daab574b0a03",
+    "deliverable_id": "036e50db-b8b1-4899-8ffd-0d7acbd1ac38",
+    "creator_id": "f3dc027b-43de-4966-ac8e-ccd69f7d9c00",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "instagram",
+    "views": 12335,
+    "reach": 8706,
+    "likes": 103,
+    "comments": 16,
+    "shares": 3,
+    "saves": 11,
+    "watch_time_seconds": null,
+    "video_length_seconds": 15,
+    "retention_rate": null,
+    "total_interactions": 133,
+    "engagement_rate": 1.08,
+    "demographics": {
+      "gender": {
+        "male": 5.8,
+        "female": 89.0
+      },
+      "countries": [],
+      "cities": [
+        {
+          "city": "Central Department",
+          "percentage": 36.0
+        },
+        {
+          "city": "Asunción",
+          "percentage": 23.0
+        },
+        {
+          "city": "Alto Paraná Department",
+          "percentage": 9.0
+        },
+        {
+          "city": "Itapúa Department",
+          "percentage": 5.0
+        },
+        {
+          "city": "Cordillera Department",
+          "percentage": 4.0
+        }
+      ],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 0.14
+        },
+        {
+          "range": "25-34",
+          "percentage": 0.33
+        },
+        {
+          "range": "35-44",
+          "percentage": 0.19
+        }
+      ]
+    },
+    "screenshots_count": 5,
+    "screenshot_day": 7,
+    "ai_extracted": true,
+    "ai_confidence": 1.0,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 12335,
+            "reach": 8706,
+            "likes": 103,
+            "comments": 16,
+            "shares": 3,
+            "saves": 11,
+            "watch_time_seconds": null,
+            "video_length_seconds": 15,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 12335,
+            "reach": 8706,
+            "likes": 103,
+            "comments": 16,
+            "shares": 3,
+            "saves": 11,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 5.8,
+              "female": 89.0
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "demographics",
+          "confidence": 0.8,
+          "platform": "instagram",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 0.14
+              },
+              {
+                "range": "25-34",
+                "percentage": 0.33
+              },
+              {
+                "range": "35-44",
+                "percentage": 0.19
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 3
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [
+              {
+                "city": "Central Department",
+                "percentage": 36.0
+              },
+              {
+                "city": "Asunción",
+                "percentage": 23.0
+              },
+              {
+                "city": "Alto Paraná Department",
+                "percentage": 9.0
+              },
+              {
+                "city": "Itapúa Department",
+                "percentage": 5.0
+              },
+              {
+                "city": "Cordillera Department",
+                "percentage": 4.0
+              }
+            ],
+            "age_ranges": []
+          },
+          "screenshot_type": "demographics",
+          "confidence": 0.8,
+          "platform": "instagram",
+          "image_index": 4
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 12335,
+          "reach": 8706,
+          "likes": 103,
+          "comments": 16,
+          "shares": 3,
+          "saves": 11,
+          "watch_time_seconds": null,
+          "video_length_seconds": 15,
+          "retention_rate": null
+        },
+        "demographics": {
+          "gender": {
+            "male": 5.8,
+            "female": 89.0
+          },
+          "countries": [],
+          "cities": [
+            {
+              "city": "Central Department",
+              "percentage": 36.0
+            },
+            {
+              "city": "Asunción",
+              "percentage": 23.0
+            },
+            {
+              "city": "Alto Paraná Department",
+              "percentage": 9.0
+            },
+            {
+              "city": "Itapúa Department",
+              "percentage": 5.0
+            },
+            {
+              "city": "Cordillera Department",
+              "percentage": 4.0
+            }
+          ],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 0.14
+            },
+            {
+              "range": "25-34",
+              "percentage": 0.33
+            },
+            {
+              "range": "35-44",
+              "percentage": 0.19
+            }
+          ]
+        },
+        "overall_confidence": 1.0
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-31T20:00:17.021759+00:00",
+    "created_at": "2026-01-31T20:00:17.021759+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697e5f77b5c3bde4536469f0"
+    },
+    "id": "edc7383c-2314-45f2-8126-7002a747f3d8",
+    "deliverable_id": "036e50db-b8b1-4899-8ffd-0d7acbd1ac38",
+    "creator_id": "f3dc027b-43de-4966-ac8e-ccd69f7d9c00",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "tiktok",
+    "views": 554,
+    "reach": null,
+    "likes": null,
+    "comments": null,
+    "shares": null,
+    "saves": null,
+    "watch_time_seconds": 3533,
+    "video_length_seconds": 19,
+    "retention_rate": 18594.74,
+    "total_interactions": 0,
+    "engagement_rate": 0.0,
+    "demographics": {
+      "gender": {
+        "male": 24.0,
+        "female": 75.0
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 89.1
+        },
+        {
+          "country": "Brazil",
+          "percentage": 2.9
+        },
+        {
+          "country": "Argentina",
+          "percentage": 1.9
+        },
+        {
+          "country": "Other",
+          "percentage": 1.4
+        },
+        {
+          "country": "Mexico",
+          "percentage": 1.2
+        },
+        {
+          "country": "United States",
+          "percentage": 1.2
+        },
+        {
+          "country": "Peru",
+          "percentage": 0.7
+        },
+        {
+          "country": "Bolivarian Republic of Venezuela",
+          "percentage": 0.7
+        },
+        {
+          "country": "Chile",
+          "percentage": 0.5
+        },
+        {
+          "country": "Germany",
+          "percentage": 0.2
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 53.0
+        },
+        {
+          "range": "25-34",
+          "percentage": 36.0
+        },
+        {
+          "range": "35-44",
+          "percentage": 6.0
+        }
+      ]
+    },
+    "screenshots_count": 4,
+    "screenshot_day": 7,
+    "ai_extracted": true,
+    "ai_confidence": 1.0,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 554,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": 3533,
+            "video_length_seconds": null,
+            "retention_rate": 27.0
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": 19,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 24.0,
+              "female": 75.0
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 89.1
+              },
+              {
+                "country": "Brazil",
+                "percentage": 2.9
+              }
+            ],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 53.0
+              },
+              {
+                "range": "25-34",
+                "percentage": 36.0
+              },
+              {
+                "range": "35-44",
+                "percentage": 6.0
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 89.1
+              },
+              {
+                "country": "Brazil",
+                "percentage": 2.9
+              },
+              {
+                "country": "Argentina",
+                "percentage": 1.9
+              },
+              {
+                "country": "Other",
+                "percentage": 1.4
+              },
+              {
+                "country": "Mexico",
+                "percentage": 1.2
+              },
+              {
+                "country": "United States",
+                "percentage": 1.2
+              },
+              {
+                "country": "Peru",
+                "percentage": 0.7
+              },
+              {
+                "country": "Bolivarian Republic of Venezuela",
+                "percentage": 0.7
+              },
+              {
+                "country": "Chile",
+                "percentage": 0.5
+              },
+              {
+                "country": "Germany",
+                "percentage": 0.2
+              },
+              {
+                "country": "Nepal",
+                "percentage": 0.2
+              }
+            ],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "45-54",
+                "percentage": 3.0
+              },
+              {
+                "range": "55+",
+                "percentage": 2.0
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 3
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 554,
+          "reach": null,
+          "likes": null,
+          "comments": null,
+          "shares": null,
+          "saves": null,
+          "watch_time_seconds": 3533,
+          "video_length_seconds": 19,
+          "retention_rate": 27.0
+        },
+        "demographics": {
+          "gender": {
+            "male": 24.0,
+            "female": 75.0
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 89.1
+            },
+            {
+              "country": "Brazil",
+              "percentage": 2.9
+            },
+            {
+              "country": "Argentina",
+              "percentage": 1.9
+            },
+            {
+              "country": "Other",
+              "percentage": 1.4
+            },
+            {
+              "country": "Mexico",
+              "percentage": 1.2
+            },
+            {
+              "country": "United States",
+              "percentage": 1.2
+            },
+            {
+              "country": "Peru",
+              "percentage": 0.7
+            },
+            {
+              "country": "Bolivarian Republic of Venezuela",
+              "percentage": 0.7
+            },
+            {
+              "country": "Chile",
+              "percentage": 0.5
+            },
+            {
+              "country": "Germany",
+              "percentage": 0.2
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 53.0
+            },
+            {
+              "range": "25-34",
+              "percentage": 36.0
+            },
+            {
+              "range": "35-44",
+              "percentage": 6.0
+            }
+          ]
+        },
+        "overall_confidence": 1.0
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-01-31T20:00:17.021759+00:00",
+    "created_at": "2026-01-31T20:00:17.021759+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697f94ddc3a12b321e9b1e74"
+    },
+    "id": "dee207a9-40dd-4c5f-bb08-527413c7d19d",
+    "deliverable_id": "c83fbb19-04bc-4dcc-920f-e7215f4ea70e",
+    "creator_id": "274f87da-4448-40d1-a0d3-7335098c8e76",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "instagram",
+    "views": 2439,
+    "reach": null,
+    "likes": 117,
+    "comments": 11,
+    "shares": 2,
+    "saves": 3,
+    "watch_time_seconds": 11186,
+    "video_length_seconds": 23,
+    "retention_rate": 48634.78,
+    "total_interactions": 133,
+    "engagement_rate": 5.45,
+    "demographics": {
+      "gender": {
+        "male": 58.0,
+        "female": 42.0
+      },
+      "countries": [],
+      "cities": [],
+      "age_ranges": []
+    },
+    "screenshots_count": 4,
+    "screenshot_day": 8,
+    "ai_extracted": true,
+    "ai_confidence": 0.9222222222222223,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 2439,
+            "reach": null,
+            "likes": 117,
+            "comments": 11,
+            "shares": 2,
+            "saves": 3,
+            "watch_time_seconds": 11186,
+            "video_length_seconds": 23,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": 2439,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "instagram",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": 11186,
+            "video_length_seconds": null,
+            "retention_rate": 31.4
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 2
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": 117,
+            "comments": 11,
+            "shares": 2,
+            "saves": 3,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 58.0,
+              "female": 42.0
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "mixed",
+          "confidence": 0.9,
+          "platform": "instagram",
+          "image_index": 3
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 2439,
+          "reach": null,
+          "likes": 117,
+          "comments": 11,
+          "shares": 2,
+          "saves": 3,
+          "watch_time_seconds": 11186,
+          "video_length_seconds": 23,
+          "retention_rate": 31.4
+        },
+        "demographics": {
+          "gender": {
+            "male": 58.0,
+            "female": 42.0
+          },
+          "countries": [],
+          "cities": [],
+          "age_ranges": []
+        },
+        "overall_confidence": 0.9222222222222223
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-02-01T18:00:27.887626+00:00",
+    "created_at": "2026-02-01T18:00:27.887626+00:00"
+  },
+  {
+    "_id": {
+      "$oid": "697f94ddc3a12b321e9b1e75"
+    },
+    "id": "e0563eae-60ec-4967-9695-b5cd0ebbb804",
+    "deliverable_id": "c83fbb19-04bc-4dcc-920f-e7215f4ea70e",
+    "creator_id": "274f87da-4448-40d1-a0d3-7335098c8e76",
+    "campaign_id": "22dde9fa-1c80-4377-aff8-fa82ca214f9f",
+    "platform": "tiktok",
+    "views": 5595,
+    "reach": null,
+    "likes": 283,
+    "comments": 7,
+    "shares": 1,
+    "saves": 6,
+    "watch_time_seconds": 14123,
+    "video_length_seconds": 22.67,
+    "retention_rate": 62298.19,
+    "total_interactions": 297,
+    "engagement_rate": 5.31,
+    "demographics": {
+      "gender": {
+        "male": 55.0,
+        "female": 44.0
+      },
+      "countries": [
+        {
+          "country": "Paraguay",
+          "percentage": 99.3
+        },
+        {
+          "country": "Brazil",
+          "percentage": 0.4
+        }
+      ],
+      "cities": [],
+      "age_ranges": [
+        {
+          "range": "18-24",
+          "percentage": 35.0
+        },
+        {
+          "range": "25-34",
+          "percentage": 38.0
+        },
+        {
+          "range": "35-44",
+          "percentage": 17.0
+        },
+        {
+          "range": "45-54",
+          "percentage": 6.0
+        },
+        {
+          "range": "55+",
+          "percentage": 4.0
+        }
+      ]
+    },
+    "screenshots_count": 3,
+    "screenshot_day": 8,
+    "ai_extracted": true,
+    "ai_confidence": 1.0,
+    "ai_raw_data": {
+      "extractions": [
+        {
+          "metrics": {
+            "views": 5595,
+            "reach": null,
+            "likes": 283,
+            "comments": 7,
+            "shares": 1,
+            "saves": 6,
+            "watch_time_seconds": 14123,
+            "video_length_seconds": 22.67,
+            "retention_rate": 1.13
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 0
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": 23,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": null,
+              "female": null
+            },
+            "countries": [],
+            "cities": [],
+            "age_ranges": []
+          },
+          "screenshot_type": "metrics",
+          "confidence": 0.9,
+          "platform": "tiktok",
+          "image_index": 1
+        },
+        {
+          "metrics": {
+            "views": null,
+            "reach": null,
+            "likes": null,
+            "comments": null,
+            "shares": null,
+            "saves": null,
+            "watch_time_seconds": null,
+            "video_length_seconds": null,
+            "retention_rate": null
+          },
+          "demographics": {
+            "gender": {
+              "male": 55.0,
+              "female": 44.0
+            },
+            "countries": [
+              {
+                "country": "Paraguay",
+                "percentage": 99.3
+              },
+              {
+                "country": "Brazil",
+                "percentage": 0.4
+              }
+            ],
+            "cities": [],
+            "age_ranges": [
+              {
+                "range": "18-24",
+                "percentage": 35.0
+              },
+              {
+                "range": "25-34",
+                "percentage": 38.0
+              },
+              {
+                "range": "35-44",
+                "percentage": 17.0
+              },
+              {
+                "range": "45-54",
+                "percentage": 6.0
+              },
+              {
+                "range": "55+",
+                "percentage": 4.0
+              }
+            ]
+          },
+          "screenshot_type": "demographics",
+          "confidence": 1.0,
+          "platform": "tiktok",
+          "image_index": 2
+        }
+      ],
+      "merged": {
+        "metrics": {
+          "views": 5595,
+          "reach": null,
+          "likes": 283,
+          "comments": 7,
+          "shares": 1,
+          "saves": 6,
+          "watch_time_seconds": 14123,
+          "video_length_seconds": 22.67,
+          "retention_rate": 1.13
+        },
+        "demographics": {
+          "gender": {
+            "male": 55.0,
+            "female": 44.0
+          },
+          "countries": [
+            {
+              "country": "Paraguay",
+              "percentage": 99.3
+            },
+            {
+              "country": "Brazil",
+              "percentage": 0.4
+            }
+          ],
+          "cities": [],
+          "age_ranges": [
+            {
+              "range": "18-24",
+              "percentage": 35.0
+            },
+            {
+              "range": "25-34",
+              "percentage": 38.0
+            },
+            {
+              "range": "35-44",
+              "percentage": 17.0
+            },
+            {
+              "range": "45-54",
+              "percentage": 6.0
+            },
+            {
+              "range": "55+",
+              "percentage": 4.0
+            }
+          ]
+        },
+        "overall_confidence": 1.0
+      }
+    },
+    "manually_verified": false,
+    "verified_by": null,
+    "is_late": false,
+    "submitted_at": "2026-02-01T18:00:27.887626+00:00",
+    "created_at": "2026-02-01T18:00:27.887626+00:00"
+  }
+]
