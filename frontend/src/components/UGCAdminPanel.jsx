@@ -663,7 +663,7 @@ const SystemPanel = ({ getAuthHeaders }) => {
           <div className="flex-1">
             <h3 className="text-lg font-medium text-white">Backup de Base de Datos</h3>
             <p className="text-sm text-gray-400 mt-1">
-              Crea una copia de seguridad de toda la base de datos y la sube a Cloudinary.
+              Crea una copia 100% completa de toda la base de datos (todas las colecciones, todos los registros) y la sube a Cloudinary.
             </p>
             <p className="text-xs text-gray-500 mt-2">
               <Clock className="w-3 h-3 inline mr-1" />
@@ -673,7 +673,7 @@ const SystemPanel = ({ getAuthHeaders }) => {
             {lastBackupTime && (
               <p className="text-xs text-green-400 mt-1">
                 <CheckCircle className="w-3 h-3 inline mr-1" />
-                Último backup manual: {lastBackupTime}
+                Último backup: {lastBackupTime}
               </p>
             )}
 
@@ -688,43 +688,23 @@ const SystemPanel = ({ getAuthHeaders }) => {
               </div>
             )}
 
-            <div className="flex flex-wrap gap-3 mt-4">
-              <button
-                onClick={handleBackup}
-                disabled={backupLoading || fullBackupLoading}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {backupLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Creando...
-                  </>
-                ) : (
-                  <>
-                    <Database className="w-4 h-4" />
-                    Backup Rápido
-                  </>
-                )}
-              </button>
-              
-              <button
-                onClick={handleFullBackup}
-                disabled={backupLoading || fullBackupLoading}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {fullBackupLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Creando Full...
-                  </>
-                ) : (
-                  <>
-                    <Database className="w-4 h-4" />
-                    Full Backup (incluye vacías)
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              onClick={handleBackup}
+              disabled={backupLoading}
+              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {backupLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Creando backup...
+                </>
+              ) : (
+                <>
+                  <Database className="w-4 h-4" />
+                  Crear Backup
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
