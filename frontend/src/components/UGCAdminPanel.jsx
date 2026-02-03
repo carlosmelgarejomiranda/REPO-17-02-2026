@@ -439,6 +439,58 @@ const SystemPanel = ({ getAuthHeaders }) => {
   const [exportLoading, setExportLoading] = useState(false);
   const [fieldsLoading, setFieldsLoading] = useState(false);
 
+  // Backup Verification State
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [currentDbState, setCurrentDbState] = useState(null);
+  const [verificationResult, setVerificationResult] = useState(null);
+  const [backupFileInput, setBackupFileInput] = useState('');
+
+  // Fetch current DB state for verification
+  const fetchCurrentDbState = async () => {
+    setVerifyLoading(true);
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/backup/verify-current`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        setCurrentDbState(data);
+      }
+    } catch (err) {
+      console.error('Error fetching DB state:', err);
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
+
+  // Verify backup against current DB
+  const handleVerifyBackup = async () => {
+    if (!backupFileInput) {
+      alert('Ingresa los datos del backup (JSON con conteo de colecciones)');
+      return;
+    }
+    
+    setVerifyLoading(true);
+    try {
+      const backupData = JSON.parse(backupFileInput);
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/backup/verify-file`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collections: backupData })
+      });
+      
+      if (res.ok) {
+        const result = await res.json();
+        setVerificationResult(result);
+      }
+    } catch (err) {
+      console.error('Verification error:', err);
+      alert('Error al verificar. Asegúrate de que el JSON sea válido.');
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
+
   // Fetch collections list on mount
   useEffect(() => {
     const fetchCollections = async () => {
