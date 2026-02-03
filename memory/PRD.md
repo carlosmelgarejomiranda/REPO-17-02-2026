@@ -53,6 +53,10 @@ Herramientas de inspección de base de datos para verificar la integridad de dat
 ### P1 - Alta Prioridad
 - Eliminar flujo de aplicación pública (sin cuenta)
 - Configurar webhooks Sentry/UptimeRobot en producción
+- **Captura de teléfono en Google OAuth** - Implementar modal obligatorio post-login para usuarios que se registran con Google y no tienen teléfono. Opciones aprobadas:
+  - Modal obligatorio al detectar `users.phone` vacío
+  - Banner persistente + bloqueo de acciones críticas
+  - Endpoint: `POST /users/complete-profile`
 
 ### P2 - Media Prioridad
 - Búsqueda global en admin panel
@@ -61,6 +65,12 @@ Herramientas de inspección de base de datos para verificar la integridad de dat
 ## Technical Debt
 - Consolidar `social_accounts` y `social_networks` en modelo Creator
 - Deprecar código GridFS legacy
+- Campos redundantes sin variación (ver análisis 2026-02-02):
+  - `onboarding_completed` siempre true en creators/brands
+  - `is_verified` siempre false en creators/brands
+  - `level` y `level_progress` siempre 0 en creators
+  - `logo_url` siempre null en brands
+- Dato incorrecto: marca "Lurdes" tiene URL en campo `instagram_handle`
 
 ## Credentials (Testing)
 - Admin: avenuepy@gmail.com / admin123
