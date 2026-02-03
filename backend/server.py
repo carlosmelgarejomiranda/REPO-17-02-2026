@@ -2818,20 +2818,23 @@ async def admin_trigger_reminders(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.post("/admin/backup/run")
-async def admin_run_backup(request: Request, background_tasks: BackgroundTasks):
+async def admin_run_backup(request: Request):
     """Run 100% complete database backup (admin only)"""
     await require_admin(request)
     
+    import threading
+    
     def run_backup_task():
-        """Background task to run backup"""
+        """Background thread to run backup"""
         try:
             from scripts.daily_backup import run_backup
             run_backup()
         except Exception as e:
             logger.error(f"Background backup failed: {e}")
     
-    # Run backup in background
-    background_tasks.add_task(run_backup_task)
+    # Start backup in background thread
+    backup_thread = threading.Thread(target=run_backup_task, daemon=True)
+    backup_thread.start()
     
     # Get current DB stats for immediate response
     try:
