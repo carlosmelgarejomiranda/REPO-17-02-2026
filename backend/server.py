@@ -2926,6 +2926,22 @@ async def admin_backup_status(request: Request):
         "cloudinary_url": _backup_status["cloudinary_url"]
     }
 
+@api_router.post("/admin/backup/reset")
+async def admin_backup_reset(request: Request):
+    """Reset backup status if stuck (admin only)"""
+    await require_admin(request)
+    
+    global _backup_status
+    _backup_status = {
+        "running": False,
+        "last_run": _backup_status.get("last_run"),
+        "last_result": "reset",
+        "last_error": "Estado reseteado manualmente",
+        "cloudinary_url": None
+    }
+    logger.warning("⚠️ Backup status manually reset by admin")
+    return {"success": True, "message": "Estado de backup reseteado"}
+
 @api_router.get("/admin/debug/collections-check")
 async def admin_debug_collections_check(request: Request):
     """Debug endpoint to check ALL critical collections content (admin only)
