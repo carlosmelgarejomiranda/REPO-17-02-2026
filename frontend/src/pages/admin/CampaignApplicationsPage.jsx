@@ -75,6 +75,42 @@ const CampaignApplicationsPage = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [error, setError] = useState('');
   const [expandedMotivation, setExpandedMotivation] = useState(null); // Track which application's motivation is expanded
+  const [exporting, setExporting] = useState(false);
+
+  // Export to Excel function
+  const handleExportExcel = async () => {
+    setExporting(true);
+    try {
+      const token = localStorage.getItem('auth_token');
+      const res = await fetch(`${API_URL}/api/ugc/campaigns/${campaignId}/applications/export`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const contentDisposition = res.headers.get('Content-Disposition');
+        const filename = contentDisposition 
+          ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
+          : `aplicaciones_${campaign?.name || 'campaign'}.xlsx`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      } else {
+        const data = await res.json();
+        alert(data.detail || 'Error al exportar');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error al exportar');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   // Sort applications locally
   const sortedApplications = React.useMemo(() => {
