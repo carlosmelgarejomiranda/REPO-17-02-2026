@@ -424,7 +424,7 @@ def run_backup():
         # Backup creation failed
         send_backup_alert(False, backup_details)
         create_system_notification(False, backup_details)
-        return False
+        return {"success": False, "error": backup_details.get('error', 'Unknown error')}
     
     # Step 2: Upload to Cloudinary
     upload_result = upload_to_cloudinary(archive_path)
@@ -432,7 +432,7 @@ def run_backup():
     if not upload_result:
         send_backup_alert(False, {'error': 'Failed to upload to Cloudinary'})
         create_system_notification(False, {'error': 'Failed to upload to Cloudinary'})
-        return False
+        return {"success": False, "error": "Failed to upload to Cloudinary"}
     
     # Step 3: Cleanup old backups
     cleanup_old_backups()
@@ -448,7 +448,13 @@ def run_backup():
     logger.info("✅ PROCESO DE BACKUP COMPLETADO EXITOSAMENTE")
     logger.info("="*70 + "\n")
     
-    return True
+    return {
+        "success": True,
+        "cloudinary_url": upload_result.get('secure_url'),
+        "collections_count": backup_details.get('collections_count'),
+        "total_documents": backup_details.get('total_documents'),
+        "size_mb": backup_details.get('size_mb')
+    }
 
 
 if __name__ == "__main__":
