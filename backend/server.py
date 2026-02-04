@@ -3010,6 +3010,136 @@ async def admin_backup_diagnose(request: Request):
     
     return results
 
+@api_router.get("/admin/backup/download-direct-py")
+async def admin_backup_download_direct_python(request: Request):
+    """Create backup using Python and return for direct download (no Cloudinary) - admin only"""
+    await require_admin(request)
+    
+    import tarfile
+    import tempfile
+    import shutil
+    import hashlib
+    from bson import json_util
+    from fastapi.responses import FileResponse
+    
+    mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+    db_name = os.environ.get('DB_NAME', 'test_database')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Collections to EXCLUDE from backup (GridFS - too large)
+    EXCLUDED_COLLECTIONS = ['images.chunks', 'images.files', 'fs.chunks', 'fs.files']
+    
+    try:
+        logger.info("=== PYTHON DIRECT BACKUP START ===")
+        
+        # Create temp directory
+        temp_dir = Path(tempfile.mkdtemp())
+        backup_name = f"backup_{db_name}_{timestamp}"
+        backup_path = temp_dir / backup_name
+        backup_path.mkdir(exist_ok=True)
+        
+        # Get all collections except excluded ones
+        all_collections = await db.list_collection_names()
+        collections = sorted([c for c in all_collections if c not in EXCLUDED_COLLECTIONS])
+        
+        logger.info(f"Total colecciones: {len(all_collections)}, A respaldar: {len(collections)}")
+        
+        # Initialize manifest
+        manifest = {
+            "backup_info": {
+                "type": "PYTHON_BACKUP_NO_GRIDFS",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "database": db_name,
+                "backup_name": backup_name,
+                "excluded_collections": EXCLUDED_COLLECTIONS,
+            },
+            "statistics": {
+                "total_collections": len(collections),
+                "total_documents": 0,
+                "total_size_bytes": 0,
+            },
+            "collections": {},
+            "checksums": {},
+        }
+        
+        total_docs = 0
+        
+        # Export each collection
+        for coll_name in collections:
+            try:
+                collection = db[coll_name]
+                documents = await collection.find({}).to_list(length=None)
+                doc_count = len(documents)
+                total_docs += doc_count
+                
+                # Serialize to JSON
+                json_data = json.dumps(documents, default=json_util.default, ensure_ascii=False)
+                
+                # Calculate checksum and size
+                checksum = hashlib.md5(json_data.encode('utf-8')).hexdigest()
+                size_bytes = len(json_data.encode('utf-8'))
+                
+                # Write to file
+                output_file = backup_path / f"{coll_name}.json"
+                with open(output_file, 'w', encoding='utf-8') as f:
+                    f.write(json_data)
+                
+                # Update manifest
+                manifest["collections"][coll_name] = {
+                    "count": doc_count,
+                    "size_bytes": size_bytes,
+                    "checksum_md5": checksum,
+                }
+                manifest["checksums"][coll_name] = checksum
+                manifest["statistics"]["total_size_bytes"] += size_bytes
+                
+                logger.info(f"✅ {coll_name}: {doc_count} docs ({size_bytes/1024:.1f} KB)")
+                
+            except Exception as e:
+                logger.error(f"❌ ERROR en {coll_name}: {e}")
+                manifest["collections"][coll_name] = {"count": 0, "error": str(e)}
+        
+        # Update manifest statistics
+        manifest["statistics"]["total_documents"] = total_docs
+        manifest["statistics"]["total_size_kb"] = round(manifest["statistics"]["total_size_bytes"] / 1024, 2)
+        manifest["statistics"]["total_size_mb"] = round(manifest["statistics"]["total_size_bytes"] / (1024 * 1024), 2)
+        
+        # Write manifest
+        manifest_file = backup_path / "_MANIFEST.json"
+        with open(manifest_file, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+        
+        # Compress using tarfile
+        archive_path = temp_dir / f"{backup_name}.tar.gz"
+        with tarfile.open(archive_path, "w:gz") as tar:
+            tar.add(backup_path, arcname=backup_name)
+        
+        # Clean up uncompressed directory
+        shutil.rmtree(backup_path)
+        
+        # Get file size
+        file_size = archive_path.stat().st_size
+        size_mb = round(file_size / (1024 * 1024), 2)
+        
+        logger.info(f"=== PYTHON DIRECT BACKUP SUCCESS: {size_mb} MB ===")
+        
+        # Return file for download
+        return FileResponse(
+            path=str(archive_path),
+            filename=f"{backup_name}.tar.gz",
+            media_type="application/gzip",
+            headers={
+                "Content-Disposition": f"attachment; filename={backup_name}.tar.gz",
+                "X-Backup-Size": str(file_size),
+                "X-Collections-Count": str(len(collections)),
+                "X-Documents-Count": str(total_docs)
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Python direct backup failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Error creando backup: {str(e)}")
+
 @api_router.post("/admin/backup/create-download")
 async def admin_backup_create_download(request: Request):
     """Create backup using mongodump and return for direct download - admin only"""
