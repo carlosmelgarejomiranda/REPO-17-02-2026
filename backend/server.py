@@ -2935,6 +2935,167 @@ async def admin_backup_status(request: Request):
         "cloudinary_url": _backup_status["cloudinary_url"]
     }
 
+@api_router.get("/admin/backup/diagnose")
+async def admin_backup_diagnose(request: Request):
+    """Diagnose backup configuration and connectivity (admin only)"""
+    await require_admin(request)
+    
+    import cloudinary
+    import cloudinary.api
+    
+    results = {
+        "mongodb": {"status": "unknown", "details": {}},
+        "cloudinary": {"status": "unknown", "details": {}},
+        "environment": {"status": "unknown", "details": {}}
+    }
+    
+    # 1. Check MongoDB
+    try:
+        mongo_url = os.environ.get('MONGO_URL', 'NOT SET')
+        db_name = os.environ.get('DB_NAME', 'NOT SET')
+        
+        results["mongodb"]["details"]["MONGO_URL"] = mongo_url[:50] + "..." if len(mongo_url) > 50 else mongo_url
+        results["mongodb"]["details"]["DB_NAME"] = db_name
+        
+        # Count documents
+        collections = await db.list_collection_names()
+        total_docs = 0
+        coll_counts = {}
+        for coll in collections:
+            count = await db[coll].count_documents({})
+            total_docs += count
+            coll_counts[coll] = count
+        
+        results["mongodb"]["details"]["collections"] = len(collections)
+        results["mongodb"]["details"]["total_documents"] = total_docs
+        results["mongodb"]["details"]["top_collections"] = dict(sorted(coll_counts.items(), key=lambda x: x[1], reverse=True)[:10])
+        results["mongodb"]["status"] = "ok"
+    except Exception as e:
+        results["mongodb"]["status"] = "error"
+        results["mongodb"]["details"]["error"] = str(e)
+    
+    # 2. Check Cloudinary
+    try:
+        cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', '')
+        api_key = os.environ.get('CLOUDINARY_API_KEY', '')
+        api_secret = os.environ.get('CLOUDINARY_API_SECRET', '')
+        
+        results["cloudinary"]["details"]["cloud_name"] = cloud_name if cloud_name else "NOT SET"
+        results["cloudinary"]["details"]["api_key_set"] = bool(api_key)
+        results["cloudinary"]["details"]["api_secret_set"] = bool(api_secret)
+        
+        if all([cloud_name, api_key, api_secret]):
+            # Try to ping Cloudinary
+            cloudinary.config(
+                cloud_name=cloud_name,
+                api_key=api_key,
+                api_secret=api_secret
+            )
+            usage = cloudinary.api.usage()
+            results["cloudinary"]["details"]["used_percent"] = usage.get("used_percent", "unknown")
+            results["cloudinary"]["details"]["plan"] = usage.get("plan", "unknown")
+            results["cloudinary"]["status"] = "ok"
+        else:
+            results["cloudinary"]["status"] = "error"
+            results["cloudinary"]["details"]["error"] = "Missing credentials"
+    except Exception as e:
+        results["cloudinary"]["status"] = "error"
+        results["cloudinary"]["details"]["error"] = str(e)
+    
+    # 3. Check environment
+    results["environment"]["details"]["RESEND_API_KEY_set"] = bool(os.environ.get('RESEND_API_KEY'))
+    results["environment"]["details"]["ADMIN_EMAIL"] = os.environ.get('ADMIN_EMAIL', 'NOT SET')
+    results["environment"]["status"] = "ok"
+    
+    return results
+
+@api_router.post("/admin/backup/create-download")
+async def admin_backup_create_download(request: Request):
+    """Create backup and return download URL directly (without Cloudinary) - admin only"""
+    await require_admin(request)
+    
+    import json
+    import tarfile
+    import hashlib
+    from bson import json_util
+    from io import BytesIO
+    from fastapi.responses import StreamingResponse
+    
+    try:
+        # Get all collections
+        collections = await db.list_collection_names()
+        
+        # Create in-memory tar.gz
+        backup_data = BytesIO()
+        
+        with tarfile.open(fileobj=backup_data, mode='w:gz') as tar:
+            manifest = {
+                "backup_info": {
+                    "type": "DIRECT_DOWNLOAD",
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "database": os.environ.get('DB_NAME', 'unknown'),
+                },
+                "collections": {},
+                "statistics": {"total_collections": len(collections), "total_documents": 0}
+            }
+            
+            total_docs = 0
+            
+            for coll_name in sorted(collections):
+                try:
+                    # Get all documents
+                    cursor = db[coll_name].find({}, {"_id": 0})
+                    documents = await cursor.to_list(length=None)
+                    
+                    # For collections that need _id preserved (like GridFS), get with _id
+                    if coll_name.endswith('.chunks') or coll_name.endswith('.files'):
+                        cursor = db[coll_name].find({})
+                        documents = await cursor.to_list(length=None)
+                    
+                    doc_count = len(documents)
+                    total_docs += doc_count
+                    
+                    # Serialize to JSON
+                    json_data = json.dumps(documents, default=json_util.default, ensure_ascii=False, indent=2)
+                    json_bytes = json_data.encode('utf-8')
+                    
+                    # Add to tar
+                    tarinfo = tarfile.TarInfo(name=f"{coll_name}.json")
+                    tarinfo.size = len(json_bytes)
+                    tar.addfile(tarinfo, BytesIO(json_bytes))
+                    
+                    manifest["collections"][coll_name] = {
+                        "count": doc_count,
+                        "size_bytes": len(json_bytes),
+                        "checksum_md5": hashlib.md5(json_bytes).hexdigest()
+                    }
+                except Exception as e:
+                    manifest["collections"][coll_name] = {"count": 0, "error": str(e)}
+            
+            manifest["statistics"]["total_documents"] = total_docs
+            
+            # Add manifest to tar
+            manifest_json = json.dumps(manifest, indent=2, ensure_ascii=False).encode('utf-8')
+            manifest_info = tarfile.TarInfo(name="_MANIFEST.json")
+            manifest_info.size = len(manifest_json)
+            tar.addfile(manifest_info, BytesIO(manifest_json))
+        
+        # Prepare response
+        backup_data.seek(0)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        db_name = os.environ.get('DB_NAME', 'database')
+        filename = f"backup_direct_{db_name}_{timestamp}.tar.gz"
+        
+        return StreamingResponse(
+            backup_data,
+            media_type="application/gzip",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        logger.error(f"Direct backup failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.post("/admin/backup/reset")
 async def admin_backup_reset(request: Request):
     """Reset backup status if stuck (admin only)"""
