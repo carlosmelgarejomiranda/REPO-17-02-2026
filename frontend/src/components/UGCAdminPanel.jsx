@@ -606,15 +606,63 @@ const SystemPanel = ({ getAuthHeaders }) => {
       if (res.ok && data.success) {
         setBackupResult({ 
           success: true, 
-          message: `${data.message} (${data.collections} colecciones, ${data.documents?.toLocaleString()} docs)` 
+          message: `Backup iniciado... (${data.collections} colecciones, ${data.documents?.toLocaleString()} docs)`,
+          status: 'running'
         });
-        setLastBackupTime(new Date().toLocaleString('es-PY'));
+        
+        // Start polling for backup status
+        const pollInterval = setInterval(async () => {
+          try {
+            const statusRes = await fetch(`${API_URL}/api/admin/backup/status`, { headers });
+            const statusData = await statusRes.json();
+            
+            if (!statusData.running) {
+              clearInterval(pollInterval);
+              setBackupLoading(false);
+              
+              if (statusData.last_result === 'success') {
+                setBackupResult({ 
+                  success: true, 
+                  message: `✅ Backup completado y subido a Cloudinary`,
+                  cloudinary_url: statusData.cloudinary_url,
+                  status: 'completed'
+                });
+                setLastBackupTime(new Date().toLocaleString('es-PY'));
+              } else {
+                setBackupResult({ 
+                  success: false, 
+                  message: `❌ Error: ${statusData.last_error || 'Error desconocido'}`,
+                  status: 'error'
+                });
+              }
+            }
+          } catch (pollErr) {
+            console.error('Error polling backup status:', pollErr);
+          }
+        }, 3000); // Poll every 3 seconds
+        
+        // Timeout after 10 minutes
+        setTimeout(() => {
+          clearInterval(pollInterval);
+          if (backupLoading) {
+            setBackupLoading(false);
+            setBackupResult({ 
+              success: false, 
+              message: 'Timeout: El backup está tomando demasiado tiempo. Verificá Cloudinary.',
+              status: 'timeout'
+            });
+          }
+        }, 600000);
+        
+      } else if (data.status === 'running') {
+        setBackupResult({ success: false, message: data.message });
+        setBackupLoading(false);
       } else {
         setBackupResult({ success: false, message: data.detail || data.message || 'Error al crear backup' });
+        setBackupLoading(false);
       }
     } catch (err) {
       setBackupResult({ success: false, message: 'Error de conexión' });
-    } finally {
       setBackupLoading(false);
     }
   };
