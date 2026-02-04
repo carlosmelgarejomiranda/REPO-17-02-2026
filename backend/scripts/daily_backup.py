@@ -344,8 +344,22 @@ def upload_to_cloudinary(file_path: Path):
     """Upload backup file to Cloudinary"""
     try:
         filename = file_path.stem
+        file_size_mb = file_path.stat().st_size / (1024 * 1024)
         
         logger.info(f"Uploading backup to Cloudinary...")
+        logger.info(f"  File: {file_path}")
+        logger.info(f"  Size: {file_size_mb:.2f} MB")
+        
+        # Check if Cloudinary is configured
+        cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME')
+        api_key = os.environ.get('CLOUDINARY_API_KEY')
+        api_secret = os.environ.get('CLOUDINARY_API_SECRET')
+        
+        if not all([cloud_name, api_key, api_secret]):
+            logger.error(f"Cloudinary not configured! cloud_name={bool(cloud_name)}, api_key={bool(api_key)}, api_secret={bool(api_secret)}")
+            return None
+        
+        logger.info(f"  Cloudinary cloud: {cloud_name}")
         
         result = cloudinary.uploader.upload(
             str(file_path),
@@ -360,8 +374,13 @@ def upload_to_cloudinary(file_path: Path):
         
         return result
         
+    except cloudinary.exceptions.Error as e:
+        logger.error(f"Cloudinary API error: {type(e).__name__}: {e}")
+        return None
     except Exception as e:
-        logger.error(f"Cloudinary upload failed: {e}")
+        logger.error(f"Cloudinary upload failed: {type(e).__name__}: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
         return None
 
 
