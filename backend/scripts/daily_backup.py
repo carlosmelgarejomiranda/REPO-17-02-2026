@@ -135,7 +135,7 @@ def send_backup_alert(success: bool, details: dict):
         """
     
     try:
-        resend.emails.send({
+        resend.Emails.send({
             "from": "Avenue <onboarding@resend.dev>",
             "to": [ADMIN_EMAIL],
             "subject": subject,
