@@ -719,54 +719,56 @@ export const AdminDashboard = ({ user }) => {
   ].filter(m => hasPermission(userRole, m.permission));
 
   // Quick actions
-  // Handle backup - Descarga directa con mongodump
+  // Handle backup - Python method to Cloudinary
   const handleBackup = async () => {
     setBackupLoading(true);
-    setBackupDiagnostics(null);
     try {
-      const res = await fetch(`${API_URL}/api/admin/backup/create-download`, {
+      const res = await fetch(`${API_URL}/api/admin/backup/run`, {
         method: 'POST',
         headers: getAuthHeaders()
       });
       
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const contentDisposition = res.headers.get('Content-Disposition');
-        const filename = contentDisposition 
-          ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
-          : `mongodump_backup_${new Date().toISOString().slice(0,10)}.gz`;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-        alert('✅ Backup descargado exitosamente');
-      } else {
-        let errorMsg = 'Error al crear backup';
-        try {
-          const text = await res.text();
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        alert(`✅ Backup iniciado!\n\n${data.message}\n\nColecciones: ${data.collections}\nDocumentos: ${data.documents?.toLocaleString()}\n\nRecibirás un email cuando termine.`);
+        
+        // Start polling for status
+        const pollInterval = setInterval(async () => {
           try {
-            const data = JSON.parse(text);
-            errorMsg = data.detail || errorMsg;
-          } catch {
-            errorMsg = text || `Error HTTP ${res.status}`;
+            const statusRes = await fetch(`${API_URL}/api/admin/backup/status`, {
+              headers: getAuthHeaders()
+            });
+            const statusData = await statusRes.json();
+            
+            if (!statusData.running) {
+              clearInterval(pollInterval);
+              setBackupLoading(false);
+              
+              if (statusData.last_result === 'success') {
+                alert(`✅ Backup completado!\n\nURL: ${statusData.cloudinary_url || 'Ver Cloudinary'}`);
+              } else if (statusData.last_error) {
+                alert(`❌ Error en backup: ${statusData.last_error}`);
+              }
+            }
+          } catch (err) {
+            console.error('Error polling status:', err);
           }
-        } catch {
-          errorMsg = `Error HTTP ${res.status}`;
-        }
-        console.error('Backup error details:', errorMsg);
-        // Fetch diagnostics automatically on error
-        await fetchBackupDiagnostics();
-        alert(`❌ Error: ${errorMsg.substring(0, 500)}\n\nRevisá los diagnósticos para más detalles.`);
+        }, 5000); // Poll every 5 seconds
+        
+        // Stop polling after 10 minutes
+        setTimeout(() => {
+          clearInterval(pollInterval);
+          setBackupLoading(false);
+        }, 600000);
+        
+      } else {
+        alert(`❌ Error: ${data.message || data.detail || 'Error al iniciar backup'}`);
+        setBackupLoading(false);
       }
     } catch (err) {
-      console.error('Backup connection error:', err);
-      await fetchBackupDiagnostics();
-      alert(`❌ Error de conexión: ${err.message}\n\nRevisá los diagnósticos para más detalles.`);
-    } finally {
+      console.error('Backup error:', err);
+      alert(`❌ Error de conexión: ${err.message}`);
       setBackupLoading(false);
     }
   };
