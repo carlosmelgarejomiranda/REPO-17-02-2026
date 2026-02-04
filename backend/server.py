@@ -2854,8 +2854,12 @@ async def admin_run_backup(request: Request):
         _backup_status["last_result"] = None
         
         try:
+            logger.info("🚀 Starting background backup task...")
             from scripts.daily_backup import run_backup
+            
+            logger.info("📦 Calling run_backup()...")
             result = run_backup()
+            logger.info(f"📋 run_backup() returned: {result}")
             
             # Check if result indicates success
             if result and isinstance(result, dict):
@@ -2873,17 +2877,23 @@ async def admin_run_backup(request: Request):
                 logger.info(f"✅ Backup completado exitosamente (legacy)")
             else:
                 _backup_status["last_result"] = "error"
-                _backup_status["last_error"] = "El backup no retornó resultado válido"
+                _backup_status["last_error"] = f"El backup retornó: {result}"
                 logger.error(f"❌ Backup returned invalid result: {result}")
                 
+        except ImportError as e:
+            _backup_status["last_result"] = "error"
+            _backup_status["last_error"] = f"Error de importación: {str(e)}"
+            logger.error(f"❌ Import error: {e}")
         except Exception as e:
             _backup_status["last_result"] = "error"
-            error_msg = f"{str(e)}\n{traceback.format_exc()}"
-            _backup_status["last_error"] = str(e)
+            error_msg = f"{type(e).__name__}: {str(e)}"
+            _backup_status["last_error"] = error_msg
             logger.error(f"❌ Background backup exception: {error_msg}")
+            import traceback
+            logger.error(traceback.format_exc())
         finally:
             _backup_status["running"] = False
-            logger.info(f"Backup status final: {_backup_status}")
+            logger.info(f"🏁 Backup task finished. Status: {_backup_status}")
     
     # Start backup in background thread
     backup_thread = threading.Thread(target=run_backup_task, daemon=True)
