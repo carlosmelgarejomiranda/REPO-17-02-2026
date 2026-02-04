@@ -732,6 +732,22 @@ const SystemPanel = ({ getAuthHeaders }) => {
                   <AlertCircle className="w-4 h-4 inline mr-2" />
                 )}
                 {backupResult.message}
+                {backupResult.status === 'running' && (
+                  <span className="ml-2 inline-flex items-center">
+                    <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                    Procesando...
+                  </span>
+                )}
+                {backupResult.cloudinary_url && (
+                  <a 
+                    href={backupResult.cloudinary_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="ml-2 underline hover:no-underline"
+                  >
+                    Ver en Cloudinary
+                  </a>
+                )}
               </div>
             )}
 
