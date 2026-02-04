@@ -293,6 +293,13 @@ def upload_to_cloudinary(file_path: Path):
         logger.info(f"  File: {file_path}")
         logger.info(f"  Size: {file_size_mb:.2f} MB")
         
+        # Check file size limit (Cloudinary free plan: 10MB, paid: ~100MB)
+        MAX_SIZE_MB = 100
+        if file_size_mb > MAX_SIZE_MB:
+            _last_upload_error = f"Archivo demasiado grande para Cloudinary: {file_size_mb:.2f} MB (máximo: {MAX_SIZE_MB} MB). Usá 'Descarga Directa' en su lugar."
+            logger.error(_last_upload_error)
+            return None
+        
         # Check if Cloudinary is configured
         cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME')
         api_key = os.environ.get('CLOUDINARY_API_KEY')
@@ -304,6 +311,13 @@ def upload_to_cloudinary(file_path: Path):
             return None
         
         logger.info(f"  Cloudinary cloud: {cloud_name}")
+        
+        # Configure Cloudinary
+        cloudinary.config(
+            cloud_name=cloud_name,
+            api_key=api_key,
+            api_secret=api_secret
+        )
         
         result = cloudinary.uploader.upload(
             str(file_path),
