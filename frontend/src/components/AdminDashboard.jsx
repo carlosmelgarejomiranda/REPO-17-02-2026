@@ -792,8 +792,7 @@ export const AdminDashboard = ({ user }) => {
   const quickActions = [
     { label: 'Nueva Campaña UGC', icon: Plus, action: () => { setActiveModule('ugc'); setActiveSubTab('overview'); }, color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
     { label: 'Editar Web', icon: Palette, action: () => setShowBuilder(true), color: 'bg-[#d4a968]/20 text-[#d4a968] border-[#d4a968]/30' },
-    { label: backupLoading ? 'Creando...' : 'Backup DB', icon: backupLoading ? Loader2 : Database, action: handleBackup, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', disabled: backupLoading, spin: backupLoading },
-    { label: 'Ver Diagnósticos', icon: Search, action: fetchBackupDiagnostics, color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
+    { label: backupLoading ? 'Creando...' : 'Backup Cloudinary', icon: backupLoading ? Loader2 : Database, action: handleBackup, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', disabled: backupLoading, spin: backupLoading },
     ...(pendingActions > 0 ? [{ label: `${pendingActions} Pendientes`, icon: Bell, action: () => {}, color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' }] : [])
   ];
 
