@@ -2817,20 +2817,53 @@ async def admin_trigger_reminders(request: Request):
         logger.error(f"Manual reminder trigger failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Global backup status tracking
+_backup_status = {
+    "running": False,
+    "last_run": None,
+    "last_result": None,
+    "last_error": None,
+    "cloudinary_url": None
+}
+
 @api_router.post("/admin/backup/run")
 async def admin_run_backup(request: Request):
     """Run 100% complete database backup (admin only)"""
     await require_admin(request)
     
+    global _backup_status
+    
+    # Check if backup is already running
+    if _backup_status["running"]:
+        return {
+            "success": False,
+            "message": "Ya hay un backup en ejecución. Esperá a que termine.",
+            "status": "running"
+        }
+    
     import threading
     
     def run_backup_task():
         """Background thread to run backup"""
+        global _backup_status
+        _backup_status["running"] = True
+        _backup_status["last_run"] = datetime.now(timezone.utc).isoformat()
+        _backup_status["last_error"] = None
+        _backup_status["cloudinary_url"] = None
+        
         try:
             from scripts.daily_backup import run_backup
-            run_backup()
+            result = run_backup()
+            _backup_status["last_result"] = "success"
+            if result and isinstance(result, dict):
+                _backup_status["cloudinary_url"] = result.get("cloudinary_url")
+            logger.info(f"✅ Backup completado exitosamente")
         except Exception as e:
-            logger.error(f"Background backup failed: {e}")
+            _backup_status["last_result"] = "error"
+            _backup_status["last_error"] = str(e)
+            logger.error(f"❌ Background backup failed: {e}")
+        finally:
+            _backup_status["running"] = False
     
     # Start backup in background thread
     backup_thread = threading.Thread(target=run_backup_task, daemon=True)
@@ -2846,6 +2879,7 @@ async def admin_run_backup(request: Request):
         return {
             "success": True,
             "message": "Backup iniciado. Se ejecuta en segundo plano y se subirá a Cloudinary.",
+            "status": "started",
             "collections": len(collections),
             "documents": total_docs
         }
@@ -2853,9 +2887,24 @@ async def admin_run_backup(request: Request):
         return {
             "success": True,
             "message": "Backup iniciado en segundo plano.",
+            "status": "started",
             "collections": 33,
             "documents": 7498
         }
+
+@api_router.get("/admin/backup/status")
+async def admin_backup_status(request: Request):
+    """Check backup status (admin only)"""
+    await require_admin(request)
+    
+    global _backup_status
+    return {
+        "running": _backup_status["running"],
+        "last_run": _backup_status["last_run"],
+        "last_result": _backup_status["last_result"],
+        "last_error": _backup_status["last_error"],
+        "cloudinary_url": _backup_status["cloudinary_url"]
+    }
 
 @api_router.get("/admin/debug/collections-check")
 async def admin_debug_collections_check(request: Request):
