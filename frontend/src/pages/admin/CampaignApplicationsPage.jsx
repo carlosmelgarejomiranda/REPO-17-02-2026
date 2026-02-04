@@ -245,7 +245,7 @@ const CampaignApplicationsPage = () => {
               </div>
             </div>
             
-            {/* Stats */}
+            {/* Stats and Export */}
             <div className="flex items-center gap-6 text-sm">
               <div className="text-center">
                 <p className="text-2xl font-light text-green-400">{campaign?.available_slots || 0}</p>
@@ -263,6 +263,26 @@ const CampaignApplicationsPage = () => {
                 <p className="text-2xl font-light text-[#d4a968]">{applications.length}</p>
                 <p className="text-xs text-gray-500">Aplicaciones</p>
               </div>
+              
+              {/* Export Button */}
+              <button
+                onClick={handleExportExcel}
+                disabled={exporting || applications.length === 0}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ml-4"
+                data-testid="export-applications-excel-btn"
+              >
+                {exporting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Exportando...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    Exportar Excel
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
