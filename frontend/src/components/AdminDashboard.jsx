@@ -717,18 +717,32 @@ export const AdminDashboard = ({ user }) => {
   ].filter(m => hasPermission(userRole, m.permission));
 
   // Quick actions
-  // Handle backup
+  // Handle backup - Descarga directa con mongodump
   const handleBackup = async () => {
     setBackupLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/admin/trigger-backup`, {
+      const res = await fetch(`${API_URL}/api/admin/backup/create-download`, {
         method: 'POST',
         headers: getAuthHeaders()
       });
-      const data = await res.json();
+      
       if (res.ok) {
-        alert('✅ Backup completado exitosamente');
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const contentDisposition = res.headers.get('Content-Disposition');
+        const filename = contentDisposition 
+          ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
+          : `mongodump_backup_${new Date().toISOString().slice(0,10)}.gz`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        alert('✅ Backup descargado exitosamente');
       } else {
+        const data = await res.json();
         alert(`❌ Error: ${data.detail || 'Error al crear backup'}`);
       }
     } catch (err) {
