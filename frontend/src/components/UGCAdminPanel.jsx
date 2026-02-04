@@ -632,7 +632,8 @@ const SystemPanel = ({ getAuthHeaders }) => {
                 setBackupResult({ 
                   success: false, 
                   message: `❌ Error: ${statusData.last_error || 'Error desconocido'}`,
-                  status: 'error'
+                  status: 'error',
+                  canReset: true
                 });
               }
             }
@@ -649,13 +650,14 @@ const SystemPanel = ({ getAuthHeaders }) => {
             setBackupResult({ 
               success: false, 
               message: 'Timeout: El backup está tomando demasiado tiempo. Verificá Cloudinary.',
-              status: 'timeout'
+              status: 'timeout',
+              canReset: true
             });
           }
         }, 600000);
         
       } else if (data.status === 'running') {
-        setBackupResult({ success: false, message: data.message });
+        setBackupResult({ success: false, message: data.message, canReset: true });
         setBackupLoading(false);
       } else {
         setBackupResult({ success: false, message: data.detail || data.message || 'Error al crear backup' });
@@ -664,6 +666,22 @@ const SystemPanel = ({ getAuthHeaders }) => {
     } catch (err) {
       setBackupResult({ success: false, message: 'Error de conexión' });
       setBackupLoading(false);
+    }
+  };
+
+  const handleResetBackup = async () => {
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/backup/reset`, {
+        method: 'POST',
+        headers
+      });
+      
+      if (res.ok) {
+        setBackupResult({ success: true, message: 'Estado reseteado. Podés intentar de nuevo.', status: 'reset' });
+      }
+    } catch (err) {
+      console.error('Error resetting backup:', err);
     }
   };
 
