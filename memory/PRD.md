@@ -55,10 +55,12 @@ Documentación completa del sistema UGC como prerrequisito para migración de ba
 - Documentación del schema de BD
 
 ## Key Files
-- `/app/backend/server.py` - Backend principal (endpoint línea ~2856)
+- `/app/docs/MANUAL_SISTEMA_UGC.md` - **NUEVO** Manual técnico completo del sistema UGC
+- `/app/docs/DATABASE_SCHEMA.md` - Documentación del schema de BD
+- `/app/docs/ERD_AVENUE_DATABASE.eraser` - ERD para eraser.io
+- `/app/backend/scripts/daily_backup.py` - Script de backup 100% completo
+- `/app/backend/server.py` - Backend principal
 - `/app/frontend/src/components/UGCAdminPanel.jsx` - Panel admin UGC
-- `/app/backend/scripts/full_backup.py` - Script de backup completo
-- `/app/docs/DATABASE_SCHEMA.md` - Documentación del schema
 
 ## Database Stats (Production - 2026-02-01)
 - `ugc_ratings`: 2 registros
