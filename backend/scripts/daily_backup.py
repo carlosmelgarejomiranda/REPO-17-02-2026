@@ -146,7 +146,8 @@ def send_backup_alert(success: bool, details: dict):
 def create_system_notification(success: bool, details: dict):
     """Create a system notification in the database"""
     try:
-        client = MongoClient(MONGO_URL, serverSelectionTimeoutMS=5000)
+        from pymongo import MongoClient as PyMongoClient
+        client = PyMongoClient(MONGO_URL, serverSelectionTimeoutMS=5000)
         db = client[DB_NAME]
         
         notification = {
