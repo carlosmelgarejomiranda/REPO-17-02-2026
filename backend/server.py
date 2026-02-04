@@ -2889,7 +2889,6 @@ async def admin_run_backup(request: Request):
             error_msg = f"{type(e).__name__}: {str(e)}"
             _backup_status["last_error"] = error_msg
             logger.error(f"❌ Background backup exception: {error_msg}")
-            import traceback
             logger.error(traceback.format_exc())
         finally:
             _backup_status["running"] = False
