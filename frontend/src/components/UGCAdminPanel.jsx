@@ -728,7 +728,7 @@ const SystemPanel = ({ getAuthHeaders }) => {
           <div className="flex-1">
             <h3 className="text-lg font-medium text-white">Backup de Base de Datos</h3>
             <p className="text-sm text-gray-400 mt-1">
-              Crea una copia 100% completa de toda la base de datos (todas las colecciones, todos los registros) y la sube a Cloudinary.
+              Crea una copia 100% completa de toda la base de datos (todas las colecciones, todos los registros).
             </p>
             <p className="text-xs text-gray-500 mt-2">
               <Clock className="w-3 h-3 inline mr-1" />
@@ -777,23 +777,68 @@ const SystemPanel = ({ getAuthHeaders }) => {
               </div>
             )}
 
-            <button
-              onClick={handleBackup}
-              disabled={backupLoading}
-              className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {backupLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Creando backup...
-                </>
-              ) : (
-                <>
-                  <Database className="w-4 h-4" />
-                  Crear Backup
-                </>
-              )}
-            </button>
+            {/* Diagnose Result */}
+            {diagnoseResult && (
+              <div className="mt-3 p-3 rounded-lg bg-gray-800 text-xs font-mono overflow-auto max-h-60">
+                <pre>{JSON.stringify(diagnoseResult, null, 2)}</pre>
+              </div>
+            )}
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                onClick={handleBackup}
+                disabled={backupLoading}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {backupLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creando...
+                  </>
+                ) : (
+                  <>
+                    <Database className="w-4 h-4" />
+                    Backup a Cloudinary
+                  </>
+                )}
+              </button>
+              
+              <button
+                onClick={handleDirectDownload}
+                disabled={directDownloadLoading}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {directDownloadLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Generando...
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    Descarga Directa
+                  </>
+                )}
+              </button>
+              
+              <button
+                onClick={handleDiagnose}
+                disabled={diagnoseLoading}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {diagnoseLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Diagnosticando...
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-4 h-4" />
+                    Diagnosticar
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
