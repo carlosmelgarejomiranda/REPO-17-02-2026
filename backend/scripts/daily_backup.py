@@ -169,168 +169,110 @@ def create_system_notification(success: bool, details: dict):
 
 def create_backup():
     """
-    Create a 100% complete MongoDB backup.
-    NO EXCEPTIONS - ALL collections included.
+    Create a MongoDB backup using mongodump.
+    This is the most reliable method for MongoDB backups.
     """
     timestamp = datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
-    backup_name = f"backup_100_percent_{DB_NAME}_{timestamp}"
+    backup_name = f"mongodump_{DB_NAME}_{timestamp}"
     backup_path = BACKUP_DIR / backup_name
-    archive_path = BACKUP_DIR / f"{backup_name}.tar.gz"
+    archive_path = BACKUP_DIR / f"{backup_name}.gz"
     
     # Create backup directory
     BACKUP_DIR.mkdir(exist_ok=True)
-    backup_path.mkdir(exist_ok=True)
     
     logger.info("="*70)
-    logger.info("🔒 BACKUP 100% COMPLETO - SIN EXCEPCIONES")
+    logger.info("🔒 BACKUP CON MONGODUMP")
     logger.info("="*70)
     logger.info(f"Database: {DB_NAME}")
     logger.info(f"MONGO_URL: {MONGO_URL[:50]}..." if len(MONGO_URL) > 50 else f"MONGO_URL: {MONGO_URL}")
     
     try:
-        # Connect to MongoDB
-        client = MongoClient(MONGO_URL, serverSelectionTimeoutMS=10000)
-        client.admin.command('ping')
-        logger.info("MongoDB connection successful")
+        # Build mongodump command
+        # mongodump --uri="mongodb://..." --db=dbname --archive=file.gz --gzip
+        cmd = [
+            'mongodump',
+            f'--uri={MONGO_URL}',
+            f'--db={DB_NAME}',
+            f'--archive={archive_path}',
+            '--gzip'
+        ]
         
-        db = client[DB_NAME]
+        logger.info(f"Ejecutando: mongodump --db={DB_NAME} --archive={archive_path} --gzip")
         
-        # Get ALL collections - NO EXCEPTIONS
-        collections = sorted(db.list_collection_names())
-        logger.info(f"Colecciones encontradas: {len(collections)}")
-        
-        # Initialize manifest
-        manifest = {
-            "backup_info": {
-                "type": "100_PERCENT_COMPLETE",
-                "created_at": datetime.now(timezone.utc).isoformat(),
-                "database": DB_NAME,
-                "backup_name": backup_name,
-            },
-            "statistics": {
-                "total_collections": len(collections),
-                "total_documents": 0,
-                "total_size_bytes": 0,
-            },
-            "collections": {},
-            "checksums": {},
-        }
-        
-        total_docs = 0
-        
-        # Export EACH collection - NO SKIPPING
-        for coll_name in collections:
-            try:
-                collection = db[coll_name]
-                
-                # Get ALL documents
-                documents = list(collection.find({}))
-                doc_count = len(documents)
-                total_docs += doc_count
-                
-                # Serialize to JSON using Extended JSON (preserves BSON types)
-                json_data = json.dumps(
-                    documents,
-                    default=json_util.default,
-                    ensure_ascii=False,
-                    indent=2
-                )
-                
-                # Calculate MD5 checksum
-                checksum = hashlib.md5(json_data.encode('utf-8')).hexdigest()
-                
-                # Calculate size
-                size_bytes = len(json_data.encode('utf-8'))
-                
-                # Write to file
-                output_file = backup_path / f"{coll_name}.json"
-                with open(output_file, 'w', encoding='utf-8') as f:
-                    f.write(json_data)
-                
-                # Update manifest
-                manifest["collections"][coll_name] = {
-                    "count": doc_count,
-                    "size_bytes": size_bytes,
-                    "checksum_md5": checksum,
-                }
-                manifest["checksums"][coll_name] = checksum
-                manifest["statistics"]["total_size_bytes"] += size_bytes
-                
-                # Log progress
-                status = "✅" if doc_count > 0 else "⚪"
-                logger.info(f"   {status} {coll_name}: {doc_count} docs ({size_bytes/1024:.1f} KB)")
-                
-            except Exception as e:
-                logger.error(f"   ❌ ERROR en {coll_name}: {e}")
-                manifest["collections"][coll_name] = {"count": 0, "error": str(e)}
-        
-        client.close()
-        
-        # Update manifest statistics
-        manifest["statistics"]["total_documents"] = total_docs
-        manifest["statistics"]["total_size_kb"] = round(
-            manifest["statistics"]["total_size_bytes"] / 1024, 2
-        )
-        manifest["statistics"]["total_size_mb"] = round(
-            manifest["statistics"]["total_size_bytes"] / (1024 * 1024), 2
+        # Run mongodump
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=600  # 10 minute timeout
         )
         
-        # Write manifest
-        manifest_file = backup_path / "_MANIFEST.json"
-        with open(manifest_file, 'w', encoding='utf-8') as f:
-            json.dump(manifest, f, indent=2, ensure_ascii=False)
+        if result.returncode != 0:
+            logger.error(f"mongodump failed: {result.stderr}")
+            return None, {'error': f"mongodump failed: {result.stderr}"}
         
-        logger.info(f"\n📋 Manifest generado: _MANIFEST.json")
+        # Log output
+        if result.stdout:
+            logger.info(result.stdout)
+        if result.stderr:
+            # mongodump outputs progress to stderr
+            for line in result.stderr.split('\n'):
+                if line.strip():
+                    logger.info(f"  {line}")
         
-        # Create verification file (simple format)
-        verification = {
-            "database": DB_NAME,
-            "timestamp": manifest["backup_info"]["created_at"],
-            "total_collections": len(collections),
-            "total_documents": total_docs,
-            "collections": {
-                name: data.get("count", 0)
-                for name, data in manifest["collections"].items()
-            },
-            "checksums": manifest["checksums"],
-        }
-        
-        verify_file = backup_path / "_VERIFICACION.json"
-        with open(verify_file, 'w', encoding='utf-8') as f:
-            json.dump(verification, f, indent=2, ensure_ascii=False)
-        
-        # Compress using tarfile
-        logger.info(f"\n📦 Comprimiendo backup...")
-        with tarfile.open(archive_path, "w:gz") as tar:
-            tar.add(backup_path, arcname=backup_name)
-        
-        # Clean up uncompressed directory
-        shutil.rmtree(backup_path)
+        # Verify file was created
+        if not archive_path.exists():
+            return None, {'error': 'mongodump did not create output file'}
         
         # Get file size
         size_mb = round(archive_path.stat().st_size / (1024 * 1024), 2)
         
+        # Get collection count using mongosh
+        try:
+            count_cmd = ['mongosh', '--quiet', '--eval', 
+                f'db.getSiblingDB("{DB_NAME}").getCollectionNames().length']
+            count_result = subprocess.run(count_cmd, capture_output=True, text=True, timeout=30)
+            collections_count = int(count_result.stdout.strip()) if count_result.returncode == 0 else 0
+            
+            # Get document count
+            docs_cmd = ['mongosh', '--quiet', '--eval', 
+                f'''
+                let total = 0;
+                db.getSiblingDB("{DB_NAME}").getCollectionNames().forEach(c => {{
+                    total += db.getSiblingDB("{DB_NAME}").getCollection(c).countDocuments();
+                }});
+                print(total);
+                ''']
+            docs_result = subprocess.run(docs_cmd, capture_output=True, text=True, timeout=60)
+            total_documents = int(docs_result.stdout.strip()) if docs_result.returncode == 0 else 0
+        except:
+            collections_count = 0
+            total_documents = 0
+        
         logger.info(f"\n{'='*70}")
-        logger.info(f"✅ BACKUP 100% COMPLETO")
+        logger.info(f"✅ MONGODUMP COMPLETADO")
         logger.info(f"{'='*70}")
         logger.info(f"   Archivo: {archive_path}")
         logger.info(f"   Tamaño: {size_mb} MB")
-        logger.info(f"   Colecciones: {len(collections)}")
-        logger.info(f"   Documentos: {total_docs:,}")
+        logger.info(f"   Colecciones: {collections_count}")
+        logger.info(f"   Documentos: {total_documents:,}")
         logger.info(f"{'='*70}")
         
         return archive_path, {
-            'collections_count': len(collections),
-            'total_documents': total_docs,
+            'collections_count': collections_count,
+            'total_documents': total_documents,
             'size_mb': size_mb,
             'db_name': DB_NAME,
         }
         
+    except subprocess.TimeoutExpired:
+        logger.error("mongodump timeout after 10 minutes")
+        return None, {'error': 'mongodump timeout after 10 minutes'}
+    except FileNotFoundError:
+        logger.error("mongodump not found. Is MongoDB tools installed?")
+        return None, {'error': 'mongodump not found. MongoDB tools not installed.'}
     except Exception as e:
         logger.error(f"Backup creation failed: {e}")
-        # Cleanup on failure
-        if backup_path.exists():
-            shutil.rmtree(backup_path, ignore_errors=True)
         return None, {'error': str(e)}
 
 
