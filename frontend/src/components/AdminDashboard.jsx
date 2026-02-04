@@ -936,6 +936,9 @@ export const AdminDashboard = ({ user }) => {
   // ============== COMMAND CENTER (HOME) ==============
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
+      {/* Diagnostics Modal */}
+      <DiagnosticsModal />
+      
       {/* Command Bar Modal */}
       {showCommandBar && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-start justify-center pt-[20vh]" onClick={() => setShowCommandBar(false)}>
