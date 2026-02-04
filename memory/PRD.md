@@ -73,18 +73,18 @@ Documentación completa del sistema UGC como prerrequisito para migración de ba
 ## Prioritized Backlog
 
 ### P0 - Crítico (Database Migration)
-1. ~~Completar UI de inspección de datos~~ ✅ COMPLETADO
-2. Fase 1: Ejecutar full_backup.py y cargar backup completo
+1. ~~Crear manual técnico del sistema UGC~~ ✅ COMPLETADO
+2. Fase 1: Preparación - Cargar backup completo en preview
 3. Fase 2: Limpieza - Eliminar colecciones obsoletas (GridFS legacy)
-4. Fase 3: Normalización - Agregar creator_id a ugc_applications
+4. Fase 3: Normalización
+   - Convertir fechas string a BSON Date
+   - Unificar almacenamiento de teléfonos (`users.phone` como única fuente)
+   - Consolidar `social_accounts` y `social_networks` en creators
 
 ### P1 - Alta Prioridad
+- **Captura de teléfono en Google OAuth** - Modal obligatorio post-login para usuarios sin teléfono
 - Eliminar flujo de aplicación pública (sin cuenta)
 - Configurar webhooks Sentry/UptimeRobot en producción
-- **Captura de teléfono en Google OAuth** - Implementar modal obligatorio post-login para usuarios que se registran con Google y no tienen teléfono. Opciones aprobadas:
-  - Modal obligatorio al detectar `users.phone` vacío
-  - Banner persistente + bloqueo de acciones críticas
-  - Endpoint: `POST /users/complete-profile`
 
 ### P2 - Media Prioridad
 - Búsqueda global en admin panel
