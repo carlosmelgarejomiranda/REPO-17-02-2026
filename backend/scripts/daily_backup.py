@@ -1,17 +1,10 @@
 #!/usr/bin/env python3
 """
-Daily MongoDB Backup - 100% COMPLETO
-====================================
-Backs up the MongoDB database with ALL collections (no exceptions).
+Daily MongoDB Backup - usando mongodump
+========================================
+Backs up the MongoDB database using native mongodump tool.
 Uploads to Cloudinary and keeps the last 7 backups.
 Sends email alerts on success/failure.
-
-Features:
-- NO OMITE NADA - Todas las colecciones incluidas
-- Incluye GridFS chunks
-- Genera manifest con checksums MD5
-- Preserva ObjectId con Extended JSON
-- Auto-verificación post-backup
 
 Run manually: python scripts/daily_backup.py
 Scheduled: Runs automatically every day at 3:00 AM Paraguay time
@@ -21,8 +14,7 @@ import os
 import sys
 import json
 import shutil
-import hashlib
-import tarfile
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 import cloudinary
@@ -31,8 +23,6 @@ import cloudinary.api
 from dotenv import load_dotenv
 import logging
 import resend
-from bson import json_util
-from pymongo import MongoClient
 
 # Setup logging
 logging.basicConfig(
@@ -61,6 +51,9 @@ MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 DB_NAME = os.environ.get('DB_NAME', 'test_database')
 BACKUP_DIR = ROOT_DIR / 'backups'
 MAX_BACKUPS_TO_KEEP = 7  # Keep last 7 days of backups in Cloudinary
+
+# Global variable to store last upload error
+_last_upload_error = None
 
 
 def send_backup_alert(success: bool, details: dict):
