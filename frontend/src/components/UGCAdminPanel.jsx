@@ -430,6 +430,11 @@ const SystemPanel = ({ getAuthHeaders }) => {
   const [lastBackupTime, setLastBackupTime] = useState(null);
   const [collectionsData, setCollectionsData] = useState(null);
   
+  // New states for diagnose and direct download
+  const [diagnoseLoading, setDiagnoseLoading] = useState(false);
+  const [diagnoseResult, setDiagnoseResult] = useState(null);
+  const [directDownloadLoading, setDirectDownloadLoading] = useState(false);
+  
   // Excel Export State
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState('');
@@ -443,6 +448,58 @@ const SystemPanel = ({ getAuthHeaders }) => {
   const [currentDbState, setCurrentDbState] = useState(null);
   const [verificationResult, setVerificationResult] = useState(null);
   const [backupFileInput, setBackupFileInput] = useState('');
+
+  // Diagnose backup configuration
+  const handleDiagnose = async () => {
+    setDiagnoseLoading(true);
+    setDiagnoseResult(null);
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/backup/diagnose`, { headers });
+      const data = await res.json();
+      setDiagnoseResult(data);
+    } catch (err) {
+      setDiagnoseResult({ error: 'Error de conexión: ' + err.message });
+    } finally {
+      setDiagnoseLoading(false);
+    }
+  };
+
+  // Direct download backup (without Cloudinary)
+  const handleDirectDownload = async () => {
+    setDirectDownloadLoading(true);
+    try {
+      const headers = getAuthHeaders();
+      const res = await fetch(`${API_URL}/api/admin/backup/create-download`, {
+        method: 'POST',
+        headers
+      });
+      
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const contentDisposition = res.headers.get('Content-Disposition');
+        const filename = contentDisposition 
+          ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
+          : `backup_direct_${new Date().toISOString().slice(0,10)}.tar.gz`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        setBackupResult({ success: true, message: '✅ Backup descargado correctamente' });
+      } else {
+        const data = await res.json();
+        setBackupResult({ success: false, message: `❌ Error: ${data.detail || 'Error desconocido'}` });
+      }
+    } catch (err) {
+      setBackupResult({ success: false, message: `❌ Error de conexión: ${err.message}` });
+    } finally {
+      setDirectDownloadLoading(false);
+    }
+  };
 
   // Fetch current DB state for verification
   const fetchCurrentDbState = async () => {
