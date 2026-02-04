@@ -789,10 +789,49 @@ export const AdminDashboard = ({ user }) => {
     }
   };
 
+  // Handle direct download backup (Python method)
+  const handleDirectBackup = async () => {
+    setBackupLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/backup/download-direct-py`, {
+        method: 'GET',
+        headers: getAuthHeaders()
+      });
+      
+      if (res.ok) {
+        // Get metadata from headers
+        const collectionsCount = res.headers.get('X-Collections-Count') || '?';
+        const docsCount = res.headers.get('X-Documents-Count') || '?';
+        
+        // Download the file
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = res.headers.get('Content-Disposition')?.split('filename=')[1] || 'backup.tar.gz';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        alert(`✅ Backup descargado!\n\nColecciones: ${collectionsCount}\nDocumentos: ${docsCount}`);
+      } else {
+        const data = await res.json();
+        alert(`❌ Error: ${data.detail || 'Error al crear backup'}`);
+      }
+    } catch (err) {
+      console.error('Direct backup error:', err);
+      alert(`❌ Error de conexión: ${err.message}`);
+    } finally {
+      setBackupLoading(false);
+    }
+  };
+
   const quickActions = [
     { label: 'Nueva Campaña UGC', icon: Plus, action: () => { setActiveModule('ugc'); setActiveSubTab('overview'); }, color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
     { label: 'Editar Web', icon: Palette, action: () => setShowBuilder(true), color: 'bg-[#d4a968]/20 text-[#d4a968] border-[#d4a968]/30' },
     { label: backupLoading ? 'Creando...' : 'Backup Cloudinary', icon: backupLoading ? Loader2 : Database, action: handleBackup, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', disabled: backupLoading, spin: backupLoading },
+    { label: backupLoading ? 'Creando...' : 'Backup Directo', icon: backupLoading ? Loader2 : Download, action: handleDirectBackup, color: 'bg-green-500/20 text-green-400 border-green-500/30', disabled: backupLoading, spin: backupLoading },
     ...(pendingActions > 0 ? [{ label: `${pendingActions} Pendientes`, icon: Bell, action: () => {}, color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' }] : [])
   ];
 
