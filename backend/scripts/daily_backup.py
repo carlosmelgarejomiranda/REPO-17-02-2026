@@ -458,9 +458,10 @@ def run_backup():
     upload_result = upload_to_cloudinary(archive_path)
     
     if not upload_result:
-        send_backup_alert(False, {'error': 'Failed to upload to Cloudinary'})
-        create_system_notification(False, {'error': 'Failed to upload to Cloudinary'})
-        return {"success": False, "error": "Failed to upload to Cloudinary"}
+        error_msg = _last_upload_error or 'Failed to upload to Cloudinary'
+        send_backup_alert(False, {'error': error_msg})
+        create_system_notification(False, {'error': error_msg})
+        return {"success": False, "error": error_msg}
     
     # Step 3: Cleanup old backups
     cleanup_old_backups()
