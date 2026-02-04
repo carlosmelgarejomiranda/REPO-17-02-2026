@@ -153,12 +153,36 @@ const CampaignApplications = () => {
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-light mb-2">
-            Creadores de <span className="text-[#d4a968] italic">{campaign?.name}</span>
-          </h1>
-          <p className="text-gray-400 text-sm mb-4">
-            Creadores preseleccionados y confirmados para tu campaña
-          </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-3xl font-light mb-2">
+                Creadores de <span className="text-[#d4a968] italic">{campaign?.name}</span>
+              </h1>
+              <p className="text-gray-400 text-sm mb-4">
+                Creadores preseleccionados y confirmados para tu campaña
+              </p>
+            </div>
+            
+            {/* Export Button */}
+            <button
+              onClick={handleExportExcel}
+              disabled={exporting || applications.length === 0}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              data-testid="export-applications-btn"
+            >
+              {exporting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Exportando...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  Exportar Excel
+                </>
+              )}
+            </button>
+          </div>
           
           {/* Stats */}
           <div className="flex items-center gap-6">
