@@ -742,11 +742,18 @@ export const AdminDashboard = ({ user }) => {
         a.remove();
         alert('✅ Backup descargado exitosamente');
       } else {
-        const data = await res.json();
-        alert(`❌ Error: ${data.detail || 'Error al crear backup'}`);
+        let errorMsg = 'Error al crear backup';
+        try {
+          const data = await res.json();
+          errorMsg = data.detail || errorMsg;
+        } catch {
+          errorMsg = `Error HTTP ${res.status}`;
+        }
+        alert(`❌ Error: ${errorMsg}`);
       }
     } catch (err) {
-      alert('❌ Error de conexión al crear backup');
+      console.error('Backup error:', err);
+      alert(`❌ Error de conexión: ${err.message || 'No se pudo conectar al servidor'}`);
     } finally {
       setBackupLoading(false);
     }
