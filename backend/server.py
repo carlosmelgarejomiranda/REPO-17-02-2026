@@ -3104,6 +3104,230 @@ async def export_collection_to_excel(request: Request):
         logger.error(f"Excel export error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== CAMPAIGN APPLICATIONS EXPORT ====================
+
+@api_router.get("/ugc/campaigns/{campaign_id}/applications/export")
+async def export_campaign_applications_excel(campaign_id: str, request: Request):
+    """Export campaign applications to Excel with full details"""
+    # Verify user has access (brand owner or admin)
+    user = await require_auth(request)
+    
+    import io
+    import xlsxwriter
+    from fastapi.responses import StreamingResponse
+    
+    try:
+        # Get campaign
+        campaign = await db.ugc_campaigns.find_one({"id": campaign_id}, {"_id": 0})
+        if not campaign:
+            raise HTTPException(status_code=404, detail="Campaña no encontrada")
+        
+        # Check if user is admin or brand owner
+        is_admin = user.get("role") in ["admin", "superadmin"]
+        if not is_admin:
+            brand = await db.ugc_brands.find_one({"user_id": user["user_id"]}, {"_id": 0})
+            if not brand or brand.get("id") != campaign.get("brand_id"):
+                raise HTTPException(status_code=403, detail="No tienes acceso a esta campaña")
+        
+        # Get all applications for this campaign
+        applications = await db.ugc_applications.find(
+            {"campaign_id": campaign_id},
+            {"_id": 0}
+        ).to_list(None)
+        
+        if not applications:
+            raise HTTPException(status_code=404, detail="No hay aplicaciones para exportar")
+        
+        # Get all creator IDs and deliverable info
+        creator_ids = [app.get("creator_id") for app in applications if app.get("creator_id")]
+        
+        # Get creators info (for phone and social networks)
+        creators_dict = {}
+        if creator_ids:
+            creators = await db.ugc_creators.find(
+                {"id": {"$in": creator_ids}},
+                {"_id": 0, "id": 1, "phone": 1, "phone_full": 1, "phone_country_code": 1, "social_networks": 1, "social_accounts": 1}
+            ).to_list(None)
+            creators_dict = {c["id"]: c for c in creators}
+        
+        # Get deliverables for each application
+        app_ids = [app.get("id") or app.get("application_id") for app in applications]
+        deliverables = await db.ugc_deliverables.find(
+            {"application_id": {"$in": app_ids}},
+            {"_id": 0, "application_id": 1, "status": 1, "post_url": 1, "instagram_url": 1, "tiktok_url": 1, "metrics_submitted_at": 1}
+        ).to_list(None)
+        deliverables_dict = {}
+        for d in deliverables:
+            app_id = d.get("application_id")
+            if app_id:
+                if app_id not in deliverables_dict:
+                    deliverables_dict[app_id] = []
+                deliverables_dict[app_id].append(d)
+        
+        # Create Excel file in memory
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet("Aplicaciones")
+        
+        # Formats
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#d4a968',
+            'font_color': 'black',
+            'border': 1,
+            'text_wrap': True,
+            'valign': 'vcenter'
+        })
+        cell_format = workbook.add_format({'border': 1, 'valign': 'vcenter'})
+        date_format = workbook.add_format({'border': 1, 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy'})
+        
+        # Define columns
+        columns = [
+            ("Nombre", 25),
+            ("Username", 18),
+            ("Estado Aplicación", 18),
+            ("Estado Entrega", 20),
+            ("Entregó URL", 12),
+            ("Entregó Métricas", 15),
+            ("Teléfono", 18),
+            ("Fecha Aplicación", 15),
+            ("Fecha Confirmación", 16),
+            ("Fecha Límite URL", 15),
+            ("Fecha Límite Métricas", 18),
+            ("Seguidores IG", 14),
+            ("Seguidores TikTok", 16),
+            ("Nivel", 10),
+            ("Rating", 8),
+        ]
+        
+        # Write headers
+        for col, (name, width) in enumerate(columns):
+            worksheet.write(0, col, name, header_format)
+            worksheet.set_column(col, col, width)
+        
+        # Helper function to get phone
+        def get_phone(creator):
+            if not creator:
+                return ""
+            phone = creator.get("phone_full") or creator.get("phone") or ""
+            code = creator.get("phone_country_code", "")
+            if phone and code and not phone.startswith("+"):
+                return f"+{code}{phone}"
+            return phone
+        
+        # Helper function to get followers from social networks
+        def get_followers(creator, platform):
+            if not creator:
+                return 0
+            # Try social_networks array first
+            for sn in creator.get("social_networks", []):
+                if sn.get("platform", "").lower() == platform.lower():
+                    return sn.get("followers", 0)
+            # Try social_accounts object (legacy)
+            sa = creator.get("social_accounts", {}).get(platform, {})
+            return sa.get("followers", 0)
+        
+        # Helper to format date
+        def format_date_excel(date_str):
+            if not date_str:
+                return ""
+            try:
+                from datetime import datetime
+                if isinstance(date_str, str):
+                    # Try parsing ISO format
+                    dt = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                    return dt.strftime("%d/%m/%Y")
+                return str(date_str)
+            except:
+                return str(date_str) if date_str else ""
+        
+        # Write data rows
+        for row, app in enumerate(applications, start=1):
+            creator_id = app.get("creator_id")
+            creator = creators_dict.get(creator_id, {})
+            app_id = app.get("id") or app.get("application_id")
+            app_deliverables = deliverables_dict.get(app_id, [])
+            
+            # Determine delivery status
+            has_url = any(d.get("post_url") or d.get("instagram_url") or d.get("tiktok_url") for d in app_deliverables)
+            has_metrics = any(d.get("metrics_submitted_at") for d in app_deliverables)
+            
+            # Get deliverable status (combine if multiple)
+            delivery_statuses = [d.get("status", "") for d in app_deliverables]
+            delivery_status = ", ".join(set(delivery_statuses)) if delivery_statuses else "Sin entrega"
+            
+            # Status translation
+            status_map = {
+                "applied": "Pendiente",
+                "shortlisted": "Preseleccionado",
+                "confirmed": "Confirmado",
+                "rejected": "Rechazado",
+                "cancelled": "Cancelado"
+            }
+            delivery_status_map = {
+                "awaiting_publish": "Esperando URL",
+                "published": "URL Subida",
+                "submitted": "Enviado",
+                "under_review": "En Revisión",
+                "approved": "Aprobado",
+                "metrics_pending": "Métricas Pendientes",
+                "metrics_submitted": "Métricas Enviadas",
+                "completed": "Completado",
+                "cancelled": "Cancelado"
+            }
+            
+            # Translate delivery statuses
+            translated_delivery = ", ".join([
+                delivery_status_map.get(s, s) for s in delivery_statuses
+            ]) if delivery_statuses else "Sin entrega"
+            
+            row_data = [
+                app.get("creator_name", ""),
+                app.get("creator_username", ""),
+                status_map.get(app.get("status", ""), app.get("status", "")),
+                translated_delivery,
+                "Sí" if has_url else "No",
+                "Sí" if has_metrics else "No",
+                get_phone(creator),
+                format_date_excel(app.get("applied_at")),
+                format_date_excel(app.get("confirmed_at")),
+                format_date_excel(app.get("url_deadline")),
+                format_date_excel(app.get("metrics_deadline")),
+                get_followers(creator, "instagram"),
+                get_followers(creator, "tiktok"),
+                app.get("creator_level", "rookie"),
+                app.get("creator_rating", 0),
+            ]
+            
+            for col, value in enumerate(row_data):
+                worksheet.write(row, col, value, cell_format)
+        
+        # Add autofilter
+        worksheet.autofilter(0, 0, len(applications), len(columns) - 1)
+        
+        # Freeze first row
+        worksheet.freeze_panes(1, 0)
+        
+        workbook.close()
+        output.seek(0)
+        
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = campaign.get("name", "campaign").replace(" ", "_")[:30]
+        filename = f"aplicaciones_{safe_name}_{timestamp}.xlsx"
+        
+        return StreamingResponse(
+            output,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Campaign applications export error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ==================== BACKUP VERIFICATION ENDPOINTS ====================
 
 @api_router.get("/admin/backup/verify-current")
