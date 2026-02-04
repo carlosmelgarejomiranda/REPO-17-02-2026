@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   ArrowLeft, Users, Star, Loader2, CheckCircle, 
-  Clock, UserCheck, Instagram, Music2, Eye, TrendingUp, Award, BadgeCheck, MapPin, Lock
+  Clock, UserCheck, Instagram, Music2, Eye, TrendingUp, Award, BadgeCheck, MapPin, Lock,
+  Download
 } from 'lucide-react';
 
 const API_URL = getApiUrl();
