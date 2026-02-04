@@ -192,6 +192,7 @@ def create_backup():
     logger.info("🔒 BACKUP 100% COMPLETO - SIN EXCEPCIONES")
     logger.info("="*70)
     logger.info(f"Database: {DB_NAME}")
+    logger.info(f"MONGO_URL: {MONGO_URL[:50]}..." if len(MONGO_URL) > 50 else f"MONGO_URL: {MONGO_URL}")
     
     try:
         # Connect to MongoDB
