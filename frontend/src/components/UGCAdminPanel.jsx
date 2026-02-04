@@ -766,6 +766,14 @@ const SystemPanel = ({ getAuthHeaders }) => {
                     Ver en Cloudinary
                   </a>
                 )}
+                {backupResult.canReset && (
+                  <button
+                    onClick={handleResetBackup}
+                    className="ml-3 px-2 py-1 bg-yellow-600 hover:bg-yellow-700 text-white text-xs rounded transition-colors"
+                  >
+                    Resetear Estado
+                  </button>
+                )}
               </div>
             )}
 
