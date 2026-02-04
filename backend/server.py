@@ -2842,6 +2842,7 @@ async def admin_run_backup(request: Request):
         }
     
     import threading
+    import traceback
     
     def run_backup_task():
         """Background thread to run backup"""
@@ -2850,20 +2851,39 @@ async def admin_run_backup(request: Request):
         _backup_status["last_run"] = datetime.now(timezone.utc).isoformat()
         _backup_status["last_error"] = None
         _backup_status["cloudinary_url"] = None
+        _backup_status["last_result"] = None
         
         try:
             from scripts.daily_backup import run_backup
             result = run_backup()
-            _backup_status["last_result"] = "success"
+            
+            # Check if result indicates success
             if result and isinstance(result, dict):
-                _backup_status["cloudinary_url"] = result.get("cloudinary_url")
-            logger.info(f"✅ Backup completado exitosamente")
+                if result.get("success") == True:
+                    _backup_status["last_result"] = "success"
+                    _backup_status["cloudinary_url"] = result.get("cloudinary_url")
+                    logger.info(f"✅ Backup completado exitosamente: {result.get('cloudinary_url')}")
+                else:
+                    _backup_status["last_result"] = "error"
+                    _backup_status["last_error"] = result.get("error", "Error en el proceso de backup")
+                    logger.error(f"❌ Backup failed: {result.get('error')}")
+            elif result == True:
+                # Legacy: run_backup returned True
+                _backup_status["last_result"] = "success"
+                logger.info(f"✅ Backup completado exitosamente (legacy)")
+            else:
+                _backup_status["last_result"] = "error"
+                _backup_status["last_error"] = "El backup no retornó resultado válido"
+                logger.error(f"❌ Backup returned invalid result: {result}")
+                
         except Exception as e:
             _backup_status["last_result"] = "error"
+            error_msg = f"{str(e)}\n{traceback.format_exc()}"
             _backup_status["last_error"] = str(e)
-            logger.error(f"❌ Background backup failed: {e}")
+            logger.error(f"❌ Background backup exception: {error_msg}")
         finally:
             _backup_status["running"] = False
+            logger.info(f"Backup status final: {_backup_status}")
     
     # Start backup in background thread
     backup_thread = threading.Thread(target=run_backup_task, daemon=True)
