@@ -791,8 +791,43 @@ export const AdminDashboard = ({ user }) => {
     { label: 'Nueva Campaña UGC', icon: Plus, action: () => { setActiveModule('ugc'); setActiveSubTab('overview'); }, color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
     { label: 'Editar Web', icon: Palette, action: () => setShowBuilder(true), color: 'bg-[#d4a968]/20 text-[#d4a968] border-[#d4a968]/30' },
     { label: backupLoading ? 'Creando...' : 'Backup DB', icon: backupLoading ? Loader2 : Database, action: handleBackup, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', disabled: backupLoading, spin: backupLoading },
+    { label: 'Ver Diagnósticos', icon: Search, action: fetchBackupDiagnostics, color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
     ...(pendingActions > 0 ? [{ label: `${pendingActions} Pendientes`, icon: Bell, action: () => {}, color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' }] : [])
   ];
+
+  // Diagnostics Modal
+  const DiagnosticsModal = () => {
+    if (!showDiagnostics) return null;
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80" onClick={() => setShowDiagnostics(false)}>
+        <div className="bg-[#1a1a1a] rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-auto" onClick={e => e.stopPropagation()}>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-white">Diagnósticos de Backup</h2>
+            <button onClick={() => setShowDiagnostics(false)} className="text-gray-400 hover:text-white">✕</button>
+          </div>
+          {backupDiagnostics && backupDiagnostics.length > 0 ? (
+            <div className="space-y-4">
+              {backupDiagnostics.map((diag, idx) => (
+                <div key={idx} className={`p-4 rounded-lg ${diag.type === 'backup_success' ? 'bg-green-900/30 border border-green-500/30' : 'bg-red-900/30 border border-red-500/30'}`}>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${diag.type === 'backup_success' ? 'bg-green-500 text-black' : 'bg-red-500 text-white'}`}>
+                      {diag.type}
+                    </span>
+                    <span className="text-xs text-gray-400">{diag.created_at}</span>
+                  </div>
+                  <pre className="text-xs text-gray-300 overflow-auto whitespace-pre-wrap bg-black/30 p-3 rounded mt-2">
+                    {JSON.stringify(diag.diagnostics, null, 2)}
+                  </pre>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400">No hay diagnósticos disponibles. Intentá hacer un backup primero.</p>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   // Website Builder view
   if (showBuilder) {
