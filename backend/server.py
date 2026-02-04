@@ -3019,16 +3019,23 @@ async def admin_backup_create_download(request: Request):
     from pathlib import Path
     from fastapi.responses import FileResponse
     
+    mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+    db_name = os.environ.get('DB_NAME', 'test_database')
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Create temp file for backup
+    backup_filename = f"mongodump_{db_name}_{timestamp}.gz"
+    backup_path = Path(tempfile.gettempdir()) / backup_filename
+    
+    logger.info(f"Creating mongodump backup: {backup_path}")
+    logger.info(f"DB: {db_name}, MONGO_URL: {mongo_url[:30]}...")
+    
     try:
-        mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-        db_name = os.environ.get('DB_NAME', 'test_database')
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        
-        # Create temp file for backup
-        backup_filename = f"mongodump_{db_name}_{timestamp}.gz"
-        backup_path = Path(tempfile.gettempdir()) / backup_filename
-        
-        logger.info(f"Creating mongodump backup: {backup_path}")
+        # Check if mongodump is available
+        check_cmd = subprocess.run(['which', 'mongodump'], capture_output=True, text=True)
+        if check_cmd.returncode != 0:
+            logger.error("mongodump not found in PATH")
+            raise HTTPException(status_code=500, detail="mongodump no está instalado en el servidor. Contactá al administrador.")
         
         # Run mongodump
         cmd = [
@@ -3039,6 +3046,8 @@ async def admin_backup_create_download(request: Request):
             '--gzip'
         ]
         
+        logger.info(f"Running: mongodump --db={db_name} --archive=... --gzip")
+        
         result = subprocess.run(
             cmd,
             capture_output=True,
@@ -3047,15 +3056,22 @@ async def admin_backup_create_download(request: Request):
         )
         
         if result.returncode != 0:
-            logger.error(f"mongodump failed: {result.stderr}")
-            raise HTTPException(status_code=500, detail=f"mongodump failed: {result.stderr}")
+            logger.error(f"mongodump failed with code {result.returncode}")
+            logger.error(f"stderr: {result.stderr}")
+            raise HTTPException(status_code=500, detail=f"mongodump falló: {result.stderr[:200]}")
+        
+        # Log success info from stderr (mongodump outputs progress to stderr)
+        if result.stderr:
+            for line in result.stderr.split('\n')[-5:]:
+                if line.strip():
+                    logger.info(f"mongodump: {line}")
         
         # Verify file exists
         if not backup_path.exists():
-            raise HTTPException(status_code=500, detail="mongodump did not create output file")
+            raise HTTPException(status_code=500, detail="mongodump no creó el archivo de salida")
         
         file_size = backup_path.stat().st_size
-        logger.info(f"Backup created: {backup_path} ({file_size / (1024*1024):.2f} MB)")
+        logger.info(f"Backup created successfully: {file_size / (1024*1024):.2f} MB")
         
         # Return file for download
         return FileResponse(
@@ -3069,16 +3085,16 @@ async def admin_backup_create_download(request: Request):
         )
         
     except subprocess.TimeoutExpired:
-        logger.error("mongodump timeout")
-        raise HTTPException(status_code=500, detail="mongodump timeout after 10 minutes")
-    except FileNotFoundError:
-        logger.error("mongodump not found")
-        raise HTTPException(status_code=500, detail="mongodump not found. MongoDB tools not installed.")
+        logger.error("mongodump timeout after 10 minutes")
+        raise HTTPException(status_code=500, detail="Timeout: mongodump tardó más de 10 minutos")
+    except FileNotFoundError as e:
+        logger.error(f"FileNotFoundError: {e}")
+        raise HTTPException(status_code=500, detail="mongodump no encontrado. MongoDB tools no instalado.")
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Direct backup failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Backup failed: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=500, detail=f"Error: {type(e).__name__}: {str(e)}")
 
 @api_router.post("/admin/backup/reset")
 async def admin_backup_reset(request: Request):
