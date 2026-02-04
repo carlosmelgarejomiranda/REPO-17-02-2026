@@ -722,6 +722,7 @@ export const AdminDashboard = ({ user }) => {
   // Handle backup - Descarga directa con mongodump
   const handleBackup = async () => {
     setBackupLoading(true);
+    setBackupDiagnostics(null);
     try {
       const res = await fetch(`${API_URL}/api/admin/backup/create-download`, {
         method: 'POST',
@@ -747,7 +748,6 @@ export const AdminDashboard = ({ user }) => {
         let errorMsg = 'Error al crear backup';
         try {
           const text = await res.text();
-          // Try to parse as JSON
           try {
             const data = JSON.parse(text);
             errorMsg = data.detail || errorMsg;
@@ -757,15 +757,33 @@ export const AdminDashboard = ({ user }) => {
         } catch {
           errorMsg = `Error HTTP ${res.status}`;
         }
-        // Show full error in console for debugging
         console.error('Backup error details:', errorMsg);
-        alert(`❌ Error:\n\n${errorMsg.substring(0, 1000)}`);
+        // Fetch diagnostics automatically on error
+        await fetchBackupDiagnostics();
+        alert(`❌ Error: ${errorMsg.substring(0, 500)}\n\nRevisá los diagnósticos para más detalles.`);
       }
     } catch (err) {
       console.error('Backup connection error:', err);
-      alert(`❌ Error de conexión:\n\n${err.message || 'No se pudo conectar al servidor'}\n\nRevisá la consola del navegador para más detalles.`);
+      await fetchBackupDiagnostics();
+      alert(`❌ Error de conexión: ${err.message}\n\nRevisá los diagnósticos para más detalles.`);
     } finally {
       setBackupLoading(false);
+    }
+  };
+
+  // Fetch backup diagnostics
+  const fetchBackupDiagnostics = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/backup/diagnostics`, {
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBackupDiagnostics(data.diagnostics || []);
+        setShowDiagnostics(true);
+      }
+    } catch (err) {
+      console.error('Error fetching diagnostics:', err);
     }
   };
 
