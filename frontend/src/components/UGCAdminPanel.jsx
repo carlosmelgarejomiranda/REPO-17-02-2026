@@ -442,10 +442,6 @@ const SystemPanel = ({ getAuthHeaders }) => {
   const [backupFileInput, setBackupFileInput] = useState('');
 
   // Fetch current DB state for verification
-    }
-  };
-
-  // Fetch current DB state for verification
   const fetchCurrentDbState = async () => {
     setVerifyLoading(true);
     try {
