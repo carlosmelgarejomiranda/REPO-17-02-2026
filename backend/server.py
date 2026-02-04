@@ -3023,57 +3023,151 @@ async def admin_backup_create_download(request: Request):
     db_name = os.environ.get('DB_NAME', 'test_database')
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     
-    # Create temp file for backup
-    backup_filename = f"mongodump_{db_name}_{timestamp}.gz"
-    backup_path = Path(tempfile.gettempdir()) / backup_filename
-    
-    logger.info(f"Creating mongodump backup: {backup_path}")
-    logger.info(f"DB: {db_name}, MONGO_URL: {mongo_url[:30]}...")
+    # Collect diagnostic info
+    diagnostics = {
+        "timestamp": timestamp,
+        "db_name": db_name,
+        "mongo_url_prefix": mongo_url[:40] + "..." if len(mongo_url) > 40 else mongo_url,
+        "checks": {}
+    }
     
     try:
-        # Check if mongodump is available
-        check_cmd = subprocess.run(['which', 'mongodump'], capture_output=True, text=True)
-        if check_cmd.returncode != 0:
-            logger.error("mongodump not found in PATH")
-            raise HTTPException(status_code=500, detail="mongodump no está instalado en el servidor. Contactá al administrador.")
+        # CHECK 1: Verify mongodump is in PATH
+        logger.info("=== BACKUP DIAGNOSTIC START ===")
         
-        # Run mongodump
+        which_result = subprocess.run(['which', 'mongodump'], capture_output=True, text=True)
+        diagnostics["checks"]["which_mongodump"] = {
+            "command": "which mongodump",
+            "returncode": which_result.returncode,
+            "stdout": which_result.stdout.strip(),
+            "stderr": which_result.stderr.strip()
+        }
+        logger.info(f"which mongodump: returncode={which_result.returncode}, path={which_result.stdout.strip()}")
+        
+        if which_result.returncode != 0:
+            # Try alternative paths
+            alt_paths = ['/usr/bin/mongodump', '/usr/local/bin/mongodump', '/opt/mongodb/bin/mongodump']
+            for alt_path in alt_paths:
+                if os.path.exists(alt_path):
+                    diagnostics["checks"]["alt_path_found"] = alt_path
+                    logger.info(f"Found mongodump at alternative path: {alt_path}")
+                    break
+            else:
+                diagnostics["checks"]["mongodump_installed"] = False
+                error_msg = f"mongodump no está instalado. Diagnóstico: {json.dumps(diagnostics, indent=2)}"
+                logger.error(error_msg)
+                
+                # Save diagnostic to DB for later review
+                try:
+                    await db.backup_diagnostics.insert_one({
+                        "type": "mongodump_not_found",
+                        "diagnostics": diagnostics,
+                        "created_at": datetime.now(timezone.utc).isoformat()
+                    })
+                except:
+                    pass
+                
+                raise HTTPException(status_code=500, detail=error_msg)
+        
+        mongodump_path = which_result.stdout.strip() or diagnostics["checks"].get("alt_path_found", "mongodump")
+        
+        # CHECK 2: Get mongodump version
+        version_result = subprocess.run([mongodump_path, '--version'], capture_output=True, text=True)
+        diagnostics["checks"]["mongodump_version"] = {
+            "command": f"{mongodump_path} --version",
+            "returncode": version_result.returncode,
+            "stdout": version_result.stdout[:200] if version_result.stdout else "",
+            "stderr": version_result.stderr[:200] if version_result.stderr else ""
+        }
+        logger.info(f"mongodump version: {version_result.stdout[:100] if version_result.stdout else 'N/A'}")
+        
+        # CHECK 3: Test MongoDB connection
+        test_cmd = subprocess.run(
+            ['mongosh', '--quiet', '--eval', 'db.runCommand({ping:1})', mongo_url],
+            capture_output=True, text=True, timeout=30
+        )
+        diagnostics["checks"]["mongodb_connection"] = {
+            "command": "mongosh ping test",
+            "returncode": test_cmd.returncode,
+            "success": test_cmd.returncode == 0
+        }
+        logger.info(f"MongoDB connection test: {'OK' if test_cmd.returncode == 0 else 'FAILED'}")
+        
+        # CREATE BACKUP
+        backup_filename = f"mongodump_{db_name}_{timestamp}.gz"
+        backup_path = Path(tempfile.gettempdir()) / backup_filename
+        
+        logger.info(f"Creating backup: {backup_path}")
+        
         cmd = [
-            'mongodump',
+            mongodump_path,
             f'--uri={mongo_url}',
             f'--db={db_name}',
             f'--archive={backup_path}',
             '--gzip'
         ]
         
-        logger.info(f"Running: mongodump --db={db_name} --archive=... --gzip")
+        diagnostics["checks"]["mongodump_command"] = f"{mongodump_path} --uri=*** --db={db_name} --archive={backup_path} --gzip"
         
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            timeout=600  # 10 minute timeout
+            timeout=600
         )
         
-        if result.returncode != 0:
-            logger.error(f"mongodump failed with code {result.returncode}")
-            logger.error(f"stderr: {result.stderr}")
-            raise HTTPException(status_code=500, detail=f"mongodump falló: {result.stderr[:200]}")
+        diagnostics["checks"]["mongodump_execution"] = {
+            "returncode": result.returncode,
+            "stdout": result.stdout[:500] if result.stdout else "",
+            "stderr": result.stderr[:500] if result.stderr else ""
+        }
         
-        # Log success info from stderr (mongodump outputs progress to stderr)
+        logger.info(f"mongodump returncode: {result.returncode}")
+        if result.stdout:
+            logger.info(f"mongodump stdout: {result.stdout[:300]}")
         if result.stderr:
-            for line in result.stderr.split('\n')[-5:]:
-                if line.strip():
-                    logger.info(f"mongodump: {line}")
+            logger.info(f"mongodump stderr: {result.stderr[:300]}")
         
-        # Verify file exists
+        if result.returncode != 0:
+            error_detail = f"mongodump falló (code {result.returncode}). stderr: {result.stderr[:300]}"
+            diagnostics["error"] = error_detail
+            
+            # Save diagnostic to DB
+            try:
+                await db.backup_diagnostics.insert_one({
+                    "type": "mongodump_failed",
+                    "diagnostics": diagnostics,
+                    "created_at": datetime.now(timezone.utc).isoformat()
+                })
+            except:
+                pass
+            
+            raise HTTPException(status_code=500, detail=f"{error_detail}\n\nDiagnóstico completo: {json.dumps(diagnostics, indent=2)}")
+        
+        # CHECK 4: Verify output file
         if not backup_path.exists():
-            raise HTTPException(status_code=500, detail="mongodump no creó el archivo de salida")
+            diagnostics["error"] = "Output file not created"
+            raise HTTPException(status_code=500, detail=f"mongodump no creó archivo. Diagnóstico: {json.dumps(diagnostics, indent=2)}")
         
         file_size = backup_path.stat().st_size
-        logger.info(f"Backup created successfully: {file_size / (1024*1024):.2f} MB")
+        diagnostics["result"] = {
+            "file_path": str(backup_path),
+            "file_size_bytes": file_size,
+            "file_size_mb": round(file_size / (1024*1024), 2)
+        }
         
-        # Return file for download
+        logger.info(f"=== BACKUP SUCCESS: {file_size / (1024*1024):.2f} MB ===")
+        
+        # Save success diagnostic
+        try:
+            await db.backup_diagnostics.insert_one({
+                "type": "backup_success",
+                "diagnostics": diagnostics,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+        except:
+            pass
+        
         return FileResponse(
             path=str(backup_path),
             filename=backup_filename,
@@ -3084,17 +3178,49 @@ async def admin_backup_create_download(request: Request):
             }
         )
         
-    except subprocess.TimeoutExpired:
-        logger.error("mongodump timeout after 10 minutes")
-        raise HTTPException(status_code=500, detail="Timeout: mongodump tardó más de 10 minutos")
-    except FileNotFoundError as e:
-        logger.error(f"FileNotFoundError: {e}")
-        raise HTTPException(status_code=500, detail="mongodump no encontrado. MongoDB tools no instalado.")
+    except subprocess.TimeoutExpired as e:
+        diagnostics["error"] = f"Timeout: {str(e)}"
+        logger.error(f"mongodump timeout: {e}")
+        try:
+            await db.backup_diagnostics.insert_one({
+                "type": "timeout",
+                "diagnostics": diagnostics,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+        except:
+            pass
+        raise HTTPException(status_code=500, detail=f"Timeout después de 10 minutos. Diagnóstico: {json.dumps(diagnostics, indent=2)}")
+    
     except HTTPException:
         raise
+    
     except Exception as e:
-        logger.error(f"Backup failed: {type(e).__name__}: {e}")
-        raise HTTPException(status_code=500, detail=f"Error: {type(e).__name__}: {str(e)}")
+        diagnostics["error"] = f"{type(e).__name__}: {str(e)}"
+        logger.error(f"Backup exception: {type(e).__name__}: {e}")
+        import traceback
+        diagnostics["traceback"] = traceback.format_exc()
+        
+        try:
+            await db.backup_diagnostics.insert_one({
+                "type": "exception",
+                "diagnostics": diagnostics,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+        except:
+            pass
+        
+        raise HTTPException(status_code=500, detail=f"Error: {type(e).__name__}: {str(e)}\n\nDiagnóstico: {json.dumps(diagnostics, indent=2)}")
+
+@api_router.get("/admin/backup/diagnostics")
+async def get_backup_diagnostics(request: Request):
+    """Get recent backup diagnostics - admin only"""
+    await require_admin(request)
+    
+    try:
+        diagnostics = await db.backup_diagnostics.find({}, {"_id": 0}).sort("created_at", -1).limit(10).to_list(None)
+        return {"diagnostics": diagnostics}
+    except Exception as e:
+        return {"error": str(e), "diagnostics": []}
 
 @api_router.post("/admin/backup/reset")
 async def admin_backup_reset(request: Request):
