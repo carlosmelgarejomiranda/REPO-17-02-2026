@@ -3011,87 +3011,71 @@ async def admin_backup_diagnose(request: Request):
 
 @api_router.post("/admin/backup/create-download")
 async def admin_backup_create_download(request: Request):
-    """Create backup and return download URL directly (without Cloudinary) - admin only"""
+    """Create backup using mongodump and return for direct download - admin only"""
     await require_admin(request)
     
-    import json
-    import tarfile
-    import hashlib
-    from bson import json_util
-    from io import BytesIO
-    from fastapi.responses import StreamingResponse
+    import subprocess
+    import tempfile
+    from pathlib import Path
+    from fastapi.responses import FileResponse
     
     try:
-        # Get all collections
-        collections = await db.list_collection_names()
-        
-        # Create in-memory tar.gz
-        backup_data = BytesIO()
-        
-        with tarfile.open(fileobj=backup_data, mode='w:gz') as tar:
-            manifest = {
-                "backup_info": {
-                    "type": "DIRECT_DOWNLOAD",
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                    "database": os.environ.get('DB_NAME', 'unknown'),
-                },
-                "collections": {},
-                "statistics": {"total_collections": len(collections), "total_documents": 0}
-            }
-            
-            total_docs = 0
-            
-            for coll_name in sorted(collections):
-                try:
-                    # Get all documents
-                    cursor = db[coll_name].find({}, {"_id": 0})
-                    documents = await cursor.to_list(length=None)
-                    
-                    # For collections that need _id preserved (like GridFS), get with _id
-                    if coll_name.endswith('.chunks') or coll_name.endswith('.files'):
-                        cursor = db[coll_name].find({})
-                        documents = await cursor.to_list(length=None)
-                    
-                    doc_count = len(documents)
-                    total_docs += doc_count
-                    
-                    # Serialize to JSON
-                    json_data = json.dumps(documents, default=json_util.default, ensure_ascii=False, indent=2)
-                    json_bytes = json_data.encode('utf-8')
-                    
-                    # Add to tar
-                    tarinfo = tarfile.TarInfo(name=f"{coll_name}.json")
-                    tarinfo.size = len(json_bytes)
-                    tar.addfile(tarinfo, BytesIO(json_bytes))
-                    
-                    manifest["collections"][coll_name] = {
-                        "count": doc_count,
-                        "size_bytes": len(json_bytes),
-                        "checksum_md5": hashlib.md5(json_bytes).hexdigest()
-                    }
-                except Exception as e:
-                    manifest["collections"][coll_name] = {"count": 0, "error": str(e)}
-            
-            manifest["statistics"]["total_documents"] = total_docs
-            
-            # Add manifest to tar
-            manifest_json = json.dumps(manifest, indent=2, ensure_ascii=False).encode('utf-8')
-            manifest_info = tarfile.TarInfo(name="_MANIFEST.json")
-            manifest_info.size = len(manifest_json)
-            tar.addfile(manifest_info, BytesIO(manifest_json))
-        
-        # Prepare response
-        backup_data.seek(0)
+        mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+        db_name = os.environ.get('DB_NAME', 'test_database')
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        db_name = os.environ.get('DB_NAME', 'database')
-        filename = f"backup_direct_{db_name}_{timestamp}.tar.gz"
         
-        return StreamingResponse(
-            backup_data,
-            media_type="application/gzip",
-            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        # Create temp file for backup
+        backup_filename = f"mongodump_{db_name}_{timestamp}.gz"
+        backup_path = Path(tempfile.gettempdir()) / backup_filename
+        
+        logger.info(f"Creating mongodump backup: {backup_path}")
+        
+        # Run mongodump
+        cmd = [
+            'mongodump',
+            f'--uri={mongo_url}',
+            f'--db={db_name}',
+            f'--archive={backup_path}',
+            '--gzip'
+        ]
+        
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            timeout=600  # 10 minute timeout
         )
         
+        if result.returncode != 0:
+            logger.error(f"mongodump failed: {result.stderr}")
+            raise HTTPException(status_code=500, detail=f"mongodump failed: {result.stderr}")
+        
+        # Verify file exists
+        if not backup_path.exists():
+            raise HTTPException(status_code=500, detail="mongodump did not create output file")
+        
+        file_size = backup_path.stat().st_size
+        logger.info(f"Backup created: {backup_path} ({file_size / (1024*1024):.2f} MB)")
+        
+        # Return file for download
+        return FileResponse(
+            path=str(backup_path),
+            filename=backup_filename,
+            media_type="application/gzip",
+            headers={
+                "Content-Disposition": f"attachment; filename={backup_filename}",
+                "X-Backup-Size": str(file_size)
+            }
+        )
+        
+    except subprocess.TimeoutExpired:
+        logger.error("mongodump timeout")
+        raise HTTPException(status_code=500, detail="mongodump timeout after 10 minutes")
+    except FileNotFoundError:
+        logger.error("mongodump not found")
+        raise HTTPException(status_code=500, detail="mongodump not found. MongoDB tools not installed.")
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Direct backup failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
