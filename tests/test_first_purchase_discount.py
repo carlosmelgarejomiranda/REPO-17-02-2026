@@ -6,7 +6,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://db-migration-tools.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://ugc-system-manual.preview.emergentagent.com').rstrip('/')
 
 # Test credentials
 TEST_EMAIL = "avenuepy@gmail.com"
