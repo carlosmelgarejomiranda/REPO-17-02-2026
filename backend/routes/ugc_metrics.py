@@ -52,7 +52,7 @@ async def get_my_metrics(
     user, creator = await require_creator(request)
     
     # Build query with optional time filter
-    query = {"creator_id": creator["id"]}
+    query = {"creator_id": creator["creator_id"]}
     
     if time_range == "30d":
         cutoff = datetime.now(timezone.utc) - timedelta(days=30)
@@ -73,11 +73,11 @@ async def get_my_metrics(
     campaigns = {}
     if campaign_ids:
         campaigns_cursor = db.ugc_campaigns.find(
-            {"id": {"$in": campaign_ids}},
-            {"_id": 0, "id": 1, "name": 1}
+            {"campaign_id": {"$in": campaign_ids}},
+            {"_id": 0, "campaign_id": 1, "name": 1}
         )
         campaigns_list = await campaigns_cursor.to_list(100)
-        campaigns = {c["id"]: c.get("name", "Campaña") for c in campaigns_list}
+        campaigns = {c["campaign_id"]: c.get("name", "Campaña") for c in campaigns_list}
     
     # Add campaign names to metrics
     for m in metrics:
