@@ -1087,11 +1087,27 @@ async def submit_metrics_v2(
 
 async def update_creator_stats(db, creator_id: str):
     """Update creator's aggregate stats after new metrics"""
-    # Get all metrics for this creator
-    metrics = await db.ugc_metrics.find(
+    # First get all applications for this creator to find their deliverables
+    applications = await db.ugc_applications.find(
         {"creator_id": creator_id},
+        {"_id": 0, "application_id": 1, "campaign_id": 1}
+    ).to_list(500)
+    
+    application_ids = [a["application_id"] for a in applications]
+    app_to_campaign = {a["application_id"]: a["campaign_id"] for a in applications}
+    
+    # Get all metrics for deliverables associated with this creator's applications
+    metrics = await db.ugc_metrics.find(
+        {"application_id": {"$in": application_ids}},
         {"_id": 0}
     ).to_list(500)
+    
+    # If no metrics by application_id, try legacy creator_id field
+    if not metrics:
+        metrics = await db.ugc_metrics.find(
+            {"creator_id": creator_id},
+            {"_id": 0}
+        ).to_list(500)
     
     # Calculate platform-specific averages
     stats = {
@@ -1136,15 +1152,17 @@ async def update_creator_stats(db, creator_id: str):
     # Count completed campaigns (campaigns where creator submitted metrics)
     completed_campaign_ids = set()
     for m in metrics:
-        if m.get("campaign_id"):
-            completed_campaign_ids.add(m["campaign_id"])
+        # Check if metric has campaign_id directly or via application
+        campaign_id = m.get("campaign_id") or app_to_campaign.get(m.get("application_id"))
+        if campaign_id:
+            completed_campaign_ids.add(campaign_id)
     
     completed_campaigns = len(completed_campaign_ids)
     
-    # Get delivery stats - include metrics_submitted status
+    # Get delivery stats - deliverables linked via application_id
     deliverables = await db.ugc_deliverables.find(
         {
-            "creator_id": creator_id, 
+            "application_id": {"$in": application_ids}, 
             "status": {"$in": ["completed", "metrics_verified", "metrics_submitted", "metrics_late"]}
         },
         {"_id": 0, "is_on_time": 1, "delivery_lag_hours": 1, "metrics_is_late": 1}
@@ -1179,7 +1197,7 @@ async def update_creator_stats(db, creator_id: str):
     }
     
     await db.ugc_creators.update_one(
-        {"id": creator_id},
+        {"creator_id": creator_id},
         {"$set": update_data}
     )
 
