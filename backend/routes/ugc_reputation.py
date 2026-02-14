@@ -142,13 +142,21 @@ async def get_creator_public_profile(creator_id: str):
     """Get public reputation profile of a creator"""
     db = await get_db()
     
+    # Search by creator_id, don't filter by verification_status to allow profile viewing
     creator = await db.ugc_creators.find_one(
-        {"id": creator_id, "verification_status": "approved"},
-        {"_id": 0, "user_id": 0, "email": 0, "phone": 0}  # Exclude private data
+        {"creator_id": creator_id},
+        {"_id": 0, "email": 0, "phone": 0, "document_id": 0}  # Exclude private data
     )
     
     if not creator:
         raise HTTPException(status_code=404, detail="Creator not found")
+    
+    # Get user name if not in creator profile
+    creator_name = creator.get("name")
+    if not creator_name and creator.get("user_id"):
+        user = await db.users.find_one({"user_id": creator["user_id"]}, {"_id": 0, "name": 1})
+        if user:
+            creator_name = user.get("name", "")
     
     # Get ratings breakdown
     ratings = await db.ugc_ratings.find(
@@ -186,8 +194,8 @@ async def get_creator_public_profile(creator_id: str):
     
     return {
         "profile": {
-            "id": creator["id"],
-            "name": creator.get("name"),
+            "id": creator["creator_id"],
+            "name": creator_name,
             "bio": creator.get("bio"),
             "profile_image": creator.get("profile_image"),
             "city": creator.get("city"),
