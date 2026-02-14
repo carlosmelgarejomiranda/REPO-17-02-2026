@@ -762,13 +762,30 @@ async def submit_metrics_v2(
     db = await get_db()
     user, creator = await require_creator(request)
     
+    # Get all applications for this creator
+    applications = await db.ugc_applications.find(
+        {"creator_id": creator["creator_id"]},
+        {"_id": 0, "application_id": 1, "campaign_id": 1, "confirmed_at": 1}
+    ).to_list(500)
+    
+    app_ids = [a["application_id"] for a in applications]
+    app_map = {a["application_id"]: a for a in applications}
+    
+    # Find deliverable by deliverable_id and verify it belongs to creator's applications
     deliverable = await db.ugc_deliverables.find_one({
-        "id": deliverable_id,
-        "creator_id": creator["id"]
+        "deliverable_id": deliverable_id,
+        "application_id": {"$in": app_ids}
     })
+    if not deliverable:
+        deliverable = await db.ugc_deliverables.find_one({
+            "id": deliverable_id,
+            "application_id": {"$in": app_ids}
+        })
     
     if not deliverable:
         raise HTTPException(status_code=404, detail="Deliverable not found")
+    
+    deliv_id = deliverable.get("deliverable_id", deliverable_id)
     
     # Check if metrics already submitted for the platforms being submitted
     if not data.instagram_screenshots and not data.tiktok_screenshots:
@@ -777,7 +794,7 @@ async def submit_metrics_v2(
     # Check for existing metrics per platform to prevent duplicates
     if data.instagram_screenshots:
         existing_ig = await db.ugc_metrics.find_one({
-            "deliverable_id": deliverable_id,
+            "deliverable_id": deliv_id,
             "platform": "instagram"
         })
         if existing_ig:
@@ -785,7 +802,7 @@ async def submit_metrics_v2(
     
     if data.tiktok_screenshots:
         existing_tt = await db.ugc_metrics.find_one({
-            "deliverable_id": deliverable_id,
+            "deliverable_id": deliv_id,
             "platform": "tiktok"
         })
         if existing_tt:
@@ -797,18 +814,16 @@ async def submit_metrics_v2(
     screenshot_day = 0
     is_late = False
     
+    # Get application data for confirmed_at
+    app_data = app_map.get(deliverable.get("application_id"), {})
+    
     confirmed_at = None
     if deliverable.get("confirmed_at"):
         confirmed_at = datetime.fromisoformat(deliverable["confirmed_at"].replace('Z', '+00:00'))
-    else:
-        application = await db.ugc_applications.find_one({
-            "campaign_id": deliverable["campaign_id"],
-            "creator_id": creator["id"]
-        })
-        if application and application.get("confirmed_at"):
-            confirmed_at = datetime.fromisoformat(application["confirmed_at"].replace('Z', '+00:00'))
-        elif deliverable.get("created_at"):
-            confirmed_at = datetime.fromisoformat(deliverable["created_at"].replace('Z', '+00:00'))
+    elif app_data.get("confirmed_at"):
+        confirmed_at = datetime.fromisoformat(app_data["confirmed_at"].replace('Z', '+00:00'))
+    elif deliverable.get("created_at"):
+        confirmed_at = datetime.fromisoformat(deliverable["created_at"].replace('Z', '+00:00'))
     
     if confirmed_at:
         delta = now - confirmed_at
