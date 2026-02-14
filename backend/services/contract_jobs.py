@@ -341,28 +341,28 @@ async def auto_reject_expired_applications():
     expired_campaigns = await db.ugc_campaigns.find({
         "contract.is_active": False,
         "contract.end_date": {"$lte": cutoff_date}
-    }, {"_id": 0, "id": 1, "name": 1}).to_list(100)
+    }, {"_id": 0, "campaign_id": 1, "name": 1}).to_list(100)
     
     rejected_count = 0
     
     for campaign in expired_campaigns:
         # Find pending applications for this campaign
         pending_apps = await db.ugc_applications.find({
-            "campaign_id": campaign["id"],
+            "campaign_id": campaign["campaign_id"],
             "status": {"$in": ["applied", "shortlisted"]},
             "auto_rejected": {"$ne": True}
-        }, {"_id": 0, "id": 1, "creator_id": 1}).to_list(100)
+        }, {"_id": 0, "application_id": 1, "creator_id": 1}).to_list(100)
         
         for app in pending_apps:
             # Get creator info for notification
             creator = await db.ugc_creators.find_one(
-                {"id": app["creator_id"]},
+                {"creator_id": app["creator_id"]},
                 {"_id": 0, "name": 1, "email": 1, "user_id": 1}
             )
             
             # Update application
             await db.ugc_applications.update_one(
-                {"id": app["id"]},
+                {"application_id": app["application_id"]},
                 {
                     "$set": {
                         "status": "rejected",
@@ -390,7 +390,7 @@ async def auto_reject_expired_applications():
             rejected_count += 1
         
         if pending_apps:
-            print(f"Campaign {campaign['id']}: Auto-rejected {len(pending_apps)} applications")
+            print(f"Campaign {campaign['campaign_id']}: Auto-rejected {len(pending_apps)} applications")
     
     return rejected_count
 
