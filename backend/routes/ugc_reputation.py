@@ -336,7 +336,8 @@ async def get_leaderboard(
     """Get top creators leaderboard"""
     db = await get_db()
     
-    query = {"verification_status": "approved"}
+    # Don't filter by verification_status - show all active creators
+    query = {}
     if category:
         query["categories"] = category
     if city:
@@ -349,7 +350,8 @@ async def get_leaderboard(
         query,
         {
             "_id": 0,
-            "id": 1,
+            "creator_id": 1,
+            "user_id": 1,
             "name": 1,
             "profile_image": 1,
             "city": 1,
@@ -363,13 +365,21 @@ async def get_leaderboard(
         ("stats.total_completed", -1)
     ]).limit(limit).to_list(limit)
     
+    # Get user names for creators that don't have name field
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id") and not c.get("name")]
+    user_names = {}
+    if user_ids:
+        users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(len(user_ids))
+        user_names = {u["user_id"]: u.get("name", "") for u in users}
+    
     leaderboard = []
     for idx, c in enumerate(creators):
         stats = c.get("stats", {})
+        creator_name = c.get("name") or user_names.get(c.get("user_id"), "")
         leaderboard.append({
             "rank": idx + 1,
-            "creator_id": c["id"],
-            "name": c.get("name"),
+            "creator_id": c["creator_id"],
+            "name": creator_name,
             "profile_image": c.get("profile_image"),
             "city": c.get("city"),
             "level": c.get("level", "rookie"),
