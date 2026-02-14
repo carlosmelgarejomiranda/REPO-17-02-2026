@@ -711,17 +711,17 @@ async def recalculate_my_stats(request: Request):
     db = await get_db()
     user = await require_auth(request)
     
-    creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0, "id": 1})
+    creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0, "creator_id": 1})
     if not creator:
         raise HTTPException(status_code=404, detail="Creator profile not found")
     
     # Import and call the update function
     from routes.ugc_metrics import update_creator_stats
-    await update_creator_stats(db, creator["id"])
+    await update_creator_stats(db, creator["creator_id"])
     
     # Return updated stats
     updated = await db.ugc_creators.find_one(
-        {"id": creator["id"]}, 
+        {"creator_id": creator["creator_id"]}, 
         {"_id": 0, "stats": 1, "completed_campaigns": 1, "delivery_on_time_rate": 1, "total_reach": 1}
     )
     
@@ -746,7 +746,7 @@ async def get_my_campaigns(request: Request):
     
     # Get all applications for this creator
     applications = await db.ugc_applications.find(
-        {"creator_id": profile["id"]},
+        {"creator_id": profile["creator_id"]},
         {"_id": 0}
     ).to_list(100)
     
@@ -754,7 +754,7 @@ async def get_my_campaigns(request: Request):
     campaigns = []
     for app in applications:
         campaign = await db.ugc_campaigns.find_one(
-            {"id": app["campaign_id"]},
+            {"campaign_id": app["campaign_id"]},
             {"_id": 0}
         )
         if campaign:
@@ -775,10 +775,22 @@ async def get_my_active_deliverables(request: Request):
     if not profile:
         raise HTTPException(status_code=404, detail="Creator profile not found")
     
-    # Get pending deliverables - exclude completed, rejected, and cancelled
+    creator_id = profile["creator_id"]
+    
+    # Get all applications for this creator
+    applications = await db.ugc_applications.find(
+        {"creator_id": creator_id},
+        {"_id": 0, "application_id": 1, "campaign_id": 1}
+    ).to_list(100)
+    
+    # Build a map of application_id -> campaign_id
+    app_to_campaign = {app["application_id"]: app["campaign_id"] for app in applications}
+    application_ids = list(app_to_campaign.keys())
+    
+    # Get pending deliverables for these applications - exclude completed, rejected, and cancelled
     deliverables = await db.ugc_deliverables.find(
         {
-            "creator_id": profile["id"],
+            "application_id": {"$in": application_ids},
             "status": {"$nin": ["completed", "rejected", "cancelled"]}
         },
         {"_id": 0}
@@ -787,8 +799,13 @@ async def get_my_active_deliverables(request: Request):
     # Enrich with campaign and brand data, filtering out cancelled campaigns
     result = []
     for d in deliverables:
+        # Get campaign_id from the application
+        campaign_id = app_to_campaign.get(d["application_id"])
+        if not campaign_id:
+            continue
+            
         campaign = await db.ugc_campaigns.find_one(
-            {"id": d["campaign_id"]},
+            {"campaign_id": campaign_id},
             {"_id": 0, "name": 1, "canje": 1, "requirements": 1, "timeline": 1, "brand_id": 1, "status": 1}
         )
         
@@ -800,9 +817,12 @@ async def get_my_active_deliverables(request: Request):
         brand = None
         if campaign and campaign.get("brand_id"):
             brand = await db.ugc_brands.find_one(
-                {"id": campaign["brand_id"]},
-                {"_id": 0, "company_name": 1, "logo_url": 1}
+                {"brand_id": campaign["brand_id"]},
+                {"_id": 0, "brand_name": 1, "logo_url": 1}
             )
+            # Map brand_name to company_name for frontend compatibility
+            if brand:
+                brand["company_name"] = brand.get("brand_name")
         
         result.append({
             "deliverable": d,
