@@ -902,7 +902,8 @@ async def register(user_data: UserCreate, request: Request, response: Response):
         "email": user_data.email,
         "name": user_data.name,
         "phone": user_data.phone,
-        "password": hashed_password,
+        "password_hash": hashed_password,
+        "picture": None,
         "role": role,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
