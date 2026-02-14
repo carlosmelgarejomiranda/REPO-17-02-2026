@@ -54,22 +54,29 @@ async def apply_to_campaign(
     db = await get_db()
     user, creator = await require_creator(request)
     
-    # Get campaign
-    campaign = await db.ugc_campaigns.find_one({"id": data.campaign_id})
+    # Get campaign - try campaign_id first, then id for backwards compatibility
+    campaign = await db.ugc_campaigns.find_one({"campaign_id": data.campaign_id})
+    if not campaign:
+        campaign = await db.ugc_campaigns.find_one({"id": data.campaign_id})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
+    
+    # Use the correct campaign_id field
+    campaign_id = campaign.get("campaign_id", campaign.get("id"))
     
     if campaign["status"] != CampaignStatus.LIVE:
         raise HTTPException(status_code=400, detail="Esta campaña no está aceptando aplicaciones")
     
     # Check slots
-    if campaign["slots_filled"] >= campaign["slots"]:
+    slots_filled = campaign.get("slots_filled", 0) or 0
+    total_slots = campaign.get("slots", 0) or 0
+    if slots_filled >= total_slots:
         raise HTTPException(status_code=400, detail="Esta campaña ya tiene todos los cupos llenos")
     
     # Check if already applied
     existing = await db.ugc_applications.find_one({
-        "campaign_id": data.campaign_id,
-        "creator_id": creator["id"]
+        "campaign_id": campaign_id,
+        "creator_id": creator["creator_id"]
     })
     if existing:
         raise HTTPException(status_code=400, detail="Ya aplicaste a esta campaña")
@@ -111,11 +118,17 @@ async def apply_to_campaign(
     # Use note if motivation is not provided
     motivation_text = data.motivation or data.note or ""
     
+    # Get creator name from users table if not in creator profile
+    creator_name = creator.get("name")
+    if not creator_name:
+        user_data = await db.users.find_one({"user_id": user["user_id"]}, {"_id": 0, "name": 1})
+        creator_name = user_data.get("name", "") if user_data else ""
+    
     application = {
-        "id": str(uuid.uuid4()),
-        "campaign_id": data.campaign_id,
-        "creator_id": creator["id"],
-        "creator_name": creator["name"],
+        "application_id": str(uuid.uuid4()),
+        "campaign_id": campaign_id,
+        "creator_id": creator["creator_id"],
+        "creator_name": creator_name,
         "creator_username": primary_social.get("username", ""),
         "creator_followers": primary_social.get("followers", 0),
         "creator_rating": creator.get("stats", {}).get("avg_rating", 0),
@@ -139,9 +152,12 @@ async def apply_to_campaign(
     await db.ugc_applications.insert_one(application)
     
     # Get brand info for notifications
-    brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1, "email": 1})
-    brand_name = brand.get("company_name", "Marca") if brand else "Marca"
+    brand = await db.ugc_brands.find_one({"brand_id": campaign["brand_id"]}, {"_id": 0, "brand_name": 1, "email": 1})
+    brand_name = brand.get("brand_name", "Marca") if brand else "Marca"
     brand_email = brand.get("email") if brand else None
+    
+    # Get creator email from users table
+    creator_email = user.get("email")
     
     # Send notifications
     try:
@@ -153,8 +169,8 @@ async def apply_to_campaign(
         
         # 1. Email al creador confirmando su aplicación
         await send_application_submitted(
-            to_email=creator.get("email"),
-            creator_name=creator["name"],
+            to_email=creator_email,
+            creator_name=creator_name,
             campaign_name=campaign["name"],
             brand_name=brand_name
         )
