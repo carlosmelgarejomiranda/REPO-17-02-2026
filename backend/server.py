@@ -1236,7 +1236,7 @@ async def update_phone(request: Request):
             {"$set": {"phone": phone}}
         )
         
-        if result.modified_count == 0:
+        if result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Usuario no encontrado")
         
         logger.info(f"Phone updated for user {user['user_id']}")
