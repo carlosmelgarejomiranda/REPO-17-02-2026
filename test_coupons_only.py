@@ -8,7 +8,7 @@ import json
 import sys
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://backup-buddy-7.preview.emergentagent.com/api"
+BACKEND_URL = "https://ugc-rebuild-1.preview.emergentagent.com/api"
 
 class Colors:
     GREEN = '\033[92m'
