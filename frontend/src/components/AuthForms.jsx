@@ -495,9 +495,12 @@ export const AuthCallback = ({ onAuthComplete }) => {
   const [attempts, setAttempts] = useState(0);
   const [debugInfo, setDebugInfo] = useState('');
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [pendingAuthData, setPendingAuthData] = useState(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [savingTerms, setSavingTerms] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [savingPhone, setSavingPhone] = useState(false);
   const hasProcessed = React.useRef(false);
   const shouldStop = React.useRef(false);
   const isProcessing = React.useRef(false);
