@@ -310,7 +310,7 @@ async def rate_creator(
     avg_rating = sum(r["rating"] for r in all_ratings) / len(all_ratings)
     
     await db.ugc_creators.update_one(
-        {"id": deliverable["creator_id"]},
+        {"creator_id": deliverable["creator_id"]},
         {
             "$set": {
                 "stats.avg_rating": round(avg_rating, 2),
