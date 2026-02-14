@@ -569,9 +569,15 @@ async def get_my_applications(
         if campaign:
             brand = await db.ugc_brands.find_one(
                 {"brand_id": campaign["brand_id"]},
-                {"_id": 0, "company_name": 1, "logo_url": 1}
+                {"_id": 0, "brand_name": 1, "logo_url": 1}
             )
+            # Map brand_name to company_name for frontend compatibility
+            if brand:
+                brand["company_name"] = brand.get("brand_name")
             campaign["brand"] = brand
+            # Add id alias for frontend compatibility
+            if "campaign_id" in campaign and "id" not in campaign:
+                campaign["id"] = campaign["campaign_id"]
         app["campaign"] = campaign
     
     return {"applications": applications}
