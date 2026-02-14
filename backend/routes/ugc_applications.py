@@ -294,15 +294,24 @@ async def update_application_status(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    application = await db.ugc_applications.find_one({"id": application_id})
+    # Try application_id first, then id for backwards compatibility
+    application = await db.ugc_applications.find_one({"application_id": application_id})
+    if not application:
+        application = await db.ugc_applications.find_one({"id": application_id})
     if not application:
         raise HTTPException(status_code=404, detail="Aplicación no encontrada")
     
     # Verify brand owns the campaign
     campaign = await db.ugc_campaigns.find_one({
-        "id": application["campaign_id"],
-        "brand_id": brand["id"]
+        "campaign_id": application["campaign_id"],
+        "brand_id": brand["brand_id"]
     })
+    if not campaign:
+        # Try legacy id field
+        campaign = await db.ugc_campaigns.find_one({
+            "id": application["campaign_id"],
+            "brand_id": brand["brand_id"]
+        })
     if not campaign:
         raise HTTPException(status_code=403, detail="No tenés permiso para esta campaña")
     
@@ -313,32 +322,34 @@ async def update_application_status(
         "updated_at": now
     }
     
+    campaign_id = campaign.get("campaign_id", campaign.get("id"))
+    app_id = application.get("application_id", application.get("id"))
+    
     if data.status == ApplicationStatus.CONFIRMED:
         # Check slots
-        if campaign["slots_filled"] >= campaign["slots"]:
+        slots_filled = campaign.get("slots_filled", 0) or 0
+        total_slots = campaign.get("slots", 0) or 0
+        if slots_filled >= total_slots:
             raise HTTPException(status_code=400, detail="No hay más cupos disponibles")
         
         update_data["confirmed_at"] = now
         
         # Increment slots_filled
         await db.ugc_campaigns.update_one(
-            {"id": campaign["id"]},
+            {"campaign_id": campaign_id},
             {"$inc": {"slots_filled": 1}}
         )
         
         # Create deliverable for this creator
         # Determine platform from creator's social networks
-        creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
+        creator = await db.ugc_creators.find_one({"creator_id": application["creator_id"]})
         platform = ContentPlatform.INSTAGRAM  # Default
         if creator and creator.get("social_networks"):
             platform = creator["social_networks"][0].get("platform", ContentPlatform.INSTAGRAM)
         
         deliverable = {
-            "id": str(uuid.uuid4()),
-            "campaign_id": campaign["id"],
-            "application_id": application_id,
-            "creator_id": application["creator_id"],
-            "brand_id": brand["id"],
+            "deliverable_id": str(uuid.uuid4()),
+            "application_id": app_id,
             "platform": platform,
             "status": DeliverableStatus.AWAITING_PUBLISH,
             "status_history": [{
@@ -372,7 +383,7 @@ async def update_application_status(
     
     # Update application
     await db.ugc_applications.update_one(
-        {"id": application_id},
+        {"application_id": app_id},
         {
             "$set": update_data,
             "$push": {
