@@ -403,23 +403,34 @@ async def update_application_status(
             send_application_confirmed, send_application_rejected,
             notify_creator_application_confirmed, notify_creator_application_rejected
         )
-        creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
-        if creator and creator.get("email"):
+        creator = await db.ugc_creators.find_one({"creator_id": application["creator_id"]})
+        # Get email from users table
+        creator_email = None
+        creator_name = creator.get("name") if creator else "Creator"
+        if creator and creator.get("user_id"):
+            user_data = await db.users.find_one({"user_id": creator["user_id"]}, {"_id": 0, "email": 1, "name": 1})
+            if user_data:
+                creator_email = user_data.get("email")
+                if not creator_name:
+                    creator_name = user_data.get("name", "Creator")
+        
+        if creator_email:
+            brand_name = brand.get("brand_name", "")
             if data.status == ApplicationStatus.CONFIRMED:
                 # Send email + WhatsApp notification
                 deadline = campaign.get("timeline", {}).get("publish_deadline", "A definir")
                 await notify_creator_application_confirmed(
-                    creator_email=creator["email"],
-                    creator_name=creator.get("name", "Creator"),
-                    creator_phone=creator.get("phone"),
+                    creator_email=creator_email,
+                    creator_name=creator_name,
+                    creator_phone=creator.get("phone") if creator else None,
                     campaign_name=campaign.get("name", ""),
-                    brand_name=brand.get("company_name", ""),
+                    brand_name=brand_name,
                     deadline=deadline
                 )
             elif data.status == ApplicationStatus.REJECTED:
                 await notify_creator_application_rejected(
-                    creator_email=creator["email"],
-                    creator_name=creator.get("name", "Creator"),
+                    creator_email=creator_email,
+                    creator_name=creator_name,
                     campaign_name=campaign.get("name", "")
                 )
     except Exception as e:
@@ -438,13 +449,21 @@ async def withdraw_confirmed_application(
     db = await get_db()
     user, creator = await require_creator(request)
     
+    # Try application_id first, then id
     application = await db.ugc_applications.find_one({
-        "id": application_id,
-        "creator_id": creator["id"]
+        "application_id": application_id,
+        "creator_id": creator["creator_id"]
     })
+    if not application:
+        application = await db.ugc_applications.find_one({
+            "id": application_id,
+            "creator_id": creator["creator_id"]
+        })
     
     if not application:
         raise HTTPException(status_code=404, detail="Aplicación no encontrada")
+    
+    app_id = application.get("application_id", application.get("id"))
     
     # Only allow withdrawal of confirmed applications
     if application["status"] != ApplicationStatus.CONFIRMED:
@@ -456,13 +475,17 @@ async def withdraw_confirmed_application(
     now = datetime.now(timezone.utc).isoformat()
     
     # Get campaign to update slots
-    campaign = await db.ugc_campaigns.find_one({"id": application["campaign_id"]})
+    campaign = await db.ugc_campaigns.find_one({"campaign_id": application["campaign_id"]})
+    if not campaign:
+        campaign = await db.ugc_campaigns.find_one({"id": application["campaign_id"]})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
+    campaign_id = campaign.get("campaign_id", campaign.get("id"))
+    
     # Update application status to CANCELLED
     await db.ugc_applications.update_one(
-        {"id": application_id},
+        {"application_id": app_id},
         {
             "$set": {
                 "status": ApplicationStatus.CANCELLED,
