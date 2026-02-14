@@ -259,10 +259,25 @@ async def mark_as_published(
     db = await get_db()
     user, creator = await require_creator(request)
     
+    # First get all applications for this creator to find the deliverable
+    applications = await db.ugc_applications.find(
+        {"creator_id": creator["creator_id"]},
+        {"_id": 0, "application_id": 1, "campaign_id": 1, "confirmed_at": 1}
+    ).to_list(500)
+    
+    app_ids = [a["application_id"] for a in applications]
+    app_map = {a["application_id"]: a for a in applications}
+    
+    # Find deliverable by deliverable_id and verify it belongs to creator's applications
     deliverable = await db.ugc_deliverables.find_one({
-        "id": deliverable_id,
-        "creator_id": creator["id"]
+        "deliverable_id": deliverable_id,
+        "application_id": {"$in": app_ids}
     })
+    if not deliverable:
+        deliverable = await db.ugc_deliverables.find_one({
+            "id": deliverable_id,
+            "application_id": {"$in": app_ids}
+        })
     
     if not deliverable:
         raise HTTPException(status_code=404, detail="Deliverable not found")
@@ -272,16 +287,13 @@ async def mark_as_published(
     
     now = datetime.now(timezone.utc)
     
-    # Get confirmed_at from the application to calculate metrics deadline
-    application = await db.ugc_applications.find_one({
-        "campaign_id": deliverable["campaign_id"],
-        "creator_id": creator["id"]
-    })
+    # Get application data
+    app_data = app_map.get(deliverable.get("application_id"), {})
     
     # Calculate metrics deadline: 14 days from confirmation date
     confirmed_at = None
-    if application and application.get("confirmed_at"):
-        confirmed_at = datetime.fromisoformat(application["confirmed_at"].replace('Z', '+00:00'))
+    if app_data.get("confirmed_at"):
+        confirmed_at = datetime.fromisoformat(app_data["confirmed_at"].replace('Z', '+00:00'))
     elif deliverable.get("created_at"):
         # Fallback to deliverable creation date if no confirmation date
         confirmed_at = datetime.fromisoformat(deliverable["created_at"].replace('Z', '+00:00'))
@@ -296,8 +308,10 @@ async def mark_as_published(
     # No longer requires brand approval to upload metrics
     new_status = DeliverableStatus.PUBLISHED
     
+    deliv_id = deliverable.get("deliverable_id", deliverable_id)
+    
     await db.ugc_deliverables.update_one(
-        {"id": deliverable_id},
+        {"deliverable_id": deliv_id},
         {
             "$set": {
                 "status": new_status,
@@ -323,11 +337,12 @@ async def mark_as_published(
     
     # Send notifications to creator, brand, and admin - ALWAYS
     try:
-        campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0, "name": 1, "brand_id": 1})
+        campaign_id = app_data.get("campaign_id")
+        campaign = await db.ugc_campaigns.find_one({"campaign_id": campaign_id}, {"_id": 0, "name": 1, "brand_id": 1}) if campaign_id else None
         campaign_name = campaign.get("name", "Campaña") if campaign else "Campaña"
         
         # Get brand info - fetch email from brand document
-        brand = await db.ugc_brands.find_one({"id": campaign.get("brand_id")}, {"_id": 0, "company_name": 1, "email": 1}) if campaign else None
+        brand = await db.ugc_brands.find_one({"brand_id": campaign.get("brand_id")}, {"_id": 0, "brand_name": 1, "email": 1}) if campaign else None
         brand_name = brand.get("company_name", "Marca") if brand else "Marca"
         brand_email = brand.get("email") if brand else None
         
