@@ -208,13 +208,21 @@ async def withdraw_application(
     db = await get_db()
     user, creator = await require_creator(request)
     
+    # Try application_id first, then id
     application = await db.ugc_applications.find_one({
-        "id": application_id,
-        "creator_id": creator["id"]
+        "application_id": application_id,
+        "creator_id": creator["creator_id"]
     })
+    if not application:
+        application = await db.ugc_applications.find_one({
+            "id": application_id,
+            "creator_id": creator["creator_id"]
+        })
     
     if not application:
         raise HTTPException(status_code=404, detail="Aplicación no encontrada")
+    
+    app_id = application.get("application_id", application.get("id"))
     
     if application["status"] == ApplicationStatus.CONFIRMED:
         raise HTTPException(status_code=400, detail="No podés retirar una aplicación confirmada")
@@ -222,7 +230,7 @@ async def withdraw_application(
     now = datetime.now(timezone.utc).isoformat()
     
     await db.ugc_applications.update_one(
-        {"application_id": application_id},
+        {"application_id": app_id},
         {
             "$set": {
                 "status": ApplicationStatus.WITHDRAWN,
