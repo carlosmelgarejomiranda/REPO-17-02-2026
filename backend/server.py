@@ -1146,6 +1146,7 @@ async def google_callback(request: Request, response: Response):
             if email == ADMIN_EMAIL and role != "superadmin":
                 role = "superadmin"
                 await db.users.update_one({"email": email}, {"$set": {"role": "superadmin"}})
+            user_phone = existing_user.get("phone")
         else:
             # Create new user
             user_id = f"user_{uuid.uuid4().hex[:12]}"
@@ -1155,11 +1156,14 @@ async def google_callback(request: Request, response: Response):
                 "user_id": user_id,
                 "email": email,
                 "name": name,
+                "phone": None,
+                "password_hash": None,
                 "picture": picture,
                 "role": role,
                 "created_at": datetime.now(timezone.utc).isoformat()
             }
             await db.users.insert_one(user_doc)
+            user_phone = None
         
         # Create JWT token
         token = create_jwt_token(user_id, email, role)
