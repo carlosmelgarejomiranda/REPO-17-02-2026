@@ -250,7 +250,7 @@ async def reload_campaign_slots():
         if now > end_date:
             # Contract expired - deactivate and make invisible to creators
             await db.ugc_campaigns.update_one(
-                {"id": campaign["id"]},
+                {"campaign_id": campaign["campaign_id"]},
                 {
                     "$set": {
                         "contract.is_active": False,
@@ -259,7 +259,7 @@ async def reload_campaign_slots():
                     }
                 }
             )
-            print(f"Campaign {campaign['id']} contract expired - deactivated")
+            print(f"Campaign {campaign['campaign_id']} contract expired - deactivated")
             continue
         
         # Reload slots
@@ -282,7 +282,7 @@ async def reload_campaign_slots():
         
         # Update campaign with new slots
         await db.ugc_campaigns.update_one(
-            {"id": campaign["id"]},
+            {"campaign_id": campaign["campaign_id"]},
             {
                 "$set": {
                     "available_slots": new_available,
@@ -297,23 +297,23 @@ async def reload_campaign_slots():
         
         # Get brand info for notification
         brand = await db.ugc_brands.find_one(
-            {"id": campaign["brand_id"]},
-            {"_id": 0, "company_name": 1, "email": 1, "contact_name": 1}
+            {"brand_id": campaign["brand_id"]},
+            {"_id": 0, "brand_name": 1, "email": 1, "contact_name": 1}
         )
         
         if brand:
             # Send notification to brand
             await send_brand_notification(
                 brand_email=brand.get("email", ""),
-                brand_name=brand.get("contact_name", brand.get("company_name", "")),
+                brand_name=brand.get("contact_name", brand.get("brand_name", "")),
                 campaign_name=campaign["name"],
                 slots_added=monthly_deliverables
             )
             
             reloaded_campaigns.append({
-                "campaign_id": campaign["id"],
+                "campaign_id": campaign["campaign_id"],
                 "campaign_name": campaign["name"],
-                "brand_name": brand.get("company_name", ""),
+                "brand_name": brand.get("brand_name", ""),
                 "slots_added": monthly_deliverables,
                 "available_slots": new_available
             })
