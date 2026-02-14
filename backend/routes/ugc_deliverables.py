@@ -200,29 +200,50 @@ async def get_deliverable_detail(
     db = await get_db()
     await require_auth(request)
     
-    deliverable = await db.ugc_deliverables.find_one({"id": deliverable_id}, {"_id": 0})
+    # Try deliverable_id first, then id
+    deliverable = await db.ugc_deliverables.find_one({"deliverable_id": deliverable_id}, {"_id": 0})
+    if not deliverable:
+        deliverable = await db.ugc_deliverables.find_one({"id": deliverable_id}, {"_id": 0})
     if not deliverable:
         raise HTTPException(status_code=404, detail="Deliverable not found")
     
-    # Get campaign and brand info
-    campaign = await db.ugc_campaigns.find_one(
-        {"id": deliverable["campaign_id"]},
-        {"_id": 0}
+    # Get application to find campaign_id
+    application = await db.ugc_applications.find_one(
+        {"application_id": deliverable.get("application_id")},
+        {"_id": 0, "campaign_id": 1}
     )
-    brand = await db.ugc_brands.find_one(
-        {"id": deliverable["brand_id"]},
-        {"_id": 0, "company_name": 1, "logo_url": 1}
-    )
+    
+    campaign = None
+    brand = None
+    
+    if application and application.get("campaign_id"):
+        campaign = await db.ugc_campaigns.find_one(
+            {"campaign_id": application["campaign_id"]},
+            {"_id": 0}
+        )
+        if campaign and campaign.get("brand_id"):
+            brand = await db.ugc_brands.find_one(
+                {"brand_id": campaign["brand_id"]},
+                {"_id": 0, "brand_name": 1, "logo_url": 1}
+            )
+            # Map brand_name to company_name for frontend compatibility
+            if brand:
+                brand["company_name"] = brand.get("brand_name")
     
     deliverable["campaign"] = campaign
     deliverable["brand"] = brand
     
     # Get metrics if exists
+    deliv_id = deliverable.get("deliverable_id", deliverable_id)
     metrics = await db.ugc_metrics.find_one(
-        {"deliverable_id": deliverable_id},
+        {"deliverable_id": deliv_id},
         {"_id": 0}
     )
     deliverable["metrics"] = metrics
+    
+    # Add id alias for frontend compatibility
+    if "deliverable_id" in deliverable and "id" not in deliverable:
+        deliverable["id"] = deliverable["deliverable_id"]
     
     return deliverable
 
