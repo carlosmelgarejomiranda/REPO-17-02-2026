@@ -620,9 +620,15 @@ async def get_creator_profile(creator_id: str):
     """Get a creator's public profile"""
     db = await get_db()
     
-    profile = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0})
+    profile = await db.ugc_creators.find_one({"creator_id": creator_id}, {"_id": 0})
     if not profile:
         raise HTTPException(status_code=404, detail="Creator not found")
+    
+    # Get user name if not in profile
+    if not profile.get("name") and profile.get("user_id"):
+        user = await db.users.find_one({"user_id": profile["user_id"]}, {"_id": 0, "name": 1})
+        if user:
+            profile["name"] = user.get("name", "")
     
     # Remove private data for public view
     if "email" in profile:
