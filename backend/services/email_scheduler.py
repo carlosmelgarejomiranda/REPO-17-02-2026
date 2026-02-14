@@ -187,8 +187,16 @@ async def process_metrics_delivery_reminders():
             if days_until < -8 or days_until > 2:
                 continue
             
+            # Get application to find creator and campaign
+            application = await db.ugc_applications.find_one(
+                {"application_id": deliverable["application_id"]},
+                {"_id": 0, "creator_id": 1, "campaign_id": 1}
+            )
+            if not application:
+                continue
+            
             # Get creator info
-            creator = await db.ugc_creators.find_one({"id": deliverable["creator_id"]}, {"_id": 0})
+            creator = await db.ugc_creators.find_one({"creator_id": application["creator_id"]}, {"_id": 0})
             if not creator:
                 continue
             
@@ -199,12 +207,14 @@ async def process_metrics_delivery_reminders():
                 continue
             
             # Get campaign and brand
-            campaign = await db.ugc_campaigns.find_one({"id": deliverable["campaign_id"]}, {"_id": 0})
-            brand = await db.ugc_brands.find_one({"id": campaign.get("brand_id")}, {"_id": 0}) if campaign else None
+            campaign = await db.ugc_campaigns.find_one({"campaign_id": application["campaign_id"]}, {"_id": 0})
+            brand = await db.ugc_brands.find_one({"brand_id": campaign.get("brand_id")}, {"_id": 0}) if campaign else None
             
-            creator_name = creator.get("name", "Creador")
+            creator_name = creator.get("name")
+            if not creator_name and user:
+                creator_name = user.get("name", "Creador")
             campaign_name = campaign.get("name", "Campaña") if campaign else "Campaña"
-            brand_name = brand.get("company_name", "Marca") if brand else "Marca"
+            brand_name = brand.get("brand_name", "Marca") if brand else "Marca"
             deadline_formatted = format_date_spanish(deadline)
             
             # Send appropriate email based on days
