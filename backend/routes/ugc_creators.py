@@ -842,8 +842,8 @@ async def get_leaderboard(filters: LeaderboardFilters = None):
     if filters is None:
         filters = LeaderboardFilters()
     
-    # Build query
-    query = {"is_active": True, "onboarding_completed": True}
+    # Build query - creators might not have is_active/onboarding_completed fields
+    query = {}
     if filters.city:
         query["city"] = filters.city
     if filters.category:
@@ -858,6 +858,14 @@ async def get_leaderboard(filters: LeaderboardFilters = None):
         ("stats.total_campaigns", -1)
     ]).limit(filters.limit).to_list(filters.limit)
     
+    # Get user names for creators
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id")]
+    users = await db.users.find(
+        {"user_id": {"$in": user_ids}},
+        {"_id": 0, "user_id": 1, "name": 1}
+    ).to_list(len(user_ids))
+    user_names = {u["user_id"]: u.get("name", "") for u in users}
+    
     # Build leaderboard
     leaderboard = []
     for i, creator in enumerate(creators):
@@ -867,13 +875,14 @@ async def get_leaderboard(filters: LeaderboardFilters = None):
             primary_username = primary.get("username", "")
         
         stats = creator.get("stats", {})
+        creator_name = creator.get("name") or user_names.get(creator.get("user_id"), "")
         
         leaderboard.append(LeaderboardEntry(
             rank=i + 1,
-            creator_id=creator["id"],
-            creator_name=creator["name"],
+            creator_id=creator["creator_id"],
+            creator_name=creator_name,
             creator_username=primary_username,
-            profile_picture=creator.get("profile_picture"),
+            profile_picture=creator.get("profile_picture") or creator.get("profile_image"),
             level=creator.get("level", CreatorLevel.ROOKIE),
             rating=stats.get("avg_rating", 0),
             total_campaigns=stats.get("total_campaigns", 0),
@@ -895,9 +904,9 @@ async def get_my_stats(request: Request):
     if not profile:
         raise HTTPException(status_code=404, detail="Creator profile not found")
     
-    # Get reviews
+    # Get reviews (using creator_id field)
     reviews = await db.ugc_reviews.find(
-        {"creator_id": profile["id"]},
+        {"creator_id": profile["creator_id"]},
         {"_id": 0, "rating": 1, "public_comment": 1, "created_at": 1}
     ).sort("created_at", -1).to_list(50)
     
@@ -920,13 +929,24 @@ async def get_my_feedback(request: Request):
     if not profile:
         raise HTTPException(status_code=404, detail="Creator profile not found")
     
-    # Get all deliverables with brand ratings for this creator
+    creator_id = profile["creator_id"]
+    
+    # Get all applications for this creator
+    applications = await db.ugc_applications.find(
+        {"creator_id": creator_id},
+        {"_id": 0, "application_id": 1, "campaign_id": 1}
+    ).to_list(100)
+    
+    app_to_campaign = {app["application_id"]: app["campaign_id"] for app in applications}
+    application_ids = list(app_to_campaign.keys())
+    
+    # Get all deliverables with brand ratings for these applications
     deliverables = await db.ugc_deliverables.find(
         {
-            "creator_id": profile["id"],
+            "application_id": {"$in": application_ids},
             "brand_rating": {"$exists": True}
         },
-        {"_id": 0, "id": 1, "campaign_id": 1, "brand_id": 1, "brand_rating": 1}
+        {"_id": 0, "deliverable_id": 1, "application_id": 1, "brand_rating": 1}
     ).sort("brand_rating.rated_at", -1).to_list(100)
     
     feedback = []
@@ -934,21 +954,26 @@ async def get_my_feedback(request: Request):
     
     for d in deliverables:
         rating_data = d.get("brand_rating", {})
+        campaign_id = app_to_campaign.get(d["application_id"])
         
-        # Get campaign and brand info
-        campaign = await db.ugc_campaigns.find_one(
-            {"id": d["campaign_id"]},
-            {"_id": 0, "name": 1}
-        )
-        brand = await db.ugc_brands.find_one(
-            {"id": d["brand_id"]},
-            {"_id": 0, "company_name": 1}
-        )
+        # Get campaign info
+        campaign = None
+        brand = None
+        if campaign_id:
+            campaign = await db.ugc_campaigns.find_one(
+                {"campaign_id": campaign_id},
+                {"_id": 0, "name": 1, "brand_id": 1}
+            )
+            if campaign and campaign.get("brand_id"):
+                brand = await db.ugc_brands.find_one(
+                    {"brand_id": campaign["brand_id"]},
+                    {"_id": 0, "brand_name": 1}
+                )
         
         feedback.append({
-            "deliverable_id": d["id"],
+            "deliverable_id": d["deliverable_id"],
             "campaign_name": campaign.get("name") if campaign else None,
-            "brand_name": brand.get("company_name") if brand else None,
+            "brand_name": brand.get("brand_name") if brand else None,
             "rating": rating_data.get("rating"),
             "comment": rating_data.get("comment"),
             "rated_at": rating_data.get("rated_at")
