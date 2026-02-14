@@ -1265,6 +1265,7 @@ async def get_me(request: Request):
     
     user_response["has_creator_profile"] = has_creator_profile
     user_response["has_brand_profile"] = has_brand_profile
+    user_response["needs_phone"] = not user.get("phone")
     
     return user_response
 
