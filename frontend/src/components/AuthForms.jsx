@@ -624,6 +624,14 @@ export const AuthCallback = ({ onAuthComplete }) => {
           return;
         }
         
+        // Check if user needs to provide phone number
+        if (data.needs_phone) {
+          setPendingAuthData(data);
+          setShowPhoneModal(true);
+          setStatus('phone');
+          return;
+        }
+        
         // CRITICAL: Check if user is a creator with incomplete profile
         // Must redirect to onboarding IMMEDIATELY before allowing any navigation
         if (data.token && data.has_creator_profile) {
