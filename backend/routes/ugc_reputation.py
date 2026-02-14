@@ -100,7 +100,7 @@ def calculate_level(stats: dict) -> tuple:
 
 async def update_creator_level(db, creator_id: str):
     """Update creator's level based on current stats"""
-    creator = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0})
+    creator = await db.ugc_creators.find_one({"creator_id": creator_id}, {"_id": 0})
     if not creator:
         return
     
@@ -114,7 +114,7 @@ async def update_creator_level(db, creator_id: str):
     }
     
     await db.ugc_creators.update_one(
-        {"id": creator_id},
+        {"creator_id": creator_id},
         {"$set": updates}
     )
     
