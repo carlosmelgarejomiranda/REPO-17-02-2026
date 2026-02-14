@@ -222,7 +222,7 @@ async def withdraw_application(
     now = datetime.now(timezone.utc).isoformat()
     
     await db.ugc_applications.update_one(
-        {"id": application_id},
+        {"application_id": application_id},
         {
             "$set": {
                 "status": ApplicationStatus.WITHDRAWN,
@@ -253,7 +253,10 @@ async def get_campaign_applications(
     user, brand = await require_brand(request)
     
     # Verify brand owns the campaign
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["id"]})
+    campaign = await db.ugc_campaigns.find_one({"campaign_id": campaign_id, "brand_id": brand["brand_id"]})
+    if not campaign:
+        # Try legacy id field
+        campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["brand_id"]})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
@@ -269,9 +272,14 @@ async def get_campaign_applications(
     # Enrich with creator profiles
     for app in applications:
         creator = await db.ugc_creators.find_one(
-            {"id": app["creator_id"]},
+            {"creator_id": app["creator_id"]},
             {"_id": 0, "email": 0}
         )
+        # Get name from users if not in creator
+        if creator and not creator.get("name"):
+            user_data = await db.users.find_one({"user_id": creator.get("user_id")}, {"_id": 0, "name": 1})
+            if user_data:
+                creator["name"] = user_data.get("name", "")
         app["creator"] = creator
     
     return {"applications": applications, "total": len(applications)}
