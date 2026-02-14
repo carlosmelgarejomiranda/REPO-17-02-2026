@@ -1007,7 +1007,7 @@ async def login(credentials: UserLogin, request: Request, response: Response):
     
     user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     
-    if not user or not verify_password(credentials.password, user.get("password", "")):
+    if not user or not verify_password(credentials.password, user.get("password_hash", "")):
         # Track failed attempt
         result, lockout = track_login_attempt(credentials.email, success=False)
         
