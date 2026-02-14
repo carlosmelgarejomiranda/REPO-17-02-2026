@@ -897,6 +897,64 @@ export const AuthCallback = ({ onAuthComplete }) => {
     );
   }
 
+  // Show phone number modal for OAuth users without phone
+  if (showPhoneModal) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
+        <Card style={{ backgroundColor: '#1a1a1a', borderColor: '#d4a968', maxWidth: '450px', width: '90%' }}>
+          <CardContent className="p-8">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-[#d4a968]/20 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[#d4a968]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-medium" style={{ color: '#f5ede4' }}>
+                Número de Teléfono
+              </h2>
+              <p className="text-sm mt-2" style={{ color: '#a8a8a8' }}>
+                Necesitamos tu teléfono para poder contactarte
+              </p>
+            </div>
+            
+            <div className="mb-6">
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Ej: +595 981 123456"
+                className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#d4a968]"
+                style={{ backgroundColor: '#2a2a2a', border: '1px solid #333' }}
+                data-testid="phone-input"
+              />
+              <p className="text-xs mt-2" style={{ color: '#666' }}>
+                Incluye el código de país (ej: +595 para Paraguay)
+              </p>
+            </div>
+            
+            {error && (
+              <p className="text-red-400 text-sm mb-4 text-center">{error}</p>
+            )}
+            
+            <Button
+              onClick={handleSubmitPhone}
+              disabled={!phoneNumber.trim() || savingPhone}
+              className="w-full py-4 rounded-none text-xs tracking-[0.2em] uppercase font-medium transition-all"
+              style={{ 
+                backgroundColor: phoneNumber.trim() ? '#d4a968' : '#555', 
+                color: '#000000',
+                cursor: phoneNumber.trim() ? 'pointer' : 'not-allowed'
+              }}
+              data-testid="submit-phone-btn"
+            >
+              {savingPhone ? 'Guardando...' : 'Continuar'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (error || status === 'error') {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0d0d0d' }}>
