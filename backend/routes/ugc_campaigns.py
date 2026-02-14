@@ -202,7 +202,7 @@ async def create_campaign(
     
     # Check active package
     active_package = await db.ugc_packages.find_one(
-        {"brand_id": brand["id"], "status": "active"}
+        {"brand_id": brand["brand_id"], "status": "active"}
     )
     if not active_package:
         raise HTTPException(
