@@ -341,11 +341,21 @@ async def get_my_creator_profile(request: Request):
     if not profile:
         raise HTTPException(status_code=404, detail="Creator profile not found")
     
+    # Add user name if not in profile
+    if not profile.get("name"):
+        user_data = await db.users.find_one({"user_id": user["user_id"]}, {"_id": 0, "name": 1})
+        if user_data:
+            profile["name"] = user_data.get("name", "")
+    
     # Add profile completeness check
     completeness = check_profile_complete(profile)
     profile["profile_complete"] = completeness["is_complete"]
     profile["needs_profile_update"] = completeness["needs_update"]
     profile["missing_fields"] = completeness["missing_fields"]
+    
+    # Normalize id field for frontend compatibility
+    if "creator_id" in profile and "id" not in profile:
+        profile["id"] = profile["creator_id"]
     
     return profile
 
