@@ -53,7 +53,18 @@ async def get_my_deliverables(
     db = await get_db()
     user, creator = await require_creator(request)
     
-    query = {"creator_id": creator["id"]}
+    # First get all applications for this creator
+    applications = await db.ugc_applications.find(
+        {"creator_id": creator["creator_id"]},
+        {"_id": 0, "application_id": 1, "campaign_id": 1, "url_deadline": 1, "metrics_deadline": 1, "confirmed_at": 1, "status": 1}
+    ).to_list(500)
+    
+    # Build maps for quick lookup
+    app_ids = [a["application_id"] for a in applications]
+    app_map = {a["application_id"]: a for a in applications}
+    
+    # Now get deliverables for these applications
+    query = {"application_id": {"$in": app_ids}}
     if status:
         query["status"] = status
     
@@ -64,31 +75,43 @@ async def get_my_deliverables(
     
     # Enrich with campaign info and application deadlines
     for d in deliverables:
-        campaign = await db.ugc_campaigns.find_one(
-            {"id": d["campaign_id"]},
-            {"_id": 0, "name": 1, "requirements": 1, "canje": 1, "timeline": 1, "url_delivery_days": 1, "metrics_delivery_days": 1}
-        )
-        brand = await db.ugc_brands.find_one(
-            {"id": d["brand_id"]},
-            {"_id": 0, "company_name": 1, "logo_url": 1}
-        )
+        app_data = app_map.get(d.get("application_id"), {})
+        campaign_id = app_data.get("campaign_id")
+        
+        campaign = None
+        brand = None
+        
+        if campaign_id:
+            campaign = await db.ugc_campaigns.find_one(
+                {"campaign_id": campaign_id},
+                {"_id": 0, "name": 1, "requirements": 1, "canje": 1, "timeline": 1, "url_delivery_days": 1, "metrics_delivery_days": 1, "brand_id": 1}
+            )
+            if campaign and campaign.get("brand_id"):
+                brand = await db.ugc_brands.find_one(
+                    {"brand_id": campaign["brand_id"]},
+                    {"_id": 0, "brand_name": 1, "logo_url": 1}
+                )
+                # Map brand_name to company_name for frontend compatibility
+                if brand:
+                    brand["company_name"] = brand.get("brand_name")
+        
         d["campaign"] = campaign
         d["brand"] = brand
+        d["campaign_name"] = campaign.get("name") if campaign else None
+        d["brand_name"] = brand.get("brand_name") if brand else None
         
-        # Get application data for deadlines
-        if d.get("application_id"):
-            application = await db.ugc_applications.find_one(
-                {"id": d["application_id"]},
-                {"_id": 0, "url_deadline": 1, "metrics_deadline": 1, "confirmed_at": 1, "status": 1}
-            )
-            if application:
-                if not d.get("url_deadline") and application.get("url_deadline"):
-                    d["url_deadline"] = application["url_deadline"]
-                if not d.get("metrics_deadline") and application.get("metrics_deadline"):
-                    d["metrics_deadline"] = application["metrics_deadline"]
-                if not d.get("confirmed_at") and application.get("confirmed_at"):
-                    d["confirmed_at"] = application["confirmed_at"]
-                d["application_status"] = application.get("status")
+        # Add application data for deadlines
+        if not d.get("url_deadline") and app_data.get("url_deadline"):
+            d["url_deadline"] = app_data["url_deadline"]
+        if not d.get("metrics_deadline") and app_data.get("metrics_deadline"):
+            d["metrics_deadline"] = app_data["metrics_deadline"]
+        if not d.get("confirmed_at") and app_data.get("confirmed_at"):
+            d["confirmed_at"] = app_data["confirmed_at"]
+        d["application_status"] = app_data.get("status")
+        
+        # Add id alias for frontend compatibility
+        if "deliverable_id" in d and "id" not in d:
+            d["id"] = d["deliverable_id"]
     
     return {"deliverables": deliverables}
 
