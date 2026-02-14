@@ -147,16 +147,26 @@ async def get_campaign_detail(campaign_id: str, request: Request = None):
     """Get campaign detail"""
     db = await get_db()
     
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id}, {"_id": 0})
+    # Try to find by campaign_id first, then by id for backwards compatibility
+    campaign = await db.ugc_campaigns.find_one({"campaign_id": campaign_id}, {"_id": 0})
+    if not campaign:
+        campaign = await db.ugc_campaigns.find_one({"id": campaign_id}, {"_id": 0})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
     # Get brand info
     brand = await db.ugc_brands.find_one(
-        {"id": campaign["brand_id"]},
-        {"_id": 0, "company_name": 1, "logo_url": 1, "industry": 1, "city": 1}
+        {"brand_id": campaign["brand_id"]},
+        {"_id": 0, "brand_name": 1, "logo_url": 1, "industry": 1, "city": 1}
     )
+    # Map brand_name to company_name for frontend compatibility
+    if brand:
+        brand["company_name"] = brand.get("brand_name")
     campaign["brand"] = brand
+    
+    # Add id alias for frontend compatibility
+    if "campaign_id" in campaign and "id" not in campaign:
+        campaign["id"] = campaign["campaign_id"]
     
     # Check if current user has applied (if authenticated)
     user_application = None
@@ -165,17 +175,17 @@ async def get_campaign_detail(campaign_id: str, request: Request = None):
             from server import get_current_user
             user = await get_current_user(request)
             if user:
-                creator = await db.ugc_creators.find_one({"user_id": user["user_id"]})
+                creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0, "creator_id": 1})
                 if creator:
                     user_application = await db.ugc_applications.find_one(
-                        {"campaign_id": campaign_id, "creator_id": creator["id"]},
+                        {"campaign_id": campaign.get("campaign_id", campaign_id), "creator_id": creator["creator_id"]},
                         {"_id": 0}
                     )
         except Exception:
             pass
     
     campaign["user_application"] = user_application
-    campaign["slots_available"] = campaign["slots"] - campaign.get("slots_filled", 0)
+    campaign["slots_available"] = campaign.get("slots", 0) - campaign.get("slots_filled", 0)
     
     return campaign
 
