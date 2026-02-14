@@ -1189,19 +1189,24 @@ async def google_callback(request: Request, response: Response):
         # Check if user has accepted terms
         has_accepted_terms = await db.terms_acceptances.find_one({"user_id": user_id}) is not None
         
-        logger.info(f"Google callback: Success for {email}, is_new_user={is_new_user}")
+        # Check if user needs to provide phone
+        needs_phone = not user_phone
+        
+        logger.info(f"Google callback: Success for {email}, is_new_user={is_new_user}, needs_phone={needs_phone}")
         
         return {
             "user_id": user_id,
             "email": email,
             "name": name,
+            "phone": user_phone,
             "picture": picture,
             "role": role,
             "token": token,
             "has_creator_profile": has_creator_profile,
             "has_brand_profile": has_brand_profile,
             "is_new_user": is_new_user,
-            "needs_terms_acceptance": is_new_user and not has_accepted_terms
+            "needs_terms_acceptance": is_new_user and not has_accepted_terms,
+            "needs_phone": needs_phone
         }
     except HTTPException:
         raise
