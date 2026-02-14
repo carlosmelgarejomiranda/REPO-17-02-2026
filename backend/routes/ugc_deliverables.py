@@ -122,52 +122,68 @@ async def get_my_deliverables_full(request: Request):
     db = await get_db()
     user, creator = await require_creator(request)
     
-    # Get all deliverables for this creator
+    # First get all applications for this creator
+    applications = await db.ugc_applications.find(
+        {"creator_id": creator["creator_id"]},
+        {"_id": 0, "application_id": 1, "campaign_id": 1, "status": 1, "url_deadline": 1, "metrics_deadline": 1, "confirmed_at": 1}
+    ).to_list(500)
+    
+    app_ids = [a["application_id"] for a in applications]
+    app_map = {a["application_id"]: a for a in applications}
+    
+    # Get all deliverables for these applications
     deliverables = await db.ugc_deliverables.find(
-        {"creator_id": creator["id"]},
+        {"application_id": {"$in": app_ids}},
         {"_id": 0}
     ).sort("created_at", -1).to_list(200)
     
     # Enrich with campaign, brand, rating info, and application deadlines
     for d in deliverables:
+        app_data = app_map.get(d.get("application_id"), {})
+        campaign_id = app_data.get("campaign_id")
+        
         # Campaign info
-        campaign = await db.ugc_campaigns.find_one(
-            {"id": d.get("campaign_id")},
-            {"_id": 0, "name": 1, "brand_id": 1, "requirements": 1, "status": 1, "url_delivery_days": 1, "metrics_delivery_days": 1}
-        )
-        if campaign:
-            d["campaign"] = {"name": campaign.get("name"), "status": campaign.get("status")}
-            
-            # Brand info
-            brand = await db.ugc_brands.find_one(
-                {"id": campaign.get("brand_id")},
-                {"_id": 0, "company_name": 1}
+        if campaign_id:
+            campaign = await db.ugc_campaigns.find_one(
+                {"campaign_id": campaign_id},
+                {"_id": 0, "name": 1, "brand_id": 1, "requirements": 1, "status": 1, "url_delivery_days": 1, "metrics_delivery_days": 1}
             )
-            if brand:
-                d["campaign"]["brand_name"] = brand.get("company_name")
+            if campaign:
+                d["campaign"] = {"name": campaign.get("name"), "status": campaign.get("status")}
+                d["campaign_name"] = campaign.get("name")
+                
+                # Brand info
+                if campaign.get("brand_id"):
+                    brand = await db.ugc_brands.find_one(
+                        {"brand_id": campaign["brand_id"]},
+                        {"_id": 0, "brand_name": 1}
+                    )
+                    if brand:
+                        d["campaign"]["brand_name"] = brand.get("brand_name")
+                        d["brand_name"] = brand.get("brand_name")
         
         # Rating info
-        rating = await db.ugc_ratings.find_one(
-            {"deliverable_id": d.get("id")},
-            {"_id": 0, "rating": 1, "comment": 1}
-        )
-        if rating:
-            d["brand_rating"] = rating
+        deliverable_id = d.get("deliverable_id", d.get("id"))
+        if deliverable_id:
+            rating = await db.ugc_ratings.find_one(
+                {"deliverable_id": deliverable_id},
+                {"_id": 0, "rating": 1, "comment": 1}
+            )
+            if rating:
+                d["brand_rating"] = rating
         
         # Application data for cancelled check AND deadlines
-        application = await db.ugc_applications.find_one(
-            {"deliverable_id": d.get("id")},
-            {"_id": 0, "status": 1, "url_deadline": 1, "metrics_deadline": 1, "confirmed_at": 1}
-        )
-        if application:
-            d["application_status"] = application.get("status")
-            # Enrich with deadlines from application if not present in deliverable
-            if not d.get("url_deadline") and application.get("url_deadline"):
-                d["url_deadline"] = application["url_deadline"]
-            if not d.get("metrics_deadline") and application.get("metrics_deadline"):
-                d["metrics_deadline"] = application["metrics_deadline"]
-            if not d.get("confirmed_at") and application.get("confirmed_at"):
-                d["confirmed_at"] = application["confirmed_at"]
+        d["application_status"] = app_data.get("status")
+        if not d.get("url_deadline") and app_data.get("url_deadline"):
+            d["url_deadline"] = app_data["url_deadline"]
+        if not d.get("metrics_deadline") and app_data.get("metrics_deadline"):
+            d["metrics_deadline"] = app_data["metrics_deadline"]
+        if not d.get("confirmed_at") and app_data.get("confirmed_at"):
+            d["confirmed_at"] = app_data["confirmed_at"]
+        
+        # Add id alias for frontend compatibility
+        if "deliverable_id" in d and "id" not in d:
+            d["id"] = d["deliverable_id"]
     
     return {
         "deliverables": deliverables,
