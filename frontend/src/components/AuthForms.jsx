@@ -740,6 +740,14 @@ export const AuthCallback = ({ onAuthComplete }) => {
         });
       }
       
+      // Check if also needs phone
+      if (pendingAuthData.needs_phone) {
+        setShowTermsModal(false);
+        setShowPhoneModal(true);
+        setStatus('phone');
+        return;
+      }
+      
       // Complete auth
       setShowTermsModal(false);
       if (onAuthComplete) {
@@ -753,6 +761,43 @@ export const AuthCallback = ({ onAuthComplete }) => {
       }
     } finally {
       setSavingTerms(false);
+    }
+  };
+
+  // Handle phone submission
+  const handleSubmitPhone = async () => {
+    if (!phoneNumber.trim() || !pendingAuthData) return;
+    
+    setSavingPhone(true);
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${API_URL}/api/auth/update-phone`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ phone: phoneNumber.trim() })
+      });
+      
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Error al guardar teléfono');
+      }
+      
+      // Update pending data with phone
+      const updatedData = { ...pendingAuthData, phone: phoneNumber.trim(), needs_phone: false };
+      
+      // Complete auth
+      setShowPhoneModal(false);
+      if (onAuthComplete) {
+        onAuthComplete(updatedData);
+      }
+    } catch (err) {
+      console.error('Failed to save phone:', err);
+      setError(err.message);
+    } finally {
+      setSavingPhone(false);
     }
   };
 
