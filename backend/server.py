@@ -1214,6 +1214,41 @@ async def google_callback(request: Request, response: Response):
         logger.error(f"Google callback: Unexpected error: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
+@api_router.put("/auth/update-phone")
+async def update_phone(request: Request):
+    """Update user phone number (required for OAuth users)"""
+    user = await require_auth(request)
+    
+    try:
+        data = await request.json()
+        phone = data.get("phone", "").strip()
+        
+        if not phone:
+            raise HTTPException(status_code=400, detail="El teléfono es requerido")
+        
+        # Validate phone format (basic validation)
+        if len(phone) < 6:
+            raise HTTPException(status_code=400, detail="Número de teléfono inválido")
+        
+        # Update user phone
+        result = await db.users.update_one(
+            {"user_id": user["user_id"]},
+            {"$set": {"phone": phone}}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        
+        logger.info(f"Phone updated for user {user['user_id']}")
+        
+        return {"success": True, "message": "Teléfono actualizado correctamente"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating phone: {e}")
+        raise HTTPException(status_code=500, detail="Error al actualizar teléfono")
+
 @api_router.get("/auth/me")
 async def get_me(request: Request):
     """Get current authenticated user with UGC profile info"""
