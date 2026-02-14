@@ -505,24 +505,30 @@ async def withdraw_confirmed_application(
     
     # Decrement slots_filled to free up the slot
     await db.ugc_campaigns.update_one(
-        {"id": campaign["id"]},
+        {"campaign_id": campaign_id},
         {"$inc": {"slots_filled": -1}}
     )
     
     # Mark any deliverables as cancelled
     await db.ugc_deliverables.update_many(
-        {"application_id": application_id},
+        {"application_id": app_id},
         {"$set": {"status": "cancelled", "cancelled_at": now}}
     )
+    
+    # Get creator name
+    creator_name = creator.get("name")
+    if not creator_name:
+        user_data = await db.users.find_one({"user_id": user["user_id"]}, {"_id": 0, "name": 1})
+        creator_name = user_data.get("name", "Creator") if user_data else "Creator"
     
     # Send email notification to admin
     try:
         from services.ugc_emails import notify_application_cancelled
-        brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1})
+        brand = await db.ugc_brands.find_one({"brand_id": campaign["brand_id"]}, {"_id": 0, "brand_name": 1})
         await notify_application_cancelled(
-            creator_name=creator["name"],
+            creator_name=creator_name,
             campaign_name=campaign.get("name", ""),
-            brand_name=brand.get("company_name", "") if brand else "",
+            brand_name=brand.get("brand_name", "") if brand else "",
             cancelled_by="creator"
         )
     except Exception as e:
@@ -540,7 +546,7 @@ async def get_my_applications(
     db = await get_db()
     user, creator = await require_creator(request)
     
-    query = {"creator_id": creator["id"]}
+    query = {"creator_id": creator["creator_id"]}
     if status:
         query["status"] = status
     
@@ -552,12 +558,17 @@ async def get_my_applications(
     # Enrich with campaign info
     for app in applications:
         campaign = await db.ugc_campaigns.find_one(
-            {"id": app["campaign_id"]},
+            {"campaign_id": app["campaign_id"]},
             {"_id": 0}
         )
+        if not campaign:
+            campaign = await db.ugc_campaigns.find_one(
+                {"id": app["campaign_id"]},
+                {"_id": 0}
+            )
         if campaign:
             brand = await db.ugc_brands.find_one(
-                {"id": campaign["brand_id"]},
+                {"brand_id": campaign["brand_id"]},
                 {"_id": 0, "company_name": 1, "logo_url": 1}
             )
             campaign["brand"] = brand
