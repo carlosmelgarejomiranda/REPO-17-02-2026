@@ -465,16 +465,18 @@ async def withdraw_confirmed_application(
     db = await get_db()
     user, creator = await require_creator(request)
     
-    # Find application by id
+    creator_id = creator.get("id") or creator.get("creator_id")
+    
+    # Find application by id (support both schemas)
     application = await db.ugc_applications.find_one({
-        "id": application_id,
-        "creator_id": creator["id"]
+        "$or": [{"id": application_id}, {"application_id": application_id}],
+        "creator_id": creator_id
     })
     
     if not application:
         raise HTTPException(status_code=404, detail="Aplicación no encontrada")
     
-    app_id = application["id"]
+    app_id = application.get("id") or application.get("application_id")
     
     # Only allow withdrawal of confirmed applications
     if application["status"] != ApplicationStatus.CONFIRMED:
