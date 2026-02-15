@@ -64,6 +64,9 @@ async def require_brand(request: Request):
     brand = await db.ugc_brands.find_one({"user_id": user["user_id"]}, {"_id": 0})
     if not brand:
         raise HTTPException(status_code=403, detail="Brand profile required")
+    # Normalize id field for retrocompatibility
+    if "id" not in brand and "brand_id" in brand:
+        brand["id"] = brand["brand_id"]
     return user, brand
 
 def calculate_level(stats: dict) -> tuple:
