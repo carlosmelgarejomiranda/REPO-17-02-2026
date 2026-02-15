@@ -90,18 +90,23 @@ async def get_available_campaigns(
         from server import get_current_user
         user = await get_current_user(request)
         if user:
-            creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0, "id": 1})
+            creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0})
             if creator:
-                creator_id = creator["id"]
+                # Support both old schema (creator_id) and new schema (id)
+                creator_id = creator.get("id") or creator.get("creator_id")
     except Exception:
         pass
     
     # Enrich with brand info and check if user applied
     for campaign in campaigns:
+        # Support both old schema (brand_id as PK) and new schema (id as PK)
         brand = await db.ugc_brands.find_one(
-            {"id": campaign["brand_id"]},
-            {"_id": 0, "company_name": 1, "logo_url": 1, "industry": 1}
+            {"$or": [{"id": campaign["brand_id"]}, {"brand_id": campaign["brand_id"]}]},
+            {"_id": 0, "company_name": 1, "brand_name": 1, "logo_url": 1, "industry": 1}
         )
+        if brand:
+            # Ensure company_name is set (may be brand_name in old schema)
+            brand["company_name"] = brand.get("company_name") or brand.get("brand_name")
         campaign["brand"] = brand
         
         # Calculate available slots correctly
@@ -113,10 +118,13 @@ async def get_available_campaigns(
             filled_slots = campaign.get("slots_filled", 0) or 0
             campaign["slots_available"] = max(0, total_slots - filled_slots)
         
+        # Get campaign id (support both schemas)
+        campaign_id = campaign.get("id") or campaign.get("campaign_id")
+        
         # Check if creator has applied
         if creator_id:
             application = await db.ugc_applications.find_one({
-                "campaign_id": campaign["id"],
+                "campaign_id": campaign_id,
                 "creator_id": creator_id
             })
             campaign["has_applied"] = application is not None
