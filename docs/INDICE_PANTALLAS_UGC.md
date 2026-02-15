@@ -270,73 +270,74 @@ Este documento lista todas las pantallas del módulo UGC, sus archivos, funciona
 
 ---
 
-## 🟡 PANEL MARCAS (6 pantallas)
+## ✅ PANEL MARCAS (6 pantallas) - COMPLETADO
 
-### 22. Dashboard Marca
+### 22. Dashboard Brand
 - **Archivo**: `/app/frontend/src/pages/ugc/BrandDashboard.jsx`
 - **Ruta**: `/ugc/brand/dashboard`
 - **Funcionalidades**:
   - Resumen de campañas
+  - Creadores confirmados
   - Entregas pendientes
 - **Tablas consultadas**:
   - `ugc_brands`
   - `ugc_campaigns`
   - `ugc_applications`
-- **Estado**: ⬜ PENDIENTE
+- **Estado**: ✅ ADAPTADA (backend retrocompatible)
 
-### 23. Mis Campañas (Marca)
+### 23. Mis Campañas (Brand)
 - **Archivo**: `/app/frontend/src/pages/ugc/BrandCampaigns.jsx`
 - **Ruta**: `/ugc/brand/campaigns`
 - **Funcionalidades**:
-  - Ver campañas propias
-  - Crear nueva campaña
+  - Listar campañas de la marca
+  - Ver estado de cada una
 - **Tablas consultadas**:
-  - `ugc_campaigns`
-  - `ugc_brands`
-- **Estado**: ⬜ PENDIENTE
+  - `ugc_campaigns` (por brand_id)
+- **Estado**: ✅ ADAPTADA (backend retrocompatible)
 
-### 24. Constructor de Campaña
-- **Archivo**: `/app/frontend/src/pages/ugc/CampaignBuilder.jsx`
-- **Ruta**: `/ugc/brand/campaigns/new`
-- **Funcionalidades**:
-  - Crear/editar campaña
-  - Definir requisitos, canje
-- **Tablas consultadas**:
-  - `ugc_campaigns` (INSERT/UPDATE)
-  - `ugc_brands`
-- **Estado**: ⬜ PENDIENTE
-
-### 25. Aplicaciones (Marca)
-- **Archivo**: `/app/frontend/src/pages/ugc/CampaignApplications.jsx`
-- **Ruta**: `/ugc/brand/campaigns/:id/applications`
+### 24. Ver Aplicaciones (Brand)
+- **Archivo**: `/app/frontend/src/pages/ugc/BrandApplications.jsx`
+- **Ruta**: `/ugc/brand/campaigns/:campaignId/applications`
 - **Funcionalidades**:
   - Ver postulantes
   - Confirmar/rechazar
 - **Tablas consultadas**:
   - `ugc_applications`
   - `ugc_creators` (JOIN)
-- **Estado**: ⬜ PENDIENTE
+- **Estado**: ✅ ADAPTADA (backend retrocompatible)
 
-### 26. Entregas (Marca)
+### 25. Ver Entregas (Brand)
 - **Archivo**: `/app/frontend/src/pages/ugc/BrandDeliverables.jsx`
 - **Ruta**: `/ugc/brand/deliverables`
 - **Funcionalidades**:
   - Ver entregas de creadores
-  - Aprobar/rechazar
+  - Aprobar/solicitar cambios
 - **Tablas consultadas**:
   - `ugc_deliverables`
   - `ugc_applications` (JOIN)
-- **Estado**: ⬜ PENDIENTE
+- **Estado**: ✅ ADAPTADA (backend retrocompatible)
 
-### 27. Reportes (Marca)
-- **Archivo**: `/app/frontend/src/pages/ugc/BrandCampaignReports.jsx`
+### 26. Reportes (Brand)
+- **Archivo**: `/app/frontend/src/pages/ugc/BrandReports.jsx`
 - **Ruta**: `/ugc/brand/reports`
 - **Funcionalidades**:
-  - Métricas de campañas
-  - ROI, engagement
+  - Estadísticas de campaña
+  - Métricas acumuladas
 - **Tablas consultadas**:
-  - Agregaciones múltiples
-- **Estado**: ⬜ PENDIENTE
+  - `ugc_metrics`
+  - Agregaciones
+- **Estado**: ✅ ADAPTADA (backend retrocompatible)
+
+### 27. Calificar Creator
+- **Archivo**: `/app/frontend/src/pages/ugc/BrandRateCreator.jsx`
+- **Ruta**: `/ugc/brand/rate/:deliverableId`
+- **Funcionalidades**:
+  - Calificar trabajo del creador
+  - Dejar comentarios
+- **Tablas consultadas**:
+  - `ugc_ratings` (INSERT)
+  - `ugc_deliverables` (JOIN)
+- **Estado**: ✅ ADAPTADA (backend retrocompatible)
 
 ---
 
