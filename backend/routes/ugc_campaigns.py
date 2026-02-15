@@ -148,17 +148,25 @@ async def get_campaign_detail(campaign_id: str, request: Request = None):
     """Get campaign detail"""
     db = await get_db()
     
-    # Find by id
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id}, {"_id": 0})
+    # Find by id (support both schemas)
+    campaign = await db.ugc_campaigns.find_one(
+        {"$or": [{"id": campaign_id}, {"campaign_id": campaign_id}]}, 
+        {"_id": 0}
+    )
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
-    # Get brand info
+    # Get brand info (support both schemas)
     brand = await db.ugc_brands.find_one(
-        {"id": campaign["brand_id"]},
-        {"_id": 0, "company_name": 1, "logo_url": 1, "industry": 1, "city": 1}
+        {"$or": [{"id": campaign["brand_id"]}, {"brand_id": campaign["brand_id"]}]},
+        {"_id": 0, "company_name": 1, "brand_name": 1, "logo_url": 1, "industry": 1, "city": 1}
     )
+    if brand:
+        brand["company_name"] = brand.get("company_name") or brand.get("brand_name")
     campaign["brand"] = brand
+    
+    # Get campaign id for queries
+    camp_id = campaign.get("id") or campaign.get("campaign_id")
     
     # Check if current user has applied (if authenticated)
     user_application = None
@@ -167,10 +175,11 @@ async def get_campaign_detail(campaign_id: str, request: Request = None):
             from server import get_current_user
             user = await get_current_user(request)
             if user:
-                creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0, "id": 1})
+                creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0})
                 if creator:
+                    creator_id = creator.get("id") or creator.get("creator_id")
                     user_application = await db.ugc_applications.find_one(
-                        {"campaign_id": campaign["id"], "creator_id": creator["id"]},
+                        {"campaign_id": camp_id, "creator_id": creator_id},
                         {"_id": 0}
                     )
         except Exception:
