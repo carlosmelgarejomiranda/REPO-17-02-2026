@@ -265,22 +265,30 @@ async def get_creators_worked_with(request: Request):
     if not profile:
         raise HTTPException(status_code=404, detail="Brand profile not found")
     
+    # Support both schemas
+    brand_id = profile.get("id") or profile.get("brand_id")
+    
     # Get unique creator IDs from completed deliverables
     creator_ids = await db.ugc_deliverables.distinct(
         "creator_id",
-        {"brand_id": profile["id"], "status": "completed"}
+        {"brand_id": brand_id, "status": "completed"}
     )
     
-    # Get creator profiles
+    # Get creator profiles (support both schemas)
     creators = await db.ugc_creators.find(
-        {"id": {"$in": creator_ids}},
+        {"$or": [{"id": {"$in": creator_ids}}, {"creator_id": {"$in": creator_ids}}]},
         {"_id": 0, "email": 0}
     ).to_list(100)
     
     # Add review info for each creator
     for creator in creators:
+        creator_id = creator.get("id") or creator.get("creator_id")
+        # Ensure id field exists for frontend
+        if "id" not in creator and creator_id:
+            creator["id"] = creator_id
+            
         review = await db.ugc_reviews.find_one(
-            {"brand_id": profile["id"], "creator_id": creator["id"]},
+            {"brand_id": brand_id, "creator_id": creator_id},
             {"_id": 0, "rating": 1, "public_comment": 1}
         )
         creator["my_review"] = review
