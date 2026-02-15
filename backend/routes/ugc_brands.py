@@ -108,9 +108,12 @@ async def get_my_brand_profile(request: Request):
     if not profile:
         raise HTTPException(status_code=404, detail="Brand profile not found")
     
+    # Support both schemas: id or brand_id as PK
+    brand_id = profile.get("id") or profile.get("brand_id")
+    
     # Get active package info
     active_package = await db.ugc_packages.find_one(
-        {"brand_id": profile["id"], "status": "active"},
+        {"brand_id": brand_id, "status": "active"},
         {"_id": 0}
     )
     
