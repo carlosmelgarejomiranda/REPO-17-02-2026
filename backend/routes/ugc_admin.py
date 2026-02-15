@@ -885,10 +885,10 @@ async def get_all_campaigns(
             else:
                 metrics_deadline = confirmed_at + timedelta(days=metrics_delivery_days)
             
-            # Check if creator has delivered
-            creator_deliverables = deliverables_by_creator.get(creator_id, [])
-            has_url = any(d.get("post_url") for d in creator_deliverables)
-            has_metrics = any(d.get("metrics_submitted_at") for d in creator_deliverables)
+            # Check if creator has delivered (using application_id lookup)
+            app_deliverables = deliverables_by_app.get(app_id, [])
+            has_url = any(d.get("post_url") for d in app_deliverables)
+            has_metrics = any(d.get("metrics_submitted_at") for d in app_deliverables)
             
             # URL traffic light
             if has_url:
@@ -933,8 +933,12 @@ async def get_all_campaigns(
     # Get unique brands for filter dropdown
     all_brands = await db.ugc_brands.find(
         {},
-        {"_id": 0, "id": 1, "company_name": 1}
+        {"_id": 0, "brand_id": 1, "brand_name": 1}
     ).to_list(200)
+    # Map for frontend compatibility
+    for b in all_brands:
+        b["id"] = b.get("brand_id")
+        b["company_name"] = b.get("brand_name")
     
     return {
         "campaigns": filtered_campaigns, 
