@@ -141,9 +141,31 @@ async def get_all_creators(
         {"_id": 0}
     ).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
     
+    # Get user names for creators
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id")]
+    users = await db.users.find(
+        {"user_id": {"$in": user_ids}},
+        {"_id": 0, "user_id": 1, "name": 1, "email": 1, "phone": 1}
+    ).to_list(len(user_ids))
+    user_map = {u["user_id"]: u for u in users}
+    
     # Enrich each creator with metrics and reviews
     for creator in creators:
-        creator_id = creator.get("id")
+        creator_id = creator.get("creator_id")
+        
+        # Add id alias for frontend compatibility
+        if creator_id and "id" not in creator:
+            creator["id"] = creator_id
+        
+        # Add name from users table if not present
+        if not creator.get("name") and creator.get("user_id"):
+            user_data = user_map.get(creator["user_id"], {})
+            creator["name"] = user_data.get("name", "")
+            # Also add email and phone from users if not in creator
+            if not creator.get("email"):
+                creator["email"] = user_data.get("email", "")
+            if not creator.get("phone"):
+                creator["phone"] = user_data.get("phone", "")
         
         # Get verified social accounts (from AI verification)
         social_accounts = creator.get("social_accounts", {})
