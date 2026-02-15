@@ -122,9 +122,9 @@ async def apply_to_campaign(
         creator_name = user_data.get("name", "") if user_data else ""
     
     application = {
-        "application_id": str(uuid.uuid4()),
+        "id": str(uuid.uuid4()),
         "campaign_id": campaign_id,
-        "creator_id": creator["creator_id"],
+        "creator_id": creator["id"],
         "creator_name": creator_name,
         "creator_username": primary_social.get("username", ""),
         "creator_followers": primary_social.get("followers", 0),
@@ -149,8 +149,8 @@ async def apply_to_campaign(
     await db.ugc_applications.insert_one(application)
     
     # Get brand info for notifications
-    brand = await db.ugc_brands.find_one({"brand_id": campaign["brand_id"]}, {"_id": 0, "brand_name": 1, "email": 1})
-    brand_name = brand.get("brand_name", "Marca") if brand else "Marca"
+    brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1, "email": 1})
+    brand_name = brand.get("company_name", "Marca") if brand else "Marca"
     brand_email = brand.get("email") if brand else None
     
     # Get creator email from users table
