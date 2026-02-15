@@ -286,8 +286,10 @@ async def update_campaign(
     
     update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
     
+    # Support both schemas for update
+    camp_id = campaign.get("id") or campaign.get("campaign_id")
     await db.ugc_campaigns.update_one(
-        {"id": campaign_id},
+        {"$or": [{"id": camp_id}, {"campaign_id": camp_id}]},
         {"$set": update_data}
     )
     
@@ -302,7 +304,13 @@ async def publish_campaign(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["id"]})
+    # Support both schemas
+    brand_id = brand.get("id") or brand.get("brand_id")
+    
+    campaign = await db.ugc_campaigns.find_one({
+        "$or": [{"id": campaign_id}, {"campaign_id": campaign_id}], 
+        "brand_id": brand_id
+    })
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
@@ -311,8 +319,9 @@ async def publish_campaign(
     
     now = datetime.now(timezone.utc).isoformat()
     
+    camp_id = campaign.get("id") or campaign.get("campaign_id")
     await db.ugc_campaigns.update_one(
-        {"id": campaign_id},
+        {"$or": [{"id": camp_id}, {"campaign_id": camp_id}]},
         {
             "$set": {
                 "status": CampaignStatus.LIVE,
@@ -333,15 +342,22 @@ async def close_campaign_applications(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["id"]})
+    # Support both schemas
+    brand_id = brand.get("id") or brand.get("brand_id")
+    
+    campaign = await db.ugc_campaigns.find_one({
+        "$or": [{"id": campaign_id}, {"campaign_id": campaign_id}], 
+        "brand_id": brand_id
+    })
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
     if campaign["status"] != CampaignStatus.LIVE:
         raise HTTPException(status_code=400, detail="Solo podés cerrar campañas activas")
     
+    camp_id = campaign.get("id") or campaign.get("campaign_id")
     await db.ugc_campaigns.update_one(
-        {"id": campaign_id},
+        {"$or": [{"id": camp_id}, {"campaign_id": camp_id}]},
         {
             "$set": {
                 "status": CampaignStatus.CLOSED,
