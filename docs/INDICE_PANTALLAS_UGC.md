@@ -12,8 +12,8 @@ Este documento lista todas las pantallas del módulo UGC, sus archivos, funciona
 | Admin Panel | 7 | 7 | 0 |
 | Panel Creadores | 14 | 14 | 0 |
 | Panel Marcas | 6 | 6 | 0 |
-| Componentes Compartidos | 5 | 0 | 5 |
-| **TOTAL** | **32** | **27** | **5** |
+| Componentes Compartidos | 5 | 5 | 0 |
+| **TOTAL** | **32** | **32** | **0** |
 
 ---
 
