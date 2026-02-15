@@ -306,15 +306,21 @@ async def update_application_status(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    # Find application by id
-    application = await db.ugc_applications.find_one({"id": application_id})
+    brand_id = brand.get("id") or brand.get("brand_id")
+    
+    # Find application by id (support both schemas)
+    application = await db.ugc_applications.find_one({
+        "$or": [{"id": application_id}, {"application_id": application_id}]
+    })
     if not application:
         raise HTTPException(status_code=404, detail="Aplicación no encontrada")
     
-    # Verify brand owns the campaign
+    app_id = application.get("id") or application.get("application_id")
+    
+    # Verify brand owns the campaign (support both schemas)
     campaign = await db.ugc_campaigns.find_one({
-        "id": application["campaign_id"],
-        "brand_id": brand["id"]
+        "$or": [{"id": application["campaign_id"]}, {"campaign_id": application["campaign_id"]}],
+        "brand_id": brand_id
     })
     if not campaign:
         raise HTTPException(status_code=403, detail="No tenés permiso para esta campaña")
@@ -326,8 +332,7 @@ async def update_application_status(
         "updated_at": now
     }
     
-    campaign_id = campaign["id"]
-    app_id = application["id"]
+    campaign_id = campaign.get("id") or campaign.get("campaign_id")
     
     if data.status == ApplicationStatus.CONFIRMED:
         # Check slots
@@ -338,15 +343,17 @@ async def update_application_status(
         
         update_data["confirmed_at"] = now
         
-        # Increment slots_filled
+        # Increment slots_filled (support both schemas)
         await db.ugc_campaigns.update_one(
-            {"id": campaign_id},
+            {"$or": [{"id": campaign_id}, {"campaign_id": campaign_id}]},
             {"$inc": {"slots_filled": 1}}
         )
         
         # Create deliverable for this creator
-        # Determine platform from creator's social networks
-        creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
+        # Determine platform from creator's social networks (support both schemas)
+        creator = await db.ugc_creators.find_one({
+            "$or": [{"id": application["creator_id"]}, {"creator_id": application["creator_id"]}]
+        })
         platform = ContentPlatform.INSTAGRAM  # Default
         if creator and creator.get("social_networks"):
             platform = creator["social_networks"][0].get("platform", ContentPlatform.INSTAGRAM)
@@ -356,7 +363,7 @@ async def update_application_status(
             "application_id": app_id,
             "campaign_id": campaign_id,
             "creator_id": application["creator_id"],
-            "brand_id": brand["id"],
+            "brand_id": brand_id,
             "platform": platform,
             "status": DeliverableStatus.AWAITING_PUBLISH,
             "status_history": [{
