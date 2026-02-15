@@ -1,93 +1,112 @@
 # Avenue UGC Platform - PRD
 
 ## Original Problem Statement
-Platform UGC (User Generated Content) para conectar marcas con creadores de contenido. Incluye sistema de reservas de studio, e-commerce, y panel de administración completo.
+Platform UGC (User Generated Content) para conectar marcas con creadores de contenido. El sistema incluye paneles para Creadores, Marcas, y Administradores.
 
 ## Current Session Focus
-Backup de base de datos funcional en producción.
+**Refactorización completa de la aplicación UGC** para adaptar todo el código al nuevo esquema de base de datos normalizado. El código debe ser retrocompatible con ambos esquemas (antiguo y nuevo).
+
+**Principios clave:**
+- Zero data loss durante migración
+- Zero pérdida de funcionalidad existente
+- Todos los cambios de esquema de BD deben ser autorizados por el usuario
 
 ## What's Been Implemented
 
-### Session: 2026-02-04 (Current)
-- ✅ **Endpoint de Backup Directo Python** (`GET /api/admin/backup/download-direct-py`)
-  - Crea backup usando Python/PyMongo sin mongodump
-  - Excluye colecciones GridFS para reducir tamaño (~1.3MB vs ~200MB)
-  - Incluye MANIFEST.json con checksums MD5
-  - Descarga directa sin subir a Cloudinary
+### Session: 2026-02-15 (Current)
+- ✅ **Panel del Creador (14 pantallas)** - Completamente refactorizado
+  - Dashboard, Profile (View/Edit), Campaign Catalog, Applications
+  - Deliverables, Workspace, Metrics Submission, Onboarding
+  - Reports, Leaderboard
   
-- ✅ **Botón "Backup Directo" en Admin Panel**
-  - Botón verde junto a "Backup Cloudinary"
-  - Descarga archivo .tar.gz directamente al navegador
-  - Muestra información de colecciones y documentos
+- ✅ **Panel de Admin (Vistas principales)** - Refactorizado
+  - Gestión de Campañas, Creators, Marcas, Deliverables
+  
+- ✅ **Panel de Marca (Backend)** - Adaptado a retrocompatibilidad
+  - `/api/ugc/brands/me/dashboard` - Dashboard de marca
+  - `/api/ugc/brands/me` - Perfil de marca
+  - `/api/ugc/campaigns/me/all` - Campañas de la marca
+  - Helpers `require_brand` normalizados en todos los archivos
+
+- ✅ **Retrocompatibilidad de esquemas**
+  - Código soporta esquema antiguo (brand_id/creator_id/campaign_id como PKs)
+  - Código soporta esquema nuevo (id como PK universal)
+  - Queries MongoDB usan `$or` para ambos esquemas
+  - Helpers normalizan campos de ID automáticamente
+
+### Testing Results (iteration_17)
+- 30/30 tests pasados (100%)
+- Bugs corregidos en: ugc_brands.py, ugc_brand_reports.py, ugc_deliverables.py, ugc_packages.py, ugc_metrics.py, ugc_reputation.py
 
 ### Previous Sessions
 - Manual Técnico del Sistema UGC (`/app/docs/MANUAL_SISTEMA_UGC.md`)
-- Sistema de backup a Cloudinary con Python
+- Sistema de backup a Cloudinary y directo
 - Export to Excel de campañas UGC
 - Sentry Integration para monitoreo
-- Centro de notificaciones del sistema
-- Webhooks para Sentry y UptimeRobot
-- Documentación del schema de BD
 
-## Key Files
-- `/app/backend/server.py` - Endpoints de backup (líneas 3013+)
-- `/app/backend/scripts/daily_backup.py` - Script de backup programado
-- `/app/frontend/src/components/AdminDashboard.jsx` - UI de backup
-- `/app/docs/MANUAL_SISTEMA_UGC.md` - Manual técnico UGC
-- `/app/docs/DATABASE_SCHEMA.md` - Documentación del schema
+## Key Files Modified
+- `/app/backend/routes/ugc_brands.py` - Dashboard y perfil de marca
+- `/app/backend/routes/ugc_campaigns.py` - CRUD de campañas
+- `/app/backend/routes/ugc_applications.py` - Aplicaciones de creadores
+- `/app/backend/routes/ugc_deliverables.py` - Entregas
+- `/app/backend/routes/ugc_packages.py` - Paquetes de marca
+- `/app/backend/routes/ugc_metrics.py` - Métricas
+- `/app/backend/routes/ugc_reputation.py` - Reputación
 
-## Database Stats (Preview - 2026-02-04)
-- 34 colecciones totales
-- 7,609 documentos totales
-- Backup size: ~1.3MB (sin GridFS), ~5.5MB (datos crudos)
-
-## Backup Methods Available
-1. **Backup Cloudinary** - Sube a Cloudinary, envía notificaciones, programable diariamente
-2. **Backup Directo** - Descarga directa, sin dependencias externas, ideal para emergencias
+## Reference Documents
+- `/app/docs/INDICE_PANTALLAS_UGC.md` - Roadmap de pantallas a refactorizar
+- `/app/docs/DATABASE_SCHEMA.md` - Esquema de base de datos
 
 ## Prioritized Backlog
 
-### P0 - Crítico (Pending User Verification)
-1. ⏳ **Verificación en Producción** - Usuario debe probar ambos botones de backup
-   - Backup Cloudinary (subida a nube)
-   - Backup Directo (descarga local)
+### P0 - En Progreso
+1. ✅ Panel del Creador - COMPLETADO
+2. ✅ Panel de Admin (vistas principales) - COMPLETADO
+3. 🔄 Panel de Marca - Backend adaptado, frontend pendiente de verificar
+4. ⏳ Panel de Admin (deep dive) - Detail views, modals, actions
 
 ### P1 - Alta Prioridad
-- **Database Migration Plan** - Una vez confirmado el backup funcional
-- **Captura de teléfono en Google OAuth** - Modal obligatorio post-login
-- Eliminar flujo de aplicación pública (sin cuenta)
+- Adaptar frontend del Panel de Marca (BrandDashboard.jsx, BrandCampaigns.jsx, etc.)
+- Verificar Panel de Admin con funcionalidades avanzadas
+- Diseñar tablas de Niveles/Puntos/Beneficios de Creadores
 
 ### P2 - Media Prioridad
-- Configurar webhooks Sentry/UptimeRobot en producción
-- Búsqueda global en admin panel
-- Integración Bancard para pagos
-- Consolidar campos redundantes en BD
+- Monetización de Productos (Planes/Subscriptions)
+- Eliminar flujo de aplicación pública
+- Configurar webhooks producción (Sentry, UptimeRobot)
+- Búsqueda global en Admin Panel
+- Integración Bancard
 
-## Technical Debt
-- Consolidar `social_accounts` y `social_networks` en modelo Creator
-- Deprecar código GridFS legacy
-- Dato incorrecto: marca "Lurdes" tiene URL en campo `instagram_handle`
+## Technical Notes
 
-## API Endpoints de Backup
-- `POST /api/admin/backup/run` - Inicia backup a Cloudinary (background)
-- `GET /api/admin/backup/status` - Estado del último backup
-- `GET /api/admin/backup/download-direct-py` - Descarga directa sin Cloudinary
-- `GET /api/admin/backup/diagnose` - Diagnóstico de conectividad
-- `GET /api/admin/backup/diagnostics` - Historial de intentos de backup
+### Patrón de Retrocompatibilidad
+```python
+# En queries:
+{"$or": [{"id": value}, {"brand_id": value}]}
 
-## Credentials (Testing)
-- Admin: avenuepy@gmail.com / admin123
+# En acceso a campos:
+brand_id = brand.get("id") or brand.get("brand_id")
+
+# En helpers require_brand/require_creator:
+if "id" not in brand and "brand_id" in brand:
+    brand["id"] = brand["brand_id"]
+```
+
+### Base de Datos de Prueba
+- DB: `test_database` en localhost:27017
+- Esquema: Antiguo (usa brand_id/creator_id/campaign_id como PKs)
+- La BD de producción (`avenue_db`) tiene esquema nuevo
+
+## Test Credentials
+- **Admin:** avenuepy@gmail.com / admin123
+- **Test Creator:** testcreator@example.com / test123
+- **Test Brand:** testbrand@example.com / brand123
 
 ## 3rd Party Integrations
-- Resend (emails desde avenue.com.py)
-- Emergent Google Auth
-- Gemini Vision (métricas AI)
-- Cloudinary (archivos/backups)
-- Sentry (errores)
-- UptimeRobot (disponibilidad)
+- Cloudinary (archivos)
+- Resend (emails)
+- MongoDB Atlas
+- Emergent-managed Google Auth
 
-## Production Environment Notes
-- MongoDB Atlas (no local)
-- DB name: avenue-secure-shop-test_database
-- `mongodump` NO está instalado - usar método Python
-- Cloudinary limit: ~100MB por archivo
+## Known Issues
+- Instagram handle de marca "Lurdes" contiene URL completa en lugar de handle
