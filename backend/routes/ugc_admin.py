@@ -530,16 +530,22 @@ async def get_creator_reviews(
     for review in reviews:
         if review.get("brand_id"):
             brand = await db.ugc_brands.find_one(
-                {"id": review["brand_id"]},
-                {"_id": 0, "company_name": 1, "contact_name": 1}
+                {"brand_id": review["brand_id"]},
+                {"_id": 0, "brand_name": 1, "contact_name": 1}
             )
             if brand:
-                review["brand_name"] = brand.get("company_name") or brand.get("contact_name")
+                review["brand_name"] = brand.get("brand_name") or brand.get("contact_name")
+    
+    # Get creator name from users if not in creator
+    creator_name = creator.get("name")
+    if not creator_name and creator.get("user_id"):
+        user = await db.users.find_one({"user_id": creator["user_id"]}, {"_id": 0, "name": 1})
+        creator_name = user.get("name", "") if user else ""
     
     return {
         "reviews": reviews,
         "total": len(reviews),
-        "creator_name": creator.get("name")
+        "creator_name": creator_name
     }
 
 
@@ -552,20 +558,33 @@ async def get_creator_detail(
     await require_admin(request)
     db = await get_db()
     
-    creator = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0})
+    # Try creator_id first, then id for backwards compatibility
+    creator = await db.ugc_creators.find_one({"creator_id": creator_id}, {"_id": 0})
+    if not creator:
+        creator = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0})
     if not creator:
         raise HTTPException(status_code=404, detail="Creator not found")
     
+    # Add id alias for frontend
+    if "creator_id" in creator and "id" not in creator:
+        creator["id"] = creator["creator_id"]
+    
+    # Get name from users if not in creator
+    if not creator.get("name") and creator.get("user_id"):
+        user = await db.users.find_one({"user_id": creator["user_id"]}, {"_id": 0, "name": 1})
+        if user:
+            creator["name"] = user.get("name", "")
+    
     # Get campaigns count
     campaigns_count = await db.ugc_applications.count_documents({
-        "creator_id": creator_id,
+        "creator_id": creator.get("creator_id", creator_id),
         "status": {"$in": ["confirmed", "completed"]}
     })
     creator["campaigns_count"] = campaigns_count
     
     # Get ratings
     ratings = await db.ugc_ratings.find(
-        {"creator_id": creator_id},
+        {"creator_id": creator.get("creator_id", creator_id)},
         {"_id": 0, "rating": 1}
     ).to_list(100)
     creator["avg_rating"] = round(sum(r.get("rating", 0) for r in ratings) / len(ratings), 1) if ratings else 0
