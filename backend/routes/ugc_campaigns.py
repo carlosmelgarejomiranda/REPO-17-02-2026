@@ -351,7 +351,10 @@ async def get_my_campaigns(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    query = {"brand_id": brand["id"]}
+    # Support both schemas
+    brand_id = brand.get("id") or brand.get("brand_id")
+    
+    query = {"brand_id": brand_id}
     if status:
         query["status"] = status
     
@@ -362,7 +365,12 @@ async def get_my_campaigns(
     
     # Add application counts
     for campaign in campaigns:
-        app_count = await db.ugc_applications.count_documents({"campaign_id": campaign["id"]})
+        # Support both schemas for campaign id
+        campaign_id = campaign.get("id") or campaign.get("campaign_id")
+        # Ensure id field exists for frontend
+        if "id" not in campaign and campaign_id:
+            campaign["id"] = campaign_id
+        app_count = await db.ugc_applications.count_documents({"campaign_id": campaign_id})
         campaign["applications_count"] = app_count
     
     return {"campaigns": campaigns}
