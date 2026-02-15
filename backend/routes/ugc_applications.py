@@ -205,21 +205,14 @@ async def withdraw_application(
     db = await get_db()
     user, creator = await require_creator(request)
     
-    # Try application_id first, then id
+    # Find by id
     application = await db.ugc_applications.find_one({
-        "application_id": application_id,
-        "creator_id": creator["creator_id"]
+        "id": application_id,
+        "creator_id": creator["id"]
     })
-    if not application:
-        application = await db.ugc_applications.find_one({
-            "id": application_id,
-            "creator_id": creator["creator_id"]
-        })
     
     if not application:
         raise HTTPException(status_code=404, detail="Aplicación no encontrada")
-    
-    app_id = application.get("application_id", application.get("id"))
     
     if application["status"] == ApplicationStatus.CONFIRMED:
         raise HTTPException(status_code=400, detail="No podés retirar una aplicación confirmada")
@@ -227,7 +220,7 @@ async def withdraw_application(
     now = datetime.now(timezone.utc).isoformat()
     
     await db.ugc_applications.update_one(
-        {"application_id": app_id},
+        {"id": application_id},
         {
             "$set": {
                 "status": ApplicationStatus.WITHDRAWN,
@@ -258,10 +251,7 @@ async def get_campaign_applications(
     user, brand = await require_brand(request)
     
     # Verify brand owns the campaign
-    campaign = await db.ugc_campaigns.find_one({"campaign_id": campaign_id, "brand_id": brand["brand_id"]})
-    if not campaign:
-        # Try legacy id field
-        campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["brand_id"]})
+    campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["id"]})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
@@ -277,7 +267,7 @@ async def get_campaign_applications(
     # Enrich with creator profiles
     for app in applications:
         creator = await db.ugc_creators.find_one(
-            {"creator_id": app["creator_id"]},
+            {"id": app["creator_id"]},
             {"_id": 0, "email": 0}
         )
         # Get name from users if not in creator
