@@ -1024,8 +1024,10 @@ async def admin_get_campaign_applications(
     await require_admin(request)
     db = await get_db()
     
-    # Verify campaign exists
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id})
+    # Verify campaign exists - try campaign_id first, then id
+    campaign = await db.ugc_campaigns.find_one({"campaign_id": campaign_id})
+    if not campaign:
+        campaign = await db.ugc_campaigns.find_one({"id": campaign_id})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
@@ -1040,14 +1042,37 @@ async def admin_get_campaign_applications(
         {"_id": 0}
     ).sort("applied_at", -1).to_list(500)
     
+    # Get all creator_ids for bulk fetch
+    creator_ids = list(set(app.get("creator_id") for app in applications if app.get("creator_id")))
+    
+    # Fetch all creators at once
+    creators = await db.ugc_creators.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0}
+    ).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    
+    # Get user names for creators without name
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id") and not c.get("name")]
+    user_map = {}
+    if user_ids:
+        users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(len(user_ids))
+        user_map = {u["user_id"]: u for u in users}
+    
     # Enrich with creator profiles and social accounts
     for app in applications:
-        creator = await db.ugc_creators.find_one(
-            {"id": app["creator_id"]},
-            {"_id": 0}
-        )
+        creator = creator_map.get(app.get("creator_id"))
         if creator:
-            creator_id = creator.get("id")
+            creator_id = creator.get("creator_id")
+            
+            # Add name from users if not present
+            if not creator.get("name") and creator.get("user_id"):
+                user_data = user_map.get(creator["user_id"], {})
+                creator["name"] = user_data.get("name", "")
+            
+            # Add id alias for frontend
+            if creator_id and "id" not in creator:
+                creator["id"] = creator_id
             
             # Include verified social accounts info (from AI verification)
             social_accounts = creator.get("social_accounts", {})
