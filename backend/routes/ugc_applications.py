@@ -260,12 +260,19 @@ async def get_campaign_applications(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    # Verify brand owns the campaign
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["id"]})
+    brand_id = brand.get("id") or brand.get("brand_id")
+    
+    # Verify brand owns the campaign (support both schemas)
+    campaign = await db.ugc_campaigns.find_one({
+        "$or": [{"id": campaign_id}, {"campaign_id": campaign_id}],
+        "brand_id": brand_id
+    })
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
-    query = {"campaign_id": campaign_id}
+    camp_id = campaign.get("id") or campaign.get("campaign_id")
+    
+    query = {"campaign_id": camp_id}
     if status:
         query["status"] = status
     
@@ -277,7 +284,7 @@ async def get_campaign_applications(
     # Enrich with creator profiles
     for app in applications:
         creator = await db.ugc_creators.find_one(
-            {"id": app["creator_id"]},
+            {"$or": [{"id": app["creator_id"]}, {"creator_id": app["creator_id"]}]},
             {"_id": 0, "email": 0}
         )
         # Get name from users if not in creator
