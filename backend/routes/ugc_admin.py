@@ -779,11 +779,20 @@ async def get_all_campaigns(
     # Enrich with brand info, application stats, and delivery traffic lights
     filtered_campaigns = []
     for campaign in campaigns:
+        campaign_id = campaign.get("campaign_id", campaign.get("id"))
+        
         brand = await db.ugc_brands.find_one(
-            {"id": campaign["brand_id"]},
-            {"_id": 0, "company_name": 1, "logo_url": 1}
+            {"brand_id": campaign["brand_id"]},
+            {"_id": 0, "brand_name": 1, "logo_url": 1}
         )
+        # Map brand_name to company_name for frontend compatibility
+        if brand:
+            brand["company_name"] = brand.get("brand_name")
         campaign["brand"] = brand
+        
+        # Add id alias for frontend compatibility
+        if "campaign_id" in campaign and "id" not in campaign:
+            campaign["id"] = campaign["campaign_id"]
         
         # Application stats
         app_stats = {
@@ -794,13 +803,13 @@ async def get_all_campaigns(
         }
         
         apps = await db.ugc_applications.find(
-            {"campaign_id": campaign["id"]},
-            {"_id": 0, "status": 1}
+            {"campaign_id": campaign_id},
+            {"_id": 0, "status": 1, "application_id": 1, "creator_id": 1, "confirmed_at": 1}
         ).to_list(500)
         
         app_stats["total"] = len(apps)
         for app in apps:
-            if app.get("status") == "pending":
+            if app.get("status") == "pending" or app.get("status") == "applied":
                 app_stats["pending"] += 1
             elif app.get("status") == "confirmed":
                 app_stats["approved"] += 1
@@ -819,24 +828,26 @@ async def get_all_campaigns(
         metrics_fixed_date = campaign.get("metrics_delivery_fixed_date")
         
         # Get all confirmed applications with their confirmed_at date
-        confirmed_apps = await db.ugc_applications.find(
-            {"campaign_id": campaign["id"], "status": "confirmed"},
-            {"_id": 0, "id": 1, "creator_id": 1, "confirmed_at": 1}
-        ).to_list(500)
+        confirmed_apps = [a for a in apps if a.get("status") == "confirmed"]
         
-        # Get deliverables for this campaign
-        deliverables = await db.ugc_deliverables.find(
-            {"campaign_id": campaign["id"]},
-            {"_id": 0, "application_id": 1, "creator_id": 1, "post_url": 1, "metrics_submitted_at": 1}
-        ).to_list(500)
+        # Get application IDs for deliverable lookup
+        app_ids = [a["application_id"] for a in confirmed_apps if a.get("application_id")]
         
-        # Create lookup for deliverables by creator
-        deliverables_by_creator = {}
+        # Get deliverables for this campaign via application_ids
+        deliverables = []
+        if app_ids:
+            deliverables = await db.ugc_deliverables.find(
+                {"application_id": {"$in": app_ids}},
+                {"_id": 0, "application_id": 1, "post_url": 1, "metrics_submitted_at": 1}
+            ).to_list(500)
+        
+        # Create lookup for deliverables by application_id
+        deliverables_by_app = {}
         for deliv in deliverables:
-            creator_id = deliv.get("creator_id")
-            if creator_id not in deliverables_by_creator:
-                deliverables_by_creator[creator_id] = []
-            deliverables_by_creator[creator_id].append(deliv)
+            app_id = deliv.get("application_id")
+            if app_id not in deliverables_by_app:
+                deliverables_by_app[app_id] = []
+            deliverables_by_app[app_id].append(deliv)
         
         # URL delivery traffic light
         url_traffic = {"on_time": 0, "due_soon": 0, "late": 0}
@@ -844,7 +855,7 @@ async def get_all_campaigns(
         metrics_traffic = {"on_time": 0, "due_soon": 0, "late": 0}
         
         for app in confirmed_apps:
-            creator_id = app.get("creator_id")
+            app_id = app.get("application_id")
             confirmed_at_str = app.get("confirmed_at")
             
             if not confirmed_at_str:
