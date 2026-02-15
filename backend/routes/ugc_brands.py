@@ -168,7 +168,8 @@ async def get_brand_dashboard(request: Request):
     if not profile:
         raise HTTPException(status_code=404, detail="Brand profile not found")
     
-    brand_id = profile["id"]
+    # Support both schemas: id or brand_id as PK
+    brand_id = profile.get("id") or profile.get("brand_id")
     
     # Get active package
     active_package = await db.ugc_packages.find_one(
@@ -187,21 +188,31 @@ async def get_brand_dashboard(request: Request):
         {"brand_id": brand_id, "status": "submitted"}
     )
     
+    # Get campaign IDs (support both schemas)
+    campaign_ids_new = await db.ugc_campaigns.distinct("id", {"brand_id": brand_id})
+    campaign_ids_old = await db.ugc_campaigns.distinct("campaign_id", {"brand_id": brand_id})
+    all_campaign_ids = [cid for cid in (campaign_ids_new + campaign_ids_old) if cid is not None]
+    
     # Get recent applications
     recent_applications = await db.ugc_applications.find(
-        {"campaign_id": {"$in": await db.ugc_campaigns.distinct("id", {"brand_id": brand_id})}},
+        {"campaign_id": {"$in": all_campaign_ids}},
         {"_id": 0}
     ).sort("applied_at", -1).limit(5).to_list(5)
     
-    # Get campaigns list for reports access
+    # Get campaigns list for reports access (support both schemas)
     campaigns = await db.ugc_campaigns.find(
         {"brand_id": brand_id},
-        {"_id": 0, "id": 1, "name": 1, "status": 1, "slots": 1, "slots_filled": 1, "category": 1, "city": 1, "created_at": 1}
+        {"_id": 0, "id": 1, "campaign_id": 1, "name": 1, "status": 1, "slots": 1, "slots_filled": 1, "category": 1, "city": 1, "created_at": 1}
     ).sort("created_at", -1).limit(10).to_list(10)
     
     # Add detailed stats for each campaign
     for campaign in campaigns:
-        campaign_id = campaign["id"]
+        # Support both schemas for campaign_id
+        campaign_id = campaign.get("id") or campaign.get("campaign_id")
+        # Ensure id field exists for frontend
+        if "id" not in campaign and campaign_id:
+            campaign["id"] = campaign_id
+            
         total_deliverables = campaign.get("slots", 0)  # materiales a entregar = slots
         
         # Aplicaciones count
