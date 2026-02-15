@@ -220,10 +220,14 @@ async def create_campaign(
     
     now = datetime.now(timezone.utc).isoformat()
     
+    # Support both schemas
+    brand_id = brand.get("id") or brand.get("brand_id")
+    package_id = active_package.get("id") or active_package.get("package_id")
+    
     campaign = {
         "id": str(uuid.uuid4()),
-        "brand_id": brand["id"],
-        "package_id": active_package["id"],
+        "brand_id": brand_id,
+        "package_id": package_id,
         "name": data.name,
         "description": data.description,
         "category": data.category,
@@ -255,7 +259,13 @@ async def update_campaign(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["id"]})
+    # Support both schemas
+    brand_id = brand.get("id") or brand.get("brand_id")
+    
+    campaign = await db.ugc_campaigns.find_one({
+        "$or": [{"id": campaign_id}, {"campaign_id": campaign_id}], 
+        "brand_id": brand_id
+    })
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
