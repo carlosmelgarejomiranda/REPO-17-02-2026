@@ -529,7 +529,7 @@ async def get_my_applications(
     db = await get_db()
     user, creator = await require_creator(request)
     
-    query = {"creator_id": creator["creator_id"]}
+    query = {"creator_id": creator["id"]}
     if status:
         query["status"] = status
     
@@ -541,26 +541,15 @@ async def get_my_applications(
     # Enrich with campaign info
     for app in applications:
         campaign = await db.ugc_campaigns.find_one(
-            {"campaign_id": app["campaign_id"]},
+            {"id": app["campaign_id"]},
             {"_id": 0}
         )
-        if not campaign:
-            campaign = await db.ugc_campaigns.find_one(
-                {"id": app["campaign_id"]},
-                {"_id": 0}
-            )
         if campaign:
             brand = await db.ugc_brands.find_one(
-                {"brand_id": campaign["brand_id"]},
-                {"_id": 0, "brand_name": 1, "logo_url": 1}
+                {"id": campaign["brand_id"]},
+                {"_id": 0, "company_name": 1, "logo_url": 1}
             )
-            # Map brand_name to company_name for frontend compatibility
-            if brand:
-                brand["company_name"] = brand.get("brand_name")
             campaign["brand"] = brand
-            # Add id alias for frontend compatibility
-            if "campaign_id" in campaign and "id" not in campaign:
-                campaign["id"] = campaign["campaign_id"]
         app["campaign"] = campaign
     
     return {"applications": applications}
