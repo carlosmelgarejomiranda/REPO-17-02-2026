@@ -2063,18 +2063,57 @@ async def get_all_deliverables(
         {"_id": 0}
     ).sort("updated_at", -1).skip(skip).limit(limit).to_list(limit)
     
-    # Enrich with creator and campaign info
+    # Get all application_ids to fetch related data in bulk
+    app_ids = list(set(d.get("application_id") for d in deliverables if d.get("application_id")))
+    
+    # Fetch applications
+    applications = await db.ugc_applications.find(
+        {"application_id": {"$in": app_ids}},
+        {"_id": 0, "application_id": 1, "creator_id": 1, "campaign_id": 1}
+    ).to_list(len(app_ids))
+    app_map = {a["application_id"]: a for a in applications}
+    
+    # Get unique creator_ids and campaign_ids
+    creator_ids = list(set(a.get("creator_id") for a in applications if a.get("creator_id")))
+    campaign_ids = list(set(a.get("campaign_id") for a in applications if a.get("campaign_id")))
+    
+    # Fetch creators
+    creators = await db.ugc_creators.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0, "creator_id": 1, "user_id": 1, "name": 1}
+    ).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    
+    # Get user names for creators without name
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id") and not c.get("name")]
+    if user_ids:
+        users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1, "email": 1}).to_list(len(user_ids))
+        user_map = {u["user_id"]: u for u in users}
+        for c in creators:
+            if not c.get("name") and c.get("user_id"):
+                user_data = user_map.get(c["user_id"], {})
+                c["name"] = user_data.get("name", "")
+                c["email"] = user_data.get("email", "")
+    
+    # Fetch campaigns
+    campaigns = await db.ugc_campaigns.find(
+        {"campaign_id": {"$in": campaign_ids}},
+        {"_id": 0, "campaign_id": 1, "name": 1, "brand_id": 1}
+    ).to_list(len(campaign_ids))
+    campaign_map = {c["campaign_id"]: c for c in campaigns}
+    
+    # Enrich deliverables
     for del_item in deliverables:
-        creator = await db.ugc_creators.find_one(
-            {"id": del_item.get("creator_id")},
-            {"_id": 0, "name": 1, "email": 1}
-        )
-        campaign = await db.ugc_campaigns.find_one(
-            {"id": del_item.get("campaign_id")},
-            {"_id": 0, "name": 1, "brand_id": 1}
-        )
+        app_data = app_map.get(del_item.get("application_id"), {})
+        creator = creator_map.get(app_data.get("creator_id"))
+        campaign = campaign_map.get(app_data.get("campaign_id"))
+        
         del_item["creator"] = creator
         del_item["campaign"] = campaign
+        
+        # Add id alias for frontend compatibility
+        if "deliverable_id" in del_item and "id" not in del_item:
+            del_item["id"] = del_item["deliverable_id"]
     
     total = await db.ugc_deliverables.count_documents(query)
     
@@ -2091,10 +2130,14 @@ async def admin_review_deliverable(
     await require_admin(request)
     db = await get_db()
     
-    deliverable = await db.ugc_deliverables.find_one({"id": deliverable_id})
+    # Try deliverable_id first, then id
+    deliverable = await db.ugc_deliverables.find_one({"deliverable_id": deliverable_id})
+    if not deliverable:
+        deliverable = await db.ugc_deliverables.find_one({"id": deliverable_id})
     if not deliverable:
         raise HTTPException(status_code=404, detail="Deliverable not found")
     
+    deliv_id = deliverable.get("deliverable_id", deliverable_id)
     now = datetime.now(timezone.utc).isoformat()
     
     if action == "approve":
@@ -2113,7 +2156,7 @@ async def admin_review_deliverable(
         update_data["admin_feedback"] = feedback
     
     await db.ugc_deliverables.update_one(
-        {"id": deliverable_id},
+        {"deliverable_id": deliv_id},
         {"$set": update_data}
     )
     
