@@ -21,6 +21,28 @@ BRAND_EMAIL = "testbrand@example.com"
 BRAND_PASSWORD = "brand123"
 
 
+def get_creator_token():
+    """Get creator authentication token"""
+    response = requests.post(f"{BASE_URL}/api/auth/login", json={
+        "email": CREATOR_EMAIL,
+        "password": CREATOR_PASSWORD
+    })
+    if response.status_code == 200:
+        return response.json().get("token")
+    return None
+
+
+def get_brand_token():
+    """Get brand authentication token"""
+    response = requests.post(f"{BASE_URL}/api/auth/login", json={
+        "email": BRAND_EMAIL,
+        "password": BRAND_PASSWORD
+    })
+    if response.status_code == 200:
+        return response.json().get("token")
+    return None
+
+
 class TestAuthEndpoints:
     """Test authentication endpoints"""
     
@@ -62,38 +84,17 @@ class TestAuthEndpoints:
         assert response.status_code == 401
 
 
-@pytest.fixture
-def creator_token():
-    """Get creator authentication token"""
-    response = requests.post(f"{BASE_URL}/api/auth/login", json={
-        "email": CREATOR_EMAIL,
-        "password": CREATOR_PASSWORD
-    })
-    if response.status_code == 200:
-        return response.json().get("token")
-    pytest.skip("Creator authentication failed")
-
-
-@pytest.fixture
-def brand_token():
-    """Get brand authentication token"""
-    response = requests.post(f"{BASE_URL}/api/auth/login", json={
-        "email": BRAND_EMAIL,
-        "password": BRAND_PASSWORD
-    })
-    if response.status_code == 200:
-        return response.json().get("token")
-    pytest.skip("Brand authentication failed")
-
-
 class TestBrandDashboard:
     """Test Brand Dashboard endpoint - /api/ugc/brands/me/dashboard"""
     
-    def test_brand_dashboard_returns_profile(self, brand_token):
+    def test_brand_dashboard_returns_profile(self):
         """Dashboard should return brand profile"""
+        token = get_brand_token()
+        assert token, "Failed to get brand token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/brands/me/dashboard",
-            headers={"Authorization": f"Bearer {brand_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, f"Dashboard failed: {response.text}"
         
@@ -105,11 +106,14 @@ class TestBrandDashboard:
         assert "brand_id" in profile or "id" in profile, "No brand identifier in profile"
         assert "user_id" in profile, "user_id not in profile"
     
-    def test_brand_dashboard_returns_stats(self, brand_token):
+    def test_brand_dashboard_returns_stats(self):
         """Dashboard should return campaign statistics"""
+        token = get_brand_token()
+        assert token, "Failed to get brand token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/brands/me/dashboard",
-            headers={"Authorization": f"Bearer {brand_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -122,11 +126,14 @@ class TestBrandDashboard:
         assert "pending_reviews" in stats
         assert "deliveries_remaining" in stats
     
-    def test_brand_dashboard_returns_campaigns(self, brand_token):
+    def test_brand_dashboard_returns_campaigns(self):
         """Dashboard should return campaigns list with stats"""
+        token = get_brand_token()
+        assert token, "Failed to get brand token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/brands/me/dashboard",
-            headers={"Authorization": f"Bearer {brand_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -143,11 +150,14 @@ class TestBrandDashboard:
             assert "applications_count" in campaign
             assert "confirmed_count" in campaign
     
-    def test_brand_dashboard_returns_recent_applications(self, brand_token):
+    def test_brand_dashboard_returns_recent_applications(self):
         """Dashboard should return recent applications"""
+        token = get_brand_token()
+        assert token, "Failed to get brand token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/brands/me/dashboard",
-            headers={"Authorization": f"Bearer {brand_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -163,11 +173,14 @@ class TestBrandDashboard:
 class TestBrandCampaignsList:
     """Test Brand Campaigns List endpoint - /api/ugc/campaigns/me/all"""
     
-    def test_get_my_campaigns(self, brand_token):
+    def test_get_my_campaigns(self):
         """Brand should be able to list their campaigns"""
+        token = get_brand_token()
+        assert token, "Failed to get brand token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/me/all",
-            headers={"Authorization": f"Bearer {brand_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, f"Get campaigns failed: {response.text}"
         
@@ -185,11 +198,14 @@ class TestBrandCampaignsList:
             assert "brand_id" in campaign
             assert "applications_count" in campaign
     
-    def test_get_my_campaigns_requires_brand_profile(self, creator_token):
+    def test_get_my_campaigns_requires_brand_profile(self):
         """Creator without brand profile should get 403"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/me/all",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 403
 
@@ -197,12 +213,15 @@ class TestBrandCampaignsList:
 class TestCampaignDetail:
     """Test Campaign Detail endpoint - /api/ugc/campaigns/{id}"""
     
-    def test_get_campaign_detail_with_brand_info(self, creator_token):
+    def test_get_campaign_detail_with_brand_info(self):
         """Campaign detail should include brand information"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         # First get available campaigns to get a campaign_id
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/available",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -217,7 +236,7 @@ class TestCampaignDetail:
         # Get campaign detail
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/{campaign_id}",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, f"Campaign detail failed: {response.text}"
         
@@ -229,11 +248,14 @@ class TestCampaignDetail:
             # company_name should be set (retrocompat maps brand_name to company_name)
             assert "company_name" in brand, "company_name not in brand info"
     
-    def test_get_campaign_detail_shows_slots_available(self, creator_token):
+    def test_get_campaign_detail_shows_slots_available(self):
         """Campaign detail should show available slots"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/available",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         campaigns = response.json().get("campaigns", [])
         
@@ -244,7 +266,7 @@ class TestCampaignDetail:
         
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/{campaign_id}",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -252,11 +274,14 @@ class TestCampaignDetail:
         assert "slots_available" in data, "slots_available not in response"
         assert isinstance(data["slots_available"], int)
     
-    def test_campaign_not_found(self, creator_token):
+    def test_campaign_not_found(self):
         """Non-existent campaign should return 404"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/non-existent-id-12345",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 404
 
@@ -264,11 +289,14 @@ class TestCampaignDetail:
 class TestAvailableCampaigns:
     """Test Available Campaigns endpoint - /api/ugc/campaigns/available"""
     
-    def test_get_available_campaigns(self, creator_token):
+    def test_get_available_campaigns(self):
         """Creator should be able to list available campaigns"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/available",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, f"Available campaigns failed: {response.text}"
         
@@ -278,11 +306,14 @@ class TestAvailableCampaigns:
         assert "skip" in data
         assert "limit" in data
     
-    def test_available_campaigns_include_brand_info(self, creator_token):
+    def test_available_campaigns_include_brand_info(self):
         """Available campaigns should include brand information"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/available",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -298,11 +329,14 @@ class TestAvailableCampaigns:
                 # Retrocompat: company_name should be set
                 assert "company_name" in brand, "company_name not in brand"
     
-    def test_available_campaigns_show_has_applied(self, creator_token):
+    def test_available_campaigns_show_has_applied(self):
         """Available campaigns should show if creator has applied"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/available",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -314,11 +348,14 @@ class TestAvailableCampaigns:
             assert "has_applied" in campaign, "has_applied not in campaign"
             assert isinstance(campaign["has_applied"], bool)
     
-    def test_available_campaigns_show_slots_available(self, creator_token):
+    def test_available_campaigns_show_slots_available(self):
         """Available campaigns should show available slots"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/available",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -334,11 +371,14 @@ class TestAvailableCampaigns:
 class TestCreatorProfile:
     """Test Creator Profile endpoints"""
     
-    def test_get_creator_profile(self, creator_token):
+    def test_get_creator_profile(self):
         """Creator should be able to get their profile"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/creators/me",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, f"Get profile failed: {response.text}"
         
@@ -349,11 +389,14 @@ class TestCreatorProfile:
         assert "profile_complete" in data
         assert "needs_profile_update" in data
     
-    def test_creator_profile_has_name(self, creator_token):
+    def test_creator_profile_has_name(self):
         """Creator profile should have name field"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/creators/me",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -369,11 +412,14 @@ class TestCreatorProfile:
 class TestCreatorApplications:
     """Test Creator Applications endpoint - /api/ugc/applications/me"""
     
-    def test_get_my_applications(self, creator_token):
+    def test_get_my_applications(self):
         """Creator should be able to list their applications"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/applications/me",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, f"Get applications failed: {response.text}"
         
@@ -381,17 +427,21 @@ class TestCreatorApplications:
         assert "applications" in data, "Applications not in response"
         assert isinstance(data["applications"], list)
     
-    def test_applications_include_campaign_info(self, creator_token):
+    def test_applications_include_campaign_info(self):
         """Applications should include campaign information"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/applications/me",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
         data = response.json()
         applications = data.get("applications", [])
         
+        # Test creator may not have applications, that's OK
         if len(applications) > 0:
             app = applications[0]
             assert "campaign" in app, "Campaign not in application"
@@ -400,11 +450,14 @@ class TestCreatorApplications:
             if campaign:
                 assert "brand" in campaign, "Brand not in campaign"
     
-    def test_applications_requires_creator_profile(self, brand_token):
+    def test_applications_requires_creator_profile(self):
         """Brand without creator profile should get 403"""
+        token = get_brand_token()
+        assert token, "Failed to get brand token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/applications/me",
-            headers={"Authorization": f"Bearer {brand_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 403
 
@@ -412,11 +465,14 @@ class TestCreatorApplications:
 class TestBrandProfile:
     """Test Brand Profile endpoints"""
     
-    def test_get_brand_profile(self, brand_token):
+    def test_get_brand_profile(self):
         """Brand should be able to get their profile"""
+        token = get_brand_token()
+        assert token, "Failed to get brand token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/brands/me",
-            headers={"Authorization": f"Bearer {brand_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, f"Get brand profile failed: {response.text}"
         
@@ -434,11 +490,14 @@ class TestBrandProfile:
 class TestRetrocompatibility:
     """Test specific retrocompatibility features"""
     
-    def test_brand_dashboard_uses_or_query_for_brand_id(self, brand_token):
+    def test_brand_dashboard_uses_or_query_for_brand_id(self):
         """Dashboard should work with both id and brand_id schemas"""
+        token = get_brand_token()
+        assert token, "Failed to get brand token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/brands/me/dashboard",
-            headers={"Authorization": f"Bearer {brand_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
@@ -446,11 +505,14 @@ class TestRetrocompatibility:
         data = response.json()
         assert data["stats"]["total_campaigns"] >= 0
     
-    def test_campaign_detail_uses_or_query(self, creator_token):
+    def test_campaign_detail_uses_or_query(self):
         """Campaign detail should work with both id and campaign_id"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/campaigns/available",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         campaigns = response.json().get("campaigns", [])
         
@@ -462,7 +524,7 @@ class TestRetrocompatibility:
         if campaign_id:
             response = requests.get(
                 f"{BASE_URL}/api/ugc/campaigns/{campaign_id}",
-                headers={"Authorization": f"Bearer {creator_token}"}
+                headers={"Authorization": f"Bearer {token}"}
             )
             assert response.status_code == 200, "Failed with campaign_id"
         
@@ -471,15 +533,18 @@ class TestRetrocompatibility:
         if campaign_id:
             response = requests.get(
                 f"{BASE_URL}/api/ugc/campaigns/{campaign_id}",
-                headers={"Authorization": f"Bearer {creator_token}"}
+                headers={"Authorization": f"Bearer {token}"}
             )
             assert response.status_code == 200, "Failed with id"
     
-    def test_applications_enriched_with_brand_company_name(self, creator_token):
+    def test_applications_enriched_with_brand_company_name(self):
         """Applications should have brand.company_name (mapped from brand_name)"""
+        token = get_creator_token()
+        assert token, "Failed to get creator token"
+        
         response = requests.get(
             f"{BASE_URL}/api/ugc/applications/me",
-            headers={"Authorization": f"Bearer {creator_token}"}
+            headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200
         
