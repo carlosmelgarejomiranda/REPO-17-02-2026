@@ -20,27 +20,38 @@ CREATOR_PASSWORD = "test123"
 BRAND_EMAIL = "testbrand@example.com"
 BRAND_PASSWORD = "brand123"
 
+# Module-level token cache to avoid rate limiting
+_token_cache = {}
+
 
 def get_creator_token():
-    """Get creator authentication token"""
-    response = requests.post(f"{BASE_URL}/api/auth/login", json={
-        "email": CREATOR_EMAIL,
-        "password": CREATOR_PASSWORD
-    })
-    if response.status_code == 200:
-        return response.json().get("token")
-    return None
+    """Get creator authentication token (cached)"""
+    if 'creator' not in _token_cache:
+        response = requests.post(f"{BASE_URL}/api/auth/login", json={
+            "email": CREATOR_EMAIL,
+            "password": CREATOR_PASSWORD
+        })
+        if response.status_code == 200:
+            _token_cache['creator'] = response.json().get("token")
+        else:
+            print(f"Creator login failed: {response.status_code} - {response.text}")
+            _token_cache['creator'] = None
+    return _token_cache.get('creator')
 
 
 def get_brand_token():
-    """Get brand authentication token"""
-    response = requests.post(f"{BASE_URL}/api/auth/login", json={
-        "email": BRAND_EMAIL,
-        "password": BRAND_PASSWORD
-    })
-    if response.status_code == 200:
-        return response.json().get("token")
-    return None
+    """Get brand authentication token (cached)"""
+    if 'brand' not in _token_cache:
+        response = requests.post(f"{BASE_URL}/api/auth/login", json={
+            "email": BRAND_EMAIL,
+            "password": BRAND_PASSWORD
+        })
+        if response.status_code == 200:
+            _token_cache['brand'] = response.json().get("token")
+        else:
+            print(f"Brand login failed: {response.status_code} - {response.text}")
+            _token_cache['brand'] = None
+    return _token_cache.get('brand')
 
 
 class TestAuthEndpoints:
@@ -48,6 +59,9 @@ class TestAuthEndpoints:
     
     def test_creator_login(self):
         """Test creator can login successfully"""
+        # Clear cache to test fresh login
+        _token_cache.pop('creator', None)
+        
         response = requests.post(f"{BASE_URL}/api/auth/login", json={
             "email": CREATOR_EMAIL,
             "password": CREATOR_PASSWORD
@@ -60,9 +74,15 @@ class TestAuthEndpoints:
         assert data["email"] == CREATOR_EMAIL
         assert data["role"] == "creator"
         assert data["has_creator_profile"] == True
+        
+        # Cache the token
+        _token_cache['creator'] = data["token"]
     
     def test_brand_login(self):
         """Test brand can login successfully"""
+        # Clear cache to test fresh login
+        _token_cache.pop('brand', None)
+        
         response = requests.post(f"{BASE_URL}/api/auth/login", json={
             "email": BRAND_EMAIL,
             "password": BRAND_PASSWORD
@@ -74,6 +94,9 @@ class TestAuthEndpoints:
         assert data["email"] == BRAND_EMAIL
         assert data["role"] == "brand"
         assert data["has_brand_profile"] == True
+        
+        # Cache the token
+        _token_cache['brand'] = data["token"]
     
     def test_invalid_login(self):
         """Test invalid credentials return 401"""
