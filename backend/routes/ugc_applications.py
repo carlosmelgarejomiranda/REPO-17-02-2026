@@ -487,16 +487,18 @@ async def withdraw_confirmed_application(
     
     now = datetime.now(timezone.utc).isoformat()
     
-    # Get campaign to update slots
-    campaign = await db.ugc_campaigns.find_one({"id": application["campaign_id"]})
+    # Get campaign to update slots (support both schemas)
+    campaign = await db.ugc_campaigns.find_one({
+        "$or": [{"id": application["campaign_id"]}, {"campaign_id": application["campaign_id"]}]
+    })
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
-    campaign_id = campaign["id"]
+    campaign_id = campaign.get("id") or campaign.get("campaign_id")
     
-    # Update application status to CANCELLED
+    # Update application status to CANCELLED (support both schemas)
     await db.ugc_applications.update_one(
-        {"id": app_id},
+        {"$or": [{"id": app_id}, {"application_id": app_id}]},
         {
             "$set": {
                 "status": ApplicationStatus.CANCELLED,
@@ -514,9 +516,9 @@ async def withdraw_confirmed_application(
         }
     )
     
-    # Decrement slots_filled to free up the slot
+    # Decrement slots_filled to free up the slot (support both schemas)
     await db.ugc_campaigns.update_one(
-        {"id": campaign_id},
+        {"$or": [{"id": campaign_id}, {"campaign_id": campaign_id}]},
         {"$inc": {"slots_filled": -1}}
     )
     
@@ -535,11 +537,14 @@ async def withdraw_confirmed_application(
     # Send email notification to admin
     try:
         from services.ugc_emails import notify_application_cancelled
-        brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1})
+        brand = await db.ugc_brands.find_one(
+            {"$or": [{"id": campaign["brand_id"]}, {"brand_id": campaign["brand_id"]}]}, 
+            {"_id": 0, "company_name": 1, "brand_name": 1}
+        )
         await notify_application_cancelled(
             creator_name=creator_name,
             campaign_name=campaign.get("name", ""),
-            brand_name=brand.get("company_name", "") if brand else "",
+            brand_name=(brand.get("company_name") or brand.get("brand_name") or "") if brand else "",
             cancelled_by="creator"
         )
     except Exception as e:
