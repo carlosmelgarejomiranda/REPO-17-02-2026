@@ -679,8 +679,18 @@ async def get_all_brands(
     
     # Enrich with package info
     for brand in brands:
+        brand_id = brand.get("brand_id")
+        
+        # Add id alias for frontend compatibility
+        if brand_id and "id" not in brand:
+            brand["id"] = brand_id
+        
+        # Map brand_name to company_name for frontend compatibility
+        if brand.get("brand_name") and not brand.get("company_name"):
+            brand["company_name"] = brand["brand_name"]
+        
         active_pkg = await db.ugc_packages.find_one(
-            {"brand_id": brand["id"], "status": "active"},
+            {"brand_id": brand_id, "status": "active"},
             {"_id": 0}
         )
         brand["active_package"] = active_pkg
@@ -699,8 +709,9 @@ async def verify_brand(
     await require_admin(request)
     db = await get_db()
     
+    # Try brand_id first, then id for backwards compatibility
     result = await db.ugc_brands.update_one(
-        {"id": brand_id},
+        {"brand_id": brand_id},
         {
             "$set": {
                 "is_verified": verified,
@@ -708,6 +719,18 @@ async def verify_brand(
             }
         }
     )
+    
+    if result.modified_count == 0:
+        # Try legacy id field
+        result = await db.ugc_brands.update_one(
+            {"id": brand_id},
+            {
+                "$set": {
+                    "is_verified": verified,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
     
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Brand not found")
@@ -739,9 +762,11 @@ async def get_all_packages(
     # Enrich with brand info
     for pkg in packages:
         brand = await db.ugc_brands.find_one(
-            {"id": pkg["brand_id"]},
-            {"_id": 0, "company_name": 1}
+            {"brand_id": pkg["brand_id"]},
+            {"_id": 0, "brand_name": 1}
         )
+        if brand:
+            brand["company_name"] = brand.get("brand_name")
         pkg["brand"] = brand
     
     total = await db.ugc_packages.count_documents(query)
