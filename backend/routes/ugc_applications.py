@@ -395,9 +395,9 @@ async def update_application_status(
         update_data["rejected_at"] = now
         update_data["rejection_reason"] = data.reason
     
-    # Update application
+    # Update application (support both schemas)
     await db.ugc_applications.update_one(
-        {"id": app_id},
+        {"$or": [{"id": app_id}, {"application_id": app_id}]},
         {
             "$set": update_data,
             "$push": {
@@ -417,7 +417,9 @@ async def update_application_status(
             send_application_confirmed, send_application_rejected,
             notify_creator_application_confirmed, notify_creator_application_rejected
         )
-        creator = await db.ugc_creators.find_one({"id": application["creator_id"]})
+        creator = await db.ugc_creators.find_one({
+            "$or": [{"id": application["creator_id"]}, {"creator_id": application["creator_id"]}]
+        })
         # Get email from users table
         creator_email = None
         creator_name = creator.get("name") if creator else "Creator"
@@ -429,7 +431,7 @@ async def update_application_status(
                     creator_name = user_data.get("name", "Creator")
         
         if creator_email:
-            brand_name = brand.get("company_name", "")
+            brand_name = brand.get("company_name") or brand.get("brand_name") or ""
             if data.status == ApplicationStatus.CONFIRMED:
                 # Send email + WhatsApp notification
                 deadline = campaign.get("timeline", {}).get("publish_deadline", "A definir")
