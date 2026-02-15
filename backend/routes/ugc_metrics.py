@@ -30,6 +30,9 @@ async def require_creator(request: Request):
     creator = await db.ugc_creators.find_one({"user_id": user["user_id"]}, {"_id": 0})
     if not creator:
         raise HTTPException(status_code=403, detail="Creator profile required")
+    # Normalize id field for retrocompatibility
+    if "id" not in creator and "creator_id" in creator:
+        creator["id"] = creator["creator_id"]
     return user, creator
 
 async def require_admin(request: Request):
