@@ -54,12 +54,15 @@ async def apply_to_campaign(
     db = await get_db()
     user, creator = await require_creator(request)
     
-    # Get campaign by id
-    campaign = await db.ugc_campaigns.find_one({"id": data.campaign_id})
+    # Get campaign (support both schemas)
+    campaign = await db.ugc_campaigns.find_one(
+        {"$or": [{"id": data.campaign_id}, {"campaign_id": data.campaign_id}]}
+    )
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
-    campaign_id = campaign["id"]
+    campaign_id = campaign.get("id") or campaign.get("campaign_id")
+    creator_id = creator.get("id") or creator.get("creator_id")
     
     if campaign["status"] != CampaignStatus.LIVE:
         raise HTTPException(status_code=400, detail="Esta campaña no está aceptando aplicaciones")
@@ -73,7 +76,7 @@ async def apply_to_campaign(
     # Check if already applied
     existing = await db.ugc_applications.find_one({
         "campaign_id": campaign_id,
-        "creator_id": creator["id"]
+        "creator_id": creator_id
     })
     if existing:
         raise HTTPException(status_code=400, detail="Ya aplicaste a esta campaña")
