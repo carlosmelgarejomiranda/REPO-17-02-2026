@@ -439,21 +439,16 @@ async def withdraw_confirmed_application(
     db = await get_db()
     user, creator = await require_creator(request)
     
-    # Try application_id first, then id
+    # Find application by id
     application = await db.ugc_applications.find_one({
-        "application_id": application_id,
-        "creator_id": creator["creator_id"]
+        "id": application_id,
+        "creator_id": creator["id"]
     })
-    if not application:
-        application = await db.ugc_applications.find_one({
-            "id": application_id,
-            "creator_id": creator["creator_id"]
-        })
     
     if not application:
         raise HTTPException(status_code=404, detail="Aplicación no encontrada")
     
-    app_id = application.get("application_id", application.get("id"))
+    app_id = application["id"]
     
     # Only allow withdrawal of confirmed applications
     if application["status"] != ApplicationStatus.CONFIRMED:
@@ -465,17 +460,15 @@ async def withdraw_confirmed_application(
     now = datetime.now(timezone.utc).isoformat()
     
     # Get campaign to update slots
-    campaign = await db.ugc_campaigns.find_one({"campaign_id": application["campaign_id"]})
-    if not campaign:
-        campaign = await db.ugc_campaigns.find_one({"id": application["campaign_id"]})
+    campaign = await db.ugc_campaigns.find_one({"id": application["campaign_id"]})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
-    campaign_id = campaign.get("campaign_id", campaign.get("id"))
+    campaign_id = campaign["id"]
     
     # Update application status to CANCELLED
     await db.ugc_applications.update_one(
-        {"application_id": app_id},
+        {"id": app_id},
         {
             "$set": {
                 "status": ApplicationStatus.CANCELLED,
@@ -495,7 +488,7 @@ async def withdraw_confirmed_application(
     
     # Decrement slots_filled to free up the slot
     await db.ugc_campaigns.update_one(
-        {"campaign_id": campaign_id},
+        {"id": campaign_id},
         {"$inc": {"slots_filled": -1}}
     )
     
@@ -514,11 +507,11 @@ async def withdraw_confirmed_application(
     # Send email notification to admin
     try:
         from services.ugc_emails import notify_application_cancelled
-        brand = await db.ugc_brands.find_one({"brand_id": campaign["brand_id"]}, {"_id": 0, "brand_name": 1})
+        brand = await db.ugc_brands.find_one({"id": campaign["brand_id"]}, {"_id": 0, "company_name": 1})
         await notify_application_cancelled(
             creator_name=creator_name,
             campaign_name=campaign.get("name", ""),
-            brand_name=brand.get("brand_name", "") if brand else "",
+            brand_name=brand.get("company_name", "") if brand else "",
             cancelled_by="creator"
         )
     except Exception as e:
