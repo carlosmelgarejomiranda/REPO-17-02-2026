@@ -45,19 +45,40 @@ async def get_campaign_metrics_detailed(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    # Verify brand owns this campaign
+    # Get brand_id (handle both schemas)
+    brand_id = brand.get("id") or brand.get("brand_id")
+    
+    # Verify brand owns this campaign (handle both schemas)
     campaign = await db.ugc_campaigns.find_one({
-        "id": campaign_id,
-        "brand_id": brand["id"]
-    })
+        "$or": [{"campaign_id": campaign_id}, {"id": campaign_id}],
+        "brand_id": brand_id
+    }, {"_id": 0})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
-    # Build query
-    query = {"campaign_id": campaign_id}
+    camp_id = campaign.get("campaign_id") or campaign.get("id")
+    
+    # Get applications for this campaign (metrics link via deliverable -> application)
+    applications = await db.ugc_applications.find(
+        {"campaign_id": camp_id},
+        {"_id": 0, "application_id": 1}
+    ).to_list(1000)
+    app_ids = [a["application_id"] for a in applications]
+    
+    # Get deliverables for these applications
+    deliverables = await db.ugc_deliverables.find(
+        {"application_id": {"$in": app_ids}},
+        {"_id": 0, "deliverable_id": 1, "id": 1, "platform": 1}
+    ).to_list(1000)
+    deliverable_ids = [d.get("deliverable_id") or d.get("id") for d in deliverables]
+    
+    # Build query for metrics
+    query = {"deliverable_id": {"$in": deliverable_ids}}
     
     if platform and platform != 'all':
-        query["platform"] = platform
+        # Filter deliverables by platform first
+        platform_deliverables = [d.get("deliverable_id") or d.get("id") for d in deliverables if d.get("platform") == platform]
+        query["deliverable_id"] = {"$in": platform_deliverables}
     
     if month and month != 'all':
         # Parse month filter (format: YYYY-MM)
