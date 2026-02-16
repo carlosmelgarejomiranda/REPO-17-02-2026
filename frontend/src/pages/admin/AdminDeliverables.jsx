@@ -59,7 +59,7 @@ const AdminDeliverables = () => {
       }
 
       // Fetch deliverables
-      const delRes = await fetch(`${API_URL}/api/ugc/deliverables/campaign/${campaignId}`, { 
+      const delRes = await fetch(`${API_URL}/api/ugc/admin/deliverables/campaign/${campaignId}`, { 
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (delRes.ok) {
