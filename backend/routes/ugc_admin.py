@@ -2072,6 +2072,87 @@ async def get_detailed_stats(
 
 # ==================== DELIVERABLES MANAGEMENT ====================
 
+@router.get("/deliverables/campaign/{campaign_id}", response_model=dict)
+async def get_campaign_deliverables_admin(
+    campaign_id: str,
+    request: Request,
+    status: Optional[str] = None
+):
+    """Get all deliverables for a campaign (admin)"""
+    await require_admin(request)
+    db = await get_db()
+    
+    # Verify campaign exists
+    campaign = await db.ugc_campaigns.find_one(
+        {"$or": [{"campaign_id": campaign_id}, {"id": campaign_id}]},
+        {"_id": 0}
+    )
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaña no encontrada")
+    
+    camp_id = campaign.get("campaign_id") or campaign.get("id")
+    
+    # Get all applications for this campaign
+    applications = await db.ugc_applications.find(
+        {"campaign_id": camp_id},
+        {"_id": 0, "application_id": 1, "creator_id": 1, "status": 1, "confirmed_at": 1}
+    ).to_list(1000)
+    
+    app_ids = [a["application_id"] for a in applications]
+    app_map = {a["application_id"]: a for a in applications}
+    
+    # Get deliverables for these applications
+    query = {"application_id": {"$in": app_ids}}
+    if status:
+        query["status"] = status
+    
+    deliverables = await db.ugc_deliverables.find(
+        query,
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(1000)
+    
+    # Get unique creator_ids
+    creator_ids = list(set(a.get("creator_id") for a in applications if a.get("creator_id")))
+    
+    # Fetch creators
+    creators = await db.ugc_creators.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0}
+    ).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    
+    # Get user names
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id")]
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(len(user_ids))
+    user_map = {u["user_id"]: u["name"] for u in users}
+    
+    # Enrich deliverables
+    for d in deliverables:
+        # Add id alias
+        if "deliverable_id" in d and "id" not in d:
+            d["id"] = d["deliverable_id"]
+        
+        app_data = app_map.get(d.get("application_id"), {})
+        creator = creator_map.get(app_data.get("creator_id"), {})
+        
+        # Add creator name from users table
+        if creator.get("user_id"):
+            creator["name"] = user_map.get(creator["user_id"], "")
+        
+        # Extract social networks for display
+        social_networks = creator.get("social_networks", [])
+        for sn in social_networks:
+            if sn.get("platform") == "instagram":
+                creator["instagram_username"] = sn.get("username")
+            elif sn.get("platform") == "tiktok":
+                creator["tiktok_username"] = sn.get("username")
+        
+        d["creator"] = creator
+        d["application"] = app_data
+        d["campaign"] = campaign
+    
+    return {"deliverables": deliverables, "campaign": campaign}
+
 @router.get("/deliverables", response_model=dict)
 async def get_all_deliverables(
     request: Request,
