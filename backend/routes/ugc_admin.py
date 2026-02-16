@@ -1052,11 +1052,11 @@ async def admin_get_campaign_applications(
     ).to_list(len(creator_ids))
     creator_map = {c["creator_id"]: c for c in creators}
     
-    # Get user names for creators without name
-    user_ids = [c.get("user_id") for c in creators if c.get("user_id") and not c.get("name")]
+    # Get user names for all creators (name is in users table, not creators)
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id")]
     user_map = {}
     if user_ids:
-        users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(len(user_ids))
+        users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1, "email": 1}).to_list(len(user_ids))
         user_map = {u["user_id"]: u for u in users}
     
     # Enrich with creator profiles and social accounts
@@ -1065,10 +1065,11 @@ async def admin_get_campaign_applications(
         if creator:
             creator_id = creator.get("creator_id")
             
-            # Add name from users if not present
-            if not creator.get("name") and creator.get("user_id"):
+            # Add name from users table
+            if creator.get("user_id"):
                 user_data = user_map.get(creator["user_id"], {})
                 creator["name"] = user_data.get("name", "")
+                creator["email"] = user_data.get("email", "")
             
             # Add id alias for frontend
             if creator_id and "id" not in creator:
