@@ -30,6 +30,43 @@ async def require_brand(request: Request):
         raise HTTPException(status_code=403, detail="Brand access required")
     return user
 
+async def get_brand_for_user(db, user_id: str):
+    """Get brand profile for user through org_membership → company → brand"""
+    # First try: user has direct company membership
+    company_membership = await db.org_memberships.find_one({
+        "user_id": user_id,
+        "org_type": "company",
+        "status": "active"
+    }, {"_id": 0})
+    
+    if company_membership:
+        company_id = company_membership.get("org_id")
+        brand = await db.ugc_brands.find_one({"company_id": company_id}, {"_id": 0})
+        if brand:
+            return brand
+    
+    # Second try: user has agency membership → agency_clients → company → brand
+    agency_membership = await db.org_memberships.find_one({
+        "user_id": user_id,
+        "org_type": "agency",
+        "status": "active"
+    }, {"_id": 0})
+    
+    if agency_membership:
+        agency_id = agency_membership.get("org_id")
+        agency_client = await db.agency_clients.find_one({
+            "agency_id": agency_id,
+            "status": "active"
+        }, {"_id": 0})
+        
+        if agency_client:
+            company_id = agency_client.get("company_id")
+            brand = await db.ugc_brands.find_one({"company_id": company_id}, {"_id": 0})
+            if brand:
+                return brand
+    
+    return None
+
 # ==================== ONBOARDING ====================
 
 @router.post("/onboarding", response_model=dict)
