@@ -99,13 +99,52 @@ async def get_campaign_metrics_detailed(
     # Fetch metrics
     metrics = await db.ugc_metrics.find(query, {"_id": 0}).to_list(500)
     
+    # Get deliverable info to find creators
+    deliverable_map = {}
+    for d in deliverables:
+        d_id = d.get("deliverable_id") or d.get("id")
+        deliverable_map[d_id] = d
+    
+    # Get applications to map deliverables to creators
+    app_map = {a["application_id"]: a for a in applications}
+    
+    # Get creator and user info
+    creator_ids = list(set(a.get("creator_id") for a in applications if a.get("creator_id")))
+    creators = await db.ugc_creators.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0}
+    ).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    
+    # Get user names
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id")]
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(len(user_ids))
+    user_map = {u["user_id"]: u["name"] for u in users}
+    
     # Enrich with creator info
     for metric in metrics:
-        creator = await db.ugc_creators.find_one(
-            {"id": metric.get("creator_id")},
-            {"_id": 0, "name": 1, "level": 1, "profile_image": 1}
+        deliverable_id = metric.get("deliverable_id")
+        
+        # Find the deliverable to get application_id
+        deliverable = await db.ugc_deliverables.find_one(
+            {"$or": [{"deliverable_id": deliverable_id}, {"id": deliverable_id}]},
+            {"_id": 0, "application_id": 1, "platform": 1}
         )
-        metric["creator"] = creator
+        
+        if deliverable:
+            app_id = deliverable.get("application_id")
+            app_data = app_map.get(app_id, {})
+            creator_id = app_data.get("creator_id")
+            creator = creator_map.get(creator_id, {})
+            
+            # Add name from users table
+            if creator.get("user_id"):
+                creator["name"] = user_map.get(creator["user_id"], "Creator")
+            
+            metric["creator"] = creator
+            metric["platform"] = deliverable.get("platform")
+        else:
+            metric["creator"] = {"name": "Creator"}
         
         # Add video_length if not present (estimated)
         if "video_length" not in metric:
