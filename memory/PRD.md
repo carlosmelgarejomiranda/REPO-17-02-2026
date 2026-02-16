@@ -86,7 +86,7 @@ Platform UGC (User Generated Content) para conectar marcas con creadores de cont
 
 ### P1 - Alta Prioridad (Próximos pasos)
 - Diseñar tablas de Niveles/Puntos/Beneficios de Creadores
-- Corregir instagram_handle de marca "Lurdes"
+- UI/UX para compra de paquetes por agencias
 - Pruebas de integración E2E para validar todos los flujos
 
 ### P2 - Media Prioridad
