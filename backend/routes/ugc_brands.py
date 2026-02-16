@@ -166,19 +166,60 @@ async def get_brand_dashboard(request: Request):
     """Get brand dashboard summary"""
     db = await get_db()
     user = await require_auth(request)
+    user_id = user["user_id"]
     
-    profile = await db.ugc_brands.find_one({"user_id": user["user_id"]}, {"_id": 0})
+    # New flow: user → org_membership → company → brand
+    # First, find company memberships for this user
+    company_membership = await db.org_memberships.find_one({
+        "user_id": user_id,
+        "org_type": "company",
+        "status": "active"
+    }, {"_id": 0})
+    
+    profile = None
+    
+    if company_membership:
+        # User has direct company membership, find brand for that company
+        company_id = company_membership.get("org_id")
+        profile = await db.ugc_brands.find_one({"company_id": company_id}, {"_id": 0})
+    
+    if not profile:
+        # Try agency flow: user → agency membership → agency_clients → company → brand
+        agency_membership = await db.org_memberships.find_one({
+            "user_id": user_id,
+            "org_type": "agency",
+            "status": "active"
+        }, {"_id": 0})
+        
+        if agency_membership:
+            agency_id = agency_membership.get("org_id")
+            # Get first active client company
+            agency_client = await db.agency_clients.find_one({
+                "agency_id": agency_id,
+                "status": "active"
+            }, {"_id": 0})
+            
+            if agency_client:
+                company_id = agency_client.get("company_id")
+                profile = await db.ugc_brands.find_one({"company_id": company_id}, {"_id": 0})
+    
     if not profile:
         raise HTTPException(status_code=404, detail="Brand profile not found")
     
     # Support both schemas: id or brand_id as PK
     brand_id = profile.get("id") or profile.get("brand_id")
     
-    # Get active package
-    active_package = await db.ugc_packages.find_one(
-        {"brand_id": brand_id, "status": "active"},
-        {"_id": 0}
-    )
+    # Get active package (now by agency_id, not brand_id)
+    # First get the company for this brand
+    company = await db.ugc_companies.find_one({"company_id": profile.get("company_id")}, {"_id": 0})
+    agency_client = await db.agency_clients.find_one({"company_id": profile.get("company_id"), "status": "active"}, {"_id": 0})
+    
+    active_package = None
+    if agency_client:
+        active_package = await db.ugc_packages.find_one(
+            {"agency_id": agency_client.get("agency_id"), "status": "active"},
+            {"_id": 0}
+        )
     
     # Get campaigns count
     campaigns_count = await db.ugc_campaigns.count_documents({"brand_id": brand_id})
