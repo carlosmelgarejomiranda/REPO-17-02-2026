@@ -61,16 +61,22 @@ async def get_campaign_metrics_detailed(
     # Get applications for this campaign (metrics link via deliverable -> application)
     applications = await db.ugc_applications.find(
         {"campaign_id": camp_id},
-        {"_id": 0, "application_id": 1}
+        {"_id": 0, "application_id": 1, "creator_id": 1}
     ).to_list(1000)
     app_ids = [a["application_id"] for a in applications]
     
     # Get deliverables for these applications
     deliverables = await db.ugc_deliverables.find(
         {"application_id": {"$in": app_ids}},
-        {"_id": 0, "deliverable_id": 1, "id": 1, "platform": 1}
+        {"_id": 0, "deliverable_id": 1, "id": 1, "platform": 1, "application_id": 1}
     ).to_list(1000)
     deliverable_ids = [d.get("deliverable_id") or d.get("id") for d in deliverables]
+    
+    # Build deliverable map for quick lookup
+    deliverable_map = {}
+    for d in deliverables:
+        d_id = d.get("deliverable_id") or d.get("id")
+        deliverable_map[d_id] = d
     
     # Build query for metrics
     query = {"deliverable_id": {"$in": deliverable_ids}}
