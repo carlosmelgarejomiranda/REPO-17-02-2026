@@ -601,50 +601,76 @@ async def get_campaign_deliverables(
     db = await get_db()
     user, brand = await require_brand(request)
     
-    # Verify brand owns the campaign
-    campaign = await db.ugc_campaigns.find_one({"id": campaign_id, "brand_id": brand["id"]})
+    # Get brand_id (handle both schemas)
+    brand_id = brand.get("id") or brand.get("brand_id")
+    
+    # Verify brand owns the campaign (handle both schemas for campaign_id)
+    campaign = await db.ugc_campaigns.find_one({
+        "$or": [{"campaign_id": campaign_id}, {"id": campaign_id}],
+        "brand_id": brand_id
+    }, {"_id": 0})
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaña no encontrada")
     
-    query = {"campaign_id": campaign_id}
+    camp_id = campaign.get("campaign_id") or campaign.get("id")
+    
+    # Get applications for this campaign (deliverables link via application_id)
+    applications = await db.ugc_applications.find(
+        {"campaign_id": camp_id},
+        {"_id": 0, "application_id": 1, "creator_id": 1, "confirmed_at": 1, "status": 1}
+    ).to_list(1000)
+    
+    app_ids = [a["application_id"] for a in applications]
+    app_map = {a["application_id"]: a for a in applications}
+    
+    # Get deliverables for these applications
+    query = {"application_id": {"$in": app_ids}}
     if status:
-        query["status"] = status
+        query["status"] = status.value if hasattr(status, 'value') else status
     
     deliverables = await db.ugc_deliverables.find(
         query,
         {"_id": 0}
     ).sort("created_at", -1).to_list(100)
     
-    # Enrich with creator info and application deadlines
+    # Get all creator_ids
+    creator_ids = list(set(a.get("creator_id") for a in applications if a.get("creator_id")))
+    creators = await db.ugc_creators.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0}
+    ).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    
+    # Get user names
+    user_ids = [c.get("user_id") for c in creators if c.get("user_id")]
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(len(user_ids))
+    user_map = {u["user_id"]: u["name"] for u in users}
+    
+    # Enrich deliverables
     for d in deliverables:
-        creator = await db.ugc_creators.find_one(
-            {"id": d["creator_id"]},
-            {"_id": 0, "name": 1, "profile_picture": 1, "social_networks": 1, "level": 1}
-        )
-        d["creator"] = creator
+        # Add id alias
+        if "deliverable_id" in d and "id" not in d:
+            d["id"] = d["deliverable_id"]
         
-        # Get application data for deadlines and confirmed_at
-        if d.get("application_id"):
-            application = await db.ugc_applications.find_one(
-                {"id": d["application_id"]},
-                {"_id": 0, "url_deadline": 1, "metrics_deadline": 1, "confirmed_at": 1, "status": 1}
-            )
-            if application:
-                # Enrich deliverable with application data
-                if not d.get("url_deadline") and application.get("url_deadline"):
-                    d["url_deadline"] = application["url_deadline"]
-                if not d.get("metrics_deadline") and application.get("metrics_deadline"):
-                    d["metrics_deadline"] = application["metrics_deadline"]
-                if not d.get("confirmed_at") and application.get("confirmed_at"):
-                    d["confirmed_at"] = application["confirmed_at"]
-                d["application_status"] = application.get("status")
+        app_data = app_map.get(d.get("application_id"), {})
+        creator = creator_map.get(app_data.get("creator_id"), {})
+        
+        # Add name from users
+        if creator.get("user_id"):
+            creator["name"] = user_map.get(creator["user_id"], "")
+        
+        d["creator"] = creator
+        d["confirmed_at"] = app_data.get("confirmed_at")
+        d["application_status"] = app_data.get("status")
         
         # Get metrics if exists
-        metrics = await db.ugc_metrics.find_one(
-            {"deliverable_id": d["id"]},
-            {"_id": 0}
-        )
-        d["metrics"] = metrics
+        deliverable_id = d.get("id") or d.get("deliverable_id")
+        if deliverable_id:
+            metrics = await db.ugc_metrics.find_one(
+                {"deliverable_id": deliverable_id},
+                {"_id": 0}
+            )
+            d["metrics"] = metrics
     
     return {"deliverables": deliverables}
 
