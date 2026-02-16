@@ -46,6 +46,11 @@ Platform UGC (User Generated Content) para conectar marcas con creadores de cont
   - Queries MongoDB usan `$or` para ambos esquemas
   - Helpers normalizan campos de ID automáticamente
 
+### Testing Results (iteration_18) - Latest
+- 20/20 tests pasados (100%) - Endpoint de métricas detalladas verificado
+- Bug Fix verificado: nombres de creadores en métricas
+- Creadores verificados: Pauli Mateos, Christian Zavala, Elias Benítez, José Arthur Silva, Sofía Noemí Ramírez Zárate
+
 ### Testing Results (iteration_17)
 - 30/30 tests pasados (100%)
 - Bugs corregidos en: ugc_brands.py, ugc_brand_reports.py, ugc_deliverables.py, ugc_packages.py, ugc_metrics.py, ugc_reputation.py
