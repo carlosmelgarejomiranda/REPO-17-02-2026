@@ -128,4 +128,5 @@ if "id" not in brand and "brand_id" in brand:
 - Emergent-managed Google Auth
 
 ## Known Issues
-- Instagram handle de marca "Lurdes" contiene URL completa en lugar de handle
+- ✅ RESUELTO: Instagram handle de marca "Lurdes" - corregido a "lurdesromero__"
+- ℹ️ TikTok deliverables no visibles - no hay datos de TikTok en la BD (todos los deliverables son Instagram)
