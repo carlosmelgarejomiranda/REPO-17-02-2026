@@ -26,8 +26,9 @@ async def require_auth(request: Request):
 
 async def require_brand(request: Request):
     from server import db
+    from routes.ugc_brands import get_brand_for_user
     user = await require_auth(request)
-    brand = await db.ugc_brands.find_one({"user_id": user["user_id"]}, {"_id": 0})
+    brand = await get_brand_for_user(db, user["user_id"])
     if not brand:
         raise HTTPException(status_code=403, detail="Brand profile required")
     # Normalize id field for retrocompatibility
