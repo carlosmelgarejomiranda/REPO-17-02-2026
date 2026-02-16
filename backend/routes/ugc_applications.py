@@ -396,47 +396,58 @@ async def update_application_status(
             {"$inc": {"slots_filled": 1}}
         )
         
-        # Create deliverable for this creator
-        # Determine platform from creator's social networks (support both schemas)
+        # Create deliverables for this creator (one per social network)
         creator = await db.ugc_creators.find_one({
             "$or": [{"id": application["creator_id"]}, {"creator_id": application["creator_id"]}]
         })
-        platform = ContentPlatform.INSTAGRAM  # Default
+        
+        # Get platforms from creator's social networks
+        platforms_to_create = []
         if creator and creator.get("social_networks"):
-            platform = creator["social_networks"][0].get("platform", ContentPlatform.INSTAGRAM)
+            for sn in creator["social_networks"]:
+                platform = sn.get("platform")
+                if platform and platform not in platforms_to_create:
+                    platforms_to_create.append(platform)
         
-        deliverable = {
-            "id": str(uuid.uuid4()),
-            "application_id": app_id,
-            "campaign_id": campaign_id,
-            "creator_id": application["creator_id"],
-            "brand_id": brand_id,
-            "platform": platform,
-            "status": DeliverableStatus.AWAITING_PUBLISH,
-            "status_history": [{
+        # Default to Instagram if no social networks found
+        if not platforms_to_create:
+            platforms_to_create = [ContentPlatform.INSTAGRAM]
+        
+        # Create one deliverable per platform
+        for platform in platforms_to_create:
+            deliverable = {
+                "id": str(uuid.uuid4()),
+                "deliverable_id": str(uuid.uuid4()),
+                "application_id": app_id,
+                "campaign_id": campaign_id,
+                "creator_id": application["creator_id"],
+                "brand_id": brand_id,
+                "platform": platform,
                 "status": DeliverableStatus.AWAITING_PUBLISH,
-                "timestamp": now,
-                "by": "system"
-            }],
-            "post_url": None,
-            "file_url": None,
-            "evidence_urls": [],
-            "published_at": None,
-            "submitted_at": None,
-            "delivery_lag_hours": None,
-            "is_on_time": None,
-            "review_round": 0,
-            "review_notes": [],
-            "approved_at": None,
-            "metrics_window_opens": None,
-            "metrics_window_closes": None,
-            "metrics_submitted_at": None,
-            "metrics_is_late": False,
-            "created_at": now,
-            "updated_at": now
-        }
-        
-        await db.ugc_deliverables.insert_one(deliverable)
+                "status_history": [{
+                    "status": DeliverableStatus.AWAITING_PUBLISH,
+                    "timestamp": now,
+                    "by": "system"
+                }],
+                "post_url": None,
+                "file_url": None,
+                "evidence_urls": [],
+                "published_at": None,
+                "submitted_at": None,
+                "delivery_lag_hours": None,
+                "is_on_time": None,
+                "review_round": 0,
+                "review_notes": [],
+                "approved_at": None,
+                "metrics_window_opens": None,
+                "metrics_window_closes": None,
+                "metrics_submitted_at": None,
+                "metrics_is_late": False,
+                "created_at": now,
+                "updated_at": now
+            }
+            
+            await db.ugc_deliverables.insert_one(deliverable)
         
     elif data.status == ApplicationStatus.REJECTED:
         update_data["rejected_at"] = now
