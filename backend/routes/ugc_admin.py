@@ -1074,50 +1074,41 @@ async def admin_get_campaign_applications(
             if creator_id and "id" not in creator:
                 creator["id"] = creator_id
             
-            # Include verified social accounts info (from AI verification)
-            social_accounts = creator.get("social_accounts", {})
-            creator["verified_instagram"] = social_accounts.get("instagram")
-            creator["verified_tiktok"] = social_accounts.get("tiktok")
-            
-            # Include unverified social networks (from onboarding)
+            # Extract social networks info
             social_networks = creator.get("social_networks", [])
-            unverified_ig = None
-            unverified_tt = None
+            
+            ig_data = None
+            tt_data = None
+            
             for sn in social_networks:
-                if sn.get("platform") == "instagram" and not creator["verified_instagram"]:
-                    unverified_ig = {
+                if sn.get("platform") == "instagram":
+                    ig_data = {
                         "username": sn.get("username"),
                         "url": sn.get("url"),
                         "followers": sn.get("followers"),
-                        "verified": False
+                        "verified": sn.get("verified", False)
                     }
-                elif sn.get("platform") == "tiktok" and not creator["verified_tiktok"]:
-                    unverified_tt = {
+                elif sn.get("platform") == "tiktok":
+                    tt_data = {
                         "username": sn.get("username"),
                         "url": sn.get("url"),
                         "followers": sn.get("followers"),
-                        "verified": False
+                        "verified": sn.get("verified", False)
                     }
             
-            creator["unverified_instagram"] = unverified_ig
-            creator["unverified_tiktok"] = unverified_tt
+            creator["instagram"] = ig_data
+            creator["tiktok"] = tt_data
             
             # Calculate followers for easy access
-            ig_followers = 0
-            tt_followers = 0
-            
-            if creator["verified_instagram"]:
-                ig_followers = creator["verified_instagram"].get("follower_count") or 0
-            elif unverified_ig:
-                ig_followers = unverified_ig.get("followers") or 0
-                
-            if creator["verified_tiktok"]:
-                tt_followers = creator["verified_tiktok"].get("follower_count") or 0
-            elif unverified_tt:
-                tt_followers = unverified_tt.get("followers") or 0
+            ig_followers = ig_data.get("followers") or 0 if ig_data else 0
+            tt_followers = tt_data.get("followers") or 0 if tt_data else 0
             
             creator["ig_followers"] = ig_followers
             creator["tt_followers"] = tt_followers
+            
+            # Verification status
+            creator["ig_verified"] = ig_data.get("verified", False) if ig_data else False
+            creator["tt_verified"] = tt_data.get("verified", False) if tt_data else False
             
             # Get campaigns participated count
             campaigns_participated = await db.ugc_applications.count_documents({
