@@ -288,11 +288,57 @@ async def get_campaign_applications(
             {"$or": [{"id": app["creator_id"]}, {"creator_id": app["creator_id"]}]},
             {"_id": 0, "email": 0}
         )
-        # Get name from users if not in creator
-        if creator and not creator.get("name"):
-            user_data = await db.users.find_one({"user_id": creator.get("user_id")}, {"_id": 0, "name": 1})
-            if user_data:
-                creator["name"] = user_data.get("name", "")
+        if creator:
+            # Get name from users if not in creator
+            if not creator.get("name"):
+                user_data = await db.users.find_one({"user_id": creator.get("user_id")}, {"_id": 0, "name": 1})
+                if user_data:
+                    creator["name"] = user_data.get("name", "")
+            
+            # Add app-level fields for frontend compatibility
+            app["creator_name"] = creator.get("name", "")
+            
+            # Convert social_networks to social_accounts format for frontend
+            social_networks = creator.get("social_networks", [])
+            social_accounts = {}
+            total_followers = 0
+            
+            for sn in social_networks:
+                platform = sn.get("platform")
+                if platform == "instagram":
+                    social_accounts["instagram"] = {
+                        "username": sn.get("username"),
+                        "url": sn.get("url"),
+                        "followers": sn.get("followers"),
+                        "verified": sn.get("verified", False)
+                    }
+                    app["creator_username"] = sn.get("username", "")
+                    if sn.get("followers"):
+                        total_followers += sn.get("followers", 0)
+                elif platform == "tiktok":
+                    social_accounts["tiktok"] = {
+                        "username": sn.get("username"),
+                        "url": sn.get("url"),
+                        "followers": sn.get("followers"),
+                        "verified": sn.get("verified", False)
+                    }
+                    if sn.get("followers"):
+                        total_followers += sn.get("followers", 0)
+            
+            creator["social_accounts"] = social_accounts
+            app["creator_followers"] = total_followers
+            
+            # Get creator rating
+            ratings = await db.ugc_ratings.find(
+                {"creator_id": app["creator_id"]},
+                {"_id": 0, "rating": 1}
+            ).to_list(100)
+            if ratings:
+                avg_rating = sum(r.get("rating", 0) for r in ratings) / len(ratings)
+                app["creator_rating"] = avg_rating
+            else:
+                app["creator_rating"] = 0
+        
         app["creator"] = creator
     
     return {"applications": applications, "total": len(applications)}
