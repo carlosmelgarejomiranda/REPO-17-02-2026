@@ -177,7 +177,7 @@ const BrandDeliverables = () => {
     const daysLate = Math.abs(daysRemaining);
 
     // Already submitted?
-    const isSubmitted = type === 'url' ? !!deliverable.post_url : !!deliverable.metrics_submitted_at;
+    const isSubmitted = type === 'url' ? !!getPostUrl(deliverable) : !!deliverable.metrics_submitted_at;
 
     if (isSubmitted) {
       return { status: 'completed', color: 'text-green-400', bgColor: 'bg-green-500/20', label: 'Entregado' };
