@@ -6,6 +6,7 @@ import {
   CheckCircle, Clock, AlertCircle, ExternalLink, Calendar,
   Eye, BarChart3, Star, FileText
 } from 'lucide-react';
+import ClickableAvatar from '../../components/ui/ClickableAvatar';
 
 const API_URL = getApiUrl();
 
