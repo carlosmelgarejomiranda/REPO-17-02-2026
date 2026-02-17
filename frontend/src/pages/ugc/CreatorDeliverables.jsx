@@ -10,6 +10,11 @@ import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
+// Helper: obtener URL del post (fallback a instagram_url o tiktok_url)
+const getPostUrl = (deliverable) => {
+  return deliverable?.post_url || deliverable?.instagram_url || deliverable?.tiktok_url || null;
+};
+
 const CreatorDeliverables = () => {
   const [deliverables, setDeliverables] = useState([]);
   const [loading, setLoading] = useState(true);
