@@ -316,7 +316,7 @@ const CreatorDeliverables = () => {
                             {urlStatus?.label || '7d'}
                           </span>
                         </div>
-                        {del.post_url ? (
+                        {getPostUrl(del) ? (
                           <div className="flex items-center gap-1.5">
                             <CheckCircle className="w-3.5 h-3.5 text-green-400" />
                             <span className="text-xs text-green-400">Enviado</span>
