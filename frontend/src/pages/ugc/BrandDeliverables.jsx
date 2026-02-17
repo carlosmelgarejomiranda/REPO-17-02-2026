@@ -511,7 +511,7 @@ const BrandDeliverables = () => {
                         <LinkIcon className={`w-4 h-4 ${urlStatus?.color || 'text-gray-400'}`} />
                         <span className="text-xs text-gray-400">URL Publicación</span>
                       </div>
-                      {del.post_url ? (
+                      {getPostUrl(del) ? (
                         <div className="flex items-center gap-1">
                           <CheckCircle className="w-3.5 h-3.5 text-green-400" />
                           <span className="text-sm text-green-400">Entregado</span>
