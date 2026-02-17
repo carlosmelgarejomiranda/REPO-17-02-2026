@@ -182,17 +182,13 @@ const AdminCreatorDeliverables = () => {
           <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                {creator.profile_image ? (
-                  <img 
-                    src={creator.profile_image} 
-                    alt={creator.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#d4a968] to-[#a07830] rounded-full flex items-center justify-center text-2xl font-light text-black">
-                    {creator.name?.charAt(0) || '?'}
-                  </div>
-                )}
+                <ClickableAvatar
+                  src={creator.profile_image}
+                  alt={creator.name}
+                  fallback={creator.name?.charAt(0) || '?'}
+                  size="lg"
+                  showBorder
+                />
                 <div>
                   <h1 className="text-2xl font-light text-white">{creator.name}</h1>
                   <p className="text-gray-400">{creator.email}</p>
