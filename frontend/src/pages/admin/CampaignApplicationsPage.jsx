@@ -7,6 +7,7 @@ import {
   Download
 } from 'lucide-react';
 import { getApiUrl } from '../../utils/api';
+import ClickableAvatar from '../../components/ui/ClickableAvatar';
 
 const API_URL = getApiUrl();
 
