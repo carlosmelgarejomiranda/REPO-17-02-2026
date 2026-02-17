@@ -183,10 +183,10 @@ const AdminDeliverables = () => {
 
   // Check deliverable states
   const isCancelled = (del) => del.status === 'cancelled' || del.application_status === 'cancelled';
-  const isReadyToRate = (del) => !isCancelled(del) && del.post_url && del.metrics_submitted_at && !del.brand_rating;
-  const isCompletedAndRated = (del) => !isCancelled(del) && del.post_url && del.metrics_submitted_at && del.brand_rating;
-  const isPendingDelivery = (del) => !isCancelled(del) && (!del.post_url || !del.metrics_submitted_at);
-  const hasUrlIssue = (del) => !isCancelled(del) && del.post_url && (
+  const isReadyToRate = (del) => !isCancelled(del) && getPostUrl(del) && del.metrics_submitted_at && !del.brand_rating;
+  const isCompletedAndRated = (del) => !isCancelled(del) && getPostUrl(del) && del.metrics_submitted_at && del.brand_rating;
+  const isPendingDelivery = (del) => !isCancelled(del) && (!getPostUrl(del) || !del.metrics_submitted_at);
+  const hasUrlIssue = (del) => !isCancelled(del) && getPostUrl(del) && (
     (del.instagram_url && !del.instagram_url.includes('/p/') && !del.instagram_url.includes('/reel/')) ||
     (del.tiktok_url && !del.tiktok_url.includes('/video/'))
   );
