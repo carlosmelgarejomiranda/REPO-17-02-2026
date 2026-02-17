@@ -12,6 +12,11 @@ import { UGCNavbar } from '../../components/UGCNavbar';
 
 const API_URL = getApiUrl();
 
+// Helper: obtener URL del post (fallback a instagram_url o tiktok_url)
+const getPostUrl = (item) => {
+  return item?.post_url || item?.instagram_url || item?.tiktok_url || null;
+};
+
 const BrandCampaignReports = () => {
   const { campaignId } = useParams();
   const [campaign, setCampaign] = useState(null);
