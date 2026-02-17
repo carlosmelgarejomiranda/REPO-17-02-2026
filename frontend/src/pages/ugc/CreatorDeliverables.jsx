@@ -119,9 +119,9 @@ const CreatorDeliverables = () => {
 
   // Filter helpers
   const isCancelled = (del) => del.status === 'cancelled' || del.application_status === 'cancelled';
-  const isPending = (del) => !isCancelled(del) && (!del.post_url || !del.metrics_submitted_at);
-  const isCompleted = (del) => !isCancelled(del) && del.post_url && del.metrics_submitted_at;
-  const needsAction = (del) => !isCancelled(del) && (del.status === 'changes_requested' || !del.post_url);
+  const isPending = (del) => !isCancelled(del) && (!getPostUrl(del) || !del.metrics_submitted_at);
+  const isCompleted = (del) => !isCancelled(del) && getPostUrl(del) && del.metrics_submitted_at;
+  const needsAction = (del) => !isCancelled(del) && (del.status === 'changes_requested' || !getPostUrl(del));
 
   // Counts
   const activeDeliverables = deliverables.filter(d => !isCancelled(d));
