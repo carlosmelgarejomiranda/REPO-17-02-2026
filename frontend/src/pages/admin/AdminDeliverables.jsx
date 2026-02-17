@@ -7,6 +7,7 @@ import {
   ChevronDown, Send, Users, Link as LinkIcon, BarChart3, Calendar,
   Pencil, RotateCcw, Shield, Building2, Trash2
 } from 'lucide-react';
+import ClickableAvatar from '../../components/ui/ClickableAvatar';
 
 const API_URL = getApiUrl();
 
