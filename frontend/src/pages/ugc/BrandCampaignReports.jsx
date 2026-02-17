@@ -378,9 +378,9 @@ const MetricsReport = ({ metrics, totals, formatNumber, formatPercent }) => {
                         </span>
                       </td>
                       <td className="p-4 text-center">
-                        {m.post_url ? (
+                        {getPostUrl(m) ? (
                           <a
-                            href={m.post_url}
+                            href={getPostUrl(m)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#d4a968]/20 text-[#d4a968] rounded-lg hover:bg-[#d4a968]/30 transition-colors"
