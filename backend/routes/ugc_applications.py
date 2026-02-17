@@ -289,11 +289,24 @@ async def get_campaign_applications(
             {"_id": 0, "email": 0}
         )
         if creator:
+            # Get user data for name and profile picture fallback
+            user_data = await db.users.find_one(
+                {"user_id": creator.get("user_id")}, 
+                {"_id": 0, "name": 1, "picture": 1}
+            )
+            
             # Get name from users if not in creator
-            if not creator.get("name"):
-                user_data = await db.users.find_one({"user_id": creator.get("user_id")}, {"_id": 0, "name": 1})
-                if user_data:
-                    creator["name"] = user_data.get("name", "")
+            if not creator.get("name") and user_data:
+                creator["name"] = user_data.get("name", "")
+            
+            # Use user.picture as fallback for profile_image if creator doesn't have one
+            # or if the existing profile_image URL is not accessible
+            if user_data and user_data.get("picture"):
+                if not creator.get("profile_image"):
+                    creator["profile_image"] = user_data.get("picture")
+                elif creator.get("profile_image") and "avenue-secure-shop" in creator.get("profile_image", ""):
+                    # Old URLs from previous server - use Google picture instead
+                    creator["profile_image"] = user_data.get("picture")
             
             # Add app-level fields for frontend compatibility
             app["creator_name"] = creator.get("name", "")
