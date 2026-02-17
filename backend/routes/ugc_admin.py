@@ -659,7 +659,7 @@ async def get_creator_deliverables(
     return {
         "deliverables": deliverables,
         "total": len(deliverables),
-        "creator_name": creator.get("name")
+        "creator_name": creator_name
     }
 
 
