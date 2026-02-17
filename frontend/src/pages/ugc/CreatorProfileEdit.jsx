@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import SocialVerification from '../../components/SocialVerification';
+import ClickableAvatar from '../../components/ui/ClickableAvatar';
 
 const API_URL = getApiUrl();
 
