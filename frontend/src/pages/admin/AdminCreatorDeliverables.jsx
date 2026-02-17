@@ -361,9 +361,9 @@ const AdminCreatorDeliverables = () => {
                       <p className="text-gray-400 text-sm">{del.campaign?.brand_name || ''}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      {del.post_url && (
+                      {getPostUrl(del) && (
                         <a
-                          href={del.post_url}
+                          href={getPostUrl(del)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
