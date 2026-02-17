@@ -9,6 +9,11 @@ import { Button } from './ui/button';
 
 const API_URL = getApiUrl();
 
+// Helper: obtener URL del post (fallback a instagram_url o tiktok_url)
+const getPostUrl = (item) => {
+  return item?.post_url || item?.instagram_url || item?.tiktok_url || null;
+};
+
 export const AdminCreatorsReport = () => {
   const [creators, setCreators] = useState([]);
   const [loading, setLoading] = useState(true);
