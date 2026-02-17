@@ -22,6 +22,7 @@ const ClickableAvatar = ({
   showBorder = false 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const sizeClasses = {
     xs: 'w-8 h-8 text-sm',
@@ -31,12 +32,15 @@ const ClickableAvatar = ({
     xl: 'w-24 h-24 text-3xl'
   };
   
-  const hasImage = src && src !== '';
+  const hasImage = src && src !== '' && !imageError;
   
   // URL de calidad máxima para el lightbox (imagen original)
   const highResSrc = getHighResImageUrl(src, 'original');
   // URL de resolución media para el avatar
   const mediumResSrc = getHighResImageUrl(src, 400);
+
+  // Get initials from name
+  const initials = fallback || alt?.charAt(0) || '?';
   
   return (
     <>
@@ -53,25 +57,28 @@ const ClickableAvatar = ({
         onClick={() => hasImage && setIsOpen(true)}
         title={hasImage ? 'Click para ampliar' : undefined}
       >
-        {hasImage ? (
+        {src && !imageError ? (
           <img 
             src={mediumResSrc} 
             alt={alt || 'Avatar'}
             className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-medium">
-            {fallback || alt?.charAt(0) || '?'}
+            {initials}
           </div>
         )}
       </div>
       
-      <ImageLightbox
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        src={highResSrc}
-        alt={alt}
-      />
+      {hasImage && (
+        <ImageLightbox
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          src={highResSrc}
+          alt={alt}
+        />
+      )}
     </>
   );
 };
