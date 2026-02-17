@@ -275,14 +275,14 @@ const CreatorDeliverables = () => {
                       <Link
                         to={`/ugc/creator/deliverable/${del.id}`}
                         className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-sm font-medium transition-colors ${
-                          !del.post_url 
+                          !getPostUrl(del) 
                             ? 'bg-[#d4a968] text-black hover:bg-[#e5ba79]'
                             : !del.metrics_submitted_at
                             ? 'bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border border-cyan-500/30'
                             : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
                         }`}
                       >
-                        {!del.post_url ? (
+                        {!getPostUrl(del) ? (
                           <>
                             <Upload className="w-3.5 h-3.5" />
                             Subir URL
