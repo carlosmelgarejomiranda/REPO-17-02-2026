@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import ImageLightbox from './ImageLightbox';
 
+// Función para obtener URL de imagen en alta resolución (para Google Photos)
+const getHighResImageUrl = (url, size = 400) => {
+  if (!url) return url;
+  // Google Photos URLs tienen formato: ...=s96-c (donde 96 es el tamaño)
+  // Reemplazamos por un tamaño mayor
+  return url.replace(/=s\d+-c/, `=s${size}-c`);
+};
+
 const ClickableAvatar = ({ 
   src, 
   alt, 
@@ -21,6 +29,11 @@ const ClickableAvatar = ({
   
   const hasImage = src && src !== '';
   
+  // URL de alta resolución para el lightbox
+  const highResSrc = getHighResImageUrl(src, 800);
+  // URL de resolución media para el avatar
+  const mediumResSrc = getHighResImageUrl(src, 200);
+  
   return (
     <>
       <div 
@@ -38,7 +51,7 @@ const ClickableAvatar = ({
       >
         {hasImage ? (
           <img 
-            src={src} 
+            src={mediumResSrc} 
             alt={alt || 'Avatar'}
             className="w-full h-full object-cover"
           />
@@ -52,7 +65,7 @@ const ClickableAvatar = ({
       <ImageLightbox
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        src={src}
+        src={highResSrc}
         alt={alt}
       />
     </>
