@@ -300,9 +300,9 @@ const CreatorProfileEdit = () => {
           <div className="flex items-center gap-6">
             <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 p-0.5">
               <div className="w-full h-full rounded-xl bg-black flex items-center justify-center overflow-hidden">
-                {profile?.profile_picture ? (
+                {(profile?.profile_image || profile?.profile_picture) ? (
                   <img 
-                    src={profile.profile_picture} 
+                    src={profile.profile_image || profile.profile_picture} 
                     alt={profile.name} 
                     className="w-full h-full object-cover"
                   />
