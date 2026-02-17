@@ -602,8 +602,11 @@ async def get_creator_deliverables(
     await require_admin(request)
     db = await get_db()
     
-    # Verify creator exists
-    creator = await db.ugc_creators.find_one({"id": creator_id}, {"_id": 0, "name": 1})
+    # Verify creator exists (support both schemas)
+    creator = await db.ugc_creators.find_one(
+        {"$or": [{"id": creator_id}, {"creator_id": creator_id}]}, 
+        {"_id": 0, "name": 1}
+    )
     if not creator:
         raise HTTPException(status_code=404, detail="Creator not found")
     
@@ -618,7 +621,7 @@ async def get_creator_deliverables(
         campaign_id = del_item.get("campaign_id")
         if campaign_id:
             campaign = await db.ugc_campaigns.find_one(
-                {"id": campaign_id},
+                {"$or": [{"id": campaign_id}, {"campaign_id": campaign_id}]},
                 {"_id": 0, "name": 1, "brand_id": 1, "status": 1}
             )
             if campaign:
@@ -626,15 +629,16 @@ async def get_creator_deliverables(
                 
                 # Get brand name
                 brand = await db.ugc_brands.find_one(
-                    {"id": campaign.get("brand_id")},
-                    {"_id": 0, "company_name": 1}
+                    {"$or": [{"id": campaign.get("brand_id")}, {"brand_id": campaign.get("brand_id")}]},
+                    {"_id": 0, "company_name": 1, "brand_name": 1}
                 )
                 if brand:
-                    del_item["campaign"]["brand_name"] = brand.get("company_name")
+                    del_item["campaign"]["brand_name"] = brand.get("company_name") or brand.get("brand_name")
         
         # Check for rating
+        del_id = del_item.get("deliverable_id") or del_item.get("id")
         rating = await db.ugc_ratings.find_one(
-            {"deliverable_id": del_item.get("id")},
+            {"deliverable_id": del_id},
             {"_id": 0, "rating": 1, "comment": 1}
         )
         if rating:
@@ -642,7 +646,7 @@ async def get_creator_deliverables(
         
         # Get application status for cancelled check
         application = await db.ugc_applications.find_one(
-            {"deliverable_id": del_item.get("id")},
+            {"$or": [{"application_id": del_item.get("application_id")}, {"id": del_item.get("application_id")}]},
             {"_id": 0, "status": 1}
         )
         if application:
