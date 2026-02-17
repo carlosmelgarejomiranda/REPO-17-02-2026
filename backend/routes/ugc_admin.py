@@ -605,10 +605,14 @@ async def get_creator_deliverables(
     # Verify creator exists (support both schemas)
     creator = await db.ugc_creators.find_one(
         {"$or": [{"id": creator_id}, {"creator_id": creator_id}]}, 
-        {"_id": 0, "name": 1}
+        {"_id": 0, "creator_id": 1, "user_id": 1}
     )
-    if not creator:
+    if not creator or not creator.get("creator_id"):
         raise HTTPException(status_code=404, detail="Creator not found")
+    
+    # Get creator name from users collection
+    user = await db.users.find_one({"user_id": creator.get("user_id")}, {"_id": 0, "name": 1})
+    creator_name = user.get("name") if user else None
     
     # Get all deliverables for this creator
     deliverables = await db.ugc_deliverables.find(
