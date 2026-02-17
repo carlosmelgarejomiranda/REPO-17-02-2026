@@ -1,7 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 
 const ImageLightbox = ({ isOpen, onClose, src, alt }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Reset states when src changes
+  useEffect(() => {
+    setImageError(false);
+    setImageLoaded(false);
+  }, [src]);
+
   // Close on ESC key
   useEffect(() => {
     const handleEsc = (e) => {
@@ -20,6 +29,8 @@ const ImageLightbox = ({ isOpen, onClose, src, alt }) => {
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const initials = alt?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '?';
 
   return (
     <div 
@@ -47,12 +58,29 @@ const ImageLightbox = ({ isOpen, onClose, src, alt }) => {
         
         {/* Image frame */}
         <div className="relative p-1 bg-gradient-to-br from-[#d4a968] to-purple-500 rounded-2xl">
-          <div className="bg-black rounded-xl overflow-hidden">
-            <img
-              src={src}
-              alt={alt || 'Profile'}
-              className="max-w-[80vw] max-h-[80vh] min-w-[200px] min-h-[200px] object-contain"
-            />
+          <div className="bg-black rounded-xl overflow-hidden min-w-[200px] min-h-[200px] flex items-center justify-center">
+            {(!src || imageError) ? (
+              /* Fallback: show initials */
+              <div className="w-[300px] h-[300px] bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center">
+                <span className="text-8xl font-light text-black/80">{initials}</span>
+              </div>
+            ) : (
+              <>
+                {/* Loading spinner */}
+                {!imageLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-[#d4a968] border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+                <img
+                  src={src}
+                  alt={alt || 'Profile'}
+                  className={`max-w-[80vw] max-h-[80vh] object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  onLoad={() => setImageLoaded(true)}
+                  onError={() => setImageError(true)}
+                />
+              </>
+            )}
           </div>
         </div>
         
