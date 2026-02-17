@@ -257,17 +257,17 @@ const BrandDeliverables = () => {
 
   // Check if deliverable is ready to be rated (URL + Metrics submitted)
   const isReadyToRate = (del) => {
-    return !isCancelled(del) && del.post_url && del.metrics_submitted_at && !del.brand_rating;
+    return !isCancelled(del) && getPostUrl(del) && del.metrics_submitted_at && !del.brand_rating;
   };
 
   // Check if deliverable is completed and rated
   const isCompletedAndRated = (del) => {
-    return !isCancelled(del) && del.post_url && del.metrics_submitted_at && del.brand_rating;
+    return !isCancelled(del) && getPostUrl(del) && del.metrics_submitted_at && del.brand_rating;
   };
 
   // Check if still pending delivery (either URL or metrics)
   const isPendingDelivery = (del) => {
-    return !isCancelled(del) && (!del.post_url || !del.metrics_submitted_at);
+    return !isCancelled(del) && (!getPostUrl(del) || !del.metrics_submitted_at);
   };
 
   const getStatusConfig = (status) => {
