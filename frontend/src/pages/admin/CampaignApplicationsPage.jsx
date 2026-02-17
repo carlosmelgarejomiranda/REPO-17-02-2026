@@ -395,9 +395,17 @@ const CampaignApplicationsPage = () => {
                   <div className="grid grid-cols-[50px_180px_80px_110px_70px_110px_70px_160px_100px_1fr] gap-2 px-4 py-3 items-center">
                     {/* Avatar */}
                     <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-sm">
-                        {app.creator_name?.charAt(0) || 'C'}
-                      </div>
+                      {creator.profile_image ? (
+                        <img 
+                          src={creator.profile_image} 
+                          alt={app.creator_name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d4a968] to-[#b08848] flex items-center justify-center text-black font-bold text-sm">
+                          {app.creator_name?.charAt(0) || 'C'}
+                        </div>
+                      )}
                       {creator.is_verified && (
                         <div className="absolute -bottom-0.5 -right-0.5 bg-blue-500 rounded-full p-0.5">
                           <BadgeCheck className="w-2.5 h-2.5 text-white" />
