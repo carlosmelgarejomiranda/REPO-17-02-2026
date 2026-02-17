@@ -6,6 +6,10 @@ const getHighResImageUrl = (url, size = 400) => {
   if (!url) return url;
   // Google Photos URLs tienen formato: ...=s96-c (donde 96 es el tamaño)
   // Reemplazamos por un tamaño mayor
+  if (size === 'original') {
+    // Remover el parámetro de tamaño para obtener la imagen original
+    return url.replace(/=s\d+-c/, '=s0');
+  }
   return url.replace(/=s\d+-c/, `=s${size}-c`);
 };
 
@@ -29,10 +33,10 @@ const ClickableAvatar = ({
   
   const hasImage = src && src !== '';
   
-  // URL de alta resolución para el lightbox
-  const highResSrc = getHighResImageUrl(src, 800);
+  // URL de calidad máxima para el lightbox (imagen original)
+  const highResSrc = getHighResImageUrl(src, 'original');
   // URL de resolución media para el avatar
-  const mediumResSrc = getHighResImageUrl(src, 200);
+  const mediumResSrc = getHighResImageUrl(src, 400);
   
   return (
     <>
