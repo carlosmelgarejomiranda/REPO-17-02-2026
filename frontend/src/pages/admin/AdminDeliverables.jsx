@@ -486,11 +486,19 @@ const AdminDeliverables = () => {
                   {/* Creator Info */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                        <span className="text-purple-400 font-medium">
-                          {del.creator?.name?.charAt(0) || 'C'}
-                        </span>
-                      </div>
+                      {del.creator?.profile_image ? (
+                        <img 
+                          src={del.creator.profile_image} 
+                          alt={del.creator?.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                          <span className="text-purple-400 font-medium">
+                            {del.creator?.name?.charAt(0) || 'C'}
+                          </span>
+                        </div>
+                      )}
                       <div>
                         <p className="font-medium text-white">{del.creator?.name || 'Creador'}</p>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
