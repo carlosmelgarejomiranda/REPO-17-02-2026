@@ -133,8 +133,8 @@ const AdminCreatorDeliverables = () => {
 
   // Filter helpers
   const isCancelled = (del) => del.status === 'cancelled' || del.application_status === 'cancelled';
-  const isPending = (del) => !isCancelled(del) && (!del.post_url || !del.metrics_submitted_at);
-  const isCompleted = (del) => !isCancelled(del) && del.post_url && del.metrics_submitted_at;
+  const isPending = (del) => !isCancelled(del) && (!getPostUrl(del) || !del.metrics_submitted_at);
+  const isCompleted = (del) => !isCancelled(del) && getPostUrl(del) && del.metrics_submitted_at;
   const hasIssue = (del) => !isCancelled(del) && del.status === 'changes_requested';
 
   // Counts
