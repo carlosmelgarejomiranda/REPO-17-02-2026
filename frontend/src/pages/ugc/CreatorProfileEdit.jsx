@@ -299,19 +299,13 @@ const CreatorProfileEdit = () => {
             Foto de Perfil
           </h2>
           <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 p-0.5">
-              <div className="w-full h-full rounded-xl bg-black flex items-center justify-center overflow-hidden">
-                {(profile?.profile_image || profile?.profile_picture) ? (
-                  <img 
-                    src={profile.profile_image || profile.profile_picture} 
-                    alt={profile.name} 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-3xl font-light">{formData.name?.charAt(0) || '?'}</span>
-                )}
-              </div>
-            </div>
+            <ClickableAvatar
+              src={profile?.profile_image || profile?.profile_picture}
+              alt={profile?.name || formData.name}
+              fallback={formData.name?.charAt(0) || '?'}
+              size="xl"
+              showBorder
+            />
             <div>
               <p className="text-gray-400 text-sm mb-2">
                 Tu foto de perfil viene de tu cuenta de Google
