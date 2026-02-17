@@ -760,8 +760,8 @@ const CreatorDetailView = ({
                           </span>
                         </td>
                         <td className="p-4 text-center">
-                          {m.post_url ? (
-                            <a href={m.post_url} target="_blank" rel="noopener noreferrer"
+                          {getPostUrl(m) ? (
+                            <a href={getPostUrl(m)} target="_blank" rel="noopener noreferrer"
                               className="text-[#d4a968] hover:text-[#c49858]">
                               <ExternalLink className="w-4 h-4" />
                             </a>
