@@ -557,10 +557,10 @@ const BrandDeliverables = () => {
                   </div>
 
                   {/* Post URL Link */}
-                  {del.post_url && (
+                  {getPostUrl(del) && (
                     <div className="mb-4 p-3 bg-black/30 rounded-lg">
                       <a
-                        href={del.post_url}
+                        href={getPostUrl(del)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[#d4a968] hover:underline flex items-center gap-2 text-sm"
