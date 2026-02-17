@@ -10,6 +10,11 @@ import {
 
 const API_URL = getApiUrl();
 
+// Helper: obtener URL del post (fallback a instagram_url o tiktok_url)
+const getPostUrl = (deliverable) => {
+  return deliverable?.post_url || deliverable?.instagram_url || deliverable?.tiktok_url || null;
+};
+
 const AdminDeliverables = () => {
   const { campaignId } = useParams();
   const navigate = useNavigate();
